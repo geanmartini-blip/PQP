@@ -224,6 +224,8 @@ export interface World {
   history: { tick: number; pos: Map<number, [number, number]> }[];
   /** modificadores da região (energia, poluição, natureza/cidade) por regionId */
   regionState?: Record<string, { energia: boolean; apagao: boolean; poluicao: number }>;
+  /** caminho para "tocar no chão" e para a IA; o servidor injeta findPath de map/path.ts. Sem ele, anda em linha reta. */
+  pathfinder?: (map: TileMap, from: Vec, to: Vec, radius: number) => Vec[] | null;
 }
 
 /** Entrada contínua do jogador (joystick), mandada todo tick. */

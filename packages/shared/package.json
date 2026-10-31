@@ -7,7 +7,12 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./*": "./src/*"
+    "./sim": "./src/sim/index.ts",
+    "./map": "./src/map/index.ts",
+    "./net": "./src/net/index.ts",
+    "./data": "./src/data/index.ts",
+    "./schema": "./src/schema/index.ts",
+    "./*": "./src/*.ts"
   },
   "dependencies": {
     "zod": "^4.0.0"

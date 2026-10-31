@@ -85,6 +85,13 @@ export interface HudSnap {
   level: number;
   auto: boolean;
   downed?: number; // ms restantes no chão
+  /** velocidade de deslocamento efetiva agora (tiles/s, com lentidão e reforços), para a previsão do cliente */
+  mv: number;
+  /** pode se mexer (falso se atordoado, preso, derrubado, caído) */
+  canMove: boolean;
+  /** arquétipo e classe atuais */
+  arch?: string;
+  cls?: string;
 }
 
 export interface S2C_Snapshot {
