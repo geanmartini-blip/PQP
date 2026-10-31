@@ -19,7 +19,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -p packages/shared && tsc -p packages/server && tsc -p packages/client && tsc -p packages/sim",
-    "sim": "npm run sim -w @pqp/sim",
+    "sim": "npm run sim -w @pqp/sim --",
+    "e2e": "npm run e2e -w @pqp/server",
     "validate-data": "vitest run packages/shared/test/data.test.ts"
   },
   "devDependencies": {

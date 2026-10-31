@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "start": "tsx src/index.ts"
+    "start": "tsx src/index.ts",
+    "bot": "tsx src/bot/run.ts",
+    "e2e": "tsx src/bot/e2e-run.ts"
   },
   "dependencies": {
     "@pqp/shared": "*",

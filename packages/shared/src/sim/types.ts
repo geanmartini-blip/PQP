@@ -157,6 +157,58 @@ export interface Entity {
   expiresTick?: number;
   // saque
   loot?: { itemId?: string; rarity?: string; currency?: { semente?: number; credito?: number }; forPlayerId?: string };
+
+  // ---- Adições da Fase 1 (núcleo da simulação, sim/). Todas opcionais. ----
+  /** ponto de volta quando o caído expira (QG; no protótipo, onde nasceu) */
+  spawnX?: number;
+  spawnY?: number;
+  /** velocidade aplicada no último tick, em tiles/s (0 quando parado) */
+  vel?: Vec;
+  /** XP dentro do nível atual (o que falta: xpToNext(level) - xp) */
+  xp?: number;
+  /** moedas e itens coletados (protótipo; a persistência é do servidor) */
+  semente?: number;
+  credito?: number;
+  inventory?: string[];
+  /** Alcance, Controle e Cura da tabela de balanceamento (Alcance 1, 2 ou 3) */
+  attr?: { alcance: number; controle: number; cura: number };
+  /** papel do arquétipo (tanque, dano, suporte, cura) */
+  role?: string;
+  /** id do recurso da classe (folego, municao, espirito, bateria, foco) */
+  resourceId?: string;
+  /** pontos de carga do Especial ainda não soltos (o teto por segundo segura o resto) */
+  specialBank?: number;
+  /** último tick em que bateu, apanhou ou curou (piso da carga do Especial) */
+  lastActiveTick?: number;
+  /** último tick em combate (bateu ou apanhou); 5 s sem combate = regeneração */
+  lastCombatTick?: number;
+  /** último tick em que soltou um ataque básico (flag "atacando" do snapshot) */
+  lastBasicTick?: number;
+  /** tick em que o alvo manual saiu de vista (perde depois de um tempo) */
+  targetLostTick?: number;
+  /** quem bateu nesta entidade: id do atacante (ou do dono da invocação) -> último tick */
+  attackers?: Record<number, number>;
+  /** habilidade em carga curta (castMs, máx. 0,5 s) */
+  casting?: CastState;
+  /** habilidade pedida fora do alcance: anda até o alcance e lança (expira em untilTick) */
+  pendingCast?: PendingCast;
+}
+
+/** Carga curta de uma habilidade (castMs). */
+export interface CastState {
+  abilityId: string;
+  readyTick: number;
+  targetId?: number;
+  point: Vec;
+  dir: number;
+}
+
+/** Habilidade esperando o alcance: o personagem anda sozinho até lá. */
+export interface PendingCast {
+  abilityId: string;
+  targetId?: number;
+  at?: Vec;
+  untilTick: number;
 }
 
 export interface Telegraph {
@@ -172,6 +224,13 @@ export interface Telegraph {
   angleDeg?: number;
   startTick: number;
   impactTick: number;
+  // ---- Adições da Fase 1 ----
+  /** alvo travado no momento do lançamento (efeitos 'alvo' só valem se ele estiver dentro) */
+  targetId?: number;
+  /** time de quem lançou (explosões de quem já caiu) */
+  team?: Team;
+  /** força guardada quando a fonte some antes do impacto (afixo explode_ao_morrer) */
+  power?: { attack: number; level: number; mult: number };
 }
 
 /** Área que fica no chão (campo, chuva de chumbo, poça, tempestade). */
@@ -188,6 +247,16 @@ export interface GroundZone {
   tickMs: number;
   nextTick: number;
   followsId?: number;
+  // ---- Adições da Fase 1 ----
+  /** forma da área: círculo (padrão) ou cone que acompanha o lançador virado para o alvo */
+  shape?: 'circulo' | 'cone';
+  /** cone: comprimento (tiles) e abertura (graus) */
+  range?: number;
+  angleDeg?: number;
+  /** cone: última direção usada (radianos) */
+  dir?: number;
+  /** índice do efeito 'campo' dentro de ability.effects */
+  effectIndex?: number;
 }
 
 export type CombatEvent =

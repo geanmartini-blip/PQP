@@ -3,8 +3,10 @@
 O jogo roda localmente sem nada desta lista. Cada item diz o que falta e onde a integração já está pronta.
 
 ## Contas e chaves
-- **Supabase.** Criar o projeto, rodar os SQL de `supabase/migrations/` e pôr no `.env` do servidor:
-  `SUPABASE_URL` e `SUPABASE_SERVICE_KEY`. Sem isso, o servidor usa `FileStore` (JSON em `.data/`).
+- **Supabase.** Criar o projeto, rodar os SQL de `supabase/migrations/` (hoje: `0001_players.sql`,
+  a tabela dos jogadores) e pôr no ambiente do servidor `SUPABASE_URL` e `SUPABASE_SERVICE_KEY`.
+  Sem isso, o servidor usa `FileStore` (JSON em `.data/players.json`). O `SupabaseStore` ainda não
+  foi testado contra um projeto de verdade.
 - **Supabase Auth.** O login hoje é de convidado (token guardado no aparelho). Trocar por e-mail ou
   provedor quando houver projeto.
 - **pg_cron.** Os jobs de tick de produção, IA de facção e plantão estão em SQL prontos; no local eles

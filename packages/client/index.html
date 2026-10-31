@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0d0b10" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>Ponte que Partiu</title>
+    <style>
+      :root {
+        --safe-top: env(safe-area-inset-top, 0px);
+        --safe-bottom: env(safe-area-inset-bottom, 0px);
+        color-scheme: dark;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #0d0b10;
+        color: #ffe8a0;
+        touch-action: none;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
+        overscroll-behavior: none;
+        font-family: 'Trebuchet MS', Verdana, sans-serif;
+      }
+      #jogo {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        touch-action: none;
+      }
+      #jogo canvas {
+        display: block;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+        touch-action: none;
+      }
+      #girar {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        background: #0d0b10;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        font-size: 18px;
+        gap: 12px;
+      }
+      #girar .icone {
+        width: 46px;
+        height: 76px;
+        border: 4px solid #ffe8a0;
+        border-radius: 8px;
+        animation: girar 1.6s ease-in-out infinite;
+      }
+      @keyframes girar {
+        0%,
+        30% {
+          transform: rotate(90deg);
+        }
+        70%,
+        100% {
+          transform: rotate(0deg);
+        }
+      }
+      /* celular deitado: pede para girar (no PC a janela larga continua jogável) */
+      @media (orientation: landscape) and (max-height: 520px) and (pointer: coarse) {
+        #girar {
+          display: flex;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="jogo"></div>
+    <div id="girar" role="alert">
+      <div class="icone"></div>
+      <div>Gire o celular para ficar em pé</div>
+    </div>
+    <script>
+      // trava em retrato quando o navegador deixa (Android em tela cheia); no iOS fica o aviso
+      try {
+        if (screen.orientation && screen.orientation.lock) screen.orientation.lock('portrait').catch(function () {});
+      } catch (e) {}
+      // nada de zoom por gesto nem rolagem
+      document.addEventListener('gesturestart', function (e) { e.preventDefault(); }, { passive: false });
+      document.addEventListener('touchmove', function (e) { e.preventDefault(); }, { passive: false });
+      document.addEventListener('dblclick', function (e) { e.preventDefault(); }, { passive: false });
+    </script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

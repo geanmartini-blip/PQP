@@ -41,6 +41,18 @@ export interface S2C_Welcome {
   tick: number;
   tickRate: number;
   protocol: number;
+  /** token de convidado gerado pelo servidor quando o hello veio sem token válido: guarde no aparelho e mande nos próximos hello (adição da Fase 1) */
+  token?: string;
+}
+
+/** cliente pede os campos d/n/lk/lv de entidades que apareceram sem eles (adição da Fase 1) */
+export interface C2S_Need {
+  ids: number[];
+}
+
+/** resposta ao 'need': as entidades pedidas, com todos os campos (adição da Fase 1) */
+export interface S2C_Info {
+  ents: EntSnap[];
 }
 
 /** Entidade no snapshot, chaves curtas. */
@@ -92,6 +104,8 @@ export interface HudSnap {
   /** arquétipo e classe atuais */
   arch?: string;
   cls?: string;
+  /** pode usar habilidade (falso se atordoado, derrubado, silenciado ou caído). Adição da integração da Fase 1. */
+  canAct?: boolean;
 }
 
 export interface S2C_Snapshot {
@@ -102,7 +116,12 @@ export interface S2C_Snapshot {
   /** ids que saíram do raio de interesse ou morreram */
   gone?: number[];
   tel: Telegraph[];
-  zones: { i: number; a: string; x: number; y: number; r: number; e: number; team: string }[];
+  /**
+   * zonas no chão por perto. x, y e r em tiles (como os avisos em tel); e = tick em que a zona acaba.
+   * Adição da Fase 1 (opcionais): s = 'cone' quando a zona é um cone que acompanha quem lançou,
+   * com dir (radianos), ang (abertura em graus) e rg (comprimento em tiles).
+   */
+  zones: { i: number; a: string; x: number; y: number; r: number; e: number; team: string; s?: 'cone'; dir?: number; ang?: number; rg?: number }[];
   ev: CombatEvent[];
   hud: HudSnap;
 }
@@ -126,7 +145,15 @@ export const MSG = {
   notice: 'notice',
 } as const;
 
-export const quantize = (v: number) => Math.round(v * POS_SCALE);
+/**
+ * Códigos de fechamento da conexão mandados pelo servidor (adição da integração da Fase 1).
+ * Ficam fora dos códigos do Colyseus 0.18 (4000 a 4010: CONSENTED, SERVER_SHUTDOWN, WITH_ERROR...).
+ * - outroAparelho: o mesmo token entrou por outra conexão; o cliente NÃO deve reconectar sozinho.
+ * - tempoEsgotado: o personagem saiu do mapa depois do tempo no automático; pode entrar de novo.
+ */
+export const CLOSE_CODE = { outroAparelho: 4101, tempoEsgotado: 4102 } as const;
+
+export const quantize =(v: number) => Math.round(v * POS_SCALE);
 export const dequantize = (v: number) => v / POS_SCALE;
 export const quantizeAxis = (v: number) => Math.max(-127, Math.min(127, Math.round(v * 127)));
 export const dequantizeAxis = (v: number) => v / 127;

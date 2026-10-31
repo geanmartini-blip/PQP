@@ -69,8 +69,29 @@ docs/                Narrativa, Sistemas e Arte (fonte de tudo; não editar aqui
 - Ticks de produção, IA de facção e plantão rodam num worker do servidor; o equivalente em pg_cron
   fica pronto no SQL.
 
-## Execução
+## Como rodar
 
-- `npm run dev`: servidor (porta 2567) e Vite (porta 5173), os dois em 0.0.0.0 para o celular.
-- `npm start`: compila o cliente e o servidor serve tudo na porta 2567.
-- `npm test`: Vitest. `npm run sim`: simulador de balanceamento.
+No Windows, abra o PowerShell na pasta do projeto e rode `. .\scripts\env.ps1` antes (põe Node e
+Git no PATH).
+
+- `npm run dev` (scripts/dev.mjs): servidor de jogo com `tsx watch` (porta 2567) e Vite (porta 5173),
+  os dois em 0.0.0.0, com os logs prefixados por `[server]` e `[client]`. Ctrl+C encerra os dois.
+  Rede ruim no servidor: `PQP_LAG_MS`/`PQP_LOSS`/`PQP_JITTER_MS` no ambiente, ou
+  `npm run dev -- --lag 200 --loss 0.02 [--jitter 20] [--companheiro]`.
+  No PC: http://localhost:5173. No celular (mesmo Wi-Fi): http://IP-do-PC:5173 (o cliente acha o
+  servidor na porta 2567 do mesmo host).
+- `npm start`: compila o cliente e o servidor serve tudo (jogo, assets e WebSocket) na porta 2567:
+  http://localhost:2567 no PC e http://IP-do-PC:2567 no celular. `PORT` troca a porta.
+- Parâmetros da URL do cliente: `?offline=1` (servidor local no navegador, sem rede), `?debug=1`
+  (ping e fps), `?lag=200&loss=0.02&jitter=20` (rede ruim do lado do cliente), `?server=host:porta`,
+  `?gallery=1` (galeria da arte), `?nome=Fulano&ala=idol`.
+- `npm test`: Vitest (inclui o ponta a ponta curto em `packages/server/test/e2e.test.ts`).
+- `npm run e2e`: ponta a ponta completo. Sobe o servidor em outro processo numa porta livre, com
+  200 ms e 2% de perda, conecta um robô com `@colyseus/sdk`, anda até um bando, mata um inimigo com
+  os botões, vai até o chefe e espera o aviso no chão; encerra o servidor no fim (~1 min).
+- `npm run typecheck`, `npm run build`.
+- `npm run sim -- --modo 1v1 --n 500 --a peao_brabo --b idol` (ou `--todos`, `--json`): simulador.
+- `npm run bot -w @pqp/server -- 8 ws://localhost:2567 60`: carga com 8 robôs por 60 s.
+- Servidor: `PQP_COMPANHEIRO=1` (companheiro de IA), `PQP_SEED`, `PQP_DATA_DIR` (pasta do
+  players.json), `PQP_SERVE_CLIENT=0` (não serve o build; o `npm run dev` liga), `SUPABASE_URL` e
+  `SUPABASE_SERVICE_KEY` (ver PENDENTE.md).
