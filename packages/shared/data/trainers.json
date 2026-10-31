@@ -1,0 +1,1388 @@
+[
+  {
+    "id": "wesley",
+    "name": "Wesley",
+    "archetype": "peao_brabo",
+    "institution": "brigada_popular",
+    "side": "esquerda",
+    "classId": "combatente",
+    "role": "tanque",
+    "recebeBase": false,
+    "origem": "Goiás",
+    "bio": "Wesley, peão de rodeio de Goiás na Brigada Popular, de chapéu, fivela e laço benzido. Machista até o osso, e a Brigada inteira tira sarro disso",
+    "bioNarrativa": "Wesley, peão de rodeio de Goiás, treina o Peão Brabo na Brigada Popular. Acha que tudo é serviço de homem e passa a história inteira sendo salvo por mulher.",
+    "bordao": "Isso aí é serviço de homem.",
+    "emote": { "id": "emote_wesley", "texto": "Isso aí é serviço de homem.", "animacao": "emote_wesley", "descricaoAnimacao": "Estufa o peito e ajeita a fivela TOURO com as duas mãos.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "bordaoVirada": {
+      "virada": "virada_peao_brabo",
+      "texto": "Isso aí é serviço de todo mundo",
+      "emote": { "id": "emote_wesley_desconstruido", "texto": "Isso aí é serviço de todo mundo", "animacao": "emote_wesley_desconstruido", "descricaoAnimacao": "Ajeita o avental e estende a mão para levantar alguém.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] }
+    },
+    "respostaGuia": { "texto": "Então senta, que eu resolvo.", "quem": "espirito_guia", "quando": "emote_bordao", "sugestaoCampos": ["quando"] },
+    "visual": {
+      "descricao": "Chapéu maior que o corpo, fivela do tamanho de um prato escrita TOURO, camisa xadrez aberta, bigode e botina, com um touro-espírito translúcido bufando atrás",
+      "poses": ["Laço benzido girando", "Peito estufado com uma seta piscando \"VEM NI MIM\"", "Montado no inimigo, em rodeio"],
+      "piada": "Costas: adesivo \"100% MACHO\" descascando. Com Desconstruído, vira \"100% PARCEIRO\" e ele ganha um avental",
+      "artKey": "npc_wesley"
+    },
+    "falas": {
+      "saudacao": [
+        "Ô, {nome}! Chegou na hora: tem serviço pesado. E serviço pesado, cê sabe, é serviço de homem.",
+        "Bão? Sai da frente do touro, que ele tá bufando. É espírito, mas o chifre dói igual.",
+        "Chegou o aprendiz. Segura o chapéu, que o vento da Brigada é forte. A zoeira é mais forte, mas finge que não ouviu."
+      ],
+      "treino": [
+        "Peito pra frente! O inimigo tem que olhar pra você, não pros outros. Quem apanha primeiro é o peão.",
+        "Laço não é enfeite, não. É benzido. A Olga benzeu… quer dizer, eu benzi. Junto. Ela segurou a vela.",
+        "Provoca, segura e aguenta. Se doer, chora depois, atrás da baia, que nem homem."
+      ],
+      "entregaMissao": [
+        "Serviço feito? Bom. Ficou quase tão bom quanto se eu tivesse feito.",
+        "Taí, ó. Agora some, antes que a Brigada abra uma comissão pra discutir o meu jeito de agradecer.",
+        "Missão entregue. A Olga ajudou? Ajudou nada. Ela só… resolveu. É diferente."
+      ],
+      "vitoria": [
+        "Montei, segurei e ganhei. Oito segundos é pra amador.",
+        "Viu? Serviço de homem. Ninguém viu aquele raio caindo do nada, né? Ótimo."
+      ],
+      "derrota": [
+        "Escorreguei. Na bosta do touro. Que nem existe. Cala a boca.",
+        "Alguém me levanta? De preferência alguém que não vá contar pra Brigada."
+      ],
+      "cidade": [
+        "Tão rindo do quê? Do adesivo? Ele tá descascando sozinho, uai.",
+        "A Brigada marcou uma assembleia sobre o meu comportamento. Fui. Saí às seis da manhã. Meio mudado, mas não espalha.",
+        "Mulher no laço? Até que… não, peraí. A Olga laça melhor que eu. Mas é porque ela treina escondido.",
+        "Esse chapéu tem nome: Respeito. A fivela também tem: Touro. O touro não tem nome, que ele é espírito e fica bravo."
+      ],
+      "sugestao": true
+    },
+    "arco": {
+      "id": "arco_wesley",
+      "resumo": "Machista até o osso, e a Brigada inteira tira sarro disso. Acha que tudo é serviço de homem e passa a história inteira sendo salvo por mulher, mudando aos poucos; quem treina com ele pode pegar a virada Desconstruído no nível 30.",
+      "etapas": [
+        {
+          "id": "macho_raiz",
+          "gatilho": { "nivelMin": 12 },
+          "descricao": "Primeiro treino da ala: Wesley explica que tudo é serviço de homem. A Brigada responde pendurando uma faixa no galpão: COMISSÃO DE ACOMPANHAMENTO DO WESLEY.",
+          "falas": [
+            "Faixa? Pra mim? Gostei. Que que é \"acompanhamento\"?",
+            "Comissão pra me acompanhar. Até que é bom, uai. Homem importante anda com comitiva."
+          ],
+          "sugestao": true
+        },
+        {
+          "id": "salvo_pela_olga",
+          "gatilho": { "nivelMin": 14 },
+          "descricao": "Numa ronda no Juncal, Wesley se enrola no próprio laço no meio de um bando de contrabandistas, e a Olga resolve tudo com a espingarda e um pão.",
+          "salvoPor": "olga",
+          "falas": [
+            "Eu tava atraindo eles pra armadilha. A armadilha era a Olga. Tava tudo planejado.",
+            "Ela ainda me deu sopa. Disse que eu tô magro. Eu tô magro?"
+          ],
+          "sugestao": true
+        },
+        {
+          "id": "salvo_pela_sigrid",
+          "gatilho": { "nivelMin": 16 },
+          "descricao": "Na investigação do Rio Turvo, um raio da Sigrid derruba a turbina solta que ia cair na cabeça dele. Ele agradece pela primeira vez, bem baixinho.",
+          "salvoPor": "sigrid",
+          "falas": [
+            "Obrigado, Sigrid. Pronto, falei. Se alguém ouviu, foi o vento.",
+            "Mulher soltando raio… até que é bonito de ver. Não conta pro touro."
+          ],
+          "sugestao": true
+        },
+        {
+          "id": "salvo_pela_ayaan",
+          "gatilho": { "nivelMin": 18 },
+          "descricao": "Ferido, Wesley vai parar no posto da Ayaan Quispe e espera na fila como todo mundo. Ela cura e manda ele parar de reclamar.",
+          "salvoPor": "ayaan_quispe",
+          "falas": [
+            "Senha 347. Três horas na fila. A Ayaan me olhou e disse \"bebe essa água e para de reclamar\". Bebi. Parei.",
+            "Sabe que a fila é até boa? A gente conversa. Tinha um senhor lá que chora vendo novela. Chorei junto. Foi a água."
+          ],
+          "sugestao": true
+        },
+        {
+          "id": "noite_escura",
+          "gatilho": { "storyFlag": "noite_escura_vivida" },
+          "descricao": "Na Noite Escura, Wesley enche sacos de areia lado a lado com o Idol, enquanto a Kátia, da Agência Neon, coordena o resgate pelo rádio. Ele obedece cada ordem dela sem discutir.",
+          "salvoPor": "katia",
+          "falas": [
+            "Sim, senhora. Quer dizer… positivo, Kátia. Mais saco ali? Tô indo.",
+            "Isso aí é serviço de… de quem tá aqui, ué. Passa o saco, Li Wei."
+          ],
+          "sugestao": true
+        },
+        {
+          "id": "desconstruido",
+          "gatilho": { "storyFlag": "acordo_assinado" },
+          "descricao": "Depois do Acordo, o adesivo \"100% MACHO\" termina de descascar e por baixo aparece \"100% PARCEIRO\". Wesley ganha um avental e passa a falar o bordão novo.",
+          "visual": "Costas: adesivo \"100% PARCEIRO\"; avental por cima da camisa xadrez.",
+          "falas": [
+            "Isso aí é serviço de todo mundo.",
+            "Lavei a louça da Assembleia. Toda. Ninguém aplaudiu. Tá certo, não é pra aplaudir.",
+            "A Brigada fechou a comissão de acompanhamento. Senti falta. Vou propor outra."
+          ],
+          "sugestao": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "dev_kumar",
+    "name": "Dev Kumar",
+    "archetype": "iogue_furioso",
+    "institution": "brigada_popular",
+    "side": "esquerda",
+    "classId": "combatente",
+    "role": "dano",
+    "recebeBase": false,
+    "bio": "Dev Kumar, da Brigada, vegano e paciente até o limite. Medita, medita, e vira tigre",
+    "bioNarrativa": "Dev Kumar, vegano, treina o Iogue Furioso. Medita toda manhã e vira tigre quando o aluno erra a postura.",
+    "bordao": "Respira… respira… JÁ DEU.",
+    "emote": { "id": "emote_dev_kumar", "texto": "Respira… respira… JÁ DEU.", "animacao": "emote_dev_kumar", "descricaoAnimacao": "Mãos em prece; o medidor de calma sobe do verde ao vermelho e ele solta um rugido.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Coque, roupa de linho, olheira funda, tapetinho de yoga enrolado nas costas e uma veia pulsando na testa",
+      "poses": ["Lótus flutuando com aura azul", "Meio virado, com um braço de tigre e o resto ainda zen", "Tigre inteiro, ainda de coque"],
+      "piada": "Medidor de calma em cima da cabeça, do verde ao vermelho; garrafinha de kombucha na cintura",
+      "artKey": "npc_dev_kumar"
+    },
+    "falas": {
+      "saudacao": [
+        "Namastê, {nome}. Senta. Não aí. Ali. Isso. Respira.",
+        "Bom dia. Já meditei, já fiz a horta, já fiz kombucha. E você, já fez o quê?",
+        "Bem-vindo. Tira o chinelo do meu tapetinho. Por favor. Ainda é por favor."
+      ],
+      "treino": [
+        "Inspira em quatro, segura em quatro, solta em quatro. Bate em oito.",
+        "Não é raiva. É energia acumulada com destino certo.",
+        "Essa postura tá errada. Tá errada. Tá ERRADA. … Respira, Dev."
+      ],
+      "entregaMissao": [
+        "Missão cumprida. Sinto orgulho. Sinto também vontade de rugir, mas é coisa boa.",
+        "Trouxe tudo? Até o recibo da troca? Ótimo. O universo agradece. A comissão também.",
+        "Bom trabalho. Toma um chá. Não é pergunta."
+      ],
+      "vitoria": [
+        "Paz restaurada. Com garra, mas restaurada.",
+        "Om… nom nom. Desculpa, o tigre ainda tá saindo."
+      ],
+      "derrota": [
+        "Isso faz parte do caminho. O caminho tá cheio de buraco.",
+        "Eu tô calmo. TÔ CALMO. Alguém me traz a kombucha."
+      ],
+      "cidade": [
+        "Cinco anos sem comer carne e três dias sem virar tigre. Recorde pessoal.",
+        "A fumaça da Direita tá atrapalhando minha meditação. E meu pulmão. Mais a meditação.",
+        "Me venderam um espetinho de \"soja\" na feira. Era carne. Tem um feirante aprendendo a respirar agora.",
+        "Meu medidor de calma tá no amarelo. Não fala comigo sobre comissão hoje."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "jacques",
+    "name": "Jacques",
+    "archetype": "cidadao_revolucionario",
+    "institution": "brigada_popular",
+    "side": "esquerda",
+    "classId": "combatente",
+    "role": "suporte",
+    "recebeBase": true,
+    "origem": "França",
+    "bio": "Jacques, francês da Brigada, sempre a um discurso de distância de uma barricada",
+    "bioNarrativa": "Jacques, francês, recebe os novatos da Brigada e treina o Cidadão Revolucionário. Chegou fugindo de uma greve e puxou outra no mesmo dia.",
+    "bordao": "Vive la révolution! Depois do café.",
+    "emote": { "id": "emote_jacques", "texto": "Vive la révolution! Depois do café.", "animacao": "emote_jacques", "descricaoAnimacao": "Ergue a xícara de café como quem ergue uma bandeira e toma um gole.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Boina, bigode fino, cachecol de três cores, camisa listrada e xícara de café sempre na mão",
+      "poses": ["Em cima de uma barricada de cadeiras de bistrô", "Discurso no megafone com a xícara erguida", "Fincando a placa GREVE no chão"],
+      "piada": "Costas: lista de reivindicações enrolada que arrasta no chão e cresce a cada nível",
+      "artKey": "npc_jacques"
+    },
+    "falas": {
+      "saudacao": [
+        "Camarada {nome}! Bem-vindo à Brigada. Primeiro o café, depois a luta, depois mais café.",
+        "Chegou novato? Ótimo. A pauta de hoje já tem um item: você.",
+        "Bonjour, {nome}. Já reclamou de alguma coisa hoje? Ainda não? Vem, eu te ensino."
+      ],
+      "treino": [
+        "Uma barricada é só um monte de cadeira com propósito.",
+        "Fala alto, aponta pra frente, segura a xícara. Se cair café, a revolução atrasa.",
+        "Atordoar não é violência. É uma pausa forçada para reflexão."
+      ],
+      "entregaMissao": [
+        "Missão cumprida! Vai pra lista de conquistas. Fica logo acima da lista de reivindicações. A de baixo é maior.",
+        "Muito bem. A Brigada reconhece o seu esforço. Por escrito. Em três vias.",
+        "Trouxe? Magnifique. Agora a gente faz uma assembleia para decidir onde guardar."
+      ],
+      "vitoria": [
+        "A barricada resistiu! O café também.",
+        "Vitória do povo! Intervalo de quinze minutos."
+      ],
+      "derrota": [
+        "Recuo tático. Com protesto formal.",
+        "Perdemos a batalha, não a pauta. Alguém viu minha xícara?"
+      ],
+      "cidade": [
+        "Cheguei aqui fugindo de uma greve. Puxei outra no mesmo dia. Tradição é tradição.",
+        "Essa fila está desorganizada. Proponho uma fila para organizar a fila.",
+        "O Wesley perguntou se revolução é serviço de homem. Fiz um discurso de duas horas. Ele dormiu na primeira.",
+        "Na Direita não tem greve. Tem \"pausa estratégica não remunerada\". Pobres camaradas."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "olga",
+    "name": "Olga",
+    "archetype": "babushka",
+    "institution": "guarda_comunitaria",
+    "side": "esquerda",
+    "classId": "atirador",
+    "role": "tanque",
+    "recebeBase": true,
+    "origem": "Rússia",
+    "bio": "Olga, chefe da Guarda Comunitária do quarteirão, de lenço e espingarda benzida. Acha todo mundo magro",
+    "bioNarrativa": "Olga, avó russa, recebe os novatos da Guarda Comunitária e treina a Babushka. Alimenta a Esquerda inteira e atira melhor que qualquer um.",
+    "bordao": "Come mais um pouco que eu seguro esses aí.",
+    "emote": { "id": "emote_olga", "texto": "Come mais um pouco que eu seguro esses aí.", "animacao": "emote_olga", "descricaoAnimacao": "Oferece um prato de sopa fumegante com uma mão e apoia a espingarda no ombro com a outra.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Lenço florido, casaco de pele falsa enorme, sacola de feira com pão e espingarda benzida com um ramo de flores no cano",
+      "poses": ["Atirando apoiada na sacola", "Xale de Lã aberto como escudo gigante", "Oferecendo um prato de sopa ao inimigo"],
+      "piada": "Rolo de massa na cintura, mira de crochê e olhar de julgamento no retrato",
+      "artKey": "npc_olga"
+    },
+    "falas": {
+      "saudacao": [
+        "Ai, {nome}, tão magrinho. Senta. Come. Depois a gente fala de ronda.",
+        "Chegou tarde. Eu sei porque anotei. Anoto tudo. Come um pão.",
+        "Bem-vindo à Guarda. Aqui a gente vigia o quarteirão e alimenta o quarteirão. Às vezes ao mesmo tempo."
+      ],
+      "treino": [
+        "Espingarda é igual panela: segura firme e não deixa queimar.",
+        "Fica na frente. Se apanhar, eu remendo. Se emagrecer, eu brigo.",
+        "Ronda boa é a que ninguém percebe. Ronda ótima é a que todo mundo percebe e se comporta."
+      ],
+      "entregaMissao": [
+        "Fez direitinho. Toma, sopa de beterraba. Não, não tem opção sem sopa.",
+        "Missão feita. Anotei no caderno. Com estrelinha, que você merece.",
+        "Viu? Nem precisou dedurar ninguém à toa. Só quem merecia."
+      ],
+      "vitoria": [
+        "Pronto. Agora todo mundo pra mesa.",
+        "Esses aí? Magrinhos. Caíram fácil."
+      ],
+      "derrota": [
+        "Ai, minhas costas. Alguém pega a sacola, que o pão tá rolando.",
+        "Isso foi fome. Ninguém luta direito com fome."
+      ],
+      "cidade": [
+        "O Wesley acha que segurou os contrabandistas sozinho. Deixa ele. Homem precisa de história pra contar.",
+        "Vi você passando três vezes sem comer nada. Três. Eu conto.",
+        "A vizinha do 12 faz barulho depois das dez. Não é denúncia, é observação. Por escrito.",
+        "Na Direita eles vendem comida por assinatura. Assinatura! Comida se dá, criatura."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "batu",
+    "name": "Batu",
+    "archetype": "arqueiro_das_estepes",
+    "institution": "guarda_comunitaria",
+    "side": "esquerda",
+    "classId": "atirador",
+    "role": "dano",
+    "recebeBase": false,
+    "origem": "Mongólia",
+    "bio": "Batu, da Guarda, mongol montado num cavalo-espírito",
+    "bordao": "Meu tataravô fazia isso de olho fechado.",
+    "emote": { "id": "emote_batu", "texto": "Meu tataravô fazia isso de olho fechado.", "animacao": "emote_batu", "descricaoAnimacao": "Fecha os olhos, puxa o arco no vazio e solta; o pônei-espírito bufa ao lado.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Chapéu de pele pontudo, arco recurvo e um cavalo-espírito que é um pônei pequeno demais para ele",
+      "poses": ["Tiro girando, com linhas de movimento", "Galope com os pés arrastando no chão", "Parado no pônei, que bufa"],
+      "piada": "O pônei-espírito tem cara de quem quer pedir demissão",
+      "artKey": "npc_batu"
+    },
+    "falas": {
+      "saudacao": [
+        "{nome}! Chega mais. Não sobe no pônei, ele já tá reclamando de mim.",
+        "Saudações. Meu tataravô cumprimentava a cavalo. Eu cumprimento a pônei. A gente se adapta.",
+        "Chegou na hora do treino. Ou do almoço do pônei. Ele acha que é a mesma coisa."
+      ],
+      "treino": [
+        "Gira, solta, gira, solta. Se ficar tonto, solta mesmo assim.",
+        "Flecha boa vai atrás do alvo sozinha. Flecha ruim volta pra você. Aprende a diferença.",
+        "Galope não é correr. É correr com dignidade e com um pônei."
+      ],
+      "entregaMissao": [
+        "Bom trabalho. Meu tataravô faria em metade do tempo, de olho fechado. Mas ele morreu, então você ganhou.",
+        "Trouxe tudo? O pônei conferiu. Ele bufou. Isso é aprovação.",
+        "Missão cumprida. Vou contar pros espíritos. Eles adoram uma fofoca."
+      ],
+      "vitoria": [
+        "De olho fechado. Quase.",
+        "Isso! O pônei até parou de reclamar. Um pouco."
+      ],
+      "derrota": [
+        "O pônei tropeçou. Não fui eu. Foi o pônei.",
+        "Meu tataravô tá rindo de mim lá de cima. Ou de baixo. Nunca sei onde eles ficam."
+      ],
+      "cidade": [
+        "O pônei pediu demissão de novo. A Guarda abriu uma comissão. Ele vai ficar, porque comissão nunca termina.",
+        "Meu tataravô atravessava campo aberto. Eu atravesso o Juncal. Tem mais mosquito.",
+        "Na Direita me ofereceram um cavalo robô. Tinha mensalidade. Fiquei com o pônei.",
+        "Ele não é pequeno. Eu é que sou grande pra ele. É diferente."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "bazza",
+    "name": "Bazza",
+    "archetype": "cacador_de_crocodilo",
+    "institution": "guarda_comunitaria",
+    "side": "esquerda",
+    "classId": "atirador",
+    "role": "suporte",
+    "recebeBase": false,
+    "origem": "Austrália",
+    "bio": "Bazza, australiano da Guarda, de bermuda cáqui e paixão por bicho perigoso",
+    "bordao": "Que belezura! Ele vai me morder.",
+    "emote": { "id": "emote_bazza", "texto": "Que belezura! Ele vai me morder.", "animacao": "emote_bazza", "descricaoAnimacao": "Aponta para o nada com os olhos brilhando, e um balão \"Crikey!\" aparece.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Chapéu safári com dentes de crocodilo, bermuda cáqui, camisa de 14 bolsos e curativo pelo corpo todo",
+      "poses": ["Armando o laço", "Apontando com olhos brilhando e o balão \"Crikey!\"", "Abraçado a um crocodilo que morde o chapéu dele"],
+      "piada": "Os curativos aumentam a cada nível",
+      "artKey": "npc_bazza"
+    },
+    "falas": {
+      "saudacao": [
+        "Ô, {nome}! Chega mais. Devagar. Tem uma cobra no teu pé. Brincadeira. Agora tem.",
+        "Bem-vindo! Já foi mordido hoje? Não? O dia ainda tá começando.",
+        "Olha quem chegou! Que belezura. Você não morde, né?"
+      ],
+      "treino": [
+        "Marca o bicho, chama o grupo, e todo mundo bate junto. Respeito ao bicho é isso.",
+        "Laço no chão, bicho no laço, você longe do bicho. A terceira parte é a que eu sempre esqueço.",
+        "Curativo não é fraqueza. É currículo."
+      ],
+      "entregaMissao": [
+        "Missão feita! Algum bicho te mordeu? Não? Que pena, ia render uma história.",
+        "Bom trabalho, parceiro. Toma um curativo extra. De presente.",
+        "Trouxe? Belezura! Põe no bolso nove. O oito tá com um sapo."
+      ],
+      "vitoria": [
+        "Crikey! Que luta linda!",
+        "Ganhamos e ninguém foi mordido. Tô até decepcionado."
+      ],
+      "derrota": [
+        "Ele me mordeu. Que belezura de mordida.",
+        "Mais um curativo. Já perdi a conta. A Ayaan não perdeu."
+      ],
+      "cidade": [
+        "Achei uma cobra do Juncal dentro do chapéu. Ficou. O nome dela é Margarida.",
+        "A Guarda me pediu pra vigiar o quarteirão. Vigiei. Achei três aranhas lindas.",
+        "Na Direita tem zoológico com ingresso. Aqui o bicho vem de graça, direto no teu pescoço.",
+        "Catorze bolsos. Treze com bicho. Um com o curativo do bicho."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "seamus",
+    "name": "Seamus",
+    "archetype": "druida_rabugento",
+    "institution": "escola_dos_saberes",
+    "side": "esquerda",
+    "classId": "elemental",
+    "role": "tanque",
+    "recebeBase": true,
+    "origem": "Irlanda",
+    "bio": "Seamus, o professor mais antigo da Escola dos Saberes, irlandês, que quer todo mundo fora do gramado",
+    "bordao": "No meu tempo, as pedras tinham respeito.",
+    "emote": { "id": "emote_seamus", "texto": "No meu tempo, as pedras tinham respeito.", "animacao": "emote_seamus", "descricaoAnimacao": "Aponta bravo para o chão com um \"!\" em cima da cabeça; o passarinho da barba reclama junto.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Barba que arrasta no chão, túnica de musgo, sandália de pedra e cajado com a placa \"SAIA DA GRAMA\"",
+      "poses": ["Fincando um menir-totem", "Apontando bravo com um \"!\" em cima", "Cochilando em pé no círculo de pedras"],
+      "piada": "Um passarinho fez ninho na barba e reclama junto",
+      "artKey": "npc_seamus"
+    },
+    "falas": {
+      "saudacao": [
+        "Você. Sim, você. Tira o pé da grama. Agora pode dizer oi.",
+        "Mais um aprendiz. A figueira já viu oitenta turmas. Nenhuma prestou. Vamos ver a sua.",
+        "Bem-vindo à Escola dos Saberes. Primeira lição: a grama. Segunda lição: a grama de novo."
+      ],
+      "treino": [
+        "Totem se finca com respeito. Com raiva também funciona, mas pede desculpa depois.",
+        "Empurra o inimigo pra longe. Longe da grama, de preferência.",
+        "Pedra não corre. Pedra não reclama. Pedra aguenta. Seja pedra. Pode reclamar um pouco."
+      ],
+      "entregaMissao": [
+        "Hum. Fez. Não fez bonito, mas fez. No meu tempo, isso era nota sete.",
+        "Tá aqui. Leva, e não pisa na grama na saída.",
+        "Missão cumprida. O passarinho aprovou. Eu ainda tô pensando."
+      ],
+      "vitoria": [
+        "Fora do meu gramado! E não voltem!",
+        "As pedras lembraram quem manda."
+      ],
+      "derrota": [
+        "Pisaram na grama. Na minha frente. Isso foi o pior.",
+        "Eu tava só descansando os olhos. Em pé. No meio da luta."
+      ],
+      "cidade": [
+        "\"Estagiário do saber há sete anos\"? Fui eu que contratei. Ele ainda não sabe nada. Igual a mim, só que mais novo.",
+        "A Direita mandou um robô cortar a grama da Escola. Hoje ele é um menir.",
+        "Os jovens de hoje só querem raio e explosão. No meu tempo, a gente esperava a pedra crescer.",
+        "O passarinho da barba reclamou do barulho da Assembleia. Ele tem razão. Votei com ele."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "sigrid",
+    "name": "Sigrid",
+    "archetype": "bruxa_do_trovao",
+    "institution": "escola_dos_saberes",
+    "side": "esquerda",
+    "classId": "elemental",
+    "role": "dano",
+    "recebeBase": false,
+    "origem": "Escandinávia",
+    "sugestaoCampos": ["origem"],
+    "bio": "Sigrid, viking que dá aula de raio na Escola, de chifre de beber na mão",
+    "bordao": "Mais um raio e eu brindo.",
+    "emote": { "id": "emote_sigrid", "texto": "Mais um raio e eu brindo.", "animacao": "emote_sigrid", "descricaoAnimacao": "Ergue o chifre num brinde, e uma faísca pequena cai do céu ao lado.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Tranças, capacete de chifres com etiqueta \"RÉPLICA\" e um chifre de beber transbordando faísca",
+      "poses": ["Brinde que faz cair um raio", "Fim de Festa, com tempestade e confete", "Soluço que solta faísca"],
+      "piada": "Bochechas sempre vermelhas; o chifre nunca esvazia",
+      "artKey": "npc_sigrid"
+    },
+    "falas": {
+      "saudacao": [
+        "Skål, {nome}! Chegou em boa hora: a aula de raio começa logo depois do brinde.",
+        "Bem-vindo seja quem for! Pega um chifre. É de água. Hoje.",
+        "Ah, aluno novo! Fica ali, longe do para-raios. O para-raios sou eu."
+      ],
+      "treino": [
+        "Raio bom pula de um pro outro. Igual fofoca na Assembleia.",
+        "Levanta o chifre, olha pro céu e brinda. O céu entende.",
+        "Tempestade em área: quatro segundos de festa e uma vida inteira de assunto."
+      ],
+      "entregaMissao": [
+        "Missão feita? Isso merece brinde! Tudo merece brinde, mas esse merece mais.",
+        "Trouxe! Ótimo. Vou contar na minha saga. Você é o capítulo três. Eu sou todos os outros.",
+        "Muito bem. O trovão aprovou. Ouviu o ronco? Era ele. Ou meu estômago."
+      ],
+      "vitoria": [
+        "Skål! Mais um raio e eu brindo de novo!",
+        "Fim de festa! Pra eles."
+      ],
+      "derrota": [
+        "Hic. Isso não foi derrota, foi soluço.",
+        "O capacete é réplica. A dor é original."
+      ],
+      "cidade": [
+        "Na Direita, o copo vem com chip que conta quanto você bebeu. Aqui quem conta é a Assembleia. É pior.",
+        "Meu chifre nunca esvazia. A Escola abriu um estudo. O estudo também tá bebendo.",
+        "Raio de graça pra quem precisa. Raio caro, só pra quem polui o rio.",
+        "Ontem o soluço queimou a franja de um aluno. Ele adorou o visual novo."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "ayaan_quispe",
+    "name": "Ayaan Quispe",
+    "archetype": "curandeira_dos_andes",
+    "institution": "escola_dos_saberes",
+    "side": "esquerda",
+    "classId": "elemental",
+    "role": "cura",
+    "recebeBase": false,
+    "bio": "Ayaan Quispe, que cuida do posto de saúde da Escola com um totem de lhama que cospe. Atende de graça; a fila é outra história",
+    "bordao": "Bebe essa água e para de reclamar.",
+    "emote": { "id": "emote_ayaan_quispe", "texto": "Bebe essa água e para de reclamar.", "animacao": "emote_ayaan_quispe", "descricaoAnimacao": "Estende um copo d'água e mostra a senha de fila \"Nº 347\" com a outra mão.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Poncho colorido, chapéu de aba e um totem de lhama de madeira",
+      "poses": ["Balde de Água da Nascente", "Lhama cuspindo num inimigo", "Mostrando a senha de fila \"Nº 347\""],
+      "piada": "Uma fila de pacientes em miniatura atrás dela",
+      "artKey": "npc_ayaan_quispe"
+    },
+    "falas": {
+      "saudacao": [
+        "Pega a senha, {nome}. Não, não tem preferencial pra aprendiz.",
+        "Bem-vindo ao posto. Grátis pra todo mundo. Rápido pra ninguém.",
+        "Oi. Se for urgente, senta. Se não for, senta também. Aqui é sempre sentar."
+      ],
+      "treino": [
+        "Cura o mais ferido primeiro. Não o que grita mais. O que grita mais geralmente tá ótimo.",
+        "A poça cura quem fica em cima. Quem sai da poça pra reclamar, sai da cura.",
+        "A lhama cospe no inimigo. Às vezes no paciente. Ela tem critério próprio."
+      ],
+      "entregaMissao": [
+        "Missão feita. Anotei no prontuário: \"aprendiz competente, reclama pouco\".",
+        "Obrigada. Toma uma senha de presente. É a 348, logo depois do Wesley.",
+        "Muito bom. A fila andou um pouco por sua causa. Um pouco."
+      ],
+      "vitoria": [
+        "Todo mundo de pé? Ótimo. Próximo!",
+        "A lhama cuspiu em quem merecia. Hoje ela acertou."
+      ],
+      "derrota": [
+        "Ninguém morre na minha fila. Levanta.",
+        "Até a curandeira precisa de senha às vezes."
+      ],
+      "cidade": [
+        "Na Direita tem plano Ouro, atende em dez minutos. Aqui é de graça e tem bolo de fubá na espera. Escolhe.",
+        "Senha 347? Ainda não. Tá chamando a 112. Bebe essa água e para de reclamar.",
+        "A lhama não é bicho, é totem. Ela discorda.",
+        "Tem gente que entra na fila só pra conversar. Esses eu atendo por último, com carinho."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "el_relampago",
+    "name": "El Relámpago",
+    "archetype": "luchador_sagrado",
+    "institution": "trupe_do_povo",
+    "side": "esquerda",
+    "classId": "mascarado",
+    "role": "tanque",
+    "recebeBase": false,
+    "bio": "El Relámpago, estrela da Trupe do Povo, cuja máscara guarda um espírito antigo",
+    "bordao": "¡La máscara nunca cae!",
+    "emote": { "id": "emote_el_relampago", "texto": "¡La máscara nunca cae!", "animacao": "emote_el_relampago", "descricaoAnimacao": "Cruza os braços em pose heroica e depois segura a máscara com as duas mãos.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Máscara de luchador com raio dourado, capa feita de cortina de teatro, cinturão de papelão e botas brilhantes",
+      "poses": ["Voadora", "Braços cruzados em pose heroica", "Segurando a máscara com as duas mãos para não cair"],
+      "piada": "Um olho de espírito que pisca na testa da máscara",
+      "artKey": "npc_el_relampago"
+    },
+    "falas": {
+      "saudacao": [
+        "¡Hola, {nome}! Sobe no ringue. O ringue é onde eu estiver.",
+        "Bem-vindo à Trupe! Pose heroica primeiro, aperto de mão depois.",
+        "Ninguém sabe quem eu sou. Nem eu, às vezes. Mas eu sei quem você é: aprendiz."
+      ],
+      "treino": [
+        "Escudo de vida: aguenta o golpe com o peito e com a pose. A pose é metade da defesa.",
+        "Voadora se dá do alto. Se não tem alto, sobe numa cadeira. Se não tem cadeira, sobe no Tião.",
+        "Segura a máscara. Se ela cair, a luta acaba. Pra todo mundo que viu."
+      ],
+      "entregaMissao": [
+        "Missão cumprida! A plateia aplaude! A plateia sou eu, mas aplaude!",
+        "Excelente. Toma esse cinturão. É de papelão, mas é de campeão.",
+        "Fez bem. O espírito da máscara piscou pra você. Isso é raro. Ou ele tá com cisco."
+      ],
+      "vitoria": [
+        "¡La máscara nunca cae! E vocês caíram.",
+        "Pose de vitória! Mais uma! Agora do outro lado, pro público da esquerda!"
+      ],
+      "derrota": [
+        "Isso faz parte do roteiro. O roteiro tá mal escrito.",
+        "Caí, mas a máscara não. Prioridades."
+      ],
+      "cidade": [
+        "Me perguntaram o nome verdadeiro na fila do posto. Respondi \"El Relámpago\". A Ayaan escreveu \"Relâmpago, El\".",
+        "A capa é a cortina do antigo cinema. Quando abro os braços, começa uma sessão.",
+        "Na Direita querem me patrocinar. A máscara ia ganhar logotipo. Nunca. A máscara tem espírito, não patrocínio.",
+        "Tomo banho de máscara. Durmo de máscara. Como de máscara. Demora, mas é sagrado."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "donna_valentina",
+    "name": "Donna Valentina",
+    "archetype": "diva_da_opera",
+    "institution": "trupe_do_povo",
+    "side": "esquerda",
+    "classId": "mascarado",
+    "role": "dano",
+    "recebeBase": false,
+    "origem": "Itália",
+    "bio": "Donna Valentina, primeira-dama da Trupe, soprano italiana de máscara veneziana",
+    "bordao": "Bravo. Para mim.",
+    "emote": { "id": "emote_donna_valentina", "texto": "Bravo. Para mim.", "animacao": "emote_donna_valentina", "descricaoAnimacao": "Reverência exagerada recebendo flores que caem do nada, e um leque se abre.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Vestido que ocupa dois tiles, máscara veneziana, leque e peruca alta com um passarinho dentro",
+      "poses": ["Nota aguda com ondas e vidro estilhaçando", "Recebendo flores numa reverência", "Desmaio dramático"],
+      "piada": "O vestido arrasta os aliados que passam perto",
+      "artKey": "npc_donna_valentina"
+    },
+    "falas": {
+      "saudacao": [
+        "Ah, {nome}. Pode se aproximar. Não tanto. O vestido tem espaço reservado.",
+        "Bem-vindo à minha presença. A Trupe também está aqui, em algum lugar.",
+        "Você veio me ver? Claro que veio. Todos vêm."
+      ],
+      "treino": [
+        "Uma nota aguda bem dada faz o inimigo apanhar mais de todo mundo. É o que a arte faz.",
+        "A maldição é uma ária: começa baixinho, cresce, e no fim ninguém respira.",
+        "Respira pelo diafragma. Não, isso é a barriga. Diafragma, querido, diafragma!"
+      ],
+      "entregaMissao": [
+        "Missão cumprida. Bravo. Para mim, que te ensinei.",
+        "Hum. Aceitável. Aplausos contidos, sem flores.",
+        "Trouxe? Coloque aos meus pés. Os pés estão em algum lugar debaixo do vestido."
+      ],
+      "vitoria": [
+        "Bravo! Bravíssimo! Para mim.",
+        "Que estreia! Os vidros da região que me perdoem."
+      ],
+      "derrota": [
+        "Ah… a cortina se fecha… Ninguém me segura? Ninguém?",
+        "Isso não foi derrota. Foi um desmaio dramático com timing perfeito."
+      ],
+      "cidade": [
+        "A Trupe fez uma peça sobre a crise de energia. A luz acabou no segundo ato. Muito realista.",
+        "O passarinho da peruca canta desafinado. Fica, pelo contraste.",
+        "Tem um menino na Direita que acha que canta agudo. Agudo é quando racha vidro, querido.",
+        "Ninguém atravessa a praça quando eu passo. É respeito. E o vestido."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "tiao",
+    "name": "Tião",
+    "archetype": "malandro",
+    "institution": "trupe_do_povo",
+    "side": "esquerda",
+    "classId": "mascarado",
+    "role": "suporte",
+    "recebeBase": true,
+    "bio": "Tião, mestre de cerimônias da Trupe, de terno branco e chapéu de palha, que arruma Semente onde não tem",
+    "bordao": "Relaxa, que eu desenrolo.",
+    "emote": { "id": "emote_tiao", "texto": "Relaxa, que eu desenrolo.", "animacao": "emote_tiao", "descricaoAnimacao": "Ginga de um lado pro outro, ajeita o chapéu de palha e passa o palito no canto da boca.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Terno branco impecável, chapéu de palha, sapato bicolor, palito e cordão",
+      "poses": ["Gingado", "Dando uma rasteira e catando a Semente que cai", "Encostado num poste"],
+      "piada": "O terno nunca suja, nem no esgoto",
+      "artKey": "npc_tiao"
+    },
+    "falas": {
+      "saudacao": [
+        "Ô, {nome}, chega aí. Relaxa, que eu desenrolo.",
+        "Bem-vindo à Trupe do Povo, o único lugar da Esquerda onde a reunião termina. Termina com aplauso.",
+        "Chegou na estreia certa. A plateia joga tomate, mas o tomate a gente aproveita na janta."
+      ],
+      "treino": [
+        "Rasteira não é golpe baixo. É golpe no nível do chão. Tem diferença.",
+        "Ginga, parceiro. Quem fica parado leva. Quem ginga leva também, mas com estilo.",
+        "Viu a Semente caindo? Cata. Ninguém vai cobrar. Ninguém viu."
+      ],
+      "entregaMissao": [
+        "Fez? Eu sabia. Toma uma Semente que eu achei no teu bolso. Brincadeira. Ou não.",
+        "Missão entregue. Tá na conta. Que conta? A gente vê depois.",
+        "Bom trabalho. Se alguém perguntar, foi tudo dentro da regra. Qual regra? Exatamente."
+      ],
+      "vitoria": [
+        "Desenrolei. Falei que desenrolava.",
+        "Caíram tudo e ainda deixaram troco. Gente boa."
+      ],
+      "derrota": [
+        "Olha o terno. Tá limpo. O resto é detalhe.",
+        "Calma, calma. Isso é só o primeiro ato."
+      ],
+      "cidade": [
+        "Arrumei Semente onde não tinha. Não pergunta onde. Tinha.",
+        "A Assembleia quer saber de onde vem minha Semente. Marquei pra explicar. Tá na pauta duzentos.",
+        "Terno branco no esgoto e não sujou. Malandragem é isso: a lama sabe com quem tá falando.",
+        "Na Direita cobram taxa pra tudo. Eu também cobro. Mas a minha é simpática."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "takeshi",
+    "name": "Takeshi",
+    "apelido": "o \"barriga\" da Fúria Neon",
+    "archetype": "sumo_cibernetico",
+    "institution": "torcida_furia_neon",
+    "side": "direita",
+    "classId": "combatente",
+    "role": "tanque",
+    "recebeBase": false,
+    "bio": "Takeshi, o \"barriga\" da Fúria Neon, de barriga hidráulica e cinto de energia",
+    "bordao": "Ninguém passa da barriga.",
+    "emote": { "id": "emote_takeshi", "texto": "Ninguém passa da barriga.", "animacao": "emote_takeshi", "descricaoAnimacao": "Bate na barriga cromada, o manômetro sobe e os pistões soltam vapor.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Barriga hidráulica cromada com manômetro, coque com antena e mawashi de LED",
+      "poses": ["Barrigada", "Pisada de sumô com vapor saindo dos pistões", "Sentado tomando energético"],
+      "piada": "Aviso na barriga: \"MANTENHA DISTÂNCIA\"",
+      "artKey": "npc_takeshi"
+    },
+    "falas": {
+      "saudacao": [
+        "Fala, {nome}. Não encosta na barriga. Tá pressurizada.",
+        "Bem-vindo à Fúria. Pode passar. Eu disse pode. A barriga ainda tá decidindo.",
+        "Chegou reforço. Senta aí e toma um energético. O meu vem com bateria."
+      ],
+      "treino": [
+        "Apanha e devolve. A barriga guarda o soco e manda de volta com juros.",
+        "Empurrão é ciência: barriga pra frente, pistão no máximo, inimigo no estacionamento.",
+        "Postura baixa. Mais baixa. Isso. Agora não levanta, que o manômetro apita."
+      ],
+      "entregaMissao": [
+        "Missão feita. A barriga aprova. O manômetro subiu de felicidade.",
+        "Trouxe? Coloca aqui em cima. A barriga é a mesa do QG.",
+        "Bom trabalho. Pressão no verde, reforço no verde, você no verde."
+      ],
+      "vitoria": [
+        "Ninguém passa da barriga.",
+        "Pistão quente, inimigo frio."
+      ],
+      "derrota": [
+        "Vazou óleo. Não é choro, é óleo.",
+        "A barriga perdeu pressão. A dignidade foi junto."
+      ],
+      "cidade": [
+        "Paguei a barriga em 48 vezes. Faltam 31. Se eu atrasar, desligam o pistão remotamente.",
+        "O aviso na barriga diz \"mantenha distância\". Na fila do shopping funciona melhor que plano Ouro.",
+        "Energético com bateria. Faz mal? Faz. Mas o patrocínio paga o médico. O plano Bronze, pelo menos.",
+        "No apagão a barriga murcha e eu fico parecendo gente normal. Odeio."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "edson",
+    "name": "Edson \"Fiel\" Batista",
+    "apelido": "Fiel",
+    "archetype": "o_fiel",
+    "institution": "torcida_furia_neon",
+    "side": "direita",
+    "classId": "combatente",
+    "role": "dano",
+    "recebeBase": true,
+    "bio": "Edson, ex-cabeça de briga da Fúria Neon, de manoplas nas cores do Neon FC. Está aprendendo que a briga não é com a torcida do Raiz FC",
+    "bioNarrativa": "Edson \"Fiel\" Batista, que recebe os novatos da Fúria Neon e treina O Fiel, está aprendendo que a briga não é com a torcida do outro lado, e ensinando isso, devagar.",
+    "bordao": "Aqui é Neon!",
+    "emote": { "id": "emote_edson", "texto": "Aqui é Neon!", "animacao": "emote_edson", "descricaoAnimacao": "Bate as manoplas no peito e ergue o cachecol do Neon FC acima da cabeça.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Regata, viseira, cicatriz na sobrancelha, cachecol e manoplas pintadas nas cores do Neon FC",
+      "poses": ["Invasão de Campo, correndo", "Sinalizador na mão", "Com Consciência, levantando um torcedor do Raiz FC"],
+      "piada": "Costas da regata: \"FIEL ATÉ O BOLETO\"",
+      "artKey": "npc_edson"
+    },
+    "falas": {
+      "saudacao": [
+        "Aqui é Neon! Fala, {nome}. Já escolheu o lado da arquibancada? Escolhe direito.",
+        "Chegou o novato. Noventa minutos de canto e uma briga na saída. Tá preparado? Ninguém tá.",
+        "E aí, {nome}. Bem-vindo à Fúria. A gente é família. Família que cobra mensalidade, mas família."
+      ],
+      "treino": [
+        "Invade o campo, bate em quem tiver no caminho e chega no alvo. Igual sair do estádio em dia de clássico.",
+        "Sinalizador é pra iluminar a festa. Às vezes ilumina o inimigo. Pegando fogo.",
+        "Briga boa é briga com motivo. Tô tentando lembrar qual era o motivo."
+      ],
+      "entregaMissao": [
+        "Missão cumprida! Aqui é Neon! … E aí também, tá. Bom trabalho.",
+        "Fez bonito. Vou pedir pro Thalysson postar. Ele posta tudo mesmo.",
+        "Trouxe? Valeu, parceiro. A Fúria agradece. A diretoria do clube vai cobrar uma taxa, mas agradece."
+      ],
+      "vitoria": [
+        "Aqui é Neon!",
+        "Ganhamos! Alguém filmou? Alguém sempre filma."
+      ],
+      "derrota": [
+        "Perdemos o primeiro tempo. Ainda tem o segundo.",
+        "Caí. Me levanta, mas não me abraça, que eu choro."
+      ],
+      "cidade": [
+        "A torcida do Raiz FC tá ali na esquina. Não olha. … Tá, olha. Eles tão na fila do apagão também.",
+        "A regata diz \"FIEL ATÉ O BOLETO\". O boleto do sócio-torcedor chega antes do jogo.",
+        "Briguei vinte anos com a torcida do Raiz. Ninguém pagou minha conta de luz por isso.",
+        "O Neon FC trocou de patrocinador de novo. A camisa agora tem três casas de aposta e uma clínica."
+      ],
+      "sugestao": true
+    },
+    "arco": {
+      "id": "arco_edson",
+      "resumo": "Ex-cabeça de briga da Fúria Neon, está aprendendo que a briga não é com a torcida do Raiz FC, e ensinando isso, devagar. Na Noite Escura, O Fiel carrega um torcedor do Raiz FC nas costas.",
+      "etapas": [
+        {
+          "id": "aqui_e_neon",
+          "gatilho": { "nivelMin": 8 },
+          "descricao": "Edson recebe os novatos da Fúria falando mal do Raiz FC em toda frase.",
+          "falas": [
+            "Raiz FC? Torcida de horta. Torce de chinelo com meia.",
+            "Primeira regra da Fúria: o inimigo usa verde. Segunda regra: … tô pensando."
+          ],
+          "sugestao": true
+        },
+        {
+          "id": "o_boleto_e_igual",
+          "gatilho": { "nivelMin": 11 },
+          "descricao": "No primeiro bico do novato, Edson descobre que um torcedor do Raiz FC tem a energia da rua cortada para a Direita pagar mais caro por ela, e que a conta dele próprio subiu no mesmo dia.",
+          "falas": [
+            "Cortaram a luz do cara do Raiz pra vender pra gente mais caro? E a minha conta subiu igual? Quem tá ganhando, então?",
+            "Ninguém falou disso no grupo da torcida. No grupo só tem figurinha."
+          ],
+          "sugestao": true
+        },
+        {
+          "id": "apagao_na_arquibancada",
+          "gatilho": { "nivelMin": 16 },
+          "descricao": "Um apagão pega as duas torcidas no meio do jogo no Estádio das Margens. No escuro, Edson divide a saída com um torcedor do Raiz FC chamado Zeca, que tinha lanterna.",
+          "falas": [
+            "Ficamos duas horas no escuro. O cara do Raiz tinha lanterna. Eu tinha raiva. A lanterna ajudou mais.",
+            "O nome dele é Zeca. Torce errado, mas é gente fina."
+          ],
+          "sugestao": true
+        },
+        {
+          "id": "noite_escura",
+          "gatilho": { "storyFlag": "noite_escura_vivida" },
+          "descricao": "Na Noite Escura, O Fiel carrega um torcedor do Raiz FC nas costas.",
+          "falas": [
+            "Segura no cachecol, Zeca! É do Neon, mas segura!",
+            "Hoje não tem margem. Tem ponte e tem gente."
+          ],
+          "sugestao": true
+        },
+        {
+          "id": "consciencia",
+          "gatilho": { "storyFlag": "acordo_assinado" },
+          "descricao": "Depois do Acordo, Edson passa a ensinar que a briga é com quem mora lá em cima, e o clássico vira festa com saída junta.",
+          "falas": [
+            "Aqui é Neon! E ali é Raiz. E a conta é de quem mora no Mirante.",
+            "Clássico continua sendo clássico. Mas na saída, a gente sai junto."
+          ],
+          "sugestao": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "thalysson",
+    "name": "Thalysson",
+    "archetype": "monstro_da_academia",
+    "institution": "torcida_furia_neon",
+    "side": "direita",
+    "classId": "combatente",
+    "role": "suporte",
+    "recebeBase": false,
+    "bio": "Thalysson, influencer patrocinado pela Torcida, que transmite a luta ao vivo",
+    "bordao": "Tá saindo da jaula o monstro!",
+    "emote": { "id": "emote_thalysson", "texto": "Tá saindo da jaula o monstro!", "animacao": "emote_thalysson", "descricaoAnimacao": "Selfie com o pau de selfie mostrando o bíceps, e um contador de curtidas sobe com corações.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Braços gigantes, pernas finas de quem pulou o treino de perna, pau de selfie com a live ligada e galão de água",
+      "poses": ["Bíceps com contador de curtidas subindo", "Grito de \"BORA\" com corações", "Selfie no meio da luta"],
+      "piada": "Pernas de palito em todas as poses",
+      "artKey": "npc_thalysson"
+    },
+    "falas": {
+      "saudacao": [
+        "Fala, família! Olha quem chegou na live: {nome}! Manda um salve pro pessoal!",
+        "BORA! Chegou o novo monstro! Ou o filhote de monstro. Todo monstro começa filhote.",
+        "E aí, campeão! Antes de tudo: segue, curte e ativa o sininho. Depois a gente treina."
+      ],
+      "treino": [
+        "Bora, monstro! Ataca rápido, recarrega rápido, posta rápido.",
+        "Aura de dano é igual engajamento: todo mundo perto ganha um pouquinho.",
+        "Treino de perna? Hoje não. Nunca. Próxima pergunta."
+      ],
+      "entregaMissao": [
+        "Missão concluída! Vou fazer um corte disso pra live. Você aparece no fundo, borrado.",
+        "Bateu a meta! Meta de quê? Não importa, bateu!",
+        "Mandou bem! Toma esse cupom de desconto no meu suplemento. Expira em cinco minutos."
+      ],
+      "vitoria": [
+        "Tá saindo da jaula o monstro!",
+        "Dez mil curtidas nessa luta! Cinco mil são minhas, mas conta."
+      ],
+      "derrota": [
+        "Caiu a live. Caí eu. Caiu tudo.",
+        "Isso foi conteúdo, família. Conteúdo de superação. Edita depois."
+      ],
+      "cidade": [
+        "Postei treino às cinco da manhã. Acordei meio-dia. A gente posta o que quer ser.",
+        "Meu patrocinador mandou eu sorrir mais. Tô sorrindo desde 2074. A mandíbula travou.",
+        "As pernas? Tão ótimas. É o ângulo da câmera.",
+        "Live de dezoito horas sem parar. Não dormi, não comi, ganhei um galão de água de brinde."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "big_mo",
+    "name": "Big Mo",
+    "archetype": "tropa_de_choque",
+    "institution": "pm_do_consorcio",
+    "side": "direita",
+    "classId": "atirador",
+    "role": "tanque",
+    "recebeBase": false,
+    "origem": "Londres",
+    "bio": "Big Mo, ex-segurança de balada em Londres, hoje com escudo e escopeta inteligente na PM do Consórcio",
+    "bordao": "Hoje não.",
+    "emote": { "id": "emote_big_mo", "texto": "Hoje não.", "animacao": "emote_big_mo", "descricaoAnimacao": "Cruza os braços e balança a cabeça devagar, de óculos escuros.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Armadura de choque, óculos escuros à noite, escudo escrito \"HOJE NÃO\" e prancheta da lista",
+      "poses": ["Escudo em bloqueio", "Conferindo a lista", "Braços cruzados"],
+      "piada": "Cordão de isolamento de veludo vermelho, de balada",
+      "artKey": "npc_big_mo"
+    },
+    "falas": {
+      "saudacao": [
+        "Nome? … {nome}. Tá na lista. Por pouco.",
+        "Boa noite. É dia? Pra mim é sempre noite. Os óculos não saem.",
+        "Pode entrar. Devagar. Sem correr. Sem sorrir demais."
+      ],
+      "treino": [
+        "Provocar é olhar pra eles do jeito certo. Assim. Viu? Ninguém quer passar.",
+        "O cordão é de veludo. O inimigo vê e já fica lento de respeito.",
+        "Escudo na frente, lista na mão, contrato em dia. Quem não tem contrato fica do lado de fora."
+      ],
+      "entregaMissao": [
+        "Missão feita. Seu nome subiu na lista. Não muito.",
+        "Certo. Anotado. Agora você é VIP nível um. Dá direito a nada.",
+        "Bom trabalho. Não comenta com a imprensa. A imprensa é o Chidi, e ele vai querer regravar."
+      ],
+      "vitoria": [
+        "Hoje não.",
+        "Fora da lista, fora da luta."
+      ],
+      "derrota": [
+        "Passaram. Passaram pelo cordão. Isso nunca aconteceu.",
+        "Tá. Hoje sim. Só hoje."
+      ],
+      "cidade": [
+        "A PM protege quem tem contrato em dia. O resto eu olho com pena. Por trás dos óculos.",
+        "Vinte anos na porta de balada. Agora trabalho na porta do bairro. Mesmo serviço, mais papelada.",
+        "Seu nome não tá na lista do shopping. O meu também não. Lá dentro só entra plano Ouro.",
+        "Óculos escuros à noite? Ajuda a não ver o que a Diretoria faz."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "dusty",
+    "name": "Dusty",
+    "archetype": "cowboy_cromado",
+    "institution": "pm_do_consorcio",
+    "side": "direita",
+    "classId": "atirador",
+    "role": "dano",
+    "recebeBase": true,
+    "origem": "Texas",
+    "bio": "Dusty, texano instrutor de tiro da PM, de revólver com mira laser e chapéu com GPS",
+    "bordao": "Essa cidade é pequena demais pra mim e meu ego.",
+    "emote": { "id": "emote_dusty", "texto": "Essa cidade é pequena demais pra mim e meu ego.", "animacao": "emote_dusty", "descricaoAnimacao": "Gira o revólver no dedo, assopra o cano, e uma planta seca de holograma rola atrás.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Chapéu com GPS piscando, braço cromado, revólver com mira laser e espora de LED",
+      "poses": ["Saque rápido", "Duelo ao meio-dia com uma planta seca de holograma rolando", "Girando o revólver"],
+      "piada": "Ele carrega o próprio projetor de planta seca de faroeste",
+      "artKey": "npc_dusty"
+    },
+    "falas": {
+      "saudacao": [
+        "Howdy, {nome}. Bem-vindo à PM do Consórcio. Assina aqui, aqui e aqui. Não lê, ninguém lê.",
+        "Chegou o recruta. Ajeita o chapéu. Não tem chapéu? Então ajeita a postura.",
+        "Bem-vindo, parceiro. Essa cidade é pequena demais pra nós dois. Mas ela tem financiamento."
+      ],
+      "treino": [
+        "Carrega meio segundo, solta, e quem tiver atrás leva junto. Física e marketing.",
+        "Duelo ao meio-dia: marca o alvo e dobra o dano. Se não for meio-dia, eu ligo o projetor.",
+        "O GPS do chapéu sabe onde eu tô. A Diretoria também. Faz parte do contrato."
+      ],
+      "entregaMissao": [
+        "Missão cumprida. Bom tiro. Não tão bom quanto o meu, mas o meu é o meu.",
+        "Yeehaw! Pagamento depositado. Menos a taxa de manutenção do revólver. E do chapéu. E de você.",
+        "Trabalho limpo, recruta. Vai pro relatório. O relatório tem meu nome em cima, mas você tá lá embaixo."
+      ],
+      "vitoria": [
+        "Essa cidade é pequena demais pra mim e meu ego.",
+        "Planta seca rolando, inimigo no chão. Clássico."
+      ],
+      "derrota": [
+        "O laser falhou. Bateria em 3%. Não sou eu, é o plano de energia.",
+        "Me derrubaram, mas o ego aguentou. O ego é blindado."
+      ],
+      "cidade": [
+        "Trouxe meu projetor de planta seca pra cidade. Agora todo cruzamento é um duelo.",
+        "O braço cromado é financiado. Se eu atrasar, ele desarma sozinho. Por isso eu não atraso.",
+        "Me chamam de \"instrutor de tiro\". Prefiro \"lenda viva com desconto em folha\".",
+        "Na Esquerda tem uma senhora de lenço que atira melhor que eu. Não vou dizer o nome. Olga. Você não ouviu."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "chidi",
+    "name": "Chidi",
+    "archetype": "diretor_de_nollywood",
+    "institution": "pm_do_consorcio",
+    "side": "direita",
+    "classId": "atirador",
+    "role": "suporte",
+    "recebeBase": false,
+    "origem": "Nigéria",
+    "bio": "Chidi, diretor nigeriano que cuida da assessoria de imprensa da PM com drones-câmera",
+    "bordao": "De novo, com mais emoção!",
+    "emote": { "id": "emote_chidi", "texto": "De novo, com mais emoção!", "animacao": "emote_chidi", "descricaoAnimacao": "Bate a claquete e aponta o megafone; os dois drones-câmera dão uma volta em órbita.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Boné virado, claquete, megafone e dois drones-câmera em órbita",
+      "poses": ["\"Corta!\" com flash", "Brigando com um drone", "Filmando o inimigo de perto"],
+      "piada": "Cadeira de diretor dobrável com o nome escrito errado",
+      "artKey": "npc_chidi"
+    },
+    "falas": {
+      "saudacao": [
+        "Ação! Entra em cena, {nome}. Não, de novo. Com mais emoção!",
+        "Bem-vindo à assessoria da PM. Aqui a gente não faz operação, faz trailer.",
+        "Ah, rosto novo! Ótimo. O público já cansou da cara do Big Mo."
+      ],
+      "treino": [
+        "Flash na cara do inimigo: ele fica cego, a gente fica com a foto.",
+        "Marca o alvo, chama o grupo, e todo mundo bate nele. Toda história precisa de vilão.",
+        "Drone um, close. Drone dois, plano aberto. Você, emoção."
+      ],
+      "entregaMissao": [
+        "Corta! Ficou ótimo. Vou só regravar a parte em que você foi bem, pra ficar melhor.",
+        "Missão feita. Já saiu nos telões: \"Herói da PM salva o bairro\". O herói sou eu, por enquanto.",
+        "Valeu! Assina essa cessão de imagem? É padrão. Todo mundo assina."
+      ],
+      "vitoria": [
+        "Corta! Essa vai pro trailer!",
+        "Que cena! Ninguém vai acreditar que foi de verdade. Vou dizer que foi efeito."
+      ],
+      "derrota": [
+        "Isso não entra na edição final.",
+        "De novo, com mais emoção. E comigo apanhando menos."
+      ],
+      "cidade": [
+        "A PM prendeu um ladrão de bateria. Na minha versão eram doze, e tinha explosão.",
+        "Minha cadeira de diretor veio com o nome errado: \"CHIDY\". Mantive. Tem personalidade.",
+        "Um drone fugiu com o meu roteiro. O roteiro era só \"muita emoção\", mas era meu.",
+        "A Trupe da Esquerda faz peça sobre a crise. Eu faço filme sobre a crise. A diferença é o orçamento. E a mentira."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "mei_lin_zhao",
+    "name": "Mei Lin Zhao",
+    "archetype": "engenheira_de_gambiarra",
+    "institution": "universidade_neon",
+    "side": "direita",
+    "classId": "elemental",
+    "role": "tanque",
+    "recebeBase": false,
+    "bio": "Mei Lin Zhao, aluna eterna da Universidade Neon, que monta robô com geladeira, ventilador e fita",
+    "bioNarrativa": "Engenheira de Gambiarra, que conserta a cidade com o que sobra",
+    "bordao": "Funciona. Não pergunta.",
+    "emote": { "id": "emote_mei_lin_zhao", "texto": "Funciona. Não pergunta.", "animacao": "emote_mei_lin_zhao", "descricaoAnimacao": "Passa uma volta de fita prata em qualquer coisa por perto, solta uma faísca e faz joinha.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Macacão sujo de graxa, óculos de solda, fita prata em tudo e um robô feito de geladeira com rodinhas de skate",
+      "poses": ["Chave de fenda soltando faísca", "Robô-geladeira abrindo a porta com luz saindo", "Levantando a barreira de sucata"],
+      "piada": "Lacre \"GARANTIA VIOLADA\" em todas as peças",
+      "artKey": "npc_mei_lin_zhao"
+    },
+    "falas": {
+      "saudacao": [
+        "Oi, {nome}. Segura essa fita. Não solta. Não solta! Pronto, agora você faz parte do robô.",
+        "Bem-vindo. Cuidado com o chão, tem parafuso. Tem parafuso em tudo.",
+        "Aprendiz novo? Ótimo, preciso de alguém pra segurar a geladeira enquanto ela anda."
+      ],
+      "treino": [
+        "Barreira de sucata: caiu, levanta de novo. Igual eu e a mensalidade.",
+        "O robô-geladeira provoca o inimigo e ainda mantém a marmita fria. Engenharia é isso.",
+        "Fita prata resolve oitenta por cento. Os outros vinte, mais fita."
+      ],
+      "entregaMissao": [
+        "Funcionou? Não pergunta. Funcionou.",
+        "Trouxe peça? Que lindo. Vou transformar isso em outra coisa que também não devia funcionar.",
+        "Missão entregue. O pagamento vai todo pra trancar mais um semestre."
+      ],
+      "vitoria": [
+        "Funciona. Não pergunta.",
+        "A geladeira ganhou! E a marmita sobreviveu."
+      ],
+      "derrota": [
+        "Deu curto. Normal. Não toca em nada.",
+        "A garantia já tava violada. Agora a dignidade também."
+      ],
+      "cidade": [
+        "Tô no 23º semestre. A Universidade diz que o diploma é uma assinatura vitalícia.",
+        "Consertei a subestação do bairro com um ventilador e uma caneta. Me cobraram taxa por mexer em patrimônio.",
+        "A Universidade patenteou a minha gambiarra. Agora eu pago licença pra usar o que eu inventei.",
+        "Lacre de garantia? Tava violado desde a fábrica. Eu só confirmei."
+      ],
+      "sugestao": true
+    },
+    "iaFaccao": "mei_lin_zhao"
+  },
+  {
+    "id": "klaus",
+    "name": "Doktor Klaus",
+    "archetype": "doktor_klaus",
+    "institution": "universidade_neon",
+    "side": "direita",
+    "classId": "elemental",
+    "role": "dano",
+    "recebeBase": true,
+    "origem": "Alemanha",
+    "bio": "Professor titular de física da Universidade, alemão, de bobinas de Tesla e zero noção de segurança",
+    "bordao": "Ja, explodiu. Era o plano.",
+    "emote": { "id": "emote_klaus", "texto": "Ja, explodiu. Era o plano.", "animacao": "emote_klaus", "descricaoAnimacao": "Uma explosão pequena na mão, o cabelo arrepia e solta fumaça; ele mostra o polegar.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Jaleco chamuscado, cabelo arrepiado de eletricidade, óculos de proteção e uma bobina de Tesla nas costas",
+      "poses": ["Raio em cadeia", "Experimento explodindo com o cabelo pegando fogo", "Mostrando a patente carimbada"],
+      "piada": "Placa nas costas: \"0 DIAS SEM ACIDENTE\"",
+      "artKey": "npc_klaus"
+    },
+    "falas": {
+      "saudacao": [
+        "Ah, calouro {nome}! Bem-vindo à Universidade Neon. Pagou a mensalidade? Então pode respirar o ar do laboratório.",
+        "Guten Tag. Fica atrás da linha amarela. Não, mais atrás. A linha amarela também explode.",
+        "Novato! Excelente. Preciso de um voluntário. Não é pergunta."
+      ],
+      "treino": [
+        "O raio salta para mais dois inimigos. Às vezes três. Às vezes para mim. A ciência é generosa.",
+        "Quinze por cento de chance de sair pela culatra. Oitenta e cinco de glória. Vale.",
+        "Óculos de proteção, sempre. Os meus derreteram, mas o princípio está certo."
+      ],
+      "entregaMissao": [
+        "Missão concluída! Vou publicar. Seu nome vai na nota de rodapé, se couber.",
+        "Excelente dado. Inútil, mas excelente.",
+        "Recebido. Já mandei para a patente. Agora é da Universidade. Você pode visitar."
+      ],
+      "vitoria": [
+        "Ja, explodiu. Era o plano.",
+        "Für Wissenschaft! E pela nota de rodapé."
+      ],
+      "derrota": [
+        "Explodiu. Não era o plano. Anotem que era o plano.",
+        "Cabelo pegando fogo é normal. Podem seguir sem mim. Não, me esperem."
+      ],
+      "cidade": [
+        "Zero dias sem acidente. Nosso recorde foi um dia e meio. Era feriado.",
+        "A Universidade patenteou o trote. Calouro pintado sem licença paga multa.",
+        "Me pediram um relatório de segurança. Entreguei. Pegou fogo no caminho.",
+        "Na Esquerda curam com água de nascente. Fascinante. Eu tentei. A água explodiu."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "brooke",
+    "name": "Brooke",
+    "archetype": "coach_de_bem_estar",
+    "institution": "universidade_neon",
+    "side": "direita",
+    "classId": "elemental",
+    "role": "cura",
+    "recebeBase": false,
+    "origem": "Califórnia",
+    "bio": "Brooke, californiana, dona do curso de Saúde e Performance da Universidade. Aceita plano Ouro",
+    "bordao": "Você não está ferido, está em processo.",
+    "emote": { "id": "emote_brooke", "texto": "Você não está ferido, está em processo.", "animacao": "emote_brooke", "descricaoAnimacao": "Faz um coração com as mãos; os nanobots rosa formam um coração maior em volta.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Legging, viseira, garrafa d'água gigante e uma aura de nanobots rosa",
+      "poses": ["Pose de yoga com nanobots", "Cura com coração rosa", "Oferecendo o cartão dourado do plano Ouro"],
+      "piada": "Crachá \"COACH QUÂNTICA CERTIFICADA\"",
+      "artKey": "npc_brooke"
+    },
+    "falas": {
+      "saudacao": [
+        "Oi, {nome}! Que energia linda! Tá meio baixa, mas linda. Temos um plano pra isso.",
+        "Bem-vindo à sua jornada. A jornada tem três níveis: Bronze, Prata e Ouro.",
+        "Respira comigo. Inspira gratidão, expira boleto."
+      ],
+      "treino": [
+        "Cura o grupo perto. Cura também o seu interior. O interior é cobrado à parte.",
+        "Detox: tira todo o mal do aliado. Mal físico, mal espiritual, mal de plano Bronze.",
+        "Nanobot não cura. Nanobot ressignifica a ferida."
+      ],
+      "entregaMissao": [
+        "Missão concluída! Você é a sua melhor versão. Por enquanto. Tem a versão Ouro.",
+        "Que entrega linda! Toma um certificado. É quântico, não precisa de papel.",
+        "Obrigada! Já marquei sua próxima sessão. É obrigatória, mas com carinho."
+      ],
+      "vitoria": [
+        "Você não está ferido, está em processo.",
+        "Vencemos! Isso se chama manifestação. E cura em área."
+      ],
+      "derrota": [
+        "Eu não caí. Tô em processo de chão.",
+        "Tudo acontece por um motivo. O motivo, dessa vez, foi a falta de defesa."
+      ],
+      "cidade": [
+        "Curo de graça quem tem plano Ouro. Quem não tem, eu mando energia. A energia é de graça. A taxa de envio, não.",
+        "Me perguntaram se \"coach quântica\" é formação. É certificação. Eu mesma certifiquei.",
+        "A curandeira da Esquerda atende de graça. Que lindo. Que insustentável. Que lindo.",
+        "Bebe água. Dois litros. Da minha garrafa, que é filtrada por assinatura."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "katia",
+    "name": "Kátia",
+    "archetype": "atendente_imortal",
+    "institution": "agencia_neon",
+    "side": "direita",
+    "classId": "mascarado",
+    "role": "tanque",
+    "recebeBase": true,
+    "bio": "Kátia, supervisora do call center da Agência Neon, de escudo holográfico e paciência infinita",
+    "bioNarrativa": "Kátia, que recebe os novatos da Agência e treina a Atendente Imortal, nunca perdeu a paciência. Dizem que é imortal.",
+    "bordao": "Sua ligação é muito importante para nós.",
+    "emote": { "id": "emote_katia", "texto": "Sua ligação é muito importante para nós.", "animacao": "emote_katia", "descricaoAnimacao": "Ajusta o headset, gira na cadeira de rodinhas e sorri o sorriso de atendimento, que não muda.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Headset, cadeira de escritório com rodinhas em que ela anda, caneca \"MELHOR ATENDENTE DO MÊS — 2071\" e escudo holográfico \"AGUARDE\"",
+      "poses": ["Deslizando de cadeira", "Barra de carregamento travada em 99% em cima do inimigo", "Escudo erguido"],
+      "piada": "Sorriso de atendimento que nunca muda, nem apanhando",
+      "artKey": "npc_katia"
+    },
+    "falas": {
+      "saudacao": [
+        "Agência Neon, Kátia falando, boa tarde! Em que posso ajudar, {nome}?",
+        "Bem-vindo à Agência! Seu atendimento foi iniciado. Por favor, não desligue.",
+        "Olá! Para treino, diga \"treino\". Para missão, diga \"missão\". Para falar com um humano… sou eu, infelizmente."
+      ],
+      "treino": [
+        "Prende o inimigo na barra de 99%. Ele vai esperar. Todo mundo espera.",
+        "Escudo de protocolo: você absorve, sorri e devolve vinte por cento. Com educação.",
+        "Nunca perca a paciência. Perca o inimigo, a dignidade, o almoço. A paciência, nunca."
+      ],
+      "entregaMissao": [
+        "Missão registrada! Seu protocolo é zero-zero-zero-um-sete-sete-três. Anote, que eu não vou repetir. Vou, sim. Sempre repito.",
+        "Obrigada pelo contato! De zero a dez, quanto você recomendaria esta missão a um amigo?",
+        "Concluído com sucesso. Seu bônus cai em até noventa dias úteis."
+      ],
+      "vitoria": [
+        "Sua ligação é muito importante para nós.",
+        "Atendimento encerrado. Agradecemos a preferência."
+      ],
+      "derrota": [
+        "Estamos passando por instabilidades. Por favor, aguarde.",
+        "Caí, mas o sorriso continua. Ele é contratual."
+      ],
+      "cidade": [
+        "Já fiz turno de 72 horas. Dizem que eu sou imortal. Eu só não tive folga pra morrer.",
+        "Caneca de melhor atendente do mês, 2071. Depois disso pararam de dar o prêmio. Corte de custo.",
+        "Um cliente gritou comigo por três horas. No fim, perguntei se podia ajudar em mais alguma coisa. Ele chorou.",
+        "Na Esquerda tem fila no posto. Aqui tem fila no telefone. A diferença é a musiquinha."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "kaua_ferreira",
+    "name": "Kauã Ferreira",
+    "archetype": "hacker_da_aldeia",
+    "institution": "agencia_neon",
+    "side": "direita",
+    "classId": "mascarado",
+    "role": "dano",
+    "recebeBase": false,
+    "origem": "Entre a aldeia e a lan house",
+    "bio": "Kauã Ferreira, cresceu entre a aldeia e a lan house. De dia, segurança digital da Agência; de noite, derruba servidor de bilionário",
+    "bioNarrativa": "Kauã Ferreira cresceu entre a aldeia e a lan house, é o melhor hacker da Direita e treina o Hacker da Aldeia na Agência.",
+    "bordao": "Minha aldeia tem fibra ótica. E a sua?",
+    "emote": { "id": "emote_kaua_ferreira", "texto": "Minha aldeia tem fibra ótica. E a sua?", "animacao": "emote_kaua_ferreira", "descricaoAnimacao": "Deita na rede com o notebook na barriga e digita; código verde sobe na tela.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Moletom com grafismo da aldeia em pixel, fones, notebook com adesivo \"FIBRA ÓTICA NA ALDEIA\" e uma rede de dormir com roteador pendurado",
+      "poses": ["Digitando com código verde subindo", "Vírus em forma de insetos de pixel", "Servidor de bilionário pegando fogo ao fundo"],
+      "piada": "Parado, ele luta deitado na rede",
+      "artKey": "npc_kaua_ferreira"
+    },
+    "falas": {
+      "saudacao": [
+        "E aí, {nome}. Senta. Na rede não, a rede é minha.",
+        "Opa, aprendiz. Já trocou a senha? Não? Eu já sei qual é. Troca.",
+        "Bem-vindo. Aqui a internet é rápida. Na aldeia é mais."
+      ],
+      "treino": [
+        "Vírus em rede: pega um e pula pro outro. Igual corrente de mensagem de tio.",
+        "Derrubada: tira o alvo do ar. Se ele cair, explode. Se for servidor de bilionário, explode mais bonito.",
+        "Hacker bom não tem pressa. Deita na rede, abre o notebook e espera o erro deles."
+      ],
+      "entregaMissao": [
+        "Feito. Deixei um bilhetinho no sistema deles: \"tchau\".",
+        "Missão entregue. Não usa o Wi-Fi da Agência pra comemorar, que ele é grampeado. Por mim.",
+        "Boa. Vou contar pro pessoal da aldeia. Lá a notícia chega antes da Agência publicar."
+      ],
+      "vitoria": [
+        "Minha aldeia tem fibra ótica. E a sua?",
+        "Servidor caído, rede armada. Pode desligar."
+      ],
+      "derrota": [
+        "Caiu a conexão. A minha. A deles ainda tá caída também, pelo menos.",
+        "Bug. Não é derrota, é bug."
+      ],
+      "cidade": [
+        "De dia eu protejo a Agência de hacker. De noite eu sou o hacker. O salário é o mesmo.",
+        "Perguntaram se na aldeia tem internet. Tem. E a senha não é \"admin\", igual a da Torre do Consórcio.",
+        "Derrubei o servidor de um bilionário ontem. Ninguém sabe qual. Nem ele sabe ainda.",
+        "A rede de dormir tem roteador. Melhor sinal da Direita. Não conta pra Agência, senão ela cobra."
+      ],
+      "sugestao": true
+    }
+  },
+  {
+    "id": "li_wei",
+    "name": "Li Wei",
+    "archetype": "idol",
+    "institution": "agencia_neon",
+    "side": "direita",
+    "classId": "mascarado",
+    "role": "suporte",
+    "recebeBase": false,
+    "origem": "China",
+    "bio": "Li Wei, trainee da Agência, chinês que sonha em ser idol de K-pop, com palco holográfico e caixas de som voadoras",
+    "bioNarrativa": "Li Wei saiu da China para virar idol de K-pop, pegou o avião errado e ficou em Duas Margens. Treina o Idol na Agência Neon, e o palco holográfico dele lota toda sexta.",
+    "bordao": "Um, dois, três, coreografia!",
+    "emote": { "id": "emote_li_wei", "texto": "Um, dois, três, coreografia!", "animacao": "emote_li_wei", "descricaoAnimacao": "Três passos de coreografia e uma pose final com a franja perfeita; bastões de luz holográficos aparecem atrás.", "quadros": 4, "sugestaoCampos": ["animacao", "descricaoAnimacao", "quadros"] },
+    "visual": {
+      "descricao": "Cabelo pastel de franja perfeita, jaqueta brilhante, microfone de headset, caixas de som voadoras e palco holográfico",
+      "poses": ["Coreografia", "Fanchant com corações e ondas sonoras", "Encore puxando os inimigos para o palco, com chuva de confete"],
+      "piada": "Bastões de luz de fãs-holograma aparecem atrás dele a cada combo",
+      "artKey": "npc_li_wei"
+    },
+    "falas": {
+      "saudacao": [
+        "Oi, {nome}! Chegou bem na hora do ensaio. O ensaio é sempre.",
+        "Bem-vindo, trainee! Sorriso, franja, postura. Nessa ordem.",
+        "Ah, fã novo! Não? Aprendiz? Tudo bem, aprendiz também pode pedir autógrafo."
+      ],
+      "treino": [
+        "Fanchant: a onda sonora empurra o inimigo e anima a galera. Música é isso.",
+        "Encore puxa todo mundo pro palco. Quem sobe no palco não sai sem aplaudir.",
+        "Um, dois, três, coreografia! Errou? De novo! Errou de novo? Sorri e finge que era o passo."
+      ],
+      "entregaMissao": [
+        "Missão concluída! Isso merece um encore! Não? Vou fazer mesmo assim.",
+        "Obrigado! Vou te mencionar no show de sexta. Você vai ser o \"e todos os fãs\".",
+        "Que performance! A Agência vai ficar com trinta por cento, mas que performance!"
+      ],
+      "vitoria": [
+        "Um, dois, três, coreografia!",
+        "Chuva de confete! Alguém varre depois, né?"
+      ],
+      "derrota": [
+        "A franja… a franja desarrumou… acabou tudo.",
+        "Caí fora do tempo da música. Levanto no refrão."
+      ],
+      "cidade": [
+        "Peguei o avião errado. Ia pra uma carreira, vim parar num rio. Mas o palco daqui lota toda sexta.",
+        "Sou trainee há seis anos. A Agência diz que a estreia é \"no próximo trimestre\".",
+        "Contrato de exclusividade: não posso cantar no chuveiro sem autorização.",
+        "Uma diva da Esquerda disse que agudo é quando racha vidro. Eu racho corações. Sai mais caro consertar."
+      ],
+      "sugestao": true
+    }
+  }
+]

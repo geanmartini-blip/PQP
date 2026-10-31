@@ -1,0 +1,249 @@
+{
+  "regras": {
+    "degrausVisitas": [3, 10, 25],
+    "renovacao": "ciclo",
+    "visitasPorCiclo": 1,
+    "inspiracaoDura": "ate_a_proxima_missao",
+    "inspiracoesAoMesmoTempo": 1,
+    "outraMargem": {
+      "exigeDisfarce": true,
+      "multiplicadorRecursos": 1.5,
+      "visitasContadas": 2,
+      "neutroContaComoPropria": true,
+      "sugestaoCampos": ["multiplicadorRecursos", "visitasContadas", "neutroContaComoPropria"]
+    },
+    "sugestaoCampos": ["visitasPorCiclo", "inspiracoesAoMesmoTempo"]
+  },
+  "licoes": [
+    {
+      "id": "licao_plantas_de_ana_ferreira",
+      "name": "Plantas de Ana Ferreira",
+      "lugar": "museu_da_cidade_unida",
+      "oQueVoceGanha": "Lição: suas estruturas ganham defesa; plantas novas",
+      "tipo": "licao",
+      "formatoCena": "escolha",
+      "degraus": [
+        { "visitas": 1, "passivo": { "kind": "regra", "gancho": "estruturas_defesa", "params": { "pct": 10 }, "valeNoMapa": true }, "recompensas": [{ "kind": "planta", "estrutura": "deposito" }], "sugestao": true },
+        { "visitas": 3, "passivo": { "kind": "regra", "gancho": "estruturas_defesa", "params": { "pct": 15 }, "valeNoMapa": true }, "recompensas": [{ "kind": "planta", "estrutura": "torre_de_radio" }], "sugestao": true },
+        { "visitas": 10, "passivo": { "kind": "regra", "gancho": "estruturas_defesa", "params": { "pct": 20 }, "valeNoMapa": true }, "recompensas": [{ "kind": "planta", "estrutura": "posto_de_controle" }], "sugestao": true },
+        { "visitas": 25, "passivo": { "kind": "regra", "gancho": "estruturas_defesa", "params": { "pct": 30 }, "valeNoMapa": true }, "sugestao": true }
+      ],
+      "porVisita": [],
+      "sugestaoCampos": ["formatoCena", "degraus"]
+    },
+    {
+      "id": "licao_luz_de_cesar_portollan",
+      "name": "A Luz de César Portollan",
+      "lugar": "hospital_antigo",
+      "oQueVoceGanha": "Lição: reparos de energia mais rápidos; peças",
+      "tipo": "licao",
+      "formatoCena": "conversa",
+      "degraus": [
+        { "visitas": 1, "passivo": { "kind": "regra", "gancho": "reparo_energia_velocidade", "params": { "pct": 15 }, "valeNoMapa": true }, "sugestao": true },
+        { "visitas": 3, "passivo": { "kind": "regra", "gancho": "reparo_energia_velocidade", "params": { "pct": 20 }, "valeNoMapa": true }, "sugestao": true },
+        { "visitas": 10, "passivo": { "kind": "regra", "gancho": "reparo_energia_velocidade", "params": { "pct": 30 }, "valeNoMapa": true }, "sugestao": true },
+        { "visitas": 25, "passivo": { "kind": "regra", "gancho": "reparo_energia_velocidade", "params": { "pct": 40 }, "valeNoMapa": true }, "sugestao": true }
+      ],
+      "porVisita": [{ "kind": "recurso", "recurso": "pecas", "quantidade": 10, "sugestao": true }],
+      "sugestaoCampos": ["name", "formatoCena", "degraus"]
+    },
+    {
+      "id": "licao_caminho_de_dona_celeste",
+      "name": "O Caminho de Dona Celeste",
+      "lugar": "palafitas_do_delta",
+      "oQueVoceGanha": "Lição: curas mais fortes; comida",
+      "tipo": "licao",
+      "formatoCena": "minijogo",
+      "degraus": [
+        { "visitas": 1, "passivo": { "kind": "numero", "stats": [{ "stat": "healing", "pct": 5 }] }, "sugestao": true },
+        { "visitas": 3, "passivo": { "kind": "numero", "stats": [{ "stat": "healing", "pct": 8 }] }, "sugestao": true },
+        { "visitas": 10, "passivo": { "kind": "numero", "stats": [{ "stat": "healing", "pct": 11 }] }, "sugestao": true },
+        { "visitas": 25, "passivo": { "kind": "numero", "stats": [{ "stat": "healing", "pct": 15 }] }, "sugestao": true }
+      ],
+      "porVisita": [{ "kind": "recurso", "recurso": "comida", "quantidade": 10, "sugestao": true }],
+      "sugestaoCampos": ["name", "formatoCena", "degraus"]
+    },
+    {
+      "id": "licao_guarda_do_tenente_vidal",
+      "name": "A Guarda do Tenente Vidal",
+      "lugar": "marco_do_tenente_vidal",
+      "oQueVoceGanha": "Lição: tanques aguentam mais; reputação",
+      "tipo": "licao",
+      "formatoCena": "minijogo",
+      "filtro": { "soPapel": "tanque" },
+      "degraus": [
+        { "visitas": 1, "passivo": { "kind": "numero", "stats": [{ "stat": "damageTaken", "pct": -4 }] }, "sugestao": true },
+        { "visitas": 3, "passivo": { "kind": "numero", "stats": [{ "stat": "damageTaken", "pct": -6 }] }, "sugestao": true },
+        { "visitas": 10, "passivo": { "kind": "numero", "stats": [{ "stat": "damageTaken", "pct": -8 }] }, "sugestao": true },
+        { "visitas": 25, "passivo": { "kind": "numero", "stats": [{ "stat": "damageTaken", "pct": -12 }] }, "sugestao": true }
+      ],
+      "porVisita": [{ "kind": "reputacao", "quantidade": 15, "sugestao": true }],
+      "sugestaoCampos": ["name", "formatoCena", "degraus"]
+    },
+    {
+      "id": "licao_fitas_de_rosa_tavares",
+      "name": "As Fitas de Rosa Tavares",
+      "lugar": "arquivo_da_ilha_do_farol",
+      "oQueVoceGanha": "Lição: cartazes e rádio convencem mais",
+      "tipo": "licao",
+      "formatoCena": "conversa",
+      "degraus": [
+        { "visitas": 1, "passivo": { "kind": "regra", "gancho": "propaganda_forca", "params": { "pct": 10 }, "valeNoMapa": true }, "sugestao": true },
+        { "visitas": 3, "passivo": { "kind": "regra", "gancho": "propaganda_forca", "params": { "pct": 15 }, "valeNoMapa": true }, "sugestao": true },
+        { "visitas": 10, "passivo": { "kind": "regra", "gancho": "propaganda_forca", "params": { "pct": 20 }, "valeNoMapa": true }, "sugestao": true },
+        { "visitas": 25, "passivo": { "kind": "regra", "gancho": "propaganda_forca", "params": { "pct": 30 }, "valeNoMapa": true }, "sugestao": true }
+      ],
+      "porVisita": [],
+      "sugestaoCampos": ["name", "formatoCena", "degraus"]
+    },
+    {
+      "id": "licao_xadrez_do_professor_elias",
+      "name": "O Xadrez do Professor Elias",
+      "lugar": "praca_do_xadrez",
+      "oQueVoceGanha": "Lição: o Especial carrega 10% mais rápido",
+      "tipo": "licao",
+      "formatoCena": "minijogo",
+      "degraus": [
+        { "visitas": 1, "passivo": { "kind": "numero", "stats": [{ "stat": "specialCharge", "pct": 10 }] } },
+        { "visitas": 3, "passivo": { "kind": "numero", "stats": [{ "stat": "specialCharge", "pct": 13 }] }, "sugestao": true },
+        { "visitas": 10, "passivo": { "kind": "numero", "stats": [{ "stat": "specialCharge", "pct": 16 }] }, "sugestao": true },
+        { "visitas": 25, "passivo": { "kind": "numero", "stats": [{ "stat": "specialCharge", "pct": 20 }] }, "sugestao": true }
+      ],
+      "porVisita": [],
+      "sugestaoCampos": ["name", "formatoCena"]
+    },
+    {
+      "id": "licao_rota_de_bento_saraiva",
+      "name": "A Rota de Bento Saraiva",
+      "lugar": "bar_do_porto",
+      "oQueVoceGanha": "Lição: comboios mais rápidos; rota secreta",
+      "tipo": "licao",
+      "formatoCena": "conversa",
+      "degraus": [
+        { "visitas": 1, "passivo": { "kind": "regra", "gancho": "comboio_velocidade", "params": { "pct": 10 }, "valeNoMapa": true }, "sugestao": true },
+        { "visitas": 3, "passivo": { "kind": "regra", "gancho": "comboio_velocidade", "params": { "pct": 15 }, "valeNoMapa": true }, "sugestao": true },
+        { "visitas": 10, "passivo": { "kind": "regra", "gancho": "comboio_velocidade", "params": { "pct": 20 }, "valeNoMapa": true }, "recompensas": [{ "kind": "desbloqueio", "chave": "rota_secreta", "descricao": "Rota secreta de Bento Saraiva pelo rio" }], "sugestao": true },
+        { "visitas": 25, "passivo": { "kind": "regra", "gancho": "comboio_velocidade", "params": { "pct": 30 }, "valeNoMapa": true }, "sugestao": true }
+      ],
+      "porVisita": [],
+      "sugestaoCampos": ["name", "formatoCena", "degraus"]
+    },
+    {
+      "id": "licao_rostos_de_lucia_barreto",
+      "name": "Os Rostos de Lúcia Barreto",
+      "lugar": "murais_de_lucia_barreto",
+      "oQueVoceGanha": "Lição: artes novas para cartazes",
+      "tipo": "licao",
+      "formatoCena": "minijogo",
+      "degraus": [
+        { "visitas": 1, "passivo": { "kind": "regra", "gancho": "artes_de_cartaz", "params": { "artes": 1 }, "valeNoMapa": true }, "recompensas": [{ "kind": "desbloqueio", "chave": "arte_de_cartaz", "quantidade": 1, "descricao": "Arte nova para cartazes" }], "sugestao": true },
+        { "visitas": 3, "passivo": { "kind": "regra", "gancho": "artes_de_cartaz", "params": { "artes": 2 }, "valeNoMapa": true }, "recompensas": [{ "kind": "desbloqueio", "chave": "arte_de_cartaz", "quantidade": 1, "descricao": "Arte nova para cartazes" }], "sugestao": true },
+        { "visitas": 10, "passivo": { "kind": "regra", "gancho": "artes_de_cartaz", "params": { "artes": 3 }, "valeNoMapa": true }, "recompensas": [{ "kind": "desbloqueio", "chave": "arte_de_cartaz", "quantidade": 1, "descricao": "Arte nova para cartazes" }], "sugestao": true },
+        { "visitas": 25, "passivo": { "kind": "regra", "gancho": "artes_de_cartaz", "params": { "artes": 4 }, "valeNoMapa": true }, "recompensas": [{ "kind": "desbloqueio", "chave": "arte_de_cartaz", "quantidade": 1, "descricao": "Arte nova para cartazes" }], "sugestao": true }
+      ],
+      "porVisita": [],
+      "sugestaoCampos": ["name", "formatoCena", "degraus"]
+    },
+    {
+      "id": "licao_soco_de_ze_faisca",
+      "name": "O Soco do Zé Faísca",
+      "lugar": "ringue_do_porto",
+      "oQueVoceGanha": "Lição: dano corpo a corpo",
+      "tipo": "licao",
+      "formatoCena": "minijogo",
+      "filtro": { "soCorpoACorpo": true },
+      "degraus": [
+        { "visitas": 1, "passivo": { "kind": "numero", "stats": [{ "stat": "damage", "pct": 4 }] }, "sugestao": true },
+        { "visitas": 3, "passivo": { "kind": "numero", "stats": [{ "stat": "damage", "pct": 6 }] }, "sugestao": true },
+        { "visitas": 10, "passivo": { "kind": "numero", "stats": [{ "stat": "damage", "pct": 9 }] }, "sugestao": true },
+        { "visitas": 25, "passivo": { "kind": "numero", "stats": [{ "stat": "damage", "pct": 12 }] }, "sugestao": true }
+      ],
+      "porVisita": [],
+      "sugestaoCampos": ["name", "formatoCena", "degraus"]
+    },
+    {
+      "id": "licao_marcas_de_marta_quintela",
+      "name": "As Marcas de Marta Quintela",
+      "lugar": "mina_velha_da_serra",
+      "oQueVoceGanha": "Lição: mais chopindita; chopindita",
+      "tipo": "licao",
+      "formatoCena": "minijogo",
+      "degraus": [
+        { "visitas": 1, "passivo": { "kind": "regra", "gancho": "chopindita_ganho", "params": { "pct": 10 }, "valeNoMapa": true }, "sugestao": true },
+        { "visitas": 3, "passivo": { "kind": "regra", "gancho": "chopindita_ganho", "params": { "pct": 15 }, "valeNoMapa": true }, "sugestao": true },
+        { "visitas": 10, "passivo": { "kind": "regra", "gancho": "chopindita_ganho", "params": { "pct": 20 }, "valeNoMapa": true }, "sugestao": true },
+        { "visitas": 25, "passivo": { "kind": "regra", "gancho": "chopindita_ganho", "params": { "pct": 30 }, "valeNoMapa": true }, "sugestao": true }
+      ],
+      "porVisita": [{ "kind": "recurso", "recurso": "chopindita", "quantidade": 5, "sugestao": true }],
+      "sugestaoCampos": ["name", "formatoCena", "degraus"]
+    },
+    {
+      "id": "recompensa_carro_do_prefeito",
+      "name": "O Carro do Antigo Prefeito",
+      "lugar": "ferro_velho",
+      "oQueVoceGanha": "Peças",
+      "tipo": "recompensa",
+      "formatoCena": "minijogo",
+      "porVisita": [{ "kind": "recurso", "recurso": "pecas", "quantidade": 25, "sugestao": true }],
+      "sugestaoCampos": ["name", "formatoCena"]
+    },
+    {
+      "id": "recompensa_figurinos_esquecidos",
+      "name": "Figurinos Esquecidos",
+      "lugar": "teatro_abandonado",
+      "oQueVoceGanha": "Disfarce, que libera infiltração",
+      "tipo": "recompensa",
+      "formatoCena": "escolha",
+      "porVisita": [{ "kind": "desbloqueio", "chave": "disfarce", "quantidade": 2, "descricao": "Disfarce para entrar na outra margem e fazer infiltração", "sugestaoCampos": ["quantidade"] }],
+      "sugestaoCampos": ["name", "formatoCena"]
+    },
+    {
+      "id": "recompensa_canto_das_torcidas",
+      "name": "O Canto das Duas Torcidas",
+      "lugar": "estadio_das_margens",
+      "oQueVoceGanha": "Opinião pública e contatos",
+      "tipo": "recompensa",
+      "formatoCena": "minijogo",
+      "porVisita": [
+        { "kind": "medidor", "medidor": "opiniao_publica", "delta": 3, "aFavorDe": "propria_margem", "sugestaoCampos": ["delta"] },
+        { "kind": "desbloqueio", "chave": "contato", "quantidade": 1, "descricao": "Um contato novo na cidade, que vira vínculo nos encontros" }
+      ],
+      "sugestaoCampos": ["name", "formatoCena"]
+    },
+    {
+      "id": "recompensa_caixa_misteriosa",
+      "name": "A Caixa Misteriosa",
+      "lugar": "feira_de_pulgas",
+      "oQueVoceGanha": "Um item raro aleatório",
+      "tipo": "recompensa",
+      "formatoCena": "minijogo",
+      "porVisita": [{ "kind": "item", "raridade": "raro", "quantidade": 1 }],
+      "sugestaoCampos": ["name", "formatoCena"]
+    },
+    {
+      "id": "recompensa_diarios_da_guerra",
+      "name": "Diários da Guerra Civil",
+      "lugar": "biblioteca_municipal",
+      "oQueVoceGanha": "Pistas de história e inspiração",
+      "tipo": "recompensa",
+      "formatoCena": "conversa",
+      "porVisita": [{ "kind": "desbloqueio", "chave": "pista_de_historia", "quantidade": 1, "descricao": "Pista de história sobre a cidade unida e o relatório da barragem" }],
+      "inspiracao": {
+        "descricao": "Inspirado pelos diários: +10% de dano e de cura até a próxima missão",
+        "passivo": { "kind": "numero", "stats": [{ "stat": "damage", "pct": 10 }, { "stat": "healing", "pct": 10 }] },
+        "sugestao": true
+      },
+      "sugestaoCampos": ["name", "formatoCena"]
+    },
+    {
+      "id": "recompensa_frequencias_esquecidas",
+      "name": "Frequências Esquecidas",
+      "lugar": "radio_velha",
+      "oQueVoceGanha": "Códigos que revelam objetivos secretos",
+      "tipo": "recompensa",
+      "formatoCena": "minijogo",
+      "porVisita": [{ "kind": "desbloqueio", "chave": "codigo_secreto", "quantidade": 1, "descricao": "Código que revela um objetivo secreto de missão" }],
+      "sugestaoCampos": ["name", "formatoCena"]
+    }
+  ]
+}

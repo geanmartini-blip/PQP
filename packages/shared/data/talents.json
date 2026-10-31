@@ -1,0 +1,1825 @@
+{
+  "regras": {
+    "primeiroNivel": 10,
+    "aCadaNiveis": 5,
+    "todoTalentoPesa": "Sempre uma escolha entre opções, nunca pontinho para distribuir, e todo talento pesa: muda uma regra, cria uma habilidade nova ou dá pelo menos 15% em alguma coisa.",
+    "pesoMinimoPct": 15,
+    "nivelSemTalento": {
+      "stats": [
+        { "stat": "hp", "pct": 6 },
+        { "stat": "attack", "pct": 6 },
+        { "stat": "defense", "pct": 6 },
+        { "stat": "speed", "pct": 2 }
+      ],
+      "acumulacao": "aditiva",
+      "sugestaoCampos": ["acumulacao"]
+    },
+    "refazer": {
+      "gratisAteNivel": 20,
+      "depois": {
+        "moedas": ["semente", "credito"],
+        "onde": "qg",
+        "vezesPorCiclo": 1,
+        "custoSemente": 300,
+        "custoCredito": 300,
+        "sugestaoCampos": ["custoSemente", "custoCredito"]
+      }
+    },
+    "talentosNoMapa": {
+      "regra": "Talentos que mexem no mapa, como Nota Oficial e Olho na Janela, valem também fora da luta.",
+      "exemplosDoDoc": ["nota_oficial", "olho_na_janela"],
+      "todos": ["nota_oficial", "olho_na_janela", "figurino", "cha_da_vo"],
+      "sugestaoCampos": ["todos"]
+    },
+    "raioPertoPadrao": 4,
+    "sugestaoCampos": ["raioPertoPadrao"]
+  },
+  "talentos": [
+    {
+      "id": "ordem_do_dia",
+      "name": "Ordem do Dia",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "brigada_popular" },
+      "descricao": "Aura; aliados perto ganham +10% de dano e defesa.",
+      "efeito": {
+        "passivos": [
+          { "kind": "aura", "stats": [{ "stat": "damage", "pct": 10 }, { "stat": "defense", "pct": 10 }] }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "piquete",
+      "name": "Piquete",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "brigada_popular" },
+      "descricao": "Inimigos perto de você ficam 30% mais lentos.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "aura",
+            "intervaloS": 0.5,
+            "efeitos": [{ "kind": "lentidao", "pct": 30, "duracaoMs": 1000, "target": "inimigos_area" }]
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "autocritica",
+      "name": "Autocrítica",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "brigada_popular" },
+      "descricao": "Ao cair, devolve 50% do seu recurso para os aliados perto.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "ao_cair",
+            "efeitos": [{ "kind": "recurso", "pct": 50, "target": "aliados_area_sem_self" }],
+            "params": { "origem": "recurso_atual_do_dono" }
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "olho_na_janela",
+      "name": "Olho na Janela",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "guarda_comunitaria" },
+      "descricao": "Ninguém te pega de surpresa, e você vê armadilhas e inimigos escondidos no mapa.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "regra",
+            "gancho": "olho_na_janela",
+            "params": { "imuneEmboscada": true, "revelaArmadilhas": true, "revelaEscondidos": true },
+            "valeNoMapa": true
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "ronda",
+      "name": "Ronda",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "guarda_comunitaria" },
+      "descricao": "+30% de dano contra quem atacou um aliado nos últimos 3 s.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "aliado_atacado",
+            "stats": [{ "stat": "damage", "pct": 30 }],
+            "params": { "janelaS": 3, "soContraOAgressor": true }
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "dedo_duro",
+      "name": "Dedo-Duro",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "guarda_comunitaria" },
+      "descricao": "A cada 10 s, marca sozinho o inimigo mais forte por perto, e o grupo causa +20% de dano nele.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "recarga",
+            "recargaS": 10,
+            "gancho": "alvo_mais_forte_perto",
+            "efeitos": [{ "kind": "marca", "danoRecebidoPct": 20, "duracaoMs": 10000 }]
+          }
+        ]
+      },
+      "emPiloto": true,
+      "sugestaoCampos": ["efeito.passivos[0].efeitos[0].duracaoMs"]
+    },
+    {
+      "id": "saber_antigo",
+      "name": "Saber Antigo",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "escola_dos_saberes" },
+      "descricao": "Totens duram o dobro e curam 2% da vida por segundo de quem está perto.",
+      "efeito": {
+        "passivos": [
+          { "kind": "regra", "gancho": "totens_duram_mais", "params": { "duracaoMult": 2 } },
+          {
+            "kind": "aura",
+            "intervaloS": 1,
+            "gancho": "aura_em_volta_dos_totens",
+            "efeitos": [{ "kind": "cura", "pctVidaMax": 2, "target": "aliados_area" }]
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "cha_da_vo",
+      "name": "Chá da Vó",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "escola_dos_saberes" },
+      "descricao": "Fora de combate, o grupo se cura na hora, e o descanso dá inspiração.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "fora_de_combate",
+            "efeitos": [{ "kind": "cura", "pctVidaMax": 100, "target": "grupo" }],
+            "valeNoMapa": true
+          },
+          {
+            "kind": "regra",
+            "gancho": "descanso_da_inspiracao",
+            "params": { "stat": "damage", "pct": 15, "ateProximaMissao": true },
+            "valeNoMapa": true
+          }
+        ]
+      },
+      "emPiloto": true,
+      "sugestaoCampos": ["efeito.passivos[0].efeitos[0].pctVidaMax", "efeito.passivos[1].params"]
+    },
+    {
+      "id": "paciencia_da_mata",
+      "name": "Paciência da Mata",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "escola_dos_saberes" },
+      "descricao": "Cada 3 s sem gastar recurso deixam o próximo efeito 30% mais forte (acumula 3).",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "sem_gastar_recurso",
+            "intervaloS": 3,
+            "acumula": { "max": 3 },
+            "gancho": "proximo_efeito_mais_forte",
+            "params": { "pctPorAcumulo": 30 }
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "plateia",
+      "name": "Plateia",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "trupe_do_povo" },
+      "descricao": "Aura; cada aliado perto dá +5% de dano e cura ao grupo.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "aura",
+            "gancho": "por_aliado_perto",
+            "params": {
+              "alvo": "grupo",
+              "porAliado": [{ "stat": "damage", "pct": 5 }, { "stat": "healing", "pct": 5 }]
+            }
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "improviso",
+      "name": "Improviso",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "trupe_do_povo" },
+      "descricao": "A cada 30 s, a próxima habilidade sai duas vezes.",
+      "efeito": {
+        "passivos": [{ "kind": "recarga", "recargaS": 30, "gancho": "proxima_habilidade_duas_vezes" }]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "figurino",
+      "name": "Figurino",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "trupe_do_povo" },
+      "descricao": "Entra disfarçado na outra margem sem precisar de item.",
+      "efeito": {
+        "passivos": [{ "kind": "regra", "gancho": "disfarce_sem_item", "valeNoMapa": true }]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "bandeirao",
+      "name": "Bandeirão",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "torcida_furia_neon" },
+      "descricao": "Aura; aliados perto de você não podem ser atordoados.",
+      "efeito": {
+        "passivos": [{ "kind": "aura", "gancho": "imune_a_controle", "params": { "cc": ["atordoar"] } }]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "pressao_da_arquibancada",
+      "name": "Pressão da Arquibancada",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "torcida_furia_neon" },
+      "descricao": "Inimigos perto de você erram 15% mais.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "aura",
+            "intervaloS": 0.5,
+            "efeitos": [{ "kind": "reforco", "stat": "accuracy", "pct": -15, "duracaoMs": 1000, "target": "inimigos_area" }]
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "embalo_da_torcida",
+      "name": "Embalo da Torcida",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "torcida_furia_neon" },
+      "descricao": "Cada inimigo derrotado dá +5% de velocidade por 5 s, acumulando 5.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "ao_derrotar",
+            "efeitos": [{ "kind": "reforco", "stat": "speed", "pct": 5, "duracaoMs": 5000, "acumulaMax": 5, "target": "self" }]
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "abordagem",
+      "name": "Abordagem",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "pm_do_consorcio" },
+      "descricao": "O primeiro golpe em cada inimigo atordoa por 1 s.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "primeiro_golpe",
+            "efeitos": [{ "kind": "controle", "cc": "atordoar", "duracaoMs": 1000, "target": "alvo" }]
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "reforco_tatico",
+      "name": "Reforço Tático",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "pm_do_consorcio" },
+      "descricao": "A cada 90 s, um esquadrão de IA da PM luta do seu lado por 15 s.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "recarga",
+            "recargaS": 90,
+            "efeitos": [{ "kind": "invocar", "invocacao": "esquadrao_da_pm", "duracaoMs": 15000, "max": 1, "quantidade": 3 }]
+          }
+        ]
+      },
+      "emPiloto": true,
+      "sugestaoCampos": ["efeito.passivos[0].efeitos[0].quantidade"]
+    },
+    {
+      "id": "nota_oficial",
+      "name": "Nota Oficial",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "pm_do_consorcio" },
+      "descricao": "Cada área limpa de inimigos puxa a opinião pública da região para a sua margem, aconteça o que acontecer.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "regra",
+            "gancho": "nota_oficial",
+            "params": { "opiniaoPorAreaLimpa": 1 },
+            "valeNoMapa": true
+          }
+        ]
+      },
+      "emPiloto": true,
+      "sugestaoCampos": ["efeito.passivos[0].params.opiniaoPorAreaLimpa"]
+    },
+    {
+      "id": "bolsa_de_pesquisa",
+      "name": "Bolsa de Pesquisa",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "universidade_neon" },
+      "descricao": "Robôs e habilidades custam 25% menos Bateria.",
+      "efeito": {
+        "passivos": [{ "kind": "numero", "stats": [{ "stat": "resourceCost", "pct": -25 }] }]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "patente",
+      "name": "Patente",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "universidade_neon" },
+      "descricao": "A cada 3 usos da mesma habilidade marca, o próximo sai de graça e 30% mais forte.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "ao_usar_habilidade",
+            "acumula": { "max": 3 },
+            "gancho": "patente",
+            "params": { "usos": 3, "soHabilidadeMarca": true, "mesmaHabilidade": true, "semCusto": true, "forcaPct": 30 }
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "tese",
+      "name": "Tese",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "universidade_neon" },
+      "descricao": "Cada 5 s batendo no mesmo tipo de inimigo dão +10% de dano contra ele (acumula 5).",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "ao_acertar",
+            "intervaloS": 5,
+            "acumula": { "max": 5 },
+            "gancho": "tese",
+            "params": { "danoPctPorAcumulo": 10, "porTipoDeInimigo": true }
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "viralizou",
+      "name": "Viralizou",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "agencia_neon" },
+      "descricao": "Cada inimigo derrotado dá 1 seguidor, até 25; cada seguidor dá +1% de dano e cura, e você perde metade ao cair.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "ao_derrotar",
+            "acumula": { "max": 25 },
+            "stats": [{ "stat": "damage", "pct": 1 }, { "stat": "healing", "pct": 1 }],
+            "gancho": "seguidores",
+            "params": { "perdeAoCairPct": 50 }
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "contrato_de_exclusividade",
+      "name": "Contrato de Exclusividade",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "agencia_neon" },
+      "descricao": "Um aliado escolhido recebe os seus reforços em dobro.",
+      "efeito": {
+        "passivos": [{ "kind": "regra", "gancho": "aliado_exclusivo", "params": { "multReforco": 2 } }]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "assessoria_de_crise",
+      "name": "Assessoria de Crise",
+      "grupo": "instituicao",
+      "niveis": [10, 40],
+      "dono": { "tipo": "instituicao", "instituicao": "agencia_neon" },
+      "descricao": "Metade de cada crítico que você toma vai para um holograma.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "ao_apanhar",
+            "gancho": "critico_para_holograma",
+            "params": { "pct": 50, "soCriticos": true, "invocacao": "holograma_de_crise" }
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+
+    {
+      "id": "muralha",
+      "name": "Muralha",
+      "grupo": "papel",
+      "niveis": [15, 30, 50],
+      "dono": { "tipo": "papel", "papel": "tanque" },
+      "descricao": "Aliados a até 3 tiles de você recebem 25% menos dano.",
+      "efeito": {
+        "passivos": [{ "kind": "aura", "raio": 3, "stats": [{ "stat": "damageTaken", "pct": -25 }] }]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "revanche",
+      "name": "Revanche",
+      "grupo": "papel",
+      "niveis": [15, 30, 50],
+      "dono": { "tipo": "papel", "papel": "tanque" },
+      "descricao": "Cada golpe recebido dá 1 carga; com 10, o próximo ataque causa dano dobrado em área e atordoa.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "ao_apanhar",
+            "acumula": { "max": 10 },
+            "gancho": "revanche",
+            "params": { "cargas": 10, "danoMult": 2, "raio": 2, "atordoaMs": 1000 }
+          }
+        ]
+      },
+      "emPiloto": true,
+      "sugestaoCampos": ["efeito.passivos[0].params.raio", "efeito.passivos[0].params.atordoaMs"]
+    },
+    {
+      "id": "ultimo_de_pe",
+      "name": "Último de Pé",
+      "grupo": "papel",
+      "niveis": [15, 30, 50],
+      "dono": { "tipo": "papel", "papel": "tanque" },
+      "descricao": "Ao cair, fica de pé com 1 de vida por 3 s; recarga de 90 s.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "recarga",
+            "trigger": "ao_cair",
+            "recargaS": 90,
+            "efeitos": [{ "kind": "segurar_vida", "vidaMin": 1, "duracaoMs": 3000, "target": "self" }]
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "execucao",
+      "name": "Execução",
+      "grupo": "papel",
+      "niveis": [15, 30, 50],
+      "dono": { "tipo": "papel", "papel": "dano" },
+      "descricao": "+50% de dano em inimigos abaixo de 30% de vida.",
+      "efeito": {
+        "passivos": [{ "kind": "numero", "condicao": { "alvoVidaAbaixoPct": 30 }, "stats": [{ "stat": "damage", "pct": 50 }] }]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "golpe_inicial",
+      "name": "Golpe Inicial",
+      "grupo": "papel",
+      "niveis": [15, 30, 50],
+      "dono": { "tipo": "papel", "papel": "dano" },
+      "descricao": "Ataques contra inimigos com mais de 90% de vida são críticos.",
+      "efeito": {
+        "passivos": [{ "kind": "numero", "condicao": { "alvoVidaAcimaPct": 90 }, "stats": [{ "stat": "crit", "pct": 100 }] }]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "embalado",
+      "name": "Embalado",
+      "grupo": "papel",
+      "niveis": [15, 30, 50],
+      "dono": { "tipo": "papel", "papel": "dano" },
+      "descricao": "Cada inimigo derrotado dá +3% de dano por 8 s, acumulando 10.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "ao_derrotar",
+            "efeitos": [{ "kind": "reforco", "stat": "damage", "pct": 3, "duracaoMs": 8000, "acumulaMax": 10, "target": "self" }]
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "maestro",
+      "name": "Maestro",
+      "grupo": "papel",
+      "niveis": [15, 30, 50],
+      "dono": { "tipo": "papel", "papel": "suporte" },
+      "descricao": "Reforços duram 50% a mais e pegam 1 aliado extra.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "numero",
+            "stats": [{ "stat": "buffDuration", "pct": 50 }],
+            "gancho": "reforco_aliado_extra",
+            "params": { "aliadosExtras": 1 }
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "leitura_de_jogo",
+      "name": "Leitura de Jogo",
+      "grupo": "papel",
+      "niveis": [15, 30, 50],
+      "dono": { "tipo": "papel", "papel": "suporte" },
+      "descricao": "O grupo vê os avisos de ataque inimigo 0,5 s mais cedo.",
+      "efeito": {
+        "passivos": [{ "kind": "aura", "gancho": "aviso_antecipado", "params": { "ms": 500, "alcance": "grupo" } }]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "contragolpe",
+      "name": "Contragolpe",
+      "grupo": "papel",
+      "niveis": [15, 30, 50],
+      "dono": { "tipo": "papel", "papel": "suporte" },
+      "descricao": "Cada controle seu (atordoar, prender ou deixar lento) dá +10% de velocidade ao grupo por 5 s.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "ao_aplicar_controle",
+            "recargaS": 5,
+            "params": { "contaControles": ["atordoar", "prender", "lentidao"], "ignoraAuras": true },
+            "efeitos": [{ "kind": "reforco", "stat": "speed", "pct": 10, "duracaoMs": 5000, "target": "grupo" }]
+          }
+        ]
+      },
+      "emPiloto": true,
+      "sugestaoCampos": ["efeito.passivos[0].recargaS", "efeito.passivos[0].params.ignoraAuras"]
+    },
+    {
+      "id": "cura_preventiva",
+      "name": "Cura Preventiva",
+      "grupo": "papel",
+      "niveis": [15, 30, 50],
+      "dono": { "tipo": "papel", "papel": "cura" },
+      "descricao": "Curar quem está cheio vira escudo de até 30% da vida.",
+      "efeito": {
+        "passivos": [{ "kind": "regra", "gancho": "cura_excedente_vira_escudo", "params": { "maxPctVidaMax": 30 } }]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "milagre",
+      "name": "Milagre",
+      "grupo": "papel",
+      "niveis": [15, 30, 50],
+      "dono": { "tipo": "papel", "papel": "cura" },
+      "descricao": "Curas em quem está abaixo de 20% saem triplicadas.",
+      "efeito": {
+        "passivos": [{ "kind": "numero", "condicao": { "alvoVidaAbaixoPct": 20 }, "stats": [{ "stat": "healing", "pct": 200 }] }]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "corrente_de_vida",
+      "name": "Corrente de Vida",
+      "grupo": "papel",
+      "niveis": [15, 30, 50],
+      "dono": { "tipo": "papel", "papel": "cura" },
+      "descricao": "Cada cura também cura 30% no aliado com menos vida.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "ao_curar",
+            "gancho": "cura_em_cadeia",
+            "params": { "pctDaCura": 30, "alvo": "aliado_menos_vida" }
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+
+    {
+      "id": "chave_couro_grosso",
+      "name": "Couro Grosso / Barriga Blindada",
+      "nomePorArquetipo": { "peao_brabo": "Couro Grosso", "sumo_cibernetico": "Barriga Blindada" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["peao_brabo", "sumo_cibernetico"] },
+      "descricao": "A redução de dano da provocação vale também para os aliados perto.",
+      "efeitoPorArquetipo": {
+        "peao_brabo": {
+          "modificacoes": [
+            { "habilidade": "segura_o_peao", "efeito": "reducao_dano", "campo": "target", "valor": "aliados_area" }
+          ]
+        },
+        "sumo_cibernetico": {
+          "modificacoes": [
+            {
+              "habilidade": "barriga_hidraulica",
+              "efeitosExtras": [{ "kind": "reducao_dano", "pct": 30, "duracaoMs": 6000, "target": "aliados_area" }],
+              "sugestao": true
+            },
+            {
+              "habilidade": "grito_de_guerra",
+              "efeitosExtras": [{ "kind": "reducao_dano", "pct": 30, "duracaoMs": 3000, "target": "aliados_area" }],
+              "sugestao": true
+            }
+          ],
+          "sugestao": true
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_berrante",
+      "name": "Berrante / Grito de Arena",
+      "nomePorArquetipo": { "peao_brabo": "Berrante", "sumo_cibernetico": "Grito de Arena" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["peao_brabo", "sumo_cibernetico"] },
+      "descricao": "A provocação dobra de raio e atordoa por 1 s.",
+      "efeitoPorArquetipo": {
+        "peao_brabo": {
+          "modificacoes": [
+            {
+              "habilidade": "segura_o_peao",
+              "campo": "radius",
+              "mult": 2,
+              "efeitosExtras": [{ "kind": "controle", "cc": "atordoar", "duracaoMs": 1000, "target": "inimigos_area" }]
+            },
+            {
+              "habilidade": "grito_de_guerra",
+              "campo": "radius",
+              "mult": 2,
+              "efeitosExtras": [{ "kind": "controle", "cc": "atordoar", "duracaoMs": 1000, "target": "inimigos_area" }],
+              "sugestao": true
+            }
+          ]
+        },
+        "sumo_cibernetico": {
+          "modificacoes": [
+            {
+              "habilidade": "grito_de_guerra",
+              "campo": "radius",
+              "mult": 2,
+              "efeitosExtras": [{ "kind": "controle", "cc": "atordoar", "duracaoMs": 1000, "target": "inimigos_area" }]
+            }
+          ],
+          "sugestao": true
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_furia",
+      "name": "Fúria",
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["iogue_furioso", "o_fiel"] },
+      "descricao": "Mais dano quanto menos vida.",
+      "efeito": {
+        "passivos": [
+          { "kind": "numero", "gancho": "dano_por_vida_perdida", "params": { "danoPctPorPctVidaPerdida": 0.6, "maxPct": 60 } }
+        ]
+      },
+      "emPiloto": true,
+      "sugestaoCampos": ["efeito.passivos[0].params"]
+    },
+    {
+      "id": "chave_bote_em_cadeia",
+      "name": "Bote em Cadeia / Arquibancada",
+      "nomePorArquetipo": { "iogue_furioso": "Bote em Cadeia", "o_fiel": "Arquibancada" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["iogue_furioso", "o_fiel"] },
+      "descricao": "Cada inimigo derrotado zera a recarga da habilidade 1.",
+      "efeito": {
+        "passivos": [
+          { "kind": "gatilho", "trigger": "ao_derrotar", "gancho": "zera_recarga_do_botao", "params": { "botao": "marca_1" } }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_discurso",
+      "name": "Discurso / Bora em Dobro",
+      "nomePorArquetipo": { "cidadao_revolucionario": "Discurso", "monstro_da_academia": "Bora em Dobro" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["cidadao_revolucionario", "monstro_da_academia"] },
+      "descricao": "O reforço principal pega 2 aliados a mais.",
+      "efeitoPorArquetipo": {
+        "cidadao_revolucionario": {
+          "modificacoes": [
+            {
+              "habilidade": "as_barricadas",
+              "gancho": "reforco_segue_aliados",
+              "params": { "aliadosExtras": 2, "duracaoForaDaAreaMs": 3000 },
+              "sugestaoCampos": ["gancho", "params"]
+            }
+          ]
+        },
+        "monstro_da_academia": {
+          "modificacoes": [{ "habilidade": "bora_monstro", "campo": "alvosExtras", "soma": 2 }]
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_barricada_turbinada",
+      "name": "Barricada Turbinada / Live Turbinada",
+      "nomePorArquetipo": { "cidadao_revolucionario": "Barricada Turbinada", "monstro_da_academia": "Live Turbinada" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["cidadao_revolucionario", "monstro_da_academia"] },
+      "descricao": "O bônus de dano do grupo sobe para 30%.",
+      "efeitoPorArquetipo": {
+        "cidadao_revolucionario": {
+          "modificacoes": [{ "habilidade": "as_barricadas", "efeito": "reforco", "stat": "damage", "campo": "pct", "valor": 30 }]
+        },
+        "monstro_da_academia": {
+          "modificacoes": [{ "habilidade": "live_motivacional", "efeito": "reforco", "stat": "damage", "campo": "pct", "valor": 30 }]
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_xale",
+      "name": "Xale / Escudo de Choque",
+      "nomePorArquetipo": { "babushka": "Xale", "tropa_de_choque": "Escudo de Choque" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["babushka", "tropa_de_choque"] },
+      "descricao": "O escudo também devolve os projéteis.",
+      "efeitoPorArquetipo": {
+        "babushka": {
+          "modificacoes": [{ "habilidade": "xale_de_la", "efeito": "escudo", "gancho": "escudo_devolve_projeteis" }]
+        },
+        "tropa_de_choque": {
+          "modificacoes": [
+            {
+              "habilidade": "nome_na_lista",
+              "efeitosExtras": [{ "kind": "escudo", "pctVidaMax": 20, "duracaoMs": 4000, "seguraProjeteis": true, "target": "self" }],
+              "gancho": "escudo_devolve_projeteis"
+            }
+          ],
+          "sugestao": true
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_chumbo_grosso",
+      "name": "Chumbo Grosso / Cordão Duplo",
+      "nomePorArquetipo": { "babushka": "Chumbo Grosso", "tropa_de_choque": "Cordão Duplo" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["babushka", "tropa_de_choque"] },
+      "descricao": "A área de controle dobra de tamanho.",
+      "efeitoPorArquetipo": {
+        "babushka": {
+          "modificacoes": [{ "habilidade": "voce_esta_muito_magro", "campo": "radius", "mult": 2 }],
+          "sugestao": true
+        },
+        "tropa_de_choque": {
+          "modificacoes": [{ "habilidade": "cordao_de_isolamento", "campo": "radius", "mult": 2 }]
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_mira_firme",
+      "name": "Mira Firme",
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["arqueiro_das_estepes", "cowboy_cromado"] },
+      "descricao": "Enquanto você não toma dano, a chance de crítico sobe 5% por segundo, até 50%.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "sem_tomar_dano",
+            "intervaloS": 1,
+            "acumula": { "max": 10 },
+            "stats": [{ "stat": "crit", "pct": 5 }],
+            "gancho": "mira_firme",
+            "params": { "zeraAoTomarDano": true }
+          }
+        ]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_galope",
+      "name": "Galope / Saque Rápido",
+      "nomePorArquetipo": { "arqueiro_das_estepes": "Galope", "cowboy_cromado": "Saque Rápido" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["arqueiro_das_estepes", "cowboy_cromado"] },
+      "descricao": "Atira sem perder velocidade andando.",
+      "efeito": {
+        "passivos": [{ "kind": "regra", "gancho": "atira_andando_sem_penalidade" }]
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_crikey",
+      "name": "Crikey! / Corta!",
+      "nomePorArquetipo": { "cacador_de_crocodilo": "Crikey!", "diretor_de_nollywood": "Corta!" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["cacador_de_crocodilo", "diretor_de_nollywood"] },
+      "descricao": "A marca pula para o inimigo mais perto quando o alvo cai.",
+      "efeitoPorArquetipo": {
+        "cacador_de_crocodilo": {
+          "modificacoes": [{ "habilidade": "crikey", "efeito": "marca", "campo": "pulaAoMorrer", "valor": true }]
+        },
+        "diretor_de_nollywood": {
+          "modificacoes": [{ "habilidade": "plano_sequencia", "efeito": "marca", "campo": "pulaAoMorrer", "valor": true }]
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_armadilha",
+      "name": "Armadilha / Plano-Sequência",
+      "nomePorArquetipo": { "cacador_de_crocodilo": "Armadilha", "diretor_de_nollywood": "Plano-Sequência" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["cacador_de_crocodilo", "diretor_de_nollywood"] },
+      "descricao": "O controle dura o dobro.",
+      "efeitoPorArquetipo": {
+        "cacador_de_crocodilo": {
+          "modificacoes": [
+            { "habilidade": "armadilha_de_laco", "efeito": "controle", "campo": "duracaoMs", "valor": 2000, "sugestaoCampos": ["valor"] },
+            { "habilidade": "armadilha_de_laco", "campo": "radius", "mult": 1.5, "sugestao": true }
+          ]
+        },
+        "diretor_de_nollywood": {
+          "modificacoes": [
+            { "habilidade": "corta", "efeito": "controle", "campo": "duracaoMs", "valor": 2000, "sugestaoCampos": ["valor"] },
+            { "habilidade": "corta", "campo": "radius", "mult": 1.5, "sugestao": true }
+          ]
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_circulo_vivo",
+      "name": "Círculo Vivo / Sucata Infinita",
+      "nomePorArquetipo": { "druida_rabugento": "Círculo Vivo", "engenheira_de_gambiarra": "Sucata Infinita" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["druida_rabugento", "engenheira_de_gambiarra"] },
+      "descricao": "O totem se reconstrói sozinho.",
+      "efeitoPorArquetipo": {
+        "druida_rabugento": {
+          "modificacoes": [
+            { "habilidade": "circulo_de_pedras", "gancho": "invocacao_se_reconstroi", "params": { "rebuildMs": 8000 }, "sugestaoCampos": ["params"] },
+            { "habilidade": "totem_ou_robo", "gancho": "invocacao_se_reconstroi", "params": { "rebuildMs": 8000 }, "sugestao": true }
+          ]
+        },
+        "engenheira_de_gambiarra": {
+          "modificacoes": [
+            { "habilidade": "robo_geladeira", "gancho": "invocacao_se_reconstroi", "params": { "rebuildMs": 8000 }, "sugestaoCampos": ["params"] },
+            { "habilidade": "totem_ou_robo", "gancho": "invocacao_se_reconstroi", "params": { "rebuildMs": 8000 }, "sugestao": true }
+          ]
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_escudo_partilhado",
+      "name": "Escudo Partilhado",
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["druida_rabugento", "engenheira_de_gambiarra"] },
+      "descricao": "Escudo dividido entre todos os aliados perto.",
+      "efeitoPorArquetipo": {
+        "druida_rabugento": {
+          "passivos": [{ "kind": "regra", "gancho": "escudos_divididos_entre_aliados" }],
+          "modificacoes": [
+            {
+              "habilidade": "circulo_de_pedras",
+              "efeitosExtras": [{ "kind": "escudo", "pctVidaMax": 20, "duracaoMs": 5000, "divididoEntreAliados": true, "target": "aliados_area" }],
+              "sugestao": true
+            }
+          ]
+        },
+        "engenheira_de_gambiarra": {
+          "passivos": [{ "kind": "regra", "gancho": "escudos_divididos_entre_aliados" }],
+          "modificacoes": [
+            {
+              "habilidade": "funciona_nao_pergunta",
+              "efeitosExtras": [{ "kind": "escudo", "pctVidaMax": 20, "duracaoMs": 5000, "divididoEntreAliados": true, "target": "aliados_area" }],
+              "sugestao": true
+            }
+          ]
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_corrente_em_cadeia",
+      "name": "Corrente em Cadeia",
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["bruxa_do_trovao", "doktor_klaus"] },
+      "descricao": "O raio salta para mais 2 inimigos.",
+      "efeitoPorArquetipo": {
+        "bruxa_do_trovao": {
+          "modificacoes": [{ "habilidade": "skal", "efeito": "dano", "campo": "salto.saltos", "soma": 2 }]
+        },
+        "doktor_klaus": {
+          "modificacoes": [{ "habilidade": "experimento_instavel", "efeito": "dano", "campo": "salto.saltos", "soma": 2 }]
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_sobrecarga",
+      "name": "Sobrecarga",
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["bruxa_do_trovao", "doktor_klaus"] },
+      "descricao": "Um golpe enorme que gasta todo o recurso.",
+      "efeitoPorArquetipo": {
+        "bruxa_do_trovao": {
+          "modificacoes": [
+            {
+              "habilidade": "skal",
+              "gancho": "sobrecarga",
+              "params": { "gastaTodoRecurso": true, "danoMultPor10PctRecurso": 0.5 },
+              "sugestaoCampos": ["params.danoMultPor10PctRecurso"]
+            }
+          ]
+        },
+        "doktor_klaus": {
+          "modificacoes": [
+            {
+              "habilidade": "experimento_instavel",
+              "gancho": "sobrecarga",
+              "params": { "gastaTodoRecurso": true, "danoMultPor10PctRecurso": 0.5 },
+              "sugestaoCampos": ["params.danoMultPor10PctRecurso"]
+            }
+          ]
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_segunda_chance",
+      "name": "Segunda Chance",
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["curandeira_dos_andes", "coach_de_bem_estar"] },
+      "descricao": "Levanta sozinho o aliado que cair perto de você; recarga de 120 s.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "recarga",
+            "trigger": "aliado_vai_cair",
+            "recargaS": 120,
+            "gancho": "levanta_aliado_caido",
+            "params": { "momento": "ao_ser_derrubado" },
+            "efeitos": [{ "kind": "levantar", "pctVida": 30 }]
+          }
+        ]
+      },
+      "emPiloto": true,
+      "sugestaoCampos": ["efeito.passivos[0].efeitos[0].pctVida"]
+    },
+    {
+      "id": "chave_chuva_mansa",
+      "name": "Chuva Mansa / Vibrações",
+      "nomePorArquetipo": { "curandeira_dos_andes": "Chuva Mansa", "coach_de_bem_estar": "Vibrações" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["curandeira_dos_andes", "coach_de_bem_estar"] },
+      "descricao": "Cura menor, mas em todos.",
+      "efeitoPorArquetipo": {
+        "curandeira_dos_andes": {
+          "modificacoes": [
+            { "habilidade": "agua_da_nascente", "efeito": "cura", "campo": "target", "valor": "grupo" },
+            { "habilidade": "agua_da_nascente", "efeito": "cura", "campo": "pctVidaMax", "mult": 0.5, "sugestaoCampos": ["mult"] }
+          ]
+        },
+        "coach_de_bem_estar": {
+          "modificacoes": [
+            { "habilidade": "vibracoes_positivas", "efeito": "cura", "campo": "target", "valor": "grupo" },
+            { "habilidade": "vibracoes_positivas", "efeito": "cura", "campo": "pctVidaMax", "mult": 0.5, "sugestaoCampos": ["mult"] }
+          ]
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_mascara",
+      "name": "Máscara / Protocolo",
+      "nomePorArquetipo": { "luchador_sagrado": "Máscara", "atendente_imortal": "Protocolo" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["luchador_sagrado", "atendente_imortal"] },
+      "descricao": "O escudo é 50% maior e, quando quebra, empurra os inimigos.",
+      "efeitoPorArquetipo": {
+        "luchador_sagrado": {
+          "modificacoes": [
+            { "habilidade": "la_mascara_no_cae", "efeito": "escudo", "campo": "pctVidaMax", "mult": 1.5 },
+            { "habilidade": "la_mascara_no_cae", "gancho": "escudo_quebra_empurra", "params": { "tiles": 2, "raio": 2 }, "sugestaoCampos": ["params"] }
+          ]
+        },
+        "atendente_imortal": {
+          "modificacoes": [
+            { "habilidade": "protocolo", "efeito": "escudo", "campo": "pctVidaMax", "mult": 1.5 },
+            { "habilidade": "protocolo", "gancho": "escudo_quebra_empurra", "params": { "tiles": 2, "raio": 2 }, "sugestaoCampos": ["params"] }
+          ]
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_laco",
+      "name": "Laço / Transferência de Ligação",
+      "nomePorArquetipo": { "luchador_sagrado": "Laço", "atendente_imortal": "Transferência de Ligação" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["luchador_sagrado", "atendente_imortal"] },
+      "descricao": "Divide com você o dano de um aliado.",
+      "efeito": {
+        "passivos": [
+          { "kind": "regra", "gancho": "divide_dano_de_aliado", "params": { "pct": 50, "alvo": "aliado_menos_vida" } }
+        ]
+      },
+      "emPiloto": true,
+      "sugestaoCampos": ["efeito.passivos[0].params"]
+    },
+    {
+      "id": "chave_aria",
+      "name": "Ária / Vírus em Rede",
+      "nomePorArquetipo": { "diva_da_opera": "Ária", "hacker_da_aldeia": "Vírus em Rede" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["diva_da_opera", "hacker_da_aldeia"] },
+      "descricao": "A área dura o dobro.",
+      "efeitoPorArquetipo": {
+        "diva_da_opera": {
+          "modificacoes": [{ "habilidade": "aria_amaldicoada", "efeito": "campo", "campo": "duracaoMs", "mult": 2 }]
+        },
+        "hacker_da_aldeia": {
+          "modificacoes": [{ "habilidade": "virus_em_rede", "efeito": "dano_continuo", "campo": "duracaoMs", "mult": 2 }]
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_nota_aguda",
+      "name": "Nota Aguda / Derrubada",
+      "nomePorArquetipo": { "diva_da_opera": "Nota Aguda", "hacker_da_aldeia": "Derrubada" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["diva_da_opera", "hacker_da_aldeia"] },
+      "descricao": "O efeito pega todos em volta do alvo.",
+      "efeitoPorArquetipo": {
+        "diva_da_opera": {
+          "modificacoes": [{ "habilidade": "nota_aguda", "gancho": "efeito_em_volta_do_alvo", "params": { "raio": 2 }, "sugestaoCampos": ["params"] }]
+        },
+        "hacker_da_aldeia": {
+          "modificacoes": [{ "habilidade": "derrubada", "gancho": "efeito_em_volta_do_alvo", "params": { "raio": 2 }, "sugestaoCampos": ["params"] }]
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_gingado",
+      "name": "Gingado / Fanchant",
+      "nomePorArquetipo": { "malandro": "Gingado", "idol": "Fanchant" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["malandro", "idol"] },
+      "descricao": "O bônus de velocidade sobe para 40%.",
+      "efeitoPorArquetipo": {
+        "malandro": {
+          "modificacoes": [{ "habilidade": "gingado", "efeito": "reforco", "stat": "speed", "campo": "pct", "valor": 40 }]
+        },
+        "idol": {
+          "modificacoes": [{ "habilidade": "fanchant", "efeito": "reforco", "stat": "speed", "campo": "pct", "valor": 40 }]
+        }
+      },
+      "emPiloto": true
+    },
+    {
+      "id": "chave_rasteira_em_cadeia",
+      "name": "Rasteira em Cadeia / Palco Gigante",
+      "nomePorArquetipo": { "malandro": "Rasteira em Cadeia", "idol": "Palco Gigante" },
+      "grupo": "chave",
+      "niveis": [20, 30, 35],
+      "dono": { "tipo": "arquetipos", "arquetipos": ["malandro", "idol"] },
+      "descricao": "A área da Rasteira ou do Encore dobra.",
+      "efeitoPorArquetipo": {
+        "malandro": {
+          "modificacoes": [{ "habilidade": "rasteira", "campo": "radius", "mult": 2 }]
+        },
+        "idol": {
+          "modificacoes": [{ "habilidade": "encore", "campo": "radius", "mult": 2 }]
+        }
+      },
+      "emPiloto": true
+    },
+
+    {
+      "id": "mutirao",
+      "name": "Mutirão",
+      "grupo": "margem",
+      "niveis": [25, 45],
+      "dono": { "tipo": "margem", "margem": "esquerda" },
+      "descricao": "+10% em tudo para cada aliado da Esquerda perto, até 3.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "aura",
+            "gancho": "por_aliado_da_margem",
+            "params": {
+              "margem": "esquerda",
+              "maxAliados": 3,
+              "alvo": "self",
+              "porAliado": [
+                { "stat": "hp", "pct": 10 },
+                { "stat": "attack", "pct": 10 },
+                { "stat": "defense", "pct": 10 },
+                { "stat": "speed", "pct": 10 },
+                { "stat": "damage", "pct": 10 },
+                { "stat": "healing", "pct": 10 },
+                { "stat": "shield", "pct": 10 }
+              ]
+            }
+          }
+        ]
+      },
+      "emPiloto": false,
+      "sugestaoCampos": ["efeito.passivos[0].params.porAliado"]
+    },
+    {
+      "id": "terra_limpa",
+      "name": "Terra Limpa",
+      "grupo": "margem",
+      "niveis": [25, 45],
+      "dono": { "tipo": "margem", "margem": "esquerda" },
+      "descricao": "Em região com poluição 0, suas habilidades custam metade.",
+      "efeito": {
+        "passivos": [{ "kind": "numero", "condicao": { "regiao": "poluicao_zero" }, "stats": [{ "stat": "resourceCost", "pct": -50 }] }]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "assembleia_de_campo",
+      "name": "Assembleia de Campo",
+      "grupo": "margem",
+      "niveis": [25, 45],
+      "dono": { "tipo": "margem", "margem": "esquerda" },
+      "descricao": "A cada 60 s, o grupo ganha 8 s de cura, escudo ou dano extra, escolhido sozinho pelo que mais falta.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "recarga",
+            "recargaS": 60,
+            "gancho": "assembleia_de_campo",
+            "params": { "duracaoMs": 8000, "opcoes": ["cura", "escudo", "dano"], "escolha": "o_que_mais_falta", "alvo": "grupo" }
+          }
+        ]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "overclock",
+      "name": "Overclock",
+      "grupo": "margem",
+      "niveis": [25, 45],
+      "dono": { "tipo": "margem", "margem": "direita" },
+      "descricao": "Em região com energia, +15% de velocidade e de dano.",
+      "efeito": {
+        "passivos": [
+          { "kind": "numero", "condicao": { "regiao": "energia" }, "stats": [{ "stat": "speed", "pct": 15 }, { "stat": "damage", "pct": 15 }] }
+        ]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "gerador_portatil",
+      "name": "Gerador Portátil",
+      "grupo": "margem",
+      "niveis": [25, 45],
+      "dono": { "tipo": "margem", "margem": "direita" },
+      "descricao": "Ignora a penalidade de apagão.",
+      "efeito": {
+        "passivos": [{ "kind": "regra", "gancho": "ignora_apagao" }]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "investimento",
+      "name": "Investimento",
+      "grupo": "margem",
+      "niveis": [25, 45],
+      "dono": { "tipo": "margem", "margem": "direita" },
+      "descricao": "Gasta Crédito para ligar +1% em tudo a cada 100 Créditos, até 20%, por 10 minutos.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "regra",
+            "gancho": "investimento",
+            "params": { "creditosPorPct": 100, "maxPct": 20, "duracaoMs": 600000, "stats": ["hp", "attack", "defense", "speed", "damage", "healing", "shield"] }
+          }
+        ]
+      },
+      "emPiloto": false,
+      "sugestaoCampos": ["efeito.passivos[0].params.stats"]
+    },
+
+    {
+      "id": "desconstruido",
+      "name": "Desconstruído",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "peao_brabo" },
+      "descricao": "Por 10 s, cada golpe que ele segura cura um aliado, e o bordão vira \"Isso aí é serviço de todo mundo\".",
+      "efeito": { "substituiEspecial": "virada_peao_brabo" },
+      "emPiloto": false
+    },
+    {
+      "id": "tigre_desperto",
+      "name": "Tigre Desperto",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "iogue_furioso" },
+      "descricao": "Vira tigre por 20 s, com +40% de dano.",
+      "efeito": { "substituiEspecial": "virada_iogue_furioso" },
+      "emPiloto": false
+    },
+    {
+      "id": "revolucao_permanente",
+      "name": "Revolução Permanente",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "cidadao_revolucionario" },
+      "descricao": "Barricada gigante por 20 s que puxa os inimigos para ela.",
+      "efeito": { "substituiEspecial": "virada_cidadao_revolucionario" },
+      "emPiloto": false
+    },
+    {
+      "id": "sopa_da_vo",
+      "name": "Sopa da Vó",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "babushka" },
+      "descricao": "O grupo perto volta a 100% de vida.",
+      "efeito": { "substituiEspecial": "virada_babushka" },
+      "emPiloto": false
+    },
+    {
+      "id": "horda",
+      "name": "Horda",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "arqueiro_das_estepes" },
+      "descricao": "Por 10 s, cada tiro dispara mais 2 flechas de cavaleiros-espírito.",
+      "efeito": { "substituiEspecial": "virada_arqueiro_das_estepes" },
+      "emPiloto": false
+    },
+    {
+      "id": "o_bicho_grande",
+      "name": "O Bicho Grande",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "cacador_de_crocodilo" },
+      "descricao": "Um crocodilo-espírito luta do lado dele por 20 s.",
+      "efeito": { "substituiEspecial": "virada_cacador_de_crocodilo" },
+      "emPiloto": false
+    },
+    {
+      "id": "circulo_completo",
+      "name": "Círculo Completo",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "druida_rabugento" },
+      "descricao": "3 totens de uma vez, e o círculo dá +30% de defesa ao grupo.",
+      "efeito": { "substituiEspecial": "virada_druida_rabugento" },
+      "emPiloto": false
+    },
+    {
+      "id": "saideira_dos_deuses",
+      "name": "Saideira dos Deuses",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "bruxa_do_trovao" },
+      "descricao": "Raios em todos os inimigos à vista por 6 s.",
+      "efeito": { "substituiEspecial": "virada_bruxa_do_trovao" },
+      "emPiloto": false
+    },
+    {
+      "id": "nascente",
+      "name": "Nascente",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "curandeira_dos_andes" },
+      "descricao": "A poça cobre a área toda e cura o grupo por 10 s.",
+      "efeito": { "substituiEspecial": "virada_curandeira_dos_andes" },
+      "emPiloto": false
+    },
+    {
+      "id": "mascara_eterna",
+      "name": "Máscara Eterna",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "luchador_sagrado" },
+      "descricao": "Imune a dano por 5 s.",
+      "efeito": { "substituiEspecial": "virada_luchador_sagrado" },
+      "emPiloto": false
+    },
+    {
+      "id": "grand_finale",
+      "name": "Grand Finale",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "diva_da_opera" },
+      "descricao": "A nota final atordoa todos os inimigos à vista por 2 s.",
+      "efeito": { "substituiEspecial": "virada_diva_da_opera" },
+      "emPiloto": false
+    },
+    {
+      "id": "golpe_do_seculo",
+      "name": "Golpe do Século",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "malandro" },
+      "descricao": "Rasteira em todos os inimigos à vista, que caem por 2 s e deixam cair o dobro de Semente.",
+      "efeito": { "substituiEspecial": "virada_malandro" },
+      "emPiloto": false
+    },
+    {
+      "id": "yokozuna",
+      "name": "Yokozuna",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "sumo_cibernetico" },
+      "descricao": "Por 10 s, não pode ser empurrado, e a barriga devolve 60% do dano.",
+      "efeito": { "substituiEspecial": "virada_sumo_cibernetico" },
+      "emPiloto": false
+    },
+    {
+      "id": "consciencia",
+      "name": "Consciência",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "o_fiel" },
+      "descricao": "Por 15 s, protege o aliado mais fraco e ganha +50% de dano para cada aliado caído perto.",
+      "efeito": { "substituiEspecial": "virada_o_fiel" },
+      "emPiloto": false
+    },
+    {
+      "id": "shape_inexplicavel",
+      "name": "Shape Inexplicável",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "monstro_da_academia" },
+      "descricao": "A Live Motivacional dobra e pega o grupo todo por 15 s.",
+      "efeito": { "substituiEspecial": "virada_monstro_da_academia" },
+      "emPiloto": false
+    },
+    {
+      "id": "muralha_de_escudos",
+      "name": "Muralha de Escudos",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "tropa_de_choque" },
+      "descricao": "Bloqueia todo dano à distância contra o grupo por 4 s.",
+      "efeito": { "substituiEspecial": "virada_tropa_de_choque" },
+      "emPiloto": false
+    },
+    {
+      "id": "meio_dia_eterno",
+      "name": "Meio-Dia Eterno",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "cowboy_cromado" },
+      "descricao": "Por 8 s, todo ataque contra o alvo marcado é crítico.",
+      "efeito": { "substituiEspecial": "virada_cowboy_cromado" },
+      "emPiloto": false
+    },
+    {
+      "id": "blockbuster",
+      "name": "Blockbuster",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "diretor_de_nollywood" },
+      "descricao": "Por 8 s, o grupo tem recargas pela metade e +50% de velocidade.",
+      "efeito": { "substituiEspecial": "virada_diretor_de_nollywood" },
+      "emPiloto": false
+    },
+    {
+      "id": "mecha_de_sucata",
+      "name": "Mecha de Sucata",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "engenheira_de_gambiarra" },
+      "descricao": "Junta os robôs num robô gigante que ela pilota por 20 s.",
+      "efeito": { "substituiEspecial": "virada_engenheira_de_gambiarra" },
+      "emPiloto": false
+    },
+    {
+      "id": "ciencia_exata",
+      "name": "Ciência Exata",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "doktor_klaus" },
+      "descricao": "Explosão gigante que nunca sai pela culatra.",
+      "efeito": { "substituiEspecial": "virada_doktor_klaus" },
+      "emPiloto": false
+    },
+    {
+      "id": "retiro",
+      "name": "Retiro",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "coach_de_bem_estar" },
+      "descricao": "Levanta todos os aliados caídos perto com metade da vida.",
+      "efeito": { "substituiEspecial": "virada_coach_de_bem_estar" },
+      "emPiloto": false
+    },
+    {
+      "id": "protocolo_infinito",
+      "name": "Protocolo Infinito",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "atendente_imortal" },
+      "descricao": "Prende todos os inimigos perto por até 6 s, até alguém bater neles.",
+      "efeito": { "substituiEspecial": "virada_atendente_imortal" },
+      "emPiloto": false
+    },
+    {
+      "id": "apagao_seletivo",
+      "name": "Apagão Seletivo",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "hacker_da_aldeia" },
+      "descricao": "Desliga toda a tecnologia inimiga à vista por 3 s.",
+      "efeito": { "substituiEspecial": "virada_hacker_da_aldeia" },
+      "emPiloto": false
+    },
+    {
+      "id": "turne_mundial",
+      "name": "Turnê Mundial",
+      "grupo": "virada",
+      "niveis": [30],
+      "dono": { "tipo": "arquetipo", "arquetipo": "idol" },
+      "descricao": "Show de 10 s em que o Fanchant pega o grupo inteiro e zera as recargas de todos.",
+      "efeito": { "substituiEspecial": "virada_idol" },
+      "emPiloto": false
+    },
+
+    {
+      "id": "pacto",
+      "name": "Pacto",
+      "grupo": "guia",
+      "niveis": [55],
+      "dono": { "tipo": "todos" },
+      "descricao": "O bônus do espírito ou da IA de bolso dobra.",
+      "efeito": {
+        "passivos": [{ "kind": "regra", "gancho": "bonus_do_guia_dobrado", "params": { "usa": "guias.json:pacto" } }]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "manifestacao",
+      "name": "Manifestação",
+      "grupo": "guia",
+      "niveis": [55],
+      "dono": { "tipo": "todos" },
+      "descricao": "A cada 2 minutos, o guia aparece e luta do seu lado por 15 s.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "recarga",
+            "recargaS": 120,
+            "efeitos": [{ "kind": "invocar", "invocacao": "manifestacao_do_guia", "duracaoMs": 15000, "max": 1 }]
+          }
+        ]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "segundo_guia",
+      "name": "Segundo Guia",
+      "grupo": "guia",
+      "niveis": [55],
+      "dono": { "tipo": "todos" },
+      "descricao": "Ganha também o bônus de um segundo espírito ou IA.",
+      "efeito": {
+        "passivos": [{ "kind": "regra", "gancho": "segundo_guia", "params": { "guiasExtras": 1, "soOBonus": true } }]
+      },
+      "emPiloto": false
+    },
+
+    {
+      "id": "inquebravel",
+      "name": "Inquebrável",
+      "grupo": "lenda",
+      "niveis": [60],
+      "dono": { "tipo": "classe", "classe": "combatente" },
+      "descricao": "Não pode ser atordoado nem empurrado e recebe 20% menos dano.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "numero",
+            "stats": [{ "stat": "damageTaken", "pct": -20 }],
+            "gancho": "imune_a_controle",
+            "params": { "cc": ["atordoar"], "empurrao": true }
+          }
+        ]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "devastador",
+      "name": "Devastador",
+      "grupo": "lenda",
+      "niveis": [60],
+      "dono": { "tipo": "classe", "classe": "combatente" },
+      "descricao": "Cada golpe acerta também os inimigos ao lado.",
+      "efeito": {
+        "passivos": [{ "kind": "regra", "gancho": "golpes_acertam_ao_lado" }]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "general",
+      "name": "General",
+      "grupo": "lenda",
+      "niveis": [60],
+      "dono": { "tipo": "classe", "classe": "combatente" },
+      "descricao": "Os aliados perto recebem o seu talento-chave.",
+      "efeito": {
+        "passivos": [{ "kind": "aura", "gancho": "aura_do_talento_chave" }]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "olho_que_tudo_ve",
+      "name": "Olho Que Tudo Vê",
+      "grupo": "lenda",
+      "niveis": [60],
+      "dono": { "tipo": "classe", "classe": "atirador" },
+      "descricao": "Alcance dobrado, e os tiros ignoram escudos.",
+      "efeito": {
+        "passivos": [{ "kind": "numero", "stats": [{ "stat": "range", "pct": 100 }], "gancho": "tiros_ignoram_escudos" }]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "rajada_lendaria",
+      "name": "Rajada Lendária",
+      "grupo": "lenda",
+      "niveis": [60],
+      "dono": { "tipo": "classe", "classe": "atirador" },
+      "descricao": "O Especial carrega duas vezes mais rápido.",
+      "efeito": {
+        "passivos": [{ "kind": "numero", "stats": [{ "stat": "specialCharge", "pct": 100 }] }]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "batedor_lendario",
+      "name": "Batedor Lendário",
+      "grupo": "lenda",
+      "niveis": [60],
+      "dono": { "tipo": "classe", "classe": "atirador" },
+      "descricao": "O grupo vê os avisos de ataque inimigo 1 s mais cedo.",
+      "efeito": {
+        "passivos": [{ "kind": "aura", "gancho": "aviso_antecipado", "params": { "ms": 1000, "alcance": "grupo" } }]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "avatar",
+      "name": "Avatar",
+      "grupo": "lenda",
+      "niveis": [60],
+      "dono": { "tipo": "classe", "classe": "elemental" },
+      "descricao": "Até 4 totens ou robôs.",
+      "efeito": {
+        "passivos": [{ "kind": "regra", "gancho": "max_invocacoes", "params": { "max": 4 } }]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "cataclismo",
+      "name": "Cataclismo",
+      "grupo": "lenda",
+      "niveis": [60],
+      "dono": { "tipo": "classe", "classe": "elemental" },
+      "descricao": "A cada 60 s, dano enorme em todos os inimigos à vista.",
+      "efeito": {
+        "passivos": [
+          { "kind": "recarga", "recargaS": 60, "efeitos": [{ "kind": "dano", "mult": 4, "target": "inimigos_a_vista" }] }
+        ]
+      },
+      "emPiloto": false,
+      "sugestaoCampos": ["efeito.passivos[0].efeitos[0].mult"]
+    },
+    {
+      "id": "fonte",
+      "name": "Fonte",
+      "grupo": "lenda",
+      "niveis": [60],
+      "dono": { "tipo": "classe", "classe": "elemental" },
+      "descricao": "Depois de usar o Especial, o recurso não gasta por 8 s.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "gatilho",
+            "trigger": "ao_usar_especial",
+            "efeitos": [{ "kind": "reforco", "stat": "resourceCost", "pct": -100, "duracaoMs": 8000, "target": "self" }]
+          }
+        ]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "mil_faces",
+      "name": "Mil Faces",
+      "grupo": "lenda",
+      "niveis": [60],
+      "dono": { "tipo": "classe", "classe": "mascarado" },
+      "descricao": "A cada 60 s, copia a última habilidade marca de um aliado perto.",
+      "efeito": {
+        "passivos": [{ "kind": "recarga", "recargaS": 60, "gancho": "copia_marca_de_aliado", "params": { "ultimaUsada": true } }]
+      },
+      "emPiloto": false
+    },
+    {
+      "id": "ilusao_total",
+      "name": "Ilusão Total",
+      "grupo": "lenda",
+      "niveis": [60],
+      "dono": { "tipo": "classe", "classe": "mascarado" },
+      "descricao": "A cada 45 s, os inimigos perto atacam uns aos outros por 3 s.",
+      "efeito": {
+        "passivos": [
+          {
+            "kind": "recarga",
+            "recargaS": 45,
+            "params": { "atacamUnsAosOutros": true },
+            "efeitos": [{ "kind": "controle", "cc": "confundir", "duracaoMs": 2000, "target": "inimigos_area" }]
+          }
+        ]
+      },
+      "emPiloto": false,
+      "sugestaoCampos": ["efeito.passivos[0].efeitos[0].duracaoMs"]
+    },
+    {
+      "id": "idolo_das_massas",
+      "name": "Ídolo das Massas",
+      "grupo": "lenda",
+      "niveis": [60],
+      "dono": { "tipo": "classe", "classe": "mascarado" },
+      "descricao": "Todo efeito de reforço e de controle seu dobra.",
+      "efeito": {
+        "passivos": [{ "kind": "regra", "gancho": "dobra_reforco_e_controle", "params": { "mult": 2, "controleMaxMs": 2000, "controleExcedenteViraArea": true } }]
+      },
+      "emPiloto": false,
+      "sugestaoCampos": ["efeito.passivos[0].params.controleMaxMs", "efeito.passivos[0].params.controleExcedenteViraArea"]
+    }
+  ],
+  "paresChave": [
+    {
+      "arquetipos": ["peao_brabo", "sumo_cibernetico"],
+      "talentoA": "chave_couro_grosso",
+      "talentoB": "chave_berrante",
+      "buildExemplo": { "nome": "Curral", "descricao": "Couro Grosso com o talento de papel Muralha" }
+    },
+    {
+      "arquetipos": ["iogue_furioso", "o_fiel"],
+      "talentoA": "chave_furia",
+      "talentoB": "chave_bote_em_cadeia",
+      "buildExemplo": { "nome": "Berserker", "descricao": "Fúria com roubo de vida" }
+    },
+    {
+      "arquetipos": ["cidadao_revolucionario", "monstro_da_academia"],
+      "talentoA": "chave_discurso",
+      "talentoB": "chave_barricada_turbinada",
+      "buildExemplo": { "nome": "Comuna", "descricao": "Discurso com calçado de velocidade" }
+    },
+    {
+      "arquetipos": ["babushka", "tropa_de_choque"],
+      "talentoA": "chave_xale",
+      "talentoB": "chave_chumbo_grosso",
+      "buildExemplo": { "nome": "Vovó Fortaleza", "descricao": "Xale e munição extra" }
+    },
+    {
+      "arquetipos": ["arqueiro_das_estepes", "cowboy_cromado"],
+      "talentoA": "chave_mira_firme",
+      "talentoB": "chave_galope",
+      "buildExemplo": { "nome": "Duelista", "descricao": "Saque Rápido com cabeça de precisão" }
+    },
+    {
+      "arquetipos": ["cacador_de_crocodilo", "diretor_de_nollywood"],
+      "talentoA": "chave_crikey",
+      "talentoB": "chave_armadilha",
+      "buildExemplo": { "nome": "Controlador", "descricao": "Armadilhas com adorno de controle" }
+    },
+    {
+      "arquetipos": ["druida_rabugento", "engenheira_de_gambiarra"],
+      "talentoA": "chave_circulo_vivo",
+      "talentoB": "chave_escudo_partilhado",
+      "buildExemplo": { "nome": "Fortaleza", "descricao": "Totem vivo com set Turbina" }
+    },
+    {
+      "arquetipos": ["bruxa_do_trovao", "doktor_klaus"],
+      "talentoA": "chave_corrente_em_cadeia",
+      "talentoB": "chave_sobrecarga",
+      "buildExemplo": { "nome": "Saideira", "descricao": "Corrente em Cadeia e recurso máximo" }
+    },
+    {
+      "arquetipos": ["curandeira_dos_andes", "coach_de_bem_estar"],
+      "talentoA": "chave_segunda_chance",
+      "talentoB": "chave_chuva_mansa",
+      "buildExemplo": { "nome": "Anjo da Guarda", "descricao": "Segunda Chance com adorno de reanimação" }
+    },
+    {
+      "arquetipos": ["luchador_sagrado", "atendente_imortal"],
+      "talentoA": "chave_mascara",
+      "talentoB": "chave_laco",
+      "buildExemplo": { "nome": "Imortal", "descricao": "Laço com roubo de vida" }
+    },
+    {
+      "arquetipos": ["diva_da_opera", "hacker_da_aldeia"],
+      "talentoA": "chave_aria",
+      "talentoB": "chave_nota_aguda",
+      "buildExemplo": { "nome": "Caçador de Elite", "descricao": "Contra elites e chefes" }
+    },
+    {
+      "arquetipos": ["malandro", "idol"],
+      "talentoA": "chave_gingado",
+      "talentoB": "chave_rasteira_em_cadeia",
+      "buildExemplo": { "nome": "Showman", "descricao": "Palco Gigante com talentos cruzados da ala de dano" }
+    }
+  ]
+}

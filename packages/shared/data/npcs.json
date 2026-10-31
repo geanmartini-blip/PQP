@@ -1,0 +1,853 @@
+{
+  "personagens": [
+    {
+      "id": "seu_jaco",
+      "name": "Seu Jacó",
+      "categoria": "historia",
+      "lado": "neutro",
+      "quemE": "Pescador do Delta, que ensina os novatos e reclama de tudo. Preenche a ficha do cadastro do Delta com uma caneta que falha, ensina a remar, a lutar e a desconfiar de quem vende chopindita barata, e no nível 8 leva o novato de barco até a ponte.",
+      "apresentacao": "presencial",
+      "visual": {
+        "descricao": "Pescador de chapéu de palha furado, vara remendada e um bagre de estimação num balde",
+        "piada": "Reclama de tudo com o dedo em riste",
+        "artKey": "npc_seu_jaco"
+      },
+      "regioes": ["delta", "usina_da_ponte"],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "cadastro_ficha",
+          "descricao": "Criação de personagem: Seu Jacó preenche a ficha com a caneta que falha.",
+          "linhas": [
+            "Nome? Fala devagar, que essa caneta falha. … Falhou. Fala de novo.",
+            "Pronto, tá cadastrado. Metade do seu nome ficou no papel, a outra metade ficou na caneta.",
+            "Lado? Nenhum. Classe? Nenhuma. Dívida? Ainda não. Bem-vindo ao Delta.",
+            "Essa cara aí é a sua mesmo? Tá bom. Já vi pior. Já fui pior."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "maquina_de_visual",
+          "descricao": "Espelho do Cadastro, a Máquina de Visual do Delta (institutions.maquinasVisual[maquina_visual_delta]).",
+          "linhas": [
+            "Tá torto porque o espelho é torto. Ou porque você é. Não é da minha conta.",
+            "Pode trocar a cara quantas vezes quiser. A ficha eu não preencho de novo, que a caneta não aguenta.",
+            "Aqui só tem a roupa do Delta, em seis cores. Escolhe uma e para de se olhar, que o barco não espera."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "tutorial_mover",
+          "descricao": "Joystick que aparece onde o polegar toca, na metade esquerda; tocar no chão leva até lá.",
+          "linhas": [
+            "Encosta o dedo do lado esquerdo e arrasta. Não precisa apertar, não é boleto.",
+            "Toca no chão, que você vai até lá sozinho. Igual turista."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "tutorial_alvo",
+          "descricao": "Alvo automático no inimigo mais perto à vista; tocar perto de outro troca o alvo.",
+          "linhas": [
+            "Chegou perto de bicho, você já mira sozinho. Viu a marquinha embaixo dele? É o alvo.",
+            "Quer bater em outro? Toca perto dele. Simples. Mais simples que a fila do posto."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "tutorial_ataque",
+          "descricao": "Ataque básico automático, inclusive andando.",
+          "linhas": [
+            "Bate sozinho, até andando. Eu, na tua idade, batia andando e reclamando."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "tutorial_aviso_no_chao",
+          "descricao": "Nível 4: sair do aviso de ataque no chão.",
+          "linhas": [
+            "Viu o círculo no chão? Se for o bicho fazendo o círculo, sai de cima. Simples assim."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "tutorial_item",
+          "descricao": "Botão de item.",
+          "linhas": [
+            "Botão de item: comeu, curou. Não gasta à toa, que no Delta não tem feira toda hora."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "tutorial_saque",
+          "descricao": "Saque coletado sozinho.",
+          "linhas": [
+            "O que cai, você pega sozinho. Até lixo. Eu vivo disso há quarenta anos."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "tutorial_reanimar",
+          "descricao": "Aliado caído fica 30 s no chão; quem fica 3 s ao lado o levanta.",
+          "linhas": [
+            "Caiu alguém? Fica três segundos do lado que ele levanta. Não precisa de senha nem de plano."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "tutorial_remar",
+          "descricao": "Seu Jacó ensina a remar pelas palafitas.",
+          "linhas": [
+            "Remar é igual andar, só que molhado. Arrasta o dedo, que o barco vai.",
+            "O bagre vai junto, no balde. Ele dá sorte. Não dá, mas eu gosto dele.",
+            "Por aqui passava a Dona Celeste, de palafita em palafita, trazendo menino ao mundo. Rema com respeito."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "tutorial_lutar",
+          "descricao": "Primeiras lutas no Delta.",
+          "linhas": [
+            "Siri do mangue? Bate. Mosquito? Bate. Capanga do Capataz? Bate e depois reclama comigo.",
+            "Luta sozinho dá coisa. Luta em grupo dá experiência. Igual a vida, só que com siri."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "aviso_chopindita_barata",
+          "descricao": "Seu Jacó ensina a desconfiar de quem vende chopindita barata.",
+          "linhas": [
+            "Ó: quem vende chopindita barata tá vendendo pedra pintada. Ou pior: chopindita roubada.",
+            "Chopindita de verdade é dourada por dentro e tem uma crosta branca que parece espuma. A falsa tem desconto.",
+            "Se o preço tá bom demais, o vendedor é do Capataz."
+          ],
+          "sugestaoCampos": ["linhas"]
+        },
+        {
+          "contexto": "antes_do_chefe",
+          "descricao": "Nível 7: Bruno Ferro, o Capataz, está levando o barco de um vizinho por uma dívida.",
+          "linhas": [
+            "O Bruno Ferro tá levando o barco do Toninho por uma dívida. Dívida que ele mesmo inventou, com juros que ele mesmo calculou.",
+            "Vai lá. Eu seguro o bagre."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "depois_do_chefe",
+          "linhas": [
+            "Devolveu o barco? Agora você tem um inimigo e um amigo. No Delta, isso é ficar rico.",
+            "Tá pronto pra atravessar. Não fica se achando, que a ponte é mais alta que você."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "aleatorias",
+          "descricao": "Reclamações soltas pelo Delta.",
+          "linhas": [
+            "No meu tempo o rio era limpo e a gente reclamava igual.",
+            "A Esquerda manda fazer fila. A Direita manda pagar a fila. No Delta, a fila chega sozinha, de barco.",
+            "O boleto chega de barco. O posto de saúde, nem a nado.",
+            "Essa vara é remendada há trinta anos. Igual a ponte. E as duas aguentam. Por enquanto."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "travessia_partida",
+          "descricao": "Nível 8: Seu Jacó leva o novato de barco até a ponte.",
+          "linhas": [
+            "Sobe no barco. Hoje você escolhe uma margem. Não escolhe com o estômago.",
+            "Senta no meio, que o barco é velho e eu também."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "travessia_habilidades",
+          "descricao": "Nível 8, no barco: os 3 botões de habilidade aparecem quando a instituição define a classe; tocar usa, segurar e arrastar só posiciona áreas.",
+          "linhas": [
+            "Do outro lado vão te dar uns botões grandes. Toca. Só toca. Segurar o dedo é só pra arrastar a área pro lugar.",
+            "No Delta você só batia. Lá vão te ensinar a bater com nome técnico."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "travessia_especial",
+          "descricao": "Nível 8, no barco: o Especial brilha quando pronto e carrega batendo, apanhando e curando.",
+          "linhas": [
+            "E vai ter um botão que brilha. Brilhou? Aperta. É o Especial. Carrega batendo, apanhando e curando, que nem casamento."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "travessia_esquerda",
+          "descricao": "À esquerda, a Margem Esquerda: fumaça de fogueira, tambor e uma assembleia que dá para ouvir do rio.",
+          "linhas": [
+            "Ali, a Esquerda: fumaça de fogueira, tambor e uma assembleia que dá pra ouvir daqui. Começou ontem. Vai terminar amanhã.",
+            "Lá ninguém compra nada, só troca. Inclusive de assunto, que é pra reunião não acabar."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "travessia_direita",
+          "descricao": "À direita, a Margem Direita: neon, drones e propaganda de plano de saúde pintada no casco do barco.",
+          "linhas": [
+            "Ali, a Direita: neon, drone e propaganda. Olha aí, pintaram plano de saúde no casco do meu barco de novo.",
+            "Lá tudo acende e tudo tem preço. Até essa conversa, se eu fosse de lá."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "travessia_despedida",
+          "linhas": [
+            "Vai. E se te perguntarem de onde você é, diz que é do Delta. Ninguém sabe o que isso quer dizer, e é bom assim.",
+            "Volta pra visitar. Traz pão. E não compra chopindita barata, pelo amor de Deus."
+          ],
+          "sugestao": true
+        }
+      ]
+    },
+    {
+      "id": "bruno_ferro",
+      "name": "Bruno Ferro",
+      "apelido": "o Capataz",
+      "categoria": "historia",
+      "lado": "neutro",
+      "quemE": "Contrabandista do Juncal, que vende para os dois lados e entrega lá em cima. Chefe do Delta no nível 7, quando está levando o barco de um vizinho por uma dívida; depois, o contrabando pelo Juncal para quem não quer pagar taxa nem enfrentar fila.",
+      "apresentacao": "presencial",
+      "visual": {
+        "descricao": "Colete de couro, corrente dourada falsa e duas maquininhas, uma de Semente e outra de Crédito",
+        "piada": "Sorriso de vendedor que não fecha nunca",
+        "artKey": "npc_bruno_ferro"
+      },
+      "regioes": ["delta", "juncal"],
+      "noPiloto": true,
+      "inimigo": "bruno_ferro_chefe",
+      "falas": [
+        {
+          "contexto": "chefe_entrada",
+          "descricao": "Nível 7, no Delta.",
+          "linhas": [
+            "Barco bonito, né? Agora é meu. O Toninho assinou. Com o polegar. Dormindo.",
+            "Quer o barco de volta? Paga a dívida. Os juros eu calculo na hora, conforme a sua cara.",
+            "Novato do Delta querendo briga. Que fofo. Aceito Semente, Crédito e choro."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "chefe_luta",
+          "linhas": [
+            "Passa na maquininha! Débito ou porrada?",
+            "Pancada eu cobro em dobro!",
+            "Pessoal, cobra esse aí, que ele tá inadimplente!"
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "chefe_derrota",
+          "linhas": [
+            "Tá bom, tá bom! Leva o barco. Mas a gente se vê no Juncal. Lá eu faço desconto.",
+            "Isso não é derrota. É renegociação."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "juncal_contrabando",
+          "descricao": "Loja de contrabando no Juncal: sem taxa e sem fila.",
+          "linhas": [
+            "Sem fila, sem taxa, sem pergunta. Só o preço, que muda conforme o seu desespero.",
+            "Vendo pra Esquerda, vendo pra Direita. Lado é pra quem não tem estoque.",
+            "Nota fiscal? Isso é coisa de margem. Aqui é Juncal."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "negocio_com_o_capataz",
+          "descricao": "Missão de barganhar chopindita no Juncal.",
+          "linhas": [
+            "Chopindita de primeira. Espuma natural. Ah, a espuma caiu? Então era a de segunda.",
+            "Oferta e procura: eu ofereço, você procura o dinheiro.",
+            "Faço esse preço só pra você. E pra todo mundo que perguntar."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "pistas",
+          "descricao": "Sinais de que ele entrega lá em cima.",
+          "linhas": [
+            "Essa carga? Não é pra vocês. Vai lá pra cima. Onde? Lá em cima, ué. Onde a névoa esconde.",
+            "Tem cliente que paga em ouro e não quer recibo. Os melhores clientes nunca descem a Serra."
+          ],
+          "sugestao": true
+        }
+      ]
+    },
+    {
+      "id": "o_sombra",
+      "name": "O Sombra",
+      "categoria": "historia",
+      "lado": "neutro",
+      "quemE": "Mercenário pago pelas duas tesourarias, que sabota as duas margens.",
+      "apresentacao": "presencial",
+      "visual": {
+        "descricao": "Capa preta com dois crachás pendurados, um de cada margem",
+        "piada": "Os dois crachás dizem \"FUNCIONÁRIO DO MÊS\"",
+        "artKey": "npc_o_sombra"
+      },
+      "regioes": ["usina_da_ponte", "juncal"],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "aparicao",
+          "linhas": [
+            "Nada pessoal. É contrato.",
+            "Dois crachás e nenhum lado. É mais eficiente.",
+            "Funcionário do mês nas duas margens. Ao mesmo tempo. Ninguém nunca perguntou como."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "galerias_da_usina",
+          "descricao": "Os mercenários dele nas Galerias da Usina.",
+          "linhas": [
+            "Meus rapazes estão lá embaixo cuidando da turbina. Cuidando de um jeito bem específico.",
+            "Se a água subir, não fui eu. Fui eu, mas com nota emitida."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "fuga",
+          "linhas": [
+            "Recuo pago. Está incluso no pacote.",
+            "As duas tesourarias pagam em dia. É a única coisa nesta cidade que funciona."
+          ],
+          "sugestao": true
+        }
+      ]
+    },
+    {
+      "id": "eco",
+      "name": "Eco",
+      "categoria": "historia",
+      "lado": "neutro",
+      "quemE": "A voz da rádio pirata; engenheira que assinou o relatório. Transmite da Ilha do Farol, ninguém sabe como, e toda noite fala de um relatório que ninguém leu.",
+      "apresentacao": "radio",
+      "regioes": ["ilha_do_farol", "delta", "margem_esquerda", "margem_direita", "usina_da_ponte", "juncal"],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "encerramento_radio",
+          "descricao": "Toda noite, a rádio da Eco termina igual.",
+          "linhas": ["A ponte é de quem atravessa."]
+        },
+        {
+          "contexto": "radio_noturna",
+          "descricao": "Transmissões da rádio pirata antes da Noite Escura.",
+          "linhas": [
+            "Boa noite, Duas Margens. Aqui é a Eco, de onde vocês não sabem, falando do que vocês não querem saber.",
+            "A pauta de hoje é a mesma de ontem: um relatório que ninguém leu. Três anos na gaveta. Duas gavetas, na verdade.",
+            "Faltou luz na sua rua? Pergunte para onde ela foi. Não pergunte para a margem do lado: ela também está no escuro.",
+            "Tem gente que assina relatório, tem gente que arquiva e tem gente que manda para comissão. Adivinhem quem está sem luz hoje.",
+            "Uma pergunta para quem faz conta: se as duas margens estão sem energia, quem está gastando?"
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "noite_escura",
+          "descricao": "Na Noite Escura, a Eco transmite o relatório para a cidade inteira e mostra a única luz acesa: o Mirante.",
+          "linhas": [
+            "Hoje eu vou ler o relatório inteiro. Engenheiros das duas margens, uma barragem rachando, e duas assinaturas que preferiram a guerra.",
+            "Agora olhem para a Serra. Lá no alto. É a única luz acesa da cidade."
+          ],
+          "sugestao": true
+        }
+      ]
+    },
+    {
+      "id": "dalva_rocha",
+      "name": "Dalva Rocha",
+      "categoria": "historia",
+      "lado": "neutro",
+      "quemE": "Prefeita da ponte, neutra, sem poder nenhum e de agenda cheia.",
+      "apresentacao": "presencial",
+      "visual": {
+        "descricao": "Tailleur amarrotado, faixa de prefeita desbotada, duas agendas debaixo do braço e um carimbo sem tinta",
+        "piada": "Carimba tudo com força, e o carimbo não marca nada",
+        "artKey": "npc_dalva_rocha",
+        "sugestao": true
+      },
+      "regioes": ["usina_da_ponte"],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "saudacao",
+          "linhas": [
+            "Prefeitura da Ponte, bom dia! Posso não resolver, mas posso ouvir.",
+            "Bem-vindo à ponte, território neutro. Neutro de verdade: ninguém me deixa decidir nada."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "aleatorias",
+          "linhas": [
+            "Minha agenda está cheia até 2079. De reuniões sobre a agenda.",
+            "Sou neutra. Não por convicção: é que ninguém me dá poder para ser outra coisa.",
+            "Câmbio, posto de controle, clássico no estádio: tudo passa por mim. Nada para em mim.",
+            "Mandei um ofício para as duas margens pedindo reforma da barragem. Recebi dois carimbos de recebido. Os dois sem tinta."
+          ],
+          "sugestao": true
+        }
+      ]
+    },
+    {
+      "id": "nayra_sundaram",
+      "name": "Nayra Sundaram",
+      "apelido": "a Voz das Raízes",
+      "categoria": "lider",
+      "lado": "esquerda",
+      "quemE": "Fala em nome do povo em todo discurso e nunca aparece numa assembleia. O retrato dela está em todas as casas, e criticar o retrato rende uma comissão. Mora no Mirante, no mesmo condomínio de Kenji Albrecht; na Arena da Ponte aparece em campo e, na Noite Escura, descobre-se que era projeção.",
+      "apresentacao": "holograma",
+      "visual": {
+        "descricao": "Holograma de telão com moldura de flores e auréola de sol nascente",
+        "piada": "Quando cai, vira pixels quebrados e uma tela de \"SEM SINAL\"",
+        "artKey": "npc_nayra_sundaram"
+      },
+      "regioes": ["margem_esquerda"],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "telao_discurso",
+          "descricao": "Nayra fala de dignidade, Kenji fala de oportunidade, e os dois usam as mesmas palavras em ordem diferente.",
+          "linhas": [
+            "Povo das Raízes: a nossa dignidade é a nossa oportunidade.",
+            "Eles têm a máquina. Nós temos a terra. E a terra não esquece.",
+            "A energia falta porque o outro lado rouba.",
+            "Juntos, o futuro é nosso, e ninguém vende o que é nosso."
+          ],
+          "sugestaoCampos": ["linhas"]
+        },
+        {
+          "contexto": "ordem_da_guerra",
+          "descricao": "Nível 19: o líder aparece num telão e dá a ordem da guerra.",
+          "linhas": [
+            "Chegou a hora. Na Arena da Ponte, vamos mostrar que a Assembleia decide. Juntos.",
+            "Eu estarei com vocês. Em espírito, em retrato e em cada casa."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "queda",
+          "descricao": "Ao cair na Arena da Ponte (fora do piloto).",
+          "linhas": ["Dig… ni… da… [SEM SINAL]"],
+          "sugestao": true
+        }
+      ]
+    },
+    {
+      "id": "kenji_albrecht",
+      "name": "Kenji Albrecht",
+      "apelido": "o Arquiteto",
+      "categoria": "lider",
+      "lado": "direita",
+      "quemE": "CEO do Consórcio Neon, promete uma Duas Margens toda acesa e mostra um gráfico subindo em todo telão. Ninguém lembra de tê-lo visto pessoalmente. Mora no Mirante, no mesmo condomínio de Nayra Sundaram; na Arena da Ponte aparece em campo e, na Noite Escura, descobre-se que era projeção.",
+      "apresentacao": "holograma",
+      "visual": {
+        "descricao": "Holograma de telão com um gráfico subindo atrás",
+        "piada": "Quando cai, o gráfico despenca junto e ele trava numa pose de palestra",
+        "artKey": "npc_kenji_albrecht"
+      },
+      "regioes": ["margem_direita"],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "telao_discurso",
+          "descricao": "As mesmas palavras de Nayra, em ordem diferente.",
+          "linhas": [
+            "Colaboradores do Consórcio: a nossa oportunidade é a nossa dignidade.",
+            "Eles têm a terra. Nós temos a máquina. E a máquina não esquece.",
+            "O outro lado rouba porque a energia falta.",
+            "Juntos, o que é nosso ninguém vende, e o futuro é nosso."
+          ],
+          "sugestaoCampos": ["linhas"]
+        },
+        {
+          "contexto": "ordem_da_guerra",
+          "descricao": "Nível 19: o líder aparece num telão e dá a ordem da guerra.",
+          "linhas": [
+            "Chegou a hora. Na Arena da Ponte, vamos mostrar que o Consórcio entrega. Resultado.",
+            "Eu estarei com vocês. Em tempo real, em alta definição e em cada telão."
+          ],
+          "sugestao": true
+        },
+        {
+          "contexto": "queda",
+          "descricao": "Ao cair na Arena da Ponte (fora do piloto).",
+          "linhas": ["E o gráfico… sobe… sob… so… [trava na pose de palestra]"],
+          "sugestao": true
+        }
+      ]
+    },
+    {
+      "id": "seguranca_do_mirante",
+      "name": "Segurança do Mirante",
+      "categoria": "mirante",
+      "lado": "mirante",
+      "quemE": "Seguranças privados do Mirante, o condomínio da elite no alto da Serra.",
+      "apresentacao": "presencial",
+      "visual": {
+        "descricao": "Terno branco, luvas brancas e um fone transparente",
+        "piada": "Limpam o chão por onde os invasores passaram",
+        "artKey": "npc_seguranca_do_mirante"
+      },
+      "regioes": ["mirante"],
+      "noPiloto": false,
+      "falas": [
+        {
+          "contexto": "invasao",
+          "linhas": [
+            "O senhor não consta na lista de convidados.",
+            "Por gentileza, não respire no jardim.",
+            "Vamos ter que pedir que o senhor se retire. Do mapa.",
+            "Pisou. Pisou no mármore. Alguém traz o pano."
+          ],
+          "sugestao": true
+        }
+      ]
+    },
+    {
+      "id": "mordomo_robo_do_mirante",
+      "name": "Mordomo-robô do Mirante",
+      "categoria": "mirante",
+      "lado": "mirante",
+      "quemE": "Mordomo-robô da Garagem e dos salões do Mirante.",
+      "apresentacao": "presencial",
+      "visual": {
+        "descricao": "Robô de fraque com bandeja de prata",
+        "piada": "Oferece canapé até no meio da luta",
+        "artKey": "npc_mordomo_robo_do_mirante"
+      },
+      "regioes": ["mirante"],
+      "noPiloto": false,
+      "falas": [
+        {
+          "contexto": "invasao",
+          "linhas": [
+            "Canapé, senhor? De mata intocada, com espuma de chopindita.",
+            "O senhor prefere apanhar antes ou depois do aperitivo?",
+            "Lamento, os patrões estão em reunião com os dois lados. Digo… com nenhum lado.",
+            "Guardanapo para o sangue, senhor? É de linho."
+          ],
+          "sugestao": true
+        }
+      ]
+    },
+    {
+      "id": "vendedor_do_delta",
+      "name": "Vendedor do Delta",
+      "categoria": "menor",
+      "lado": "neutro",
+      "quemE": "Dono da banca numa palafita, que vende de tudo um pouco para quem acabou de chegar.",
+      "apresentacao": "presencial",
+      "visual": { "descricao": "Avental de lona, boné de pescador e uma banca que balança com a maré", "piada": "A placa \"FIADO SÓ AMANHÃ\" nunca muda de dia", "artKey": "npc_vendedor_do_delta" },
+      "regioes": ["delta"],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "loja",
+          "linhas": [
+            "Tem anzol, tem curativo, tem pão de ontem. Pão de hoje, só amanhã.",
+            "Aceito Semente, Crédito e troca. Fiado não, nem pro Seu Jacó.",
+            "Promoção do dia: tudo pelo preço de ontem. Só que hoje."
+          ]
+        }
+      ],
+      "sugestao": true
+    },
+    {
+      "id": "vendedor_de_chopindita_barata",
+      "name": "Vendedor de Chopindita Barata",
+      "categoria": "menor",
+      "lado": "neutro",
+      "quemE": "Sujeito simpático demais que vende \"chopindita\" no cais do Delta por um terço do preço. Trabalha para o Capataz. É dele que o Seu Jacó manda desconfiar.",
+      "apresentacao": "presencial",
+      "visual": { "descricao": "Camisa florida, óculos escuros e um casaco aberto cheio de pedrinhas douradas penduradas", "piada": "A tinta dourada das pedras sai na mão", "artKey": "npc_vendedor_de_chopindita_barata" },
+      "regioes": ["delta", "juncal"],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "oferta",
+          "linhas": [
+            "Psiu! Chopindita de primeira, preço de última!",
+            "Espuma? Saiu no transporte. É normal.",
+            "Nota? Nota é coisa de quem desconfia. Você desconfia de mim?",
+            "O Seu Jacó falou mal de mim? Ele fala mal de todo mundo, é a idade."
+          ]
+        }
+      ],
+      "sugestao": true
+    },
+    {
+      "id": "toninho_do_barco",
+      "name": "Toninho do Barco",
+      "categoria": "menor",
+      "lado": "neutro",
+      "quemE": "O vizinho do Delta cujo barco Bruno Ferro, o Capataz, está levando por uma dívida no nível 7.",
+      "apresentacao": "presencial",
+      "visual": { "descricao": "Bermuda de pescador, regata furada e um remo sem barco", "piada": "Carrega o remo pra todo lado, por esperança", "artKey": "npc_toninho_do_barco" },
+      "regioes": ["delta"],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "pedido_de_ajuda",
+          "linhas": [
+            "Ele levou meu barco! Disse que eu devia. Devia o quê? Ele disse: \"juros\".",
+            "Sem barco eu não pesco, sem peixe eu não pago, sem pagar ele leva a casa. É um plano de negócios."
+          ]
+        },
+        {
+          "contexto": "agradecimento",
+          "linhas": [
+            "Meu barco! Tá até mais limpo. Ele devia estar planejando vender.",
+            "Leva esse peixe. É o que eu tenho. É o que todo mundo no Delta tem."
+          ]
+        }
+      ],
+      "sugestao": true
+    },
+    {
+      "id": "vizinha_da_bracadeira",
+      "name": "Vizinha da Braçadeira",
+      "categoria": "menor",
+      "lado": "esquerda",
+      "quemE": "Quem reclama demais da cota recebe a visita da Guarda Comunitária, que é a vizinha do lado com uma braçadeira.",
+      "apresentacao": "presencial",
+      "visual": { "descricao": "Roupão florido, chinelo, braçadeira da Guarda Comunitária e um caderninho com caneta presa por barbante", "piada": "A cortina da casa dela se mexe sozinha quando alguém passa", "artKey": "npc_vizinha_da_bracadeira", "sugestao": true },
+      "regioes": ["margem_esquerda"],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "ronda",
+          "linhas": [
+            "Boa noite. Saindo a essa hora? Não é nada. Só anotando.",
+            "Você pegou mais abóbora do que a cota? Não precisa responder. Eu já sei.",
+            "Não sou fiscal, sou vizinha. A braçadeira é só pra todo mundo saber que eu sou vizinha.",
+            "Criticou o retrato da Voz? Que pena. Abriram uma comissão. Você está nela."
+          ],
+          "sugestao": true
+        }
+      ],
+      "sugestaoCampos": ["name", "visual", "falas"]
+    },
+    {
+      "id": "entregador_de_app",
+      "name": "Entregador de App",
+      "categoria": "menor",
+      "lado": "direita",
+      "quemE": "Entregador do app do Consórcio. Ninguém é empregado: ele é parceiro, empreendedor de si mesmo, e paga o aluguel da bicicleta para trabalhar.",
+      "apresentacao": "presencial",
+      "visual": { "descricao": "Mochila térmica maior que ele, capacete com câmera e bicicleta elétrica alugada piscando \"BATERIA 4%\"", "piada": "A nota dele flutua em cima da cabeça e cai a cada esbarrão", "artKey": "npc_entregador_de_app" },
+      "regioes": ["margem_direita"],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "aleatorias",
+          "linhas": [
+            "Licença, licença! Tenho noventa segundos pra atravessar o bairro ou minha nota cai.",
+            "Sou empreendedor de mim mesmo. Meu chefe sou eu. Eu sou um chefe horrível.",
+            "Cinco estrelas, por favor. Com quatro eu saio do app.",
+            "A taxa de entrega subiu porque choveu. Não choveu? Então subiu porque não choveu."
+          ]
+        }
+      ],
+      "sugestao": true
+    },
+    {
+      "id": "funcionario_da_cabine_neon",
+      "name": "Funcionário da Cabine Neon",
+      "categoria": "menor",
+      "lado": "direita",
+      "quemE": "Atende a Cabine Neon, a Máquina de Visual da Direita, que é grátis e mesmo assim mostra os termos de uso inteiros antes de abrir.",
+      "apresentacao": "presencial",
+      "visual": { "descricao": "Uniforme neon justo, crachá \"ESPECIALISTA EM EXPERIÊNCIA\" e um tablet com os termos de uso que nunca terminam de rolar", "piada": "O rolo dos termos de uso sai do tablet e arrasta no chão", "artKey": "npc_funcionario_da_cabine_neon", "sugestao": true },
+      "regioes": ["margem_direita"],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "maquina_de_visual",
+          "descricao": "Falas da Cabine Neon (institutions.maquinasVisual[cabine_neon]); a primeira toca ao abrir, antes dos termos de uso.",
+          "linhas": [
+            "Bem-vindo à Cabine Neon, colaborador! Antes de ficar lindo, só uns termos rapidinhos.",
+            "Grátis pra você! É só ler e aceitar os termos. São só 214 páginas.",
+            "Seu novo eu está a um aceite de distância.",
+            "Visual atualizado. Seu score de simpatia subiu 0,3%.",
+            "Detectamos uma olheira. Deseja conhecer nossos planos de sono?",
+            "Rolar até o fim conta como leitura. A gente sabe que você não leu. Tudo bem, ninguém lê.",
+            "Seu visual novo foi salvo na nuvem. A nuvem é nossa."
+          ],
+          "sugestao": true
+        }
+      ],
+      "sugestaoCampos": ["name", "visual", "falas"]
+    },
+    {
+      "id": "benzedeira_do_espelho",
+      "name": "Benzedeira do Espelho",
+      "categoria": "menor",
+      "lado": "esquerda",
+      "quemE": "Cuida do Espelho da Benzedeira, a Máquina de Visual da Esquerda, grátis e sem limite de uso.",
+      "apresentacao": "presencial",
+      "visual": { "descricao": "Xale de crochê, ramo de arruda atrás da orelha e um espelho de moldura entalhada maior que ela", "piada": "O reflexo dela no espelho sempre chega meio segundo atrasado", "artKey": "npc_benzedeira_do_espelho", "sugestao": true },
+      "regioes": ["margem_esquerda"],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "maquina_de_visual",
+          "descricao": "Falas do Espelho da Benzedeira (institutions.maquinasVisual[espelho_da_benzedeira]); a primeira toca ao abrir.",
+          "linhas": [
+            "Senta aí. A cara a gente ajeita; o chapéu da ala fica, que esse é benzido.",
+            "Senta, que o espelho não morde. Quem morde é a fila.",
+            "Pode mudar a cara à vontade. A Assembleia te reconhece pelo jeito de reclamar.",
+            "Benzi o espelho hoje cedo. Se aparecer outra pessoa nele, não é comigo.",
+            "Senta na frente do espelho e não faz careta, que ele grava.",
+            "De graça e sem fila. A única coisa da Esquerda sem fila. Não espalha.",
+            "Mudou de cara? O espírito guia vai demorar um pouco pra te reconhecer. Faz parte."
+          ],
+          "sugestao": true
+        }
+      ],
+      "sugestaoCampos": ["name", "visual", "falas"]
+    },
+    {
+      "id": "cambista_da_ponte",
+      "name": "Cambista da Ponte",
+      "categoria": "menor",
+      "lado": "neutro",
+      "quemE": "Atende o câmbio na ponte, onde Semente vira Crédito e o contrário, com cotação que muda conforme o mapa.",
+      "apresentacao": "presencial",
+      "visual": { "descricao": "Colete de duas cores, metade verde-musgo e metade neon, e duas calculadoras, uma de madeira e outra holográfica", "piada": "O placar de cotação atrás dele troca de número enquanto ele fala", "artKey": "npc_cambista_da_ponte" },
+      "regioes": ["usina_da_ponte"],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "cambio",
+          "linhas": [
+            "Semente pra Crédito ou Crédito pra Semente? Tanto faz, eu ganho nos dois.",
+            "A cotação mudou. Mudou agora. Mudou de novo. Quer trocar ou quer assistir?",
+            "Na ponte ninguém tem lado. Só taxa."
+          ]
+        }
+      ],
+      "sugestao": true
+    }
+  ],
+  "herois": [
+    {
+      "id": "ana_ferreira",
+      "name": "Ana Ferreira",
+      "quemE": "Engenheira que desenhou a Usina da Ponte.",
+      "homenagens": [
+        { "tipo": "unico", "name": "Régua de Ana Ferreira", "descricao": "Barreiras e totens também dão defesa a quem está perto" },
+        { "tipo": "lugar_que_ensina", "name": "Museu da Cidade Unida", "descricao": "Você estuda as plantas de Ana Ferreira" }
+      ],
+      "placa": "Avenida Engenheira Ana Ferreira, que desenhou a ponte que hoje a cidade divide.",
+      "sugestaoCampos": ["placa"]
+    },
+    {
+      "id": "cesar_portollan",
+      "name": "César Portollan",
+      "quemE": "Eletricista lendário que manteve o hospital aceso durante a guerra civil.",
+      "homenagens": [
+        { "tipo": "unico", "name": "Colete de César Portollan", "descricao": "Libera Emenda de Cobre: religa uma estrutura ou um robô destruído; recarga de 60 s" },
+        { "tipo": "lugar_que_ensina", "name": "Hospital antigo", "descricao": "Uma enfermeira conta como César Portollan manteve a luz acesa na guerra" }
+      ],
+      "placa": "Rua Eletricista César Portollan. Iluminação pública: em manutenção.",
+      "sugestaoCampos": ["placa"]
+    },
+    {
+      "id": "celeste_amaral",
+      "name": "Dona Celeste Amaral",
+      "quemE": "Parteira do Delta que trouxe ao mundo metade da cidade.",
+      "homenagens": [
+        { "tipo": "unico", "name": "Bisturi de Dona Celeste", "descricao": "Levantar aliados caídos leva metade do tempo" },
+        { "tipo": "lugar_que_ensina", "name": "Palafitas do Delta", "descricao": "Você rema com Seu Jacó pelo caminho de Dona Celeste" }
+      ],
+      "placa": "Passarela Dona Celeste Amaral, que trouxe ao mundo metade de quem passa por aqui.",
+      "sugestaoCampos": ["placa"]
+    },
+    {
+      "id": "joaquim_vidal",
+      "name": "Tenente Joaquim Vidal",
+      "quemE": "Segurou a ponte sozinho por uma madrugada inteira.",
+      "homenagens": [
+        { "tipo": "unico", "name": "Capacete do Tenente Vidal", "descricao": "Provocações duram 1 s a mais e dão +10% de defesa" },
+        { "tipo": "lugar_que_ensina", "name": "Marco do Tenente Vidal", "descricao": "Você monta guarda uma madrugada inteira na ponte" }
+      ],
+      "placa": "Marco do Tenente Joaquim Vidal. Aqui ele segurou a ponte sozinho por uma madrugada inteira. Hoje são precisos dois postos de controle.",
+      "sugestaoCampos": ["placa"]
+    },
+    {
+      "id": "rosa_tavares",
+      "name": "Rosa Tavares",
+      "quemE": "A primeira voz da rádio da Ilha do Farol.",
+      "homenagens": [
+        { "tipo": "unico", "name": "Fones de Rosa Tavares", "descricao": "Mostra os avisos de ataque inimigo 0,5 s mais cedo" },
+        { "tipo": "lugar_que_ensina", "name": "Arquivo da Ilha do Farol", "descricao": "Você ouve as fitas de Rosa Tavares" }
+      ],
+      "placa": "Farol Rosa Tavares. Frequência oficial: desligada. Frequência extraoficial: sempre no ar.",
+      "sugestaoCampos": ["placa"]
+    },
+    {
+      "id": "elias_monteiro",
+      "name": "Professor Elias Monteiro",
+      "quemE": "Ensinava xadrez e estratégia na praça.",
+      "homenagens": [
+        { "tipo": "unico", "name": "Peão do Professor Elias", "descricao": "Reforços recarregam 30% mais rápido" },
+        { "tipo": "lugar_que_ensina", "name": "Praça do xadrez", "descricao": "Você joga com um ex-aluno do Professor Elias" }
+      ],
+      "placa": "Praça Professor Elias Monteiro. Proibido jogar damas.",
+      "sugestaoCampos": ["placa"]
+    },
+    {
+      "id": "bento_saraiva",
+      "name": "Bento Saraiva",
+      "quemE": "Marinheiro que abriu a rota de comboios pelo rio.",
+      "homenagens": [
+        { "tipo": "unico", "name": "Botas de Bento Saraiva", "descricao": "Comboio que você escolta ignora a primeira emboscada" },
+        { "tipo": "lugar_que_ensina", "name": "Bar do porto", "descricao": "Um marinheiro conta a rota de Bento Saraiva" }
+      ],
+      "placa": "Cais Bento Saraiva. A rota que ele abriu hoje tem pedágio dos dois lados.",
+      "sugestaoCampos": ["placa"]
+    },
+    {
+      "id": "lucia_barreto",
+      "name": "Lúcia Barreto",
+      "quemE": "Pintou os murais da cidade unida.",
+      "homenagens": [
+        { "tipo": "lugar_que_ensina", "name": "Murais de Lúcia Barreto", "descricao": "Você copia um rosto no caderno" }
+      ],
+      "placa": "Muro Lúcia Barreto. Cartaz colado aqui é falta de respeito. Das duas margens.",
+      "sugestaoCampos": ["placa"]
+    },
+    {
+      "id": "ze_faisca",
+      "name": "Zé Faísca",
+      "quemE": "Boxeador do porto que nunca perdeu uma luta de rua.",
+      "homenagens": [
+        { "tipo": "unico", "name": "Jaqueta do Zé Faísca", "descricao": "Ataques corpo a corpo têm 15% de chance de atordoar por 1 s" },
+        { "tipo": "lugar_que_ensina", "name": "Ringue do porto", "descricao": "Você treina com o sobrinho do Zé Faísca" }
+      ],
+      "placa": "Ringue Zé Faísca. Invicto na rua. A rua também.",
+      "sugestaoCampos": ["placa"]
+    },
+    {
+      "id": "marta_quintela",
+      "name": "Marta Quintela",
+      "quemE": "Mineira que achou o primeiro veio de chopindita e batizou a pedra no bar do porto.",
+      "homenagens": [
+        { "tipo": "unico", "name": "Calça de Mineira de Marta", "descricao": "+recurso da classe; revela veios de chopindita no mapa" },
+        { "tipo": "lugar_que_ensina", "name": "Mina velha da Serra", "descricao": "Você segue as marcas de Marta Quintela" },
+        { "tipo": "nome", "name": "Chopindita", "descricao": "O nome veio do bar do porto, onde Marta Quintela mostrou a primeira pedra a um balcão inteiro que achou que era cerveja." }
+      ],
+      "placa": "Bar do Porto, onde Marta Quintela batizou a chopindita. Não, a pedra não está no cardápio.",
+      "sugestaoCampos": ["placa"]
+    }
+  ]
+}

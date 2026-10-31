@@ -1,0 +1,337 @@
+{
+  "corpos": [
+    { "id": "baixinho", "name": "Baixinho", "artKey": "corpo_baixinho", "descricao": "Pouca altura e muita opinião.", "offsetCabecaPx": 3, "larguraExtraPx": 0, "sugestaoCampos": ["descricao", "offsetCabecaPx", "larguraExtraPx"] },
+    { "id": "medio", "name": "Médio", "artKey": "corpo_medio", "descricao": "O corpo padrão de quem ainda não escolheu lado.", "offsetCabecaPx": 0, "larguraExtraPx": 0, "sugestaoCampos": ["descricao", "offsetCabecaPx", "larguraExtraPx"] },
+    { "id": "alto_e_magrelo", "name": "Alto e magrelo", "artKey": "corpo_alto_e_magrelo", "descricao": "Bate a cabeça em toda palafita do Delta.", "offsetCabecaPx": -3, "larguraExtraPx": -1, "sugestaoCampos": ["descricao", "offsetCabecaPx", "larguraExtraPx"] },
+    { "id": "fortao", "name": "Fortão", "artKey": "corpo_fortao", "descricao": "Ombro largo, camiseta sofrendo.", "offsetCabecaPx": -1, "larguraExtraPx": 2, "sugestaoCampos": ["descricao", "offsetCabecaPx", "larguraExtraPx"] },
+    { "id": "barrigudo", "name": "Barrigudo", "artKey": "corpo_barrigudo", "descricao": "Patrimônio construído em anos de feira e de app de entrega.", "offsetCabecaPx": 0, "larguraExtraPx": 3, "sugestaoCampos": ["descricao", "offsetCabecaPx", "larguraExtraPx"] }
+  ],
+  "peles": [
+    { "id": "tom_1", "name": "Tom 1", "artKey": "pele_tom_1", "descricao": "Os 12 tons vão do mais claro (1) ao mais escuro (12).", "hex": "#f9dcc4", "hexSombra": "#e8bfa3", "zoeiro": false, "sugestaoCampos": ["name", "descricao", "hex", "hexSombra"] },
+    { "id": "tom_2", "name": "Tom 2", "artKey": "pele_tom_2", "hex": "#f3cfae", "hexSombra": "#dfb18d", "zoeiro": false, "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "tom_3", "name": "Tom 3", "artKey": "pele_tom_3", "hex": "#eec39a", "hexSombra": "#d6a57b", "zoeiro": false, "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "tom_4", "name": "Tom 4", "artKey": "pele_tom_4", "hex": "#e3b07f", "hexSombra": "#c99364", "zoeiro": false, "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "tom_5", "name": "Tom 5", "artKey": "pele_tom_5", "hex": "#d9a06b", "hexSombra": "#bd8452", "zoeiro": false, "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "tom_6", "name": "Tom 6", "artKey": "pele_tom_6", "hex": "#c98d5a", "hexSombra": "#ad7244", "zoeiro": false, "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "tom_7", "name": "Tom 7", "artKey": "pele_tom_7", "hex": "#b97a49", "hexSombra": "#9c6036", "zoeiro": false, "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "tom_8", "name": "Tom 8", "artKey": "pele_tom_8", "hex": "#a5683c", "hexSombra": "#88512b", "zoeiro": false, "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "tom_9", "name": "Tom 9", "artKey": "pele_tom_9", "hex": "#8f5632", "hexSombra": "#734124", "zoeiro": false, "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "tom_10", "name": "Tom 10", "artKey": "pele_tom_10", "hex": "#7a4628", "hexSombra": "#5f331b", "zoeiro": false, "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "tom_11", "name": "Tom 11", "artKey": "pele_tom_11", "hex": "#63371f", "hexSombra": "#4a2714", "zoeiro": false, "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "tom_12", "name": "Tom 12", "artKey": "pele_tom_12", "hex": "#4b2815", "hexSombra": "#351b0d", "zoeiro": false, "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    {
+      "id": "vermelho_de_sol",
+      "name": "Vermelho de sol",
+      "artKey": "pele_vermelho_de_sol",
+      "descricao": "Quem rema sem chapéu volta assim.",
+      "hex": "#e8735a",
+      "hexSombra": "#c95440",
+      "zoeiro": true,
+      "desbloqueio": { "descricao": "Remar com o Seu Jacó pelas Palafitas do Delta 3 vezes (a 3ª visita do lugar que ensina).", "tipo": "licao", "chave": "palafitas_do_delta", "meta": 3, "sugestao": true },
+      "sugestaoCampos": ["descricao", "hex", "hexSombra"]
+    },
+    {
+      "id": "marca_de_regata",
+      "name": "Marca de regata",
+      "artKey": "pele_marca_de_regata",
+      "descricao": "Bronzeado de quem trabalha no sol. A marca da regata fica clara por cima do tom.",
+      "hex": "#c98d5a",
+      "hexSombra": "#ad7244",
+      "hexSecundario": "#f3cfae",
+      "zoeiro": true,
+      "desbloqueio": { "descricao": "Derrotar 200 inimigos no mapa aberto, debaixo do sol.", "tipo": "contador", "chave": "inimigos_derrotados_mapa", "meta": 200, "sugestao": true },
+      "sugestaoCampos": ["descricao", "hex", "hexSombra", "hexSecundario"]
+    },
+    {
+      "id": "cinza_de_quem_nao_dorme",
+      "name": "Cinza de quem não dorme",
+      "artKey": "pele_cinza_de_quem_nao_dorme",
+      "descricao": "Combina com olheira. E com boleto.",
+      "hex": "#b7b4ae",
+      "hexSombra": "#96938d",
+      "zoeiro": true,
+      "desbloqueio": { "descricao": "Descer até o andar 5 das Galerias da Usina e derrotar a Bomba Descontrolada. Quem passa tanto tempo embaixo da ponte esquece a cor do sol.", "tipo": "masmorra", "chave": "galerias_da_usina", "meta": 5, "sugestao": true },
+      "sugestaoCampos": ["descricao", "hex", "hexSombra"]
+    }
+  ],
+  "rostos": [
+    {
+      "id": "cara_de_sono", "name": "Cara de sono", "artKey": "rosto_cara_de_sono", "descricao": "Pálpebra a meio mastro, sempre.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_cara_de_sono_briga", "descricao": "Abre um olho só, irritado de ter acordado." },
+        "vitoria": { "artKey": "rosto_cara_de_sono_vitoria", "descricao": "Bocejo satisfeito." },
+        "derrota": { "artKey": "rosto_cara_de_sono_derrota", "descricao": "Dorme ali mesmo, com bolha de ronco." }
+      },
+      "sugestaoCampos": ["descricao", "expressoes"]
+    },
+    {
+      "id": "sorriso_amarelo", "name": "Sorriso amarelo", "artKey": "rosto_sorriso_amarelo", "descricao": "O sorriso de quem ouviu \"somos uma família\".",
+      "expressoes": {
+        "briga": { "artKey": "rosto_sorriso_amarelo_briga", "descricao": "Sorriso amarelo com gota de suor." },
+        "vitoria": { "artKey": "rosto_sorriso_amarelo_vitoria", "descricao": "Sorriso amarelo, agora aliviado." },
+        "derrota": { "artKey": "rosto_sorriso_amarelo_derrota", "descricao": "Sorriso amarelo que não sai nem caído." }
+      },
+      "sugestaoCampos": ["descricao", "expressoes"]
+    },
+    {
+      "id": "sobrancelha_de_vilao", "name": "Sobrancelha de vilão", "artKey": "rosto_sobrancelha_de_vilao", "descricao": "Uma sobrancelha mora mais alto que a outra.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_sobrancelha_de_vilao_briga", "descricao": "Sobrancelha sobe até a franja." },
+        "vitoria": { "artKey": "rosto_sobrancelha_de_vilao_vitoria", "descricao": "Risada de vilão de novela, mão no queixo." },
+        "derrota": { "artKey": "rosto_sobrancelha_de_vilao_derrota", "descricao": "\"Isso não acaba aqui.\" Acaba." }
+      },
+      "sugestaoCampos": ["descricao", "expressoes"]
+    },
+    {
+      "id": "tranquilo", "name": "Tranquilo", "artKey": "rosto_tranquilo", "descricao": "Rosto padrão de quem ainda não pagou nenhum boleto.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_tranquilo_briga", "descricao": "Testa franzida, boca reta." },
+        "vitoria": { "artKey": "rosto_tranquilo_vitoria", "descricao": "Sorriso aberto." },
+        "derrota": { "artKey": "rosto_tranquilo_derrota", "descricao": "Olhos em X." }
+      },
+      "sugestao": true
+    },
+    {
+      "id": "sorridente", "name": "Sorridente", "artKey": "rosto_sorridente", "descricao": "Sorri até para a fila do posto.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_sorridente_briga", "descricao": "Sorriso cerrado, dentes à mostra." },
+        "vitoria": { "artKey": "rosto_sorridente_vitoria", "descricao": "Sorriso que fecha os olhos." },
+        "derrota": { "artKey": "rosto_sorridente_derrota", "descricao": "Ainda sorri, mas chorando." }
+      },
+      "sugestao": true
+    },
+    {
+      "id": "cara_fechada", "name": "Cara fechada", "artKey": "rosto_cara_fechada", "descricao": "Já acorda bravo com a cota.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_cara_fechada_briga", "descricao": "Mais fechada ainda, com veia na testa." },
+        "vitoria": { "artKey": "rosto_cara_fechada_vitoria", "descricao": "Canto da boca sobe um pixel." },
+        "derrota": { "artKey": "rosto_cara_fechada_derrota", "descricao": "Bufa e cruza os braços no chão." }
+      },
+      "sugestao": true
+    },
+    {
+      "id": "desconfiado", "name": "Desconfiado", "artKey": "rosto_desconfiado", "descricao": "Olho apertado de quem já comprou chopindita barata.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_desconfiado_briga", "descricao": "Olhos estreitos, um mais que o outro." },
+        "vitoria": { "artKey": "rosto_desconfiado_vitoria", "descricao": "\"Sabia.\"" },
+        "derrota": { "artKey": "rosto_desconfiado_derrota", "descricao": "\"Sabia também.\"" }
+      },
+      "sugestao": true
+    },
+    {
+      "id": "olho_arregalado", "name": "Olho arregalado", "artKey": "rosto_olho_arregalado", "descricao": "Viu a conta de luz e nunca mais piscou.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_olho_arregalado_briga", "descricao": "Pupila pequenininha de pânico." },
+        "vitoria": { "artKey": "rosto_olho_arregalado_vitoria", "descricao": "Arregalado de alegria." },
+        "derrota": { "artKey": "rosto_olho_arregalado_derrota", "descricao": "Arregalado, olhando o teto." }
+      },
+      "sugestao": true
+    },
+    {
+      "id": "cara_de_paisagem", "name": "Cara de paisagem", "artKey": "rosto_cara_de_paisagem", "descricao": "Nenhuma emoção registrada em ata.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_cara_de_paisagem_briga", "descricao": "A mesma cara, só que batendo." },
+        "vitoria": { "artKey": "rosto_cara_de_paisagem_vitoria", "descricao": "A mesma cara, com confete." },
+        "derrota": { "artKey": "rosto_cara_de_paisagem_derrota", "descricao": "A mesma cara, deitada." }
+      },
+      "sugestao": true
+    },
+    {
+      "id": "sorriso_de_canto", "name": "Sorriso de canto", "artKey": "rosto_sorriso_de_canto", "descricao": "Sabe de alguma coisa e não vai contar.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_sorriso_de_canto_briga", "descricao": "Sorriso de canto e olhar de lado." },
+        "vitoria": { "artKey": "rosto_sorriso_de_canto_vitoria", "descricao": "Piscada de quem armou tudo." },
+        "derrota": { "artKey": "rosto_sorriso_de_canto_derrota", "descricao": "O sorriso cai para o outro canto." }
+      },
+      "sugestao": true
+    },
+    {
+      "id": "cara_de_boleto", "name": "Cara de boleto", "artKey": "rosto_cara_de_boleto", "descricao": "Testa enrugada de quem faz conta no fim do mês.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_cara_de_boleto_briga", "descricao": "Morde o lábio como quem calcula juros." },
+        "vitoria": { "artKey": "rosto_cara_de_boleto_vitoria", "descricao": "Alívio de quem pagou no vencimento." },
+        "derrota": { "artKey": "rosto_cara_de_boleto_derrota", "descricao": "Lágrima com cifrão." }
+      },
+      "sugestao": true
+    },
+    {
+      "id": "cara_de_assembleia", "name": "Cara de assembleia", "artKey": "rosto_cara_de_assembleia", "descricao": "Olhar de quem está na pauta 47 de 112.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_cara_de_assembleia_briga", "descricao": "Acorda num susto e já sai batendo." },
+        "vitoria": { "artKey": "rosto_cara_de_assembleia_vitoria", "descricao": "Ergue a mão como quem vota a favor." },
+        "derrota": { "artKey": "rosto_cara_de_assembleia_derrota", "descricao": "Cabeça caída como no terceiro intervalo." }
+      },
+      "sugestao": true
+    },
+    {
+      "id": "piscadinha", "name": "Piscadinha", "artKey": "rosto_piscadinha", "descricao": "Pisca para todo mundo, inclusive para o inimigo.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_piscadinha_briga", "descricao": "Pisca e mostra a língua." },
+        "vitoria": { "artKey": "rosto_piscadinha_vitoria", "descricao": "Piscadinha com estrelinha." },
+        "derrota": { "artKey": "rosto_piscadinha_derrota", "descricao": "Os dois olhos fechados, sem charme nenhum." }
+      },
+      "sugestao": true
+    },
+    {
+      "id": "bochechudo", "name": "Bochechudo", "artKey": "rosto_bochechudo", "descricao": "Bochecha que a Babushka aprova.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_bochechudo_briga", "descricao": "Bochecha estufada de raiva." },
+        "vitoria": { "artKey": "rosto_bochechudo_vitoria", "descricao": "Bochecha vermelha de orgulho." },
+        "derrota": { "artKey": "rosto_bochechudo_derrota", "descricao": "Bochecha murcha." }
+      },
+      "sugestao": true
+    },
+    {
+      "id": "olhar_perdido", "name": "Olhar perdido", "artKey": "rosto_olhar_perdido", "descricao": "Pegou o barco errado e ficou.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_olhar_perdido_briga", "descricao": "Olha para o lado errado e bate assim mesmo." },
+        "vitoria": { "artKey": "rosto_olhar_perdido_vitoria", "descricao": "\"Ganhei? Eu?\"" },
+        "derrota": { "artKey": "rosto_olhar_perdido_derrota", "descricao": "Olhar perdido, agora no chão." }
+      },
+      "sugestao": true
+    },
+    {
+      "id": "nariz_empinado", "name": "Nariz empinado", "artKey": "rosto_nariz_empinado", "descricao": "Olha todo mundo de cima, como se morasse no Mirante.",
+      "expressoes": {
+        "briga": { "artKey": "rosto_nariz_empinado_briga", "descricao": "Nariz ainda mais alto, olho de nojo." },
+        "vitoria": { "artKey": "rosto_nariz_empinado_vitoria", "descricao": "Assopra as unhas." },
+        "derrota": { "artKey": "rosto_nariz_empinado_derrota", "descricao": "Nariz no chão, pela primeira vez." }
+      },
+      "sugestao": true
+    }
+  ],
+  "cortes": [
+    { "id": "careca", "name": "Careca", "artKey": "cabelo_careca", "descricao": "Brilha no sol do Delta.", "tingivel": false, "semCabelo": true, "cobreCabeca": false, "sugestaoCampos": ["descricao"] },
+    { "id": "mullet", "name": "Mullet", "artKey": "cabelo_mullet", "descricao": "Negócio na frente, assembleia atrás.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestaoCampos": ["descricao"] },
+    { "id": "topete_de_gala", "name": "Topete de galã", "artKey": "cabelo_topete_de_gala", "descricao": "Meio pote de gel e muita fé.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestaoCampos": ["descricao"] },
+    { "id": "calvicie_penteada", "name": "Calvície com cabelo penteado por cima", "artKey": "cabelo_calvicie_penteada", "descricao": "Engana ninguém, mas com dignidade.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestaoCampos": ["descricao"] },
+    { "id": "black_power", "name": "Black power", "artKey": "cabelo_black_power", "descricao": "Ocupa meio tile e não pede licença.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestaoCampos": ["descricao"] },
+    { "id": "moicano", "name": "Moicano", "artKey": "cabelo_moicano", "descricao": "Uma crista só, convicção inteira.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestaoCampos": ["descricao"] },
+    { "id": "bone", "name": "Boné", "artKey": "cabelo_bone", "descricao": "Boné que nunca sai da cabeça. A cor de cabelo escolhida pinta o boné.", "tingivel": true, "semCabelo": false, "cobreCabeca": true, "sugestaoCampos": ["descricao", "tingivel"] },
+    { "id": "curtinho_social", "name": "Curtinho social", "artKey": "cabelo_curtinho_social", "descricao": "Corte de entrevista de emprego.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestao": true },
+    { "id": "raspado", "name": "Raspado", "artKey": "cabelo_raspado", "descricao": "Máquina um, sem conversa.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestao": true },
+    { "id": "franja_reta", "name": "Franja reta", "artKey": "cabelo_franja_reta", "descricao": "Cortada com régua. Talvez a de Ana Ferreira.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestao": true },
+    { "id": "coque", "name": "Coque", "artKey": "cabelo_coque", "descricao": "Coque no alto, paz por fora.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestao": true },
+    { "id": "rabo_de_cavalo", "name": "Rabo de cavalo", "artKey": "cabelo_rabo_de_cavalo", "descricao": "Balança quando corre. Corre muito.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestao": true },
+    { "id": "trancas", "name": "Tranças", "artKey": "cabelo_trancas", "descricao": "Duas tranças que viram chicote no giro.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestao": true },
+    { "id": "dreads", "name": "Dreads", "artKey": "cabelo_dreads", "descricao": "Pesados e com histórias dentro.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestao": true },
+    { "id": "cacheado", "name": "Cacheado", "artKey": "cabelo_cacheado", "descricao": "Volume que a umidade do rio só aumenta.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestao": true },
+    { "id": "liso_comprido", "name": "Liso comprido", "artKey": "cabelo_liso_comprido", "descricao": "Vai até as costas e esconde a piada da roupa.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestao": true },
+    { "id": "chanel", "name": "Chanel", "artKey": "cabelo_chanel", "descricao": "Reto na altura do queixo, cara de quem pede para falar com o gerente.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestao": true },
+    { "id": "cuia", "name": "Cuia", "artKey": "cabelo_cuia", "descricao": "Corte de tigela, feito pela mãe em 2066.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestao": true },
+    { "id": "espetado_de_gel", "name": "Espetado de gel", "artKey": "cabelo_espetado_de_gel", "descricao": "Cada ponta é uma ameaça.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestao": true },
+    { "id": "corte_feito_em_casa", "name": "Corte feito em casa", "artKey": "cabelo_corte_feito_em_casa", "descricao": "Um lado curto, outro lado arrependimento.", "tingivel": true, "semCabelo": false, "cobreCabeca": false, "sugestao": true }
+  ],
+  "coresCabelo": [
+    { "id": "preto", "name": "Preto", "artKey": "cor_cabelo_preto", "hex": "#1e1a1a", "hexSombra": "#0e0b0b", "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "castanho_escuro", "name": "Castanho-escuro", "artKey": "cor_cabelo_castanho_escuro", "hex": "#3d2617", "hexSombra": "#29180e", "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "castanho_claro", "name": "Castanho-claro", "artKey": "cor_cabelo_castanho_claro", "hex": "#6e4628", "hexSombra": "#53331b", "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "loiro", "name": "Loiro", "artKey": "cor_cabelo_loiro", "hex": "#d9b464", "hexSombra": "#b8933f", "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "loiro_de_farmacia", "name": "Loiro de farmácia", "artKey": "cor_cabelo_loiro_de_farmacia", "descricao": "Com a raiz aparecendo, de propósito ou não.", "hex": "#f0e08a", "hexSombra": "#cdbb5e", "sugestaoCampos": ["name", "descricao", "hex", "hexSombra"] },
+    { "id": "ruivo", "name": "Ruivo", "artKey": "cor_cabelo_ruivo", "hex": "#b4522a", "hexSombra": "#8e3c1c", "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "grisalho", "name": "Grisalho", "artKey": "cor_cabelo_grisalho", "descricao": "Cada fio branco é uma assembleia ou um trimestre.", "hex": "#8d8a86", "hexSombra": "#6c6a66", "sugestaoCampos": ["name", "descricao", "hex", "hexSombra"] },
+    { "id": "branco", "name": "Branco", "artKey": "cor_cabelo_branco", "hex": "#e8e6e1", "hexSombra": "#c4c1ba", "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "cor_de_chopindita", "name": "Cor de chopindita", "artKey": "cor_cabelo_cor_de_chopindita", "descricao": "Dourado cor de chope. Tem gente que jura que brilha no escuro.", "hex": "#e0a526", "hexSombra": "#b07c12", "sugestaoCampos": ["name", "descricao", "hex", "hexSombra"] },
+    { "id": "verde_musgo", "name": "Verde-musgo", "artKey": "cor_cabelo_verde_musgo", "hex": "#5a6b2f", "hexSombra": "#435020", "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "rosa_neon", "name": "Rosa-neon", "artKey": "cor_cabelo_rosa_neon", "hex": "#ff4fb4", "hexSombra": "#d02d8c", "sugestaoCampos": ["name", "hex", "hexSombra"] },
+    { "id": "azul_eletrico", "name": "Azul-elétrico", "artKey": "cor_cabelo_azul_eletrico", "hex": "#2f7dff", "hexSombra": "#1b58c7", "sugestaoCampos": ["name", "hex", "hexSombra"] }
+  ],
+  "detalhes": [
+    { "id": "barba", "name": "Barba", "artKey": "detalhe_barba", "grupo": "barba", "excluiGrupos": ["cavanhaque"], "usaCorDoCabelo": true, "sugestaoCampos": ["excluiGrupos", "usaCorDoCabelo"] },
+    { "id": "bigode", "name": "Bigode", "artKey": "detalhe_bigode", "grupo": "bigode", "excluiGrupos": [], "usaCorDoCabelo": true, "sugestaoCampos": ["usaCorDoCabelo"] },
+    { "id": "cavanhaque", "name": "Cavanhaque", "artKey": "detalhe_cavanhaque", "grupo": "cavanhaque", "excluiGrupos": ["barba"], "usaCorDoCabelo": true, "sugestaoCampos": ["excluiGrupos", "usaCorDoCabelo"] },
+    { "id": "oculos", "name": "Óculos", "artKey": "detalhe_oculos", "descricao": "Remendado com fita na ponte do nariz.", "grupo": "oculos", "excluiGrupos": [], "usaCorDoCabelo": false, "sugestaoCampos": ["descricao"] },
+    { "id": "cicatriz", "name": "Cicatriz", "artKey": "detalhe_cicatriz", "descricao": "Diz que foi briga. Foi a porta da palafita.", "grupo": "cicatriz", "excluiGrupos": [], "usaCorDoCabelo": false, "sugestaoCampos": ["descricao"] },
+    { "id": "pinta", "name": "Pinta", "artKey": "detalhe_pinta", "grupo": "pinta", "excluiGrupos": [], "usaCorDoCabelo": false },
+    { "id": "dente_de_ouro", "name": "Dente de ouro", "artKey": "detalhe_dente_de_ouro", "descricao": "Brilha um pixel quando sorri.", "grupo": "dente_de_ouro", "excluiGrupos": [], "usaCorDoCabelo": false, "sugestaoCampos": ["descricao"] },
+    { "id": "olheira", "name": "Olheira", "artKey": "detalhe_olheira", "grupo": "olheira", "excluiGrupos": [], "usaCorDoCabelo": false },
+    { "id": "tatuagem_nome_errado", "name": "Tatuagem com o nome errado", "artKey": "detalhe_tatuagem_nome_errado", "descricao": "No braço. O jogador escolhe a tatuagem da lista; ela sempre sai errada.", "grupo": "tatuagem", "excluiGrupos": [], "usaCorDoCabelo": false, "sugestaoCampos": ["descricao"] }
+  ],
+  "tatuagemNomesErrados": [
+    { "id": "amor_eterno", "certo": "Amor Eterno", "errado": "AMOR ETERNU", "sugestao": true },
+    { "id": "mae", "certo": "Mãe", "errado": "MÃI", "sugestao": true },
+    { "id": "familia", "certo": "Família", "errado": "FAMILHA", "sugestao": true },
+    { "id": "esperanca", "certo": "Esperança", "errado": "ESPERANSSA", "sugestao": true },
+    { "id": "liberdade", "certo": "Liberdade", "errado": "LIBERDDE", "sugestao": true },
+    { "id": "sem_medo", "certo": "Sem Medo", "errado": "SEM MÊDO", "sugestao": true },
+    { "id": "vencedor", "certo": "Vencedor", "errado": "VENSEDOR", "sugestao": true },
+    { "id": "gratidao", "certo": "Gratidão", "errado": "GRATIDAUM", "sugestao": true },
+    { "id": "carpe_diem", "certo": "Carpe Diem", "errado": "CARPE DIEN", "sugestao": true },
+    { "id": "juliana", "certo": "Juliana", "errado": "JULIANNNA", "sugestao": true },
+    { "id": "raiz_fc", "certo": "Raiz FC", "errado": "RAÍS FC", "sugestao": true },
+    { "id": "neon_fc", "certo": "Neon FC", "errado": "NEOM FC", "sugestao": true },
+    { "id": "chopindita", "certo": "Chopindita", "errado": "XOPINDITA", "sugestao": true },
+    { "id": "assembleia", "certo": "Assembleia", "errado": "ASSEMBLÉA", "sugestao": true },
+    { "id": "credito", "certo": "Crédito", "errado": "CRÉDTO", "sugestao": true },
+    { "id": "duas_margens", "certo": "Duas Margens", "errado": "DUAS MARJENS", "sugestao": true },
+    { "id": "so_deus_pode_me_julgar", "certo": "Só Deus Pode Me Julgar", "errado": "SÓ DEUS PODE ME JULGA", "sugestao": true },
+    { "id": "nunca_desista", "certo": "Nunca Desista", "errado": "NUNCA DESISTA DE", "sugestao": true }
+  ],
+  "roupaInicial": {
+    "traje": "delta",
+    "pecas": [
+      { "id": "camiseta_lembranca_do_delta", "name": "Camiseta \"Lembrança do Delta\"", "artKey": "camiseta_lembranca_delta" },
+      { "id": "bermuda", "name": "Bermuda", "artKey": "bermuda_delta" },
+      { "id": "chinelo", "name": "Chinelo", "artKey": "chinelo_delta" }
+    ],
+    "estampa": "Lembrança do Delta",
+    "cores": ["delta_branco_encardido", "delta_azul_rio", "delta_laranja_boia", "delta_verde_palafita", "delta_amarelo_sol", "delta_cinza_lodo"]
+  },
+  "nome": {
+    "minCaracteres": 3,
+    "maxCaracteres": 16,
+    "permitido": "^[A-Za-zÀ-ÖØ-öø-ÿ0-9 '.\\-]+$",
+    "regras": [
+      "Nome livre: pode ser zoeiro, pode repetir o de outro jogador e pode ter palavrão leve.",
+      "O filtro barra só ofensa: ódio contra grupos, conteúdo sexual explícito e apologia a crime contra pessoas.",
+      "Entre 3 e 16 caracteres: letras com acento, números, espaço, apóstrofo, ponto e hífen.",
+      "Não pode ser só números nem só espaços; espaços repetidos viram um.",
+      "A comparação é feita no nome normalizado (minúsculas, sem acento, sem espaço e pontuação, com leetspeak trocado), para pegar truques como 'n4z1'.",
+      "Se o nome contém uma das exceções, o trecho da exceção é ignorado antes de comparar."
+    ],
+    "normalizacao": {
+      "trocas": { "4": "a", "@": "a", "3": "e", "1": "i", "!": "i", "0": "o", "5": "s", "$": "s", "7": "t", "8": "b" }
+    },
+    "padroesOfensa": [
+      "nazi",
+      "hitler",
+      "estupr",
+      "pedofil",
+      "viado",
+      "traveco",
+      "retardad",
+      "mongoloide",
+      "macaco",
+      "favelado",
+      "buceta",
+      "piroca",
+      "xoxota",
+      "putinha"
+    ],
+    "excecoes": ["enviado", "enviada", "desviado", "desviada", "nazir", "nazare", "nazario"],
+    "mensagemRecusa": "Esse nome não passou no cadastro. Nem o Seu Jacó, com a caneta falhando, escreveria isso.",
+    "sugestaoCampos": ["minCaracteres", "maxCaracteres", "permitido", "regras", "normalizacao", "padroesOfensa", "excecoes", "mensagemRecusa"]
+  },
+  "regras": {
+    "maxDetalhes": 4,
+    "umPorGrupo": true,
+    "cabecaCobertaEscondeCabelo": "O que cobre a cabeça esconde o cabelo, mas o rosto e os detalhes sempre aparecem.",
+    "silhuetaDaAlaFixa": "A máquina nunca troca a silhueta da ala: o Peão Brabo sempre tem chapéu e fivela, o Idol sempre tem franja e caixas de som.",
+    "sugestaoCampos": ["maxDetalhes", "umPorGrupo"]
+  },
+  "maquinas": {
+    "ids": ["espelho_da_benzedeira", "cabine_neon", "maquina_visual_delta"],
+    "muda": ["body", "skin", "face", "hair", "hair_color", "details", "palette", "shown_visual_tier"],
+    "paletasPorAla": 3
+  },
+  "padrao": {
+    "body": "medio",
+    "skin": "tom_6",
+    "face": "tranquilo",
+    "hair": "curtinho_social",
+    "hair_color": "castanho_escuro",
+    "details": [],
+    "palette": "delta_branco_encardido",
+    "sugestao": true
+  }
+}

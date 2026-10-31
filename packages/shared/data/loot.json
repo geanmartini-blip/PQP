@@ -1,0 +1,260 @@
+{
+  "coleta": {
+    "texto": "O saque cai no chão e é coletado sozinho ao passar perto, com filtro de raridade.",
+    "automatica": true,
+    "raioTiles": 2,
+    "filtroPadrao": "comum",
+    "filtros": ["comum", "raro", "unico", "set"],
+    "moedasEMateriaisSempre": true,
+    "sugestaoCampos": ["raioTiles", "filtroPadrao", "moedasEMateriaisSempre"]
+  },
+  "vendaAutomatica": {
+    "texto": "Itens comuns podem ir direto para a venda automática.",
+    "raridades": ["comum"],
+    "opcional": true,
+    "padraoLigada": false,
+    "fracaoDoPrecoBase": 0.4,
+    "moeda": "da_margem",
+    "sugestaoCampos": ["padraoLigada", "fracaoDoPrecoBase", "moeda"]
+  },
+  "rolagem": {
+    "texto": "Loot por rolagem individual, para ninguém brigar por item. Peças de set de grupo só caem para quem participou.",
+    "individual": true,
+    "pecasDeSetDeGrupoSoParaQuemParticipou": true,
+    "semMargemUsaDelta": true,
+    "margemDeNivel": 2,
+    "plantonistaFracao": 0.5,
+    "sugestaoCampos": ["semMargemUsaDelta", "margemDeNivel", "plantonistaFracao"]
+  },
+  "tabelas": [
+    {
+      "id": "loot_normal",
+      "name": "Saque comum",
+      "tier": "normal",
+      "rolagensItem": 1,
+      "chanceItem": 0.12,
+      "chancePorRaridade": { "comum": 0.9, "raro": 0.1, "unico": 0, "set": 0 },
+      "filtroItens": { "margem": "do_jogador", "classe": "do_jogador_ou_geral" },
+      "unicos": [],
+      "moedas": [{ "moeda": "da_margem", "chance": 0.6, "min": 2, "max": 6 }],
+      "materiais": [
+        { "id": "comida", "chance": 0.15, "min": 1, "max": 2 },
+        { "id": "pecas", "chance": 0.15, "min": 1, "max": 2 },
+        { "id": "chopindita", "chance": 0.05, "min": 1, "max": 1 }
+      ],
+      "consumiveis": [
+        { "id": "pocao", "chance": 0.05 },
+        { "id": "sopa", "chance": 0.03 }
+      ],
+      "descricao": "Inimigos normais de bando, no mapa e nas masmorras. Sets ficam fora do piloto (chance 0).",
+      "sugestaoCampos": ["name", "rolagensItem", "chanceItem", "chancePorRaridade", "moedas", "materiais", "consumiveis"]
+    },
+    {
+      "id": "loot_elite",
+      "name": "Saque de elite",
+      "tier": "elite",
+      "rolagensItem": 1,
+      "chanceItem": 0.6,
+      "chancePorRaridade": { "comum": 0.6, "raro": 0.38, "unico": 0.02, "set": 0 },
+      "filtroItens": { "margem": "do_jogador", "classe": "do_jogador_ou_geral" },
+      "unicos": ["jaqueta_do_ze_faisca", "fones_de_rosa_tavares"],
+      "moedas": [{ "moeda": "da_margem", "chance": 1, "min": 8, "max": 20 }],
+      "materiais": [
+        { "id": "comida", "chance": 0.3, "min": 1, "max": 3 },
+        { "id": "pecas", "chance": 0.4, "min": 1, "max": 3 },
+        { "id": "chopindita", "chance": 0.2, "min": 1, "max": 2 }
+      ],
+      "consumiveis": [
+        { "id": "pocao", "chance": 0.15 },
+        { "id": "energetico", "chance": 0.08 },
+        { "id": "granada", "chance": 0.08 }
+      ],
+      "descricao": "Elites com afixo. Os únicos são só os 2 do piloto.",
+      "sugestaoCampos": ["name", "rolagensItem", "chanceItem", "chancePorRaridade", "moedas", "materiais", "consumiveis"]
+    },
+    {
+      "id": "loot_chefe",
+      "name": "Saque de chefe",
+      "tier": "chefe",
+      "rolagensItem": 2,
+      "chanceItem": 1,
+      "chancePorRaridade": { "comum": 0.4, "raro": 0.5, "unico": 0.1, "set": 0 },
+      "filtroItens": { "margem": "do_jogador", "classe": "do_jogador_ou_geral" },
+      "unicos": ["jaqueta_do_ze_faisca", "fones_de_rosa_tavares"],
+      "moedas": [{ "moeda": "da_margem", "chance": 1, "min": 40, "max": 80 }],
+      "materiais": [
+        { "id": "comida", "chance": 0.5, "min": 2, "max": 4 },
+        { "id": "pecas", "chance": 0.6, "min": 2, "max": 5 },
+        { "id": "chopindita", "chance": 0.6, "min": 2, "max": 4 }
+      ],
+      "consumiveis": [
+        { "id": "pocao", "chance": 0.5 },
+        { "id": "sopa", "chance": 0.3 },
+        { "id": "energetico", "chance": 0.3 },
+        { "id": "granada", "chance": 0.3 }
+      ],
+      "descricao": "Chefes do mapa. Cada jogador rola o próprio saque.",
+      "sugestaoCampos": ["name", "rolagensItem", "chanceItem", "chancePorRaridade", "moedas", "materiais", "consumiveis"]
+    },
+    {
+      "id": "loot_normal_delta",
+      "name": "Saque do Delta",
+      "tier": "normal",
+      "regiao": "delta",
+      "rolagensItem": 1,
+      "chanceItem": 0.15,
+      "chancePorRaridade": { "comum": 0.92, "raro": 0.08, "unico": 0, "set": 0 },
+      "filtroItens": { "margem": "delta", "classe": "geral" },
+      "unicos": [],
+      "moedas": [
+        { "moeda": "semente", "chance": 0.5, "min": 1, "max": 4 },
+        { "moeda": "credito", "chance": 0.5, "min": 2, "max": 8 }
+      ],
+      "materiais": [
+        { "id": "comida", "chance": 0.2, "min": 1, "max": 2 },
+        { "id": "pecas", "chance": 0.1, "min": 1, "max": 1 }
+      ],
+      "consumiveis": [{ "id": "pocao", "chance": 0.06 }],
+      "descricao": "Inimigos normais do Delta (siri do mangue, capanga e cobrador do Capataz, mosquito). No Delta caem as duas moedas.",
+      "sugestao": true
+    },
+    {
+      "id": "loot_elite_delta",
+      "name": "Saque de elite do Delta",
+      "tier": "elite",
+      "regiao": "delta",
+      "rolagensItem": 1,
+      "chanceItem": 0.6,
+      "chancePorRaridade": { "comum": 0.65, "raro": 0.35, "unico": 0, "set": 0 },
+      "filtroItens": { "margem": "delta", "classe": "geral" },
+      "unicos": [],
+      "moedas": [
+        { "moeda": "semente", "chance": 0.8, "min": 4, "max": 10 },
+        { "moeda": "credito", "chance": 0.8, "min": 8, "max": 20 }
+      ],
+      "materiais": [
+        { "id": "comida", "chance": 0.3, "min": 1, "max": 2 },
+        { "id": "pecas", "chance": 0.3, "min": 1, "max": 2 }
+      ],
+      "consumiveis": [
+        { "id": "pocao", "chance": 0.15 },
+        { "id": "granada", "chance": 0.05 }
+      ],
+      "descricao": "Elites do Delta. Sem único: os do piloto pedem nível 8.",
+      "sugestao": true
+    },
+    {
+      "id": "loot_chefe_delta",
+      "name": "Saque do Capataz",
+      "tier": "chefe",
+      "regiao": "delta",
+      "rolagensItem": 2,
+      "chanceItem": 1,
+      "chancePorRaridade": { "comum": 0.5, "raro": 0.5, "unico": 0, "set": 0 },
+      "filtroItens": { "margem": "delta", "classe": "geral" },
+      "unicos": [],
+      "moedas": [
+        { "moeda": "semente", "chance": 1, "min": 15, "max": 30 },
+        { "moeda": "credito", "chance": 1, "min": 30, "max": 60 }
+      ],
+      "materiais": [
+        { "id": "chopindita", "chance": 1, "min": 1, "max": 2 },
+        { "id": "pecas", "chance": 0.5, "min": 1, "max": 3 }
+      ],
+      "consumiveis": [
+        { "id": "pocao", "chance": 1 },
+        { "id": "energetico", "chance": 0.5 }
+      ],
+      "descricao": "Bruno Ferro, o Capataz, chefe do nível 7. Ele derruba as duas maquininhas, e de cada uma sai a moeda de um lado.",
+      "sugestao": true
+    },
+    {
+      "id": "loot_normal_missao_delta",
+      "name": "Baú do Delta",
+      "tier": "normal",
+      "regiao": "delta",
+      "rolagensItem": 1,
+      "chanceItem": 1,
+      "chancePorRaridade": { "comum": 0.8, "raro": 0.2, "unico": 0, "set": 0 },
+      "filtroItens": { "margem": "delta", "classe": "geral" },
+      "unicos": [],
+      "moedas": [
+        { "moeda": "semente", "chance": 1, "min": 3, "max": 8 },
+        { "moeda": "credito", "chance": 1, "min": 6, "max": 16 }
+      ],
+      "materiais": [{ "id": "comida", "chance": 0.5, "min": 1, "max": 3 }],
+      "consumiveis": [{ "id": "pocao", "chance": 0.5 }],
+      "descricao": "Recompensa de missões, baús e lugares do Delta (não é tabela de inimigo: inimigos do Delta usam loot_normal_delta, loot_elite_delta e loot_chefe_delta).",
+      "sugestao": true
+    },
+    {
+      "id": "loot_normal_galerias",
+      "name": "Saque das Galerias",
+      "tier": "normal",
+      "regiao": "usina_da_ponte",
+      "masmorra": "galerias_da_usina",
+      "rolagensItem": 1,
+      "chanceItem": 0.15,
+      "chancePorRaridade": { "comum": 0.85, "raro": 0.15, "unico": 0, "set": 0 },
+      "filtroItens": { "margem": "do_jogador", "classe": "do_jogador_ou_geral" },
+      "unicos": [],
+      "moedas": [{ "moeda": "da_margem", "chance": 0.7, "min": 3, "max": 8 }],
+      "materiais": [
+        { "id": "pecas", "chance": 0.3, "min": 1, "max": 2 },
+        { "id": "chopindita", "chance": 0.1, "min": 1, "max": 1 }
+      ],
+      "consumiveis": [{ "id": "pocao", "chance": 0.06 }],
+      "escalaPorAndarPct": 10,
+      "descricao": "Inimigos normais das Galerias da Usina (mercenário do Sombra, turbina desgovernada, enguia elétrica). Cada andar a mais dá +10% de moeda e de chance de item.",
+      "sugestao": true
+    },
+    {
+      "id": "loot_elite_galerias",
+      "name": "Saque de elite das Galerias",
+      "tier": "elite",
+      "regiao": "usina_da_ponte",
+      "masmorra": "galerias_da_usina",
+      "rolagensItem": 1,
+      "chanceItem": 0.7,
+      "chancePorRaridade": { "comum": 0.5, "raro": 0.46, "unico": 0.04, "set": 0 },
+      "filtroItens": { "margem": "do_jogador", "classe": "do_jogador_ou_geral" },
+      "unicos": ["jaqueta_do_ze_faisca", "fones_de_rosa_tavares"],
+      "moedas": [{ "moeda": "da_margem", "chance": 1, "min": 12, "max": 25 }],
+      "materiais": [
+        { "id": "pecas", "chance": 0.5, "min": 1, "max": 3 },
+        { "id": "chopindita", "chance": 0.3, "min": 1, "max": 2 }
+      ],
+      "consumiveis": [
+        { "id": "pocao", "chance": 0.15 },
+        { "id": "granada", "chance": 0.1 }
+      ],
+      "escalaPorAndarPct": 10,
+      "sugestao": true
+    },
+    {
+      "id": "loot_chefe_galerias",
+      "name": "Saque da Bomba Descontrolada",
+      "tier": "chefe",
+      "regiao": "usina_da_ponte",
+      "masmorra": "galerias_da_usina",
+      "rolagensItem": 3,
+      "chanceItem": 1,
+      "chancePorRaridade": { "comum": 0.3, "raro": 0.55, "unico": 0.15, "set": 0 },
+      "filtroItens": { "margem": "do_jogador", "classe": "do_jogador_ou_geral" },
+      "unicos": ["jaqueta_do_ze_faisca", "fones_de_rosa_tavares"],
+      "moedas": [{ "moeda": "da_margem", "chance": 1, "min": 80, "max": 150 }],
+      "materiais": [
+        { "id": "pecas", "chance": 0.9, "min": 3, "max": 8 },
+        { "id": "chopindita", "chance": 0.8, "min": 3, "max": 6 }
+      ],
+      "consumiveis": [
+        { "id": "pocao", "chance": 0.6 },
+        { "id": "energetico", "chance": 0.5 },
+        { "id": "granada", "chance": 0.5 }
+      ],
+      "escalaPorAndarPct": 10,
+      "descricao": "Chefe do andar 5 das Galerias da Usina. Recompensas de masmorra: XP, únicos e materiais; peças de set ficam fora do piloto.",
+      "sugestaoCampos": ["name", "rolagensItem", "chanceItem", "chancePorRaridade", "unicos", "moedas", "materiais", "consumiveis", "escalaPorAndarPct"]
+    }
+  ]
+}

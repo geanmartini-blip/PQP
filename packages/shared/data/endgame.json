@@ -1,0 +1,172 @@
+{
+  "colossos": {
+    "regras": {
+      "duracaoDias": [2, 3],
+      "vidaCompartilhada": true,
+      "instanciaMax": 20,
+      "faseACadaMin": 60,
+      "postosPersistem": true,
+      "plantonistasEIA": true,
+      "recompensaPor": ["dano", "protecao", "suporte"],
+      "exemplosDePostos": [
+        "a muralha do Druida segura o golpe das 3 da manhã",
+        "o posto da Coach cura os próximos 10 que passarem",
+        "a marca do Caçador faz todo mundo bater mais"
+      ],
+      "textos": [
+        "De tempos em tempos surge um colosso, um inimigo grande demais para um grupo só, que fica no mapa por 2 ou 3 dias.",
+        "O colosso tem uma vida só para o servidor inteiro, que vai baixando ao longo dos dias.",
+        "A luta é em tempo real, a qualquer hora, em instâncias de até 20 jogadores.",
+        "A cada hora, o colosso muda de fase e ataca uma região do mapa.",
+        "Plantonistas e esquadrões de IA também lutam.",
+        "A recompensa vem pela contribuição em dano, proteção e suporte."
+      ],
+      "foraDoPiloto": true
+    },
+    "lista": [
+      {
+        "id": "a_escavadeira",
+        "name": "A Escavadeira",
+        "oQueE": "Máquina gigante de mineração que ninguém controla mais",
+        "comoFunciona": "A cada fase, cava um túnel novo para outra região",
+        "regioes": ["serra_da_chopindita"],
+        "foraDoPiloto": true,
+        "sugestaoCampos": ["regioes"]
+      },
+      {
+        "id": "o_trem_blindado",
+        "name": "O Trem Blindado",
+        "oQueE": "Comboio do Capataz cruzando o mapa",
+        "comoFunciona": "Anda uma estação por hora; se ninguém parar, a carga some no Juncal",
+        "regioes": ["juncal"],
+        "foraDoPiloto": true
+      },
+      {
+        "id": "a_tempestade",
+        "name": "A Tempestade",
+        "oQueE": "Evento sobre a barragem",
+        "comoFunciona": "As duas margens erguem postos; se a água chegar ao máximo, a usina para",
+        "regioes": ["usina_da_ponte"],
+        "foraDoPiloto": true
+      },
+      {
+        "id": "a_fortaleza_do_sombra",
+        "name": "A Fortaleza do Sombra",
+        "oQueE": "Base móvel de mercenários",
+        "comoFunciona": "Muda de lugar a cada fase",
+        "regioes": [],
+        "foraDoPiloto": true
+      },
+      {
+        "id": "o_enxame",
+        "name": "O Enxame",
+        "oQueE": "Drones sem dono que tomaram a Ilha do Farol",
+        "comoFunciona": "Cortam a rádio da cidade até serem derrubados",
+        "regioes": ["ilha_do_farol"],
+        "foraDoPiloto": true
+      }
+    ]
+  },
+  "arenas": {
+    "regras": {
+      "horario": { "inicio": "21:00", "fim": "23:00" },
+      "temporada": "mensal",
+      "vagasQueSobramFicamComIA": true,
+      "fases": ["tomar turbinas", "segurar postos", "escoltar", "derrubar torres"],
+      "vitoria": "Na fase final, o líder da outra nação entra como chefe. Vence quem fizer o líder do outro lado recuar.",
+      "vencedor": "O vencedor ganha vantagem na temporada",
+      "perdedor": "o perdedor, o bônus de quem está por baixo",
+      "reforcoACadaS": 20,
+      "textos": [
+        "A guerra entre as margens não acontece no mapa aberto. Acontece em arenas: alguém da margem chama, a galera entra e a briga é ali dentro, das 21h às 23h, em temporadas mensais.",
+        "Entra quem estiver no nível. As vagas que sobram, dos dois lados, ficam com a IA: dá para jogar como co-op contra o exército inimigo ou como PvP quando há gente dos dois lados.",
+        "Em arena e invasão, volta na próxima onda de reforço, a cada 20 segundos."
+      ],
+      "foraDoPiloto": true
+    },
+    "lista": [
+      {
+        "id": "arena_da_ponte",
+        "name": "Arena da Ponte",
+        "nivel": 20,
+        "cenario": "A ponte, as turbinas e os dois postos de controle",
+        "chefesDeIA": "Os líderes das nações, na fase final (projeções)",
+        "regiao": "usina_da_ponte",
+        "foraDoPiloto": true
+      },
+      {
+        "id": "arena_da_serra",
+        "name": "Arena da Serra",
+        "nivel": 40,
+        "cenario": "Minas e trilhas, com a escavadeira acordando",
+        "chefesDeIA": "Generais das duas margens e a Escavadeira",
+        "regiao": "serra_da_chopindita",
+        "foraDoPiloto": true
+      },
+      {
+        "id": "arena_do_farol",
+        "name": "Arena do Farol",
+        "nivel": 60,
+        "cenario": "A Ilha do Farol e as torres de rádio",
+        "chefesDeIA": "As vozes das rádios e o Enxame",
+        "regiao": "ilha_do_farol",
+        "foraDoPiloto": true
+      }
+    ]
+  },
+  "mirante": {
+    "regras": {
+      "comoColossos": true,
+      "margensJuntas": true,
+      "instanciaMax": 20,
+      "faseACadaMin": 60,
+      "textos": [
+        "Depois do Acordo, as duas margens sobem juntas contra o Mirante, o condomínio no alto da Serra onde a elite das duas nações tem mata intocada e tecnologia limpa. O povo chama de raids contra a burguesia.",
+        "O Mirante é dividido em alas; cada parte da história abre uma nova.",
+        "Funciona como os colossos: aberto por dias, luta em tempo real a qualquer hora, fase nova a cada hora, postos que persistem e plantonistas ajudando.",
+        "Jogadores das duas margens entram juntos. A recompensa inclui itens que misturam Encanto e máquina.",
+        "O Mirante revida: compra traidores, espalha boato e patrocina as arenas dos níveis 40 e 60 para jogar uma margem contra a outra de novo."
+      ],
+      "foraDoPiloto": true
+    },
+    "alas": [
+      { "id": "portao_de_vidro", "name": "O Portão de Vidro", "ordem": 1, "oQueTem": "Seguranças privados, torres automáticas e uma lista de convidados", "chefe": "O Síndico", "foraDoPiloto": true },
+      { "id": "jardim_suspenso", "name": "O Jardim Suspenso", "ordem": 2, "oQueTem": "Mata importada, bichos em jaula e espíritos presos em vitrine", "chefe": "A Paisagista", "foraDoPiloto": true },
+      { "id": "garagem", "name": "A Garagem", "ordem": 3, "oQueTem": "Carros voadores, drones de luxo e mordomos-robô", "chefe": "O Motorista Particular", "foraDoPiloto": true },
+      { "id": "cofre_de_energia", "name": "O Cofre de Energia", "ordem": 4, "oQueTem": "O fim do cabo da ponte e baterias que nunca apagam", "chefe": "O Tesoureiro", "foraDoPiloto": true },
+      { "id": "cobertura", "name": "A Cobertura", "ordem": 5, "oQueTem": "Os salões onde as duas nações fazem negócio juntas", "chefe": "Os líderes das nações", "foraDoPiloto": true }
+    ]
+  },
+  "eventos": [
+    {
+      "id": "a_arena_da_ponte",
+      "name": "A Arena da Ponte",
+      "nivel": 20,
+      "textoDoc": "Na fase final, os líderes entram em campo. Quando caem, piscam, falham e somem: eram projeções. O telão desliga, e por alguns segundos dá para ver de onde vinha o sinal, do alto da Serra.",
+      "requerFlags": ["lideres_ordem_da_guerra"],
+      "ligaFlags": ["lideres_eram_projecoes", "mundo_lideres_eram_projecoes"],
+      "foraDoPiloto": true,
+      "sugestaoCampos": ["ligaFlags"]
+    },
+    {
+      "id": "a_noite_escura",
+      "name": "A Noite Escura",
+      "nivel": 20,
+      "textoDoc": "Na noite depois da arena, a barragem racha. A energia cai nas duas margens ao mesmo tempo, inclusive no shopping, inclusive na Casa da Assembleia. No escuro, a Eco transmite o relatório para a cidade inteira e mostra a única luz que ficou acesa: o Mirante, no alto da Serra, alimentado pelo cabo da ponte.",
+      "requerFlags": ["lideres_eram_projecoes"],
+      "ligaFlags": ["noite_escura_vivida", "mundo_noite_escura"],
+      "foraDoPiloto": true,
+      "sugestaoCampos": ["ligaFlags"]
+    },
+    {
+      "id": "o_acordo",
+      "name": "O Acordo",
+      "nivel": 20,
+      "textoDoc": "De manhã, o povo das duas margens assina o Acordo na ponte, sem os líderes, sem comissão e sem departamento jurídico. A barragem será reformada junto, a energia dividida, e o Mirante vai ter que descer. Ou alguém vai ter que subir.",
+      "requerFlags": ["noite_escura_vivida"],
+      "ligaFlags": ["acordo_assinado", "mundo_acordo"],
+      "foraDoPiloto": true,
+      "sugestaoCampos": ["ligaFlags"]
+    }
+  ]
+}

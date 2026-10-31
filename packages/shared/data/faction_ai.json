@@ -1,0 +1,445 @@
+{
+  "acoes": [
+    { "id": "construir", "name": "Construir", "efeitoNoMapa": "Ergue uma estrutura da margem numa região onde ela manda (painel, roça e casa de mutirão na Esquerda; gerador, fábrica e prédio de cápsulas na Direita).", "custoPct": 10, "sugestao": true },
+    { "id": "energia_limpa", "name": "Energia limpa", "efeitoNoMapa": "Painel solar ou limpeza do rio: baixa a poluição da região em 1 ponto e sobe um pouco a energia.", "custoPct": 8, "sugestao": true },
+    { "id": "reforcar", "name": "Reforçar", "efeitoNoMapa": "Repara estruturas e postos de controle da margem: a influência dela na região cai mais devagar por um ciclo.", "custoPct": 5, "sugestao": true },
+    { "id": "emboscada", "name": "Emboscada", "efeitoNoMapa": "Um esquadrão de IA embosca uma patrulha inimiga num encontro do mapa; quem passar ali encontra a briga.", "custoPct": 4, "sugestao": true },
+    { "id": "invadir", "name": "Invadir posto", "efeitoNoMapa": "Esquadrões de IA disputam um posto de controle: a influência da margem sobe na região alvo e a da outra cai.", "custoPct": 8, "sugestao": true },
+    { "id": "arena", "name": "Convocar para a arena", "efeitoNoMapa": "Convoca equipes para a arena da semana.", "custoPct": 0, "foraDoPiloto": true, "sugestao": true },
+    { "id": "cartaz", "name": "Cartazes", "efeitoNoMapa": "Cola cartazes oficiais numa região: a opinião pública sobe para a margem.", "custoPct": 1, "sugestao": true },
+    { "id": "radio", "name": "Rádio e telões", "efeitoNoMapa": "Discurso na Rádio do Povo ou nos telões da Agência: a opinião sobe nas regiões com torre de rádio da margem.", "custoPct": 1, "sugestao": true },
+    { "id": "boato", "name": "Boato", "efeitoNoMapa": "Espalha um boato: a opinião da outra margem cai numa região.", "custoPct": 1, "sugestao": true },
+    { "id": "comboio", "name": "Comboio", "efeitoNoMapa": "Manda um comboio da Serra ao depósito.", "custoPct": 3, "foraDoPiloto": true, "sugestao": true },
+    { "id": "deposito", "name": "Organizar depósito", "efeitoNoMapa": "Reorganiza o estoque: o depósito guarda mais e fica mais difícil de saquear por um ciclo.", "custoPct": 0, "sugestao": true },
+    { "id": "comercio", "name": "Comércio", "efeitoNoMapa": "Mexe na feira ou no app: o preço de vida da margem cai 1 ponto.", "custoPct": 3, "sugestao": true },
+    { "id": "sabotagem", "name": "Sabotagem", "efeitoNoMapa": "Corta um cabo ou planta um grampo: uma estrutura inimiga para por um ciclo.", "custoPct": 4, "sugestao": true },
+    { "id": "chantagem", "name": "Chantagem", "efeitoNoMapa": "Arranca recursos ou influência de um personagem de IA da outra margem.", "custoPct": 0, "sugestao": true },
+    { "id": "escandalo", "name": "Escândalo", "efeitoNoMapa": "Publica um escândalo: a opinião cai e o alvo pode cair do cargo.", "custoPct": 1, "sugestao": true },
+    { "id": "poupar", "name": "Poupar", "efeitoNoMapa": "Não mexe no mapa e guarda os recursos para o próximo ciclo.", "custoPct": 0, "sugestao": true }
+  ],
+  "perfis": [
+    {
+      "id": "agressivo",
+      "name": "Agressivo",
+      "prioriza": "Arenas, invasões e emboscadas",
+      "evita": "Construir",
+      "acoesPrioriza": ["arena", "invadir", "emboscada"],
+      "acoesEvita": ["construir"],
+      "pesosBase": { "construir": 1, "energia_limpa": 1, "reforcar": 3, "emboscada": 9, "invadir": 9, "arena": 10, "cartaz": 4, "radio": 4, "boato": 3, "comboio": 3, "deposito": 2, "comercio": 2, "sabotagem": 5, "chantagem": 2, "escandalo": 2, "poupar": 1 },
+      "frases": {
+        "radio": {
+          "esquerda": ["Companheiros, a Direita acendeu mais uma torre com a nossa luz. Hoje à noite, a gente responde.", "Comissão? Comissão é para depois da vitória."],
+          "direita": ["Mercado é competição. Hoje, a competição é no posto de controle. Garanta a sua vaga.", "A Serra é um ativo subutilizado. Vamos utilizá-la."]
+        },
+        "cartaz": {
+          "esquerda": ["Quem acende com a nossa luz vai apagar no nosso grito.", "Primeiro a vitória. Depois a reunião."],
+          "direita": ["Crescer é conquistar. Conquistar é crescer.", "A Serra não se explora sozinha."]
+        },
+        "falaNpc": {
+          "esquerda": ["Mutirão? Mutirão bom é de trincheira.", "Já mandei para a comissão. Agora é com a Brigada."],
+          "direita": ["Ofensiva aprovada. O orçamento a gente vê depois.", "Quem não ataca vira custo não previsto."]
+        }
+      },
+      "sugestaoCampos": ["acoesPrioriza", "acoesEvita", "pesosBase", "frases"]
+    },
+    {
+      "id": "defensivo",
+      "name": "Defensivo",
+      "prioriza": "Reforçar o que já tem",
+      "evita": "Riscos",
+      "acoesPrioriza": ["reforcar"],
+      "acoesEvita": ["invadir", "emboscada", "sabotagem"],
+      "pesosBase": { "construir": 4, "energia_limpa": 4, "reforcar": 10, "emboscada": 1, "invadir": 1, "arena": 3, "cartaz": 3, "radio": 4, "boato": 1, "comboio": 4, "deposito": 7, "comercio": 3, "sabotagem": 1, "chantagem": 0, "escandalo": 1, "poupar": 6 },
+      "frases": {
+        "radio": {
+          "esquerda": ["A mata pediu calma. Reforcem as guaritas e fiquem perto de casa.", "Ninguém sai da margem esta noite. A não ser para a feira."],
+          "direita": ["Comunicado da PM: a operação de hoje foi adiada até termos certeza. Certeza absoluta.", "Seu contrato em dia é a sua melhor proteção."]
+        },
+        "cartaz": {
+          "esquerda": ["Quem cuida do que tem não perde o que cuida.", "Guarita acesa, vizinho em paz."],
+          "direita": ["Segurança é contrato em dia.", "Proteção 24 horas. Para quem pagou as 24 horas."]
+        },
+        "falaNpc": {
+          "esquerda": ["Antes de atacar, a gente ouve a mata. A mata disse não.", "Reforça o depósito e depois a gente conversa."],
+          "direita": ["Só ataco com cem por cento de certeza. Estou em noventa e oito.", "Operação adiada. Aguardem novas ordens. Ou nenhuma."]
+        }
+      },
+      "sugestaoCampos": ["acoesPrioriza", "acoesEvita", "pesosBase", "frases"]
+    },
+    {
+      "id": "construtor",
+      "name": "Construtor",
+      "prioriza": "Obras e energia limpa",
+      "evita": "Brigas longe de casa",
+      "acoesPrioriza": ["construir", "energia_limpa"],
+      "acoesEvita": ["invadir", "emboscada"],
+      "pesosBase": { "construir": 10, "energia_limpa": 10, "reforcar": 5, "emboscada": 1, "invadir": 1, "arena": 3, "cartaz": 3, "radio": 3, "boato": 1, "comboio": 4, "deposito": 4, "comercio": 4, "sabotagem": 0, "chantagem": 0, "escandalo": 1, "poupar": 2 },
+      "frases": {
+        "radio": {
+          "esquerda": ["Hoje tem mutirão no painel solar. Quem trouxer peça ganha sopa; quem trouxer duas ganha a sopa e a conversa.", "Energia limpa é energia nossa."],
+          "direita": ["Nova obra no Vale: mais luz, mais oportunidade, mais fita prata.", "Infraestrutura é o melhor investimento. Comprovado por uma planilha."]
+        },
+        "cartaz": {
+          "esquerda": ["Cada tijolo é um voto.", "Painel no telhado, rio limpo embaixo."],
+          "direita": ["A cidade acende quando alguém conserta.", "Obra entregue. Garantia violada, mas entregue."]
+        },
+        "falaNpc": {
+          "esquerda": ["Briga longe de casa não ergue parede nenhuma.", "Primeiro o telhado. A guerra pode esperar a laje secar."],
+          "direita": ["Me dá uma geladeira velha e eu te devolvo um bairro aceso.", "Arena? Eu tenho um gerador para consertar."]
+        }
+      },
+      "sugestaoCampos": ["acoesPrioriza", "acoesEvita", "pesosBase", "frases"]
+    },
+    {
+      "id": "propagandista",
+      "name": "Propagandista",
+      "prioriza": "Cartazes, rádio e boatos",
+      "evita": "Combate direto",
+      "acoesPrioriza": ["cartaz", "radio", "boato"],
+      "acoesEvita": ["emboscada", "invadir", "arena"],
+      "pesosBase": { "construir": 2, "energia_limpa": 2, "reforcar": 3, "emboscada": 0, "invadir": 0, "arena": 1, "cartaz": 10, "radio": 10, "boato": 9, "comboio": 2, "deposito": 2, "comercio": 2, "sabotagem": 3, "chantagem": 3, "escandalo": 6, "poupar": 2 },
+      "frases": {
+        "radio": {
+          "esquerda": ["Mais uma noite sem luz no seu bairro. Pergunte por quê. A resposta tem neon.", "Faltou energia de novo? Então hoje tem discurso dobrado."],
+          "direita": ["Pesquisa exclusiva: nove em cada dez colaboradores preferem luz. O décimo está sem bateria.", "Fontes confirmam: a Esquerda tem mais reunião do que energia."]
+        },
+        "cartaz": {
+          "esquerda": ["Apagou de novo? Pergunte à torre que acendeu.", "Quem tem rádio não tem medo do escuro."],
+          "direita": ["Fato: o nosso apagão é mais curto que o deles.", "Informação é poder. Assine para ler."]
+        },
+        "falaNpc": {
+          "esquerda": ["Toda falta de luz vira discurso. E todo discurso vira cartaz.", "Briga? Eu brigo no microfone."],
+          "direita": ["Isso vai dar matéria. Talvez sobre o meu chefe.", "Não precisa de soco quando se tem manchete."]
+        }
+      },
+      "sugestaoCampos": ["acoesPrioriza", "acoesEvita", "pesosBase", "frases"]
+    },
+    {
+      "id": "logistico",
+      "name": "Logístico",
+      "prioriza": "Comboios, depósitos e comércio",
+      "evita": "Gastar",
+      "acoesPrioriza": ["comboio", "deposito", "comercio"],
+      "acoesEvita": ["construir", "invadir"],
+      "pesosBase": { "construir": 2, "energia_limpa": 2, "reforcar": 4, "emboscada": 1, "invadir": 1, "arena": 2, "cartaz": 2, "radio": 2, "boato": 1, "comboio": 10, "deposito": 10, "comercio": 9, "sabotagem": 1, "chantagem": 1, "escandalo": 1, "poupar": 8 },
+      "frases": {
+        "radio": {
+          "esquerda": ["Chegou comida na feira. Fila organizada, por favor: cada saco tem nome.", "A feira abre cedo e fecha quando acaba. E vai acabar."],
+          "direita": ["Frete dinâmico ativado: sua entrega chega mais rápido quanto mais você paga.", "Depósitos cheios, margens felizes. Menos a margem de lucro, que nunca enche."]
+        },
+        "cartaz": {
+          "esquerda": ["Depósito cheio, barriga cheia.", "Não desperdice: a cota é de todos."],
+          "direita": ["Entrega em 15 minutos ou desculpas em 5.", "Economize: gaste com a gente."]
+        },
+        "falaNpc": {
+          "esquerda": ["Gastar? Só se for menos.", "Esse saco de feijão aqui tem nome e sobrenome."],
+          "direita": ["O comboio sai quando o frete compensar.", "Cada Crédito economizado é um Crédito investido. Em mim."]
+        }
+      },
+      "sugestaoCampos": ["acoesPrioriza", "acoesEvita", "pesosBase", "frases"]
+    },
+    {
+      "id": "oportunista",
+      "name": "Oportunista",
+      "prioriza": "Sabotagem e chantagem; pode trocar de margem",
+      "evita": "Lealdade",
+      "acoesPrioriza": ["sabotagem", "chantagem"],
+      "acoesEvita": [],
+      "pesosBase": { "construir": 1, "energia_limpa": 1, "reforcar": 1, "emboscada": 4, "invadir": 3, "arena": 2, "cartaz": 3, "radio": 2, "boato": 6, "comboio": 2, "deposito": 2, "comercio": 5, "sabotagem": 10, "chantagem": 10, "escandalo": 5, "poupar": 3 },
+      "frases": {
+        "radio": {
+          "esquerda": ["Boato do dia: alguém na Direita está vendendo segredo. Barato.", "Fiquem atentos: nem todo vizinho é vizinho."],
+          "direita": ["Oportunidade exclusiva: informação privilegiada por tempo limitado.", "Lealdade é um ativo. E todo ativo tem preço."]
+        },
+        "cartaz": {
+          "esquerda": ["Quem sabe, cala. Quem cala, cobra.", "Pergunte ao seu vizinho de que lado ele está hoje."],
+          "direita": ["Seu segredo está seguro conosco. Até a próxima proposta.", "Consultoria para os dois lados: atendemos você e o seu inimigo."]
+        },
+        "falaNpc": {
+          "esquerda": ["Eu sou da margem que pagar melhor nesta semana.", "Tenho uma informação. O preço dela é outra informação."],
+          "direita": ["Trabalho para quem paga mais. Hoje, por coincidência, é você.", "Os dois lados me contratam. Os dois lados estão certos."]
+        }
+      },
+      "sugestaoCampos": ["acoesPrioriza", "acoesEvita", "pesosBase", "frases"]
+    }
+  ],
+  "personagens": [
+    {
+      "id": "ilaria_vesta",
+      "name": "Ilaria Vesta",
+      "side": "esquerda",
+      "quemE": "Estrategista do Conselho e benzedeira, que decide tudo depois de ouvir a mata",
+      "perfil": "defensivo",
+      "cargoPadrao": "lideranca",
+      "cargoNoPiloto": null,
+      "comandaNoPiloto": false,
+      "ajustes": { "energia_limpa": 2 },
+      "podeTrocarDeMargem": false,
+      "fala": "A mata ainda não respondeu. Então a resposta é não.",
+      "sugestaoCampos": ["cargoPadrao", "ajustes", "fala"]
+    },
+    {
+      "id": "lazzaro_prati",
+      "name": "Lazzaro Prati",
+      "side": "esquerda",
+      "quemE": "Comandante da linha-dura. Mandou o relatório para uma comissão que nunca se reuniu",
+      "perfil": "agressivo",
+      "cargoPadrao": "operacoes",
+      "cargoNoPiloto": "lideranca",
+      "comandaNoPiloto": true,
+      "ajustes": { "boato": 2, "construir": -1 },
+      "podeTrocarDeMargem": false,
+      "especial": {
+        "gancho": "engaveta_na_comissao",
+        "descricao": "Sugestões de trégua ou de obra conjunta vão para uma comissão e nunca voltam: com ele no comando, a IA da Esquerda nunca escolhe trégua.",
+        "sugestao": true
+      },
+      "fala": "Manda para a comissão. A guerra não espera quórum.",
+      "sugestaoCampos": ["cargoPadrao", "ajustes", "fala"]
+    },
+    {
+      "id": "teodoro_rinaldi",
+      "name": "Teodoro Rinaldi",
+      "side": "esquerda",
+      "quemE": "Reformista que dividiria a Serra amanhã se a Direita limpasse o rio",
+      "perfil": "construtor",
+      "cargoPadrao": "obras",
+      "cargoNoPiloto": null,
+      "comandaNoPiloto": false,
+      "ajustes": { "comercio": 2 },
+      "podeTrocarDeMargem": false,
+      "especial": {
+        "gancho": "negocia_com_rio_limpo",
+        "descricao": "Se a poluição das regiões da Direita cair a 0, ele propõe trégua e dobra o peso de comércio.",
+        "params": { "comercioMult": 2 },
+        "sugestao": true
+      },
+      "fala": "Eu divido a Serra amanhã. Só limpem o rio hoje.",
+      "sugestaoCampos": ["cargoPadrao", "ajustes", "fala"]
+    },
+    {
+      "id": "amara_okafor",
+      "name": "Amara Okafor",
+      "side": "esquerda",
+      "quemE": "Voz da Rádio do Povo, que transforma cada falta de luz em discurso",
+      "perfil": "propagandista",
+      "cargoPadrao": "comunicacao",
+      "cargoNoPiloto": null,
+      "comandaNoPiloto": false,
+      "ajustes": { "boato": 1 },
+      "podeTrocarDeMargem": false,
+      "especial": {
+        "gancho": "apagao_vira_discurso",
+        "descricao": "Cada apagão numa região da Esquerda vira discurso: +1 de opinião para a Esquerda ali.",
+        "params": { "opiniaoPorApagao": 1 },
+        "sugestao": true
+      },
+      "fala": "Faltou luz? Ótimo. Hoje o discurso escreve sozinho.",
+      "sugestaoCampos": ["ajustes", "fala"]
+    },
+    {
+      "id": "yusuf_adeyemi",
+      "name": "Yusuf Adeyemi",
+      "side": "esquerda",
+      "quemE": "Chefe de Abastecimento, que conhece cada saco da feira pelo nome",
+      "perfil": "logistico",
+      "cargoPadrao": "logistica",
+      "cargoNoPiloto": null,
+      "comandaNoPiloto": false,
+      "ajustes": { "comercio": 1 },
+      "podeTrocarDeMargem": false,
+      "fala": "Esse saco de feijão é o Joaquim. Ele vai para a Brigada.",
+      "sugestaoCampos": ["ajustes", "fala"]
+    },
+    {
+      "id": "itzel_ramirez",
+      "name": "Itzel Ramírez",
+      "side": "esquerda",
+      "quemE": "Caçadora e espiã, que vende segredo para quem pagar",
+      "perfil": "oportunista",
+      "cargoPadrao": "inteligencia",
+      "cargoNoPiloto": null,
+      "comandaNoPiloto": false,
+      "ajustes": { "emboscada": 2 },
+      "podeTrocarDeMargem": true,
+      "fala": "Segredo bom é o que dá para vender duas vezes.",
+      "sugestaoCampos": ["cargoPadrao", "ajustes", "fala"]
+    },
+    {
+      "id": "rolf_halvorsen",
+      "name": "Rolf Halvorsen",
+      "side": "direita",
+      "quemE": "Comandante da PM, militar que só ataca quando tem certeza",
+      "perfil": "defensivo",
+      "cargoPadrao": "operacoes",
+      "cargoNoPiloto": "lideranca",
+      "comandaNoPiloto": true,
+      "ajustes": { "reforcar": 1 },
+      "podeTrocarDeMargem": false,
+      "especial": {
+        "gancho": "so_ataca_com_certeza",
+        "descricao": "Só escolhe invadir ou emboscar quando a força de IA da Direita na região passa de 80% do total; abaixo disso, reforça.",
+        "params": { "vantagemMin": 0.8 },
+        "sugestaoCampos": ["params"]
+      },
+      "fala": "Atacar? Quando a vitória vier por escrito, com firma reconhecida.",
+      "sugestaoCampos": ["ajustes", "fala"]
+    },
+    {
+      "id": "viktor_sahl",
+      "name": "Viktor Sahl",
+      "side": "direita",
+      "quemE": "Dono da Sahl Energia, quer a Serra inteira. Arquivou o relatório como custo não previsto",
+      "perfil": "agressivo",
+      "cargoPadrao": "lideranca",
+      "cargoNoPiloto": null,
+      "comandaNoPiloto": false,
+      "ajustes": { "comercio": 2, "energia_limpa": -1 },
+      "podeTrocarDeMargem": false,
+      "especial": {
+        "gancho": "custo_nao_previsto",
+        "descricao": "Nunca escolhe energia limpa nem reforma da barragem: arquiva como custo não previsto no trimestre.",
+        "sugestao": true
+      },
+      "fala": "A Serra é um custo previsto. O resto é detalhe.",
+      "sugestaoCampos": ["cargoPadrao", "ajustes", "fala"]
+    },
+    {
+      "id": "klara_lindqvist",
+      "name": "Klara Lindqvist",
+      "side": "direita",
+      "quemE": "Jornalista da Agência, que publica escândalo do próprio patrão",
+      "perfil": "propagandista",
+      "cargoPadrao": "comunicacao",
+      "cargoNoPiloto": null,
+      "comandaNoPiloto": false,
+      "ajustes": { "escandalo": 4 },
+      "podeTrocarDeMargem": false,
+      "especial": {
+        "gancho": "escandalo_do_proprio_patrao",
+        "descricao": "Quando está na Comunicação do Consórcio, publica escândalo do próprio patrão: a cada ciclo, pode expor quem ocupa a Liderança da Direita, seja IA ou jogador.",
+        "params": { "chancePorCiclo": 0.25, "opiniaoDireita": -6, "chanceDerrubar": 0.3 },
+        "sugestaoCampos": ["params"]
+      },
+      "fala": "Saiu matéria nova. Sim, é sobre o meu chefe. De novo.",
+      "sugestaoCampos": ["ajustes", "fala"]
+    },
+    {
+      "id": "mei_lin_zhao",
+      "name": "Mei Lin Zhao",
+      "side": "direita",
+      "quemE": "Engenheira de Gambiarra, que conserta a cidade com o que sobra",
+      "perfil": "construtor",
+      "cargoPadrao": "obras",
+      "cargoNoPiloto": null,
+      "comandaNoPiloto": false,
+      "ajustes": { "reforcar": 2 },
+      "podeTrocarDeMargem": false,
+      "especial": {
+        "gancho": "gambiarra",
+        "descricao": "Obras com ela custam 30% menos recursos, e 10% delas quebram no ciclo seguinte.",
+        "params": { "custoMult": 0.7, "chanceQuebrar": 0.1 },
+        "sugestao": true
+      },
+      "tambemTreinador": "mei_lin_zhao",
+      "fala": "Funciona. Não pergunta.",
+      "sugestaoCampos": ["cargoPadrao", "ajustes"]
+    },
+    {
+      "id": "mateo_silva_park",
+      "name": "Mateo Silva-Park",
+      "side": "direita",
+      "quemE": "Diretor de Logística, inventor do frete dinâmico",
+      "perfil": "logistico",
+      "cargoPadrao": "logistica",
+      "cargoNoPiloto": null,
+      "comandaNoPiloto": false,
+      "ajustes": { "comercio": 1 },
+      "podeTrocarDeMargem": false,
+      "especial": {
+        "gancho": "frete_dinamico",
+        "descricao": "Com ele na Logística, o frete do app sobe 20% e o depósito da Direita enche mais rápido.",
+        "params": { "freteMult": 1.2, "depositoMult": 1.15 },
+        "sugestao": true
+      },
+      "fala": "O frete é dinâmico. Dinamicamente, subiu.",
+      "sugestaoCampos": ["ajustes", "fala"]
+    },
+    {
+      "id": "ingrid_holm",
+      "name": "Ingrid Holm",
+      "side": "direita",
+      "quemE": "Consultora que trabalha para quem paga mais, inclusive para os dois",
+      "perfil": "oportunista",
+      "cargoPadrao": "inteligencia",
+      "cargoNoPiloto": null,
+      "comandaNoPiloto": false,
+      "ajustes": { "comercio": 2 },
+      "podeTrocarDeMargem": true,
+      "especial": {
+        "gancho": "trabalha_para_os_dois",
+        "descricao": "Enquanto ocupa o cargo, pode vender a informação da própria margem para a outra (revela um objetivo secreto da Direita).",
+        "params": { "chancePorCiclo": 0.2 },
+        "sugestao": true
+      },
+      "fala": "Minha consultoria é imparcial: cobro igual dos dois lados.",
+      "sugestaoCampos": ["cargoPadrao", "ajustes", "fala"]
+    }
+  ],
+  "regras": {
+    "decisao": {
+      "descricao": "A cada ciclo de produção, a liderança de IA de cada margem decide o que fazer conforme a personalidade de quem está no comando, então o mapa mexe mesmo com pouca gente online. A própria liderança de IA escolhe a prioridade da semana pelo perfil (agressivo: invadir; defensivo: defender; construtor: construir; os outros, o que o mapa mais pedir).",
+      "quando": "A cada ciclo de produção (worker do servidor; pg_cron no Supabase)",
+      "cicloProducaoMin": 60,
+      "acoesPorCiclo": 2,
+      "formula": "peso(a) = clamp(pesosBase[a] + ajustes[a], 0, 10) × (a na prioridade da semana ? mult : 1) × (a em acoesEvita ? evitaMult : 1) × necessidade(a); ações foraDoPiloto têm peso 0; escolhe por sorteio ponderado com o RNG semeado do worker. necessidade(a) vai de 0,5 a 2 e sobe quando o mapa pede: energia baixa puxa energia_limpa e construir; influência caindo puxa reforcar e cartaz; depósito vazio puxa poupar e deposito; opinião baixa puxa radio e boato.",
+      "prioridadeDaSemana": {
+        "construir": { "acoes": ["construir", "energia_limpa"], "mult": 1.5 },
+        "defender": { "acoes": ["reforcar", "deposito"], "mult": 1.5 },
+        "invadir": { "acoes": ["invadir", "emboscada", "arena"], "mult": 1.5 }
+      },
+      "evitaMult": 0.25,
+      "sugestaoCampos": ["cicloProducaoMin", "acoesPorCiclo", "formula", "prioridadeDaSemana", "evitaMult"]
+    },
+    "comJogadorNoCargo": {
+      "modo": "so_sugere",
+      "descricao": "Com um jogador no cargo, a IA só sugere: o personagem vira conselheiro e manda até 3 sugestões por ciclo no canal da margem, com a cara do perfil; o jogador aceita ou ignora.",
+      "sugestaoCampos": ["descricao"]
+    },
+    "limiteDiario": {
+      "descricao": "Há um limite de quanto a IA de uma margem pode mudar no mapa por dia.",
+      "influenciaPorRegiao": 10,
+      "influenciaTotal": 25,
+      "opiniaoPorRegiao": 8,
+      "estruturasNovas": 2,
+      "cartazes": 6,
+      "ataques": 3,
+      "gastoDepositoPct": 30,
+      "saqueMaxDepositoPct": 20,
+      "sugestaoCampos": ["influenciaPorRegiao", "influenciaTotal", "opiniaoPorRegiao", "estruturasNovas", "cartazes", "ataques", "gastoDepositoPct"]
+    },
+    "rotacao": {
+      "descricao": "No fim de cada ciclo, os cargos de IA são redistribuídos por desempenho e sorteio ponderado. Quando um jogador conquista um cargo, o personagem vai para outro ou para os bastidores. Os oportunistas podem trocar de margem, e escândalos derrubam quem foi pego.",
+      "quando": "Fim do ciclo semanal",
+      "pesoDesempenho": 0.7,
+      "pesoSorteio": 0.3,
+      "desempenho": "Influência que a margem ganhou com as ações do personagem no ciclo, mais as metas do cargo cumpridas.",
+      "jogadorConquista": "O personagem vai para o cargo vago com o perfil que mais combina; sem vaga, vai para os bastidores e volta a aparecer como NPC na cidade.",
+      "oportunistaTrocaMargemPct": 10,
+      "foraDoPiloto": true,
+      "sugestaoCampos": ["pesoDesempenho", "pesoSorteio", "desempenho", "jogadorConquista", "oportunistaTrocaMargemPct"]
+    },
+    "escandalos": {
+      "descricao": "Escândalos derrubam cargos e personagens de IA. O personagem pego vai para os bastidores e a margem perde opinião pública.",
+      "opiniaoMargem": -10,
+      "bastidoresCiclos": 2,
+      "sugestaoCampos": ["opiniaoMargem", "bastidoresCiclos"]
+    },
+    "personalidadeAparece": "O discurso da rádio, o cartaz e a fala dos NPCs mudam conforme quem está no comando."
+  },
+  "piloto": {
+    "descricao": "No piloto, a IA de facção tem Lazzaro Prati no comando da Esquerda e Rolf Halvorsen no comando da Direita. A rádio, os cartazes da IA e as falas dos NPCs seguem os perfis agressivo (Esquerda) e defensivo (Direita).",
+    "comando": { "esquerda": "lazzaro_prati", "direita": "rolf_halvorsen" },
+    "demaisCargos": "Os outros cargos ficam vagos no piloto (cargos eleitos e ciclo semanal estão fora). Os outros dez personagens existem nos dados e podem aparecer como NPCs da cidade, mas não decidem no mapa."
+  }
+}

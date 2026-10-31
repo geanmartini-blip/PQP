@@ -1,0 +1,303 @@
+{
+  "descricao": "Os únicos levam o nome de quem construiu a cidade antes da divisão. Cada um muda ou libera uma habilidade e tem visual próprio. Não são vendidos em loja de NPC.",
+  "regraPiloto": "No piloto entram só 2 únicos (piloto: true). Os outros 12 ficam no arquivo e não caem em nenhuma tabela de saque do piloto.",
+  "unicos": [
+    {
+      "id": "capacete_do_tenente_vidal",
+      "name": "Capacete do Tenente Vidal",
+      "slot": "cabeca",
+      "rarity": "unico",
+      "classLock": null,
+      "nivelMin": 12,
+      "stats": [{ "stat": "accuracy", "pct": 7 }, { "stat": "ccResist", "pct": 7 }],
+      "efeito": "Provocações duram 1 s a mais e dão +10% de defesa",
+      "passivos": [
+        { "kind": "regra", "gancho": "provocacao_mais_longa", "params": { "msExtra": 1000, "enquantoProvoca": { "stat": "defense", "pct": 10, "target": "self" } } }
+      ],
+      "homenageado": { "nome": "Tenente Joaquim Vidal", "quem": "Segurou a ponte sozinho por uma madrugada inteira." },
+      "visualProprio": { "descricao": "Capacete antigo de tenente, amassado de um lado, com uma flor seca presa na jugular.", "chaveArte": "unico_capacete_do_tenente_vidal" },
+      "piloto": false,
+      "ondeCai": [],
+      "precoBase": 400,
+      "sugestaoCampos": ["nivelMin", "stats", "passivos.0.params.enquantoProvoca.target", "visualProprio", "precoBase"]
+    },
+    {
+      "id": "fones_de_rosa_tavares",
+      "name": "Fones de Rosa Tavares",
+      "slot": "cabeca",
+      "rarity": "unico",
+      "classLock": null,
+      "nivelMin": 8,
+      "stats": [{ "stat": "accuracy", "pct": 7 }, { "stat": "ccResist", "pct": 7 }],
+      "efeito": "Mostra os avisos de ataque inimigo 0,5 s mais cedo",
+      "passivos": [
+        { "kind": "regra", "gancho": "aviso_antecipado", "params": { "ms": 500, "alcance": "self" } }
+      ],
+      "homenageado": { "nome": "Rosa Tavares", "quem": "A primeira voz da rádio da Ilha do Farol." },
+      "visualProprio": { "descricao": "Fones antigos de rádio, de fio enrolado, com uma luzinha NO AR que acende antes do perigo.", "chaveArte": "unico_fones_de_rosa_tavares" },
+      "piloto": true,
+      "justificativaPiloto": "Serve para qualquer classe e qualquer papel e ensina o único desvio que o jogo cobra: os avisos no chão. Custa quase nada de implementar, porque usa o mesmo gancho aviso_antecipado do talento de papel Leitura de Jogo (nível 15, que está no piloto): o servidor já decide o ataque antes do aviso; basta mandar o aviso 500 ms antes só para quem usa. Brilha contra o chefe das Galerias, cheio de avisos.",
+      "ondeCai": ["loot_elite", "loot_chefe", "loot_elite_galerias", "loot_chefe_galerias"],
+      "precoBase": 400,
+      "sugestaoCampos": ["nivelMin", "stats", "passivos.0.params.alcance", "visualProprio", "piloto", "justificativaPiloto", "ondeCai", "precoBase"]
+    },
+    {
+      "id": "colete_de_cesar_portollan",
+      "name": "Colete de César Portollan",
+      "slot": "peito",
+      "rarity": "unico",
+      "classLock": null,
+      "nivelMin": 12,
+      "stats": [{ "stat": "hp", "pct": 9 }, { "stat": "defense", "pct": 7 }],
+      "efeito": "Libera Emenda de Cobre: religa uma estrutura ou um robô destruído; recarga de 60 s",
+      "passivos": [],
+      "habilidadeLiberada": {
+        "id": "emenda_de_cobre",
+        "name": "Emenda de Cobre",
+        "ownerKey": "colete_de_cesar_portollan",
+        "slot": "item",
+        "type": "aliado",
+        "range": 4,
+        "cooldownS": 60,
+        "effects": [{ "kind": "gancho", "gancho": "religar_destruido", "params": { "alvos": ["estrutura", "robo"], "vidaPct": 50 } }],
+        "description": "Religa uma estrutura ou um robô destruído; recarga de 60 s. Aparece no botão de item quando há uma estrutura ou um robô destruído por perto; no resto do tempo, o botão segue com o consumível.",
+        "visual": { "esquerda": "Fio de cobre benzido que costura a peça de volta, com faíscas verdes.", "direita": "Fio de cobre que solda a peça de volta, com faíscas e um aviso REINICIANDO." },
+        "sugestaoCampos": ["type", "range", "effects", "description", "visual"]
+      },
+      "notaHabilidade": "A recarga de 60 s vem do doc e fica fora da faixa de 6 a 20 s de propósito: essa faixa vale para os botões 1 a 3 (habilidades de classe e marca). Emenda de Cobre usa o botão de item, é utilidade de reparo e não dano nem controle.",
+      "homenageado": { "nome": "César Portollan", "quem": "Eletricista lendário que manteve o hospital aceso durante a guerra civil." },
+      "visualProprio": { "descricao": "Colete de eletricista cheio de bolsos, com rolos de fio de cobre e um alicate pendurado.", "chaveArte": "unico_colete_de_cesar_portollan" },
+      "piloto": false,
+      "ondeCai": [],
+      "precoBase": 400,
+      "sugestaoCampos": ["nivelMin", "stats", "visualProprio", "precoBase"]
+    },
+    {
+      "id": "jaqueta_do_ze_faisca",
+      "name": "Jaqueta do Zé Faísca",
+      "slot": "peito",
+      "rarity": "unico",
+      "classLock": null,
+      "nivelMin": 8,
+      "stats": [{ "stat": "hp", "pct": 9 }, { "stat": "defense", "pct": 7 }],
+      "efeito": "Ataques corpo a corpo têm 15% de chance de atordoar por 1 s",
+      "passivos": [
+        { "kind": "gatilho", "trigger": "ao_acertar", "params": { "soCorpoACorpo": true }, "efeitos": [{ "kind": "controle", "cc": "atordoar", "duracaoMs": 1000, "chance": 0.15, "target": "alvo" }] }
+      ],
+      "homenageado": { "nome": "Zé Faísca", "quem": "Boxeador do porto que nunca perdeu uma luta de rua." },
+      "visualProprio": { "descricao": "Jaqueta de boxeador do porto, de cetim gasto, com faíscas saindo dos punhos a cada golpe.", "chaveArte": "unico_jaqueta_do_ze_faisca" },
+      "piloto": true,
+      "justificativaPiloto": "Peito é o slot de quem segura a frente, e o efeito cai direto no ataque básico automático, sem botão novo: Combatente, Luchador Sagrado e quem mais bater de perto sentem na hora. Só usa peças que o piloto já tem: gatilho ao_acertar e o efeito controle, com a imunidade de 4 s e a regra de chefe só ficar lento, iguais ao talento Abordagem da PM. Faz par com os Fones (cabeça), sem disputar slot.",
+      "ondeCai": ["loot_elite", "loot_chefe", "loot_elite_galerias", "loot_chefe_galerias"],
+      "precoBase": 400,
+      "sugestaoCampos": ["nivelMin", "stats", "passivos.0.params", "visualProprio", "piloto", "justificativaPiloto", "ondeCai", "precoBase"]
+    },
+    {
+      "id": "calca_de_mineira_de_marta",
+      "name": "Calça de Mineira de Marta",
+      "slot": "calca",
+      "rarity": "unico",
+      "classLock": null,
+      "nivelMin": 12,
+      "stats": [{ "stat": "evasion", "pct": 5 }, { "stat": "resourceMax", "pct": 7 }],
+      "efeito": "+recurso da classe; revela veios de chopindita no mapa",
+      "passivos": [
+        { "kind": "numero", "stats": [{ "stat": "resourceMax", "pct": 15 }] },
+        { "kind": "regra", "gancho": "revela_veios_chopindita", "valeNoMapa": true }
+      ],
+      "homenageado": { "nome": "Marta Quintela", "quem": "Mineira que achou o primeiro veio de chopindita e batizou a pedra no bar do porto." },
+      "visualProprio": { "descricao": "Calça de mineira com joelheira gasta e pó dourado de chopindita que nunca sai.", "chaveArte": "unico_calca_de_mineira_de_marta" },
+      "piloto": false,
+      "ondeCai": [],
+      "precoBase": 400,
+      "sugestaoCampos": ["nivelMin", "stats", "passivos.0.stats", "visualProprio", "precoBase"]
+    },
+    {
+      "id": "calca_das_palafitas",
+      "name": "Calça das Palafitas",
+      "slot": "calca",
+      "rarity": "unico",
+      "classLock": null,
+      "nivelMin": 12,
+      "stats": [{ "stat": "evasion", "pct": 5 }, { "stat": "resourceMax", "pct": 7 }],
+      "efeito": "Imune a lentidão na água e na lama; +esquiva",
+      "passivos": [
+        { "kind": "regra", "gancho": "imune_lentidao_terreno", "params": { "terrenos": ["agua", "lama"] }, "valeNoMapa": true },
+        { "kind": "numero", "stats": [{ "stat": "evasion", "pct": 8 }] }
+      ],
+      "homenageado": null,
+      "visualProprio": { "descricao": "Calça arregaçada até o joelho, sempre molhada, com uma alga pendurada que ninguém tira.", "chaveArte": "unico_calca_das_palafitas" },
+      "piloto": false,
+      "ondeCai": [],
+      "precoBase": 400,
+      "sugestaoCampos": ["nivelMin", "stats", "passivos.1.stats", "visualProprio", "precoBase"]
+    },
+    {
+      "id": "fuzil_paciencia",
+      "name": "Fuzil Paciência",
+      "slot": "arma",
+      "rarity": "unico",
+      "classLock": "atirador",
+      "tipoAtaque": "perfurante",
+      "nivelMin": 20,
+      "stats": [{ "stat": "damage", "pct": 9 }],
+      "efeito": "Mira Firme não zera quando você toma dano",
+      "passivos": [
+        { "kind": "regra", "gancho": "mira_firme_nao_zera", "params": { "talento": "chave_mira_firme" } }
+      ],
+      "homenageado": null,
+      "visualProprio": { "descricao": "Fuzil comprido de madeira escura com uma ampulheta presa no cano.", "esquerda": "Madeira escura benzida, ampulheta de areia do rio.", "direita": "Cano cromado com ampulheta de holograma.", "chaveArte": "unico_fuzil_paciencia" },
+      "piloto": false,
+      "ondeCai": [],
+      "precoBase": 400,
+      "sugestaoCampos": ["classLock", "nivelMin", "stats", "visualProprio", "precoBase"]
+    },
+    {
+      "id": "bisturi_de_dona_celeste",
+      "name": "Bisturi de Dona Celeste",
+      "slot": "arma",
+      "rarity": "unico",
+      "classLock": null,
+      "tipoAtaque": "da_classe",
+      "nivelMin": 12,
+      "stats": [{ "stat": "damage", "pct": 9 }],
+      "efeito": "Levantar aliados caídos leva metade do tempo",
+      "passivos": [
+        { "kind": "regra", "gancho": "levantar_mais_rapido", "params": { "multTempo": 0.5 } }
+      ],
+      "homenageado": { "nome": "Dona Celeste Amaral", "quem": "Parteira do Delta que trouxe ao mundo metade da cidade." },
+      "visualProprio": { "descricao": "Bisturi de prata com cabo de madeira e uma fita de parteira amarrada; o golpe sai no estilo da classe de quem usa.", "chaveArte": "unico_bisturi_de_dona_celeste" },
+      "piloto": false,
+      "ondeCai": [],
+      "precoBase": 400,
+      "sugestaoCampos": ["tipoAtaque", "nivelMin", "stats", "visualProprio", "precoBase"]
+    },
+    {
+      "id": "regua_de_ana_ferreira",
+      "name": "Régua de Ana Ferreira",
+      "slot": "arma",
+      "rarity": "unico",
+      "classLock": null,
+      "tipoAtaque": "da_classe",
+      "nivelMin": 12,
+      "stats": [{ "stat": "damage", "pct": 9 }],
+      "efeito": "Barreiras e totens também dão defesa a quem está perto",
+      "passivos": [
+        { "kind": "regra", "gancho": "invocacoes_dao_defesa", "raio": 3, "params": { "tipos": ["barreira", "totem"], "defesaPct": 10 } }
+      ],
+      "homenageado": { "nome": "Ana Ferreira", "quem": "Engenheira que desenhou a Usina da Ponte." },
+      "visualProprio": { "descricao": "Régua de engenheira, de ferro, com a planta da usina gravada e as medidas em duas unidades.", "chaveArte": "unico_regua_de_ana_ferreira" },
+      "piloto": false,
+      "ondeCai": [],
+      "precoBase": 400,
+      "sugestaoCampos": ["tipoAtaque", "nivelMin", "stats", "passivos.0.raio", "passivos.0.params.defesaPct", "visualProprio", "precoBase"]
+    },
+    {
+      "id": "botas_de_bento_saraiva",
+      "name": "Botas de Bento Saraiva",
+      "slot": "calcado",
+      "rarity": "unico",
+      "classLock": null,
+      "nivelMin": 20,
+      "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 6 }],
+      "efeito": "Comboio que você escolta ignora a primeira emboscada",
+      "passivos": [
+        { "kind": "regra", "gancho": "comboio_ignora_primeira_emboscada", "valeNoMapa": true }
+      ],
+      "homenageado": { "nome": "Bento Saraiva", "quem": "Marinheiro que abriu a rota de comboios pelo rio." },
+      "visualProprio": { "descricao": "Botas de marinheiro com sal incrustado e uma bússola na fivela.", "chaveArte": "unico_botas_de_bento_saraiva" },
+      "piloto": false,
+      "ondeCai": [],
+      "precoBase": 400,
+      "sugestaoCampos": ["nivelMin", "stats", "visualProprio", "precoBase"]
+    },
+    {
+      "id": "tenis_do_estadio",
+      "name": "Tênis do Estádio",
+      "slot": "calcado",
+      "rarity": "unico",
+      "classLock": null,
+      "nivelMin": 12,
+      "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 6 }],
+      "efeito": "+30% de velocidade por 5 s depois de derrotar um inimigo",
+      "passivos": [
+        { "kind": "gatilho", "trigger": "ao_derrotar", "efeitos": [{ "kind": "reforco", "stat": "speed", "pct": 30, "duracaoMs": 5000, "target": "self" }] }
+      ],
+      "homenageado": null,
+      "visualProprio": { "descricao": "Tênis com as cores dos dois clubes, um pé do Neon FC e outro do Raiz FC.", "chaveArte": "unico_tenis_do_estadio" },
+      "piloto": false,
+      "ondeCai": [],
+      "precoBase": 400,
+      "sugestaoCampos": ["nivelMin", "stats", "visualProprio", "precoBase"]
+    },
+    {
+      "id": "peao_do_professor_elias",
+      "name": "Peão do Professor Elias",
+      "slot": "adorno",
+      "rarity": "unico",
+      "classLock": null,
+      "nivelMin": 12,
+      "stats": [],
+      "efeito": "Reforços recarregam 30% mais rápido",
+      "passivos": [
+        { "kind": "regra", "gancho": "recarga_de_reforcos", "params": { "cooldownSpeedPct": 30, "habilidadesCom": "reforco" } }
+      ],
+      "homenageado": { "nome": "Professor Elias Monteiro", "quem": "Ensinava xadrez e estratégia na praça." },
+      "visualProprio": { "descricao": "Peão de xadrez de madeira que flutua no ombro e, de vez em quando, avança uma casa sozinho.", "chaveArte": "unico_peao_do_professor_elias" },
+      "piloto": false,
+      "ondeCai": [],
+      "precoBase": 400,
+      "sugestaoCampos": ["nivelMin", "visualProprio", "precoBase"]
+    },
+    {
+      "id": "radio_de_bolso_de_eco",
+      "name": "Rádio de Bolso de Eco",
+      "slot": "adorno",
+      "rarity": "unico",
+      "classLock": null,
+      "nivelMin": 12,
+      "stats": [],
+      "efeito": "Revela objetivos secretos de sabotagem de aliados por perto",
+      "passivos": [
+        { "kind": "regra", "gancho": "revela_sabotagem_aliados", "raio": 10, "valeNoMapa": true }
+      ],
+      "homenageado": { "nome": "Eco", "quem": "A voz da rádio pirata; engenheira que assinou o relatório." },
+      "visualProprio": { "descricao": "Rádio de bolso chiando, com antena de arame e uma frequência que ninguém mais usa.", "chaveArte": "unico_radio_de_bolso_de_eco" },
+      "piloto": false,
+      "ondeCai": [],
+      "precoBase": 400,
+      "sugestaoCampos": ["nivelMin", "passivos.0.raio", "visualProprio", "precoBase"]
+    },
+    {
+      "id": "medalha_da_cidade_unida",
+      "name": "Medalha da Cidade Unida",
+      "slot": "adorno",
+      "rarity": "unico",
+      "classLock": null,
+      "nivelMin": 20,
+      "stats": [],
+      "efeito": "Em grupo misto, +10% em todos os atributos",
+      "passivos": [
+        {
+          "kind": "numero",
+          "condicao": { "grupoMisto": true },
+          "stats": [
+            { "stat": "hp", "pct": 10 },
+            { "stat": "attack", "pct": 10 },
+            { "stat": "defense", "pct": 10 },
+            { "stat": "speed", "pct": 10 },
+            { "stat": "range", "pct": 10 },
+            { "stat": "ccDuration", "pct": 10 },
+            { "stat": "healing", "pct": 10 }
+          ]
+        }
+      ],
+      "homenageado": null,
+      "visualProprio": { "descricao": "Medalha de bronze com as duas margens unidas pela ponte, gasta de tanto passar de mão em mão.", "chaveArte": "unico_medalha_da_cidade_unida" },
+      "piloto": false,
+      "ondeCai": [],
+      "precoBase": 400,
+      "sugestaoCampos": ["nivelMin", "visualProprio", "precoBase"]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "basico_combatente",
+    "name": "Ataque Básico do Combatente",
+    "ownerKey": "combatente",
+    "slot": "basico",
+    "type": "travada",
+    "range": 1,
+    "rangeDoAlcance": true,
+    "radius": 0,
+    "cooldownS": 1,
+    "cost": 0,
+    "effects": [
+      { "kind": "dano", "mult": 1, "target": "alvo" }
+    ],
+    "description": "Automático no alvo travado: soco ou golpe corpo a corpo, inclusive andando.",
+    "visual": {
+      "esquerda": "Soco com força de espírito, com um vulto de fera no impacto.",
+      "direita": "Golpe de manopla hidráulica, com um chiado de pistão."
+    },
+    "sugestaoCampos": ["rangeDoAlcance", "cooldownS", "effects.dano.mult", "visual"]
+  },
+  {
+    "id": "basico_atirador",
+    "name": "Ataque Básico do Atirador",
+    "ownerKey": "atirador",
+    "slot": "basico",
+    "type": "travada",
+    "range": 4,
+    "rangeDoAlcance": true,
+    "radius": 0,
+    "cooldownS": 1,
+    "cost": 0,
+    "effects": [
+      { "kind": "dano", "mult": 1, "target": "alvo" }
+    ],
+    "description": "Automático no alvo travado: tiro teleguiado, inclusive andando.",
+    "visual": {
+      "esquerda": "Flecha, chumbo benzido ou laço.",
+      "direita": "Bala de revólver inteligente ou tiro de drone."
+    },
+    "sugestaoCampos": ["rangeDoAlcance", "cooldownS", "effects.dano.mult", "visual"]
+  },
+  {
+    "id": "basico_elemental",
+    "name": "Ataque Básico do Elemental",
+    "ownerKey": "elemental",
+    "slot": "basico",
+    "type": "travada",
+    "range": 4,
+    "rangeDoAlcance": true,
+    "radius": 0,
+    "cooldownS": 1.2,
+    "cost": 0,
+    "effects": [
+      { "kind": "dano", "mult": 1.1, "target": "alvo" }
+    ],
+    "description": "Automático no alvo travado: projétil de elemento ou faísca teleguiada, inclusive andando.",
+    "visual": {
+      "esquerda": "Bolinha de fogo, folha ou água.",
+      "direita": "Faísca elétrica de bobina."
+    },
+    "sugestaoCampos": ["rangeDoAlcance", "cooldownS", "effects.dano.mult", "visual"]
+  },
+  {
+    "id": "basico_mascarado",
+    "name": "Ataque Básico do Mascarado",
+    "ownerKey": "mascarado",
+    "slot": "basico",
+    "type": "travada",
+    "range": 4,
+    "rangeDoAlcance": true,
+    "radius": 0,
+    "cooldownS": 1.1,
+    "cost": 0,
+    "effects": [
+      { "kind": "dano", "mult": 1, "target": "alvo" }
+    ],
+    "description": "Automático no alvo travado: voz, lábia ou glitch teleguiado, inclusive andando.",
+    "visual": {
+      "esquerda": "Nota de voz ou máscara-fantasma que voa até o alvo.",
+      "direita": "Glitch de holograma ou pacote de vírus."
+    },
+    "sugestaoCampos": ["rangeDoAlcance", "cooldownS", "effects.dano.mult", "visual"]
+  }
+]

@@ -1,0 +1,269 @@
+{
+  "renovacao": "Cada margem tem 6 cargos, renovados a cada ciclo semanal.",
+  "semJogador": "Cargo sem jogador fica com um personagem de IA.",
+  "funcoes": [
+    { "id": "lideranca", "name": "Liderança", "oQueFaz": "Define a prioridade da semana: construir, defender ou invadir" },
+    { "id": "operacoes", "name": "Operações", "oQueFaz": "Convoca equipes para arenas e invasões" },
+    { "id": "logistica", "name": "Logística", "oQueFaz": "Comboios, depósitos e rotas" },
+    { "id": "obras", "name": "Obras", "oQueFaz": "O que construir e onde" },
+    { "id": "comunicacao", "name": "Comunicação", "oQueFaz": "Rádio, telões e cartazes oficiais" },
+    { "id": "inteligencia", "name": "Inteligência", "oQueFaz": "Espionagem e objetivos secretos" }
+  ],
+  "cargos": [
+    {
+      "id": "presidente_da_assembleia",
+      "name": "Presidente da Assembleia",
+      "side": "esquerda",
+      "funcao": "lideranca",
+      "oQueFaz": "Define a prioridade da semana: construir, defender ou invadir",
+      "patenteMin": "comissario",
+      "poderes": [
+        { "id": "prioridade_da_semana", "descricao": "Escolhe a prioridade da semana da margem.", "opcoes": ["construir", "defender", "invadir"], "porCiclo": 1 },
+        { "id": "ordens_do_comando", "descricao": "Cria as missões do dia (Ordens do comando) que seguem a estratégia da margem.", "porCiclo": 3, "sugestaoCampos": ["porCiclo"] }
+      ],
+      "iaPadrao": "ilaria_vesta",
+      "sugestaoCampos": ["patenteMin", "iaPadrao"]
+    },
+    {
+      "id": "comandante_da_brigada",
+      "name": "Comandante da Brigada",
+      "side": "esquerda",
+      "funcao": "operacoes",
+      "oQueFaz": "Convoca equipes para arenas e invasões",
+      "patenteMin": "conselheiro",
+      "poderes": [
+        { "id": "convocar_equipes", "descricao": "Convoca equipes para arenas e invasões; quem atende ganha bônus de reputação.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+        { "id": "ordens_do_comando", "descricao": "Cria missões do dia de combate e defesa.", "porCiclo": 2, "sugestao": true }
+      ],
+      "iaPadrao": "lazzaro_prati",
+      "sugestaoCampos": ["patenteMin", "iaPadrao"]
+    },
+    {
+      "id": "chefe_de_abastecimento",
+      "name": "Chefe de Abastecimento",
+      "side": "esquerda",
+      "funcao": "logistica",
+      "oQueFaz": "Comboios, depósitos e rotas",
+      "patenteMin": "militante",
+      "poderes": [
+        { "id": "comboios", "descricao": "Agenda escoltas de comboio da Serra ao depósito.", "foraDoPiloto": true },
+        { "id": "depositos", "descricao": "Decide quanto cada depósito guarda e o que vai para a feira.", "sugestao": true },
+        { "id": "rotas", "descricao": "Abre e fecha rotas de abastecimento entre regiões.", "sugestao": true }
+      ],
+      "iaPadrao": "yusuf_adeyemi",
+      "sugestaoCampos": ["patenteMin"]
+    },
+    {
+      "id": "mestre_do_mutirao",
+      "name": "Mestre do Mutirão",
+      "side": "esquerda",
+      "funcao": "obras",
+      "oQueFaz": "O que construir e onde",
+      "patenteMin": "militante",
+      "poderes": [
+        { "id": "escolher_obra", "descricao": "Escolhe a próxima estrutura da margem e onde ela fica.", "porCiclo": 2, "sugestaoCampos": ["porCiclo"] },
+        { "id": "convocar_mutirao", "descricao": "Abre um mutirão com bônus de reputação para quem ajudar.", "sugestao": true }
+      ],
+      "iaPadrao": "teodoro_rinaldi",
+      "sugestaoCampos": ["patenteMin", "iaPadrao"]
+    },
+    {
+      "id": "voz_da_radio_do_povo",
+      "name": "Voz da Rádio do Povo",
+      "side": "esquerda",
+      "funcao": "comunicacao",
+      "oQueFaz": "Rádio, telões e cartazes oficiais",
+      "patenteMin": "conselheiro",
+      "poderes": [
+        { "id": "radio", "descricao": "Escolhe o que a Rádio do Povo toca.", "sugestaoCampos": ["descricao"] },
+        { "id": "cartazes_oficiais", "descricao": "Desenha os cartazes oficiais da margem." }
+      ],
+      "iaPadrao": "amara_okafor",
+      "sugestaoCampos": ["patenteMin"]
+    },
+    {
+      "id": "chefe_da_guarda_comunitaria",
+      "name": "Chefe da Guarda Comunitária",
+      "side": "esquerda",
+      "funcao": "inteligencia",
+      "oQueFaz": "Espionagem e objetivos secretos",
+      "patenteMin": "conselheiro",
+      "poderes": [
+        { "id": "espionagem", "descricao": "Manda espiar a outra margem e revela planos inimigos.", "sugestao": true },
+        { "id": "objetivos_secretos", "descricao": "Distribui objetivos secretos nas missões de grupo.", "sugestao": true }
+      ],
+      "iaPadrao": "itzel_ramirez",
+      "sugestaoCampos": ["patenteMin", "iaPadrao"]
+    },
+    {
+      "id": "ceo",
+      "name": "CEO",
+      "side": "direita",
+      "funcao": "lideranca",
+      "oQueFaz": "Define a prioridade da semana: construir, defender ou invadir",
+      "patenteMin": "diretor",
+      "poderes": [
+        { "id": "prioridade_da_semana", "descricao": "Escolhe a prioridade da semana da margem.", "opcoes": ["construir", "defender", "invadir"], "porCiclo": 1 },
+        { "id": "ordens_do_comando", "descricao": "Cria as missões do dia (Ordens do comando) que seguem a estratégia da margem.", "porCiclo": 3, "sugestaoCampos": ["porCiclo"] }
+      ],
+      "iaPadrao": "viktor_sahl",
+      "sugestaoCampos": ["patenteMin", "iaPadrao"]
+    },
+    {
+      "id": "comandante_da_pm",
+      "name": "Comandante da PM",
+      "side": "direita",
+      "funcao": "operacoes",
+      "oQueFaz": "Convoca equipes para arenas e invasões",
+      "patenteMin": "gerente",
+      "poderes": [
+        { "id": "convocar_equipes", "descricao": "Convoca equipes para arenas e invasões; quem atende ganha bônus de reputação.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+        { "id": "ordens_do_comando", "descricao": "Cria missões do dia de combate e defesa.", "porCiclo": 2, "sugestao": true }
+      ],
+      "iaPadrao": "rolf_halvorsen",
+      "sugestaoCampos": ["patenteMin"]
+    },
+    {
+      "id": "diretor_de_logistica",
+      "name": "Diretor de Logística",
+      "side": "direita",
+      "funcao": "logistica",
+      "oQueFaz": "Comboios, depósitos e rotas",
+      "patenteMin": "parceiro",
+      "poderes": [
+        { "id": "comboios", "descricao": "Agenda escoltas de comboio da Serra ao depósito.", "foraDoPiloto": true },
+        { "id": "depositos", "descricao": "Decide quanto cada depósito guarda e o que vai para o app.", "sugestao": true },
+        { "id": "frete_dinamico", "descricao": "Ajusta o frete do app de entrega por região.", "sugestao": true }
+      ],
+      "iaPadrao": "mateo_silva_park",
+      "sugestaoCampos": ["patenteMin"]
+    },
+    {
+      "id": "diretor_de_engenharia",
+      "name": "Diretor de Engenharia",
+      "side": "direita",
+      "funcao": "obras",
+      "oQueFaz": "O que construir e onde",
+      "patenteMin": "parceiro",
+      "poderes": [
+        { "id": "escolher_obra", "descricao": "Escolhe a próxima estrutura da margem e onde ela fica.", "porCiclo": 2, "sugestaoCampos": ["porCiclo"] }
+      ],
+      "iaPadrao": "mei_lin_zhao",
+      "sugestaoCampos": ["patenteMin", "iaPadrao"]
+    },
+    {
+      "id": "diretor_da_agencia",
+      "name": "Diretor da Agência",
+      "side": "direita",
+      "funcao": "comunicacao",
+      "oQueFaz": "Rádio, telões e cartazes oficiais",
+      "patenteMin": "gerente",
+      "poderes": [
+        { "id": "teloes", "descricao": "Escolhe o que os telões da Agência mostram.", "sugestaoCampos": ["descricao"] },
+        { "id": "cartazes_oficiais", "descricao": "Desenha os cartazes oficiais da margem." }
+      ],
+      "iaPadrao": "klara_lindqvist",
+      "sugestaoCampos": ["patenteMin", "iaPadrao"]
+    },
+    {
+      "id": "diretor_de_inteligencia",
+      "name": "Diretor de Inteligência",
+      "side": "direita",
+      "funcao": "inteligencia",
+      "oQueFaz": "Espionagem e objetivos secretos",
+      "patenteMin": "gerente",
+      "poderes": [
+        { "id": "espionagem", "descricao": "Manda espiar a outra margem e revela planos inimigos.", "sugestao": true },
+        { "id": "objetivos_secretos", "descricao": "Distribui objetivos secretos nas missões de grupo.", "sugestao": true }
+      ],
+      "iaPadrao": "ingrid_holm",
+      "sugestaoCampos": ["patenteMin", "iaPadrao"]
+    }
+  ],
+  "comoSeChega": [
+    {
+      "side": "esquerda",
+      "metodo": "votacao_assembleia",
+      "texto": "Nas Raízes, a Assembleia vota toda semana, um jogador um voto, e o debate na roda pesa mais que qualquer currículo.",
+      "frequencia": "semanal",
+      "umJogadorUmVoto": true,
+      "foraDoPiloto": true
+    },
+    {
+      "side": "direita",
+      "metodo": "participacao",
+      "texto": "No Consórcio, o cargo vai para quem teve mais participação na semana, somando créditos investidos e metas batidas, e quem tem ações vota mais.",
+      "frequencia": "semanal",
+      "componentes": [
+        { "id": "creditos_investidos", "name": "Créditos investidos", "peso": 1, "sugestaoCampos": ["peso"] },
+        { "id": "metas_batidas", "name": "Metas batidas", "peso": 200, "sugestaoCampos": ["peso"] }
+      ],
+      "votosPorAcao": 1,
+      "foraDoPiloto": true,
+      "sugestaoCampos": ["votosPorAcao"]
+    }
+  ],
+  "posicoes": {
+    "regras": [
+      "Toda missão de grupo, arena e invasão tem posições.",
+      "Quem entra escolhe uma livre; as que sobram ficam com a IA.",
+      "Dá para trocar no meio da missão."
+    ],
+    "lista": [
+      {
+        "id": "comandante_da_operacao",
+        "name": "Comandante da operação",
+        "bonus": "Põe marcas no alvo e no mapa que o grupo todo vê",
+        "passivo": { "kind": "regra", "gancho": "marcas_compartilhadas", "params": { "marcasMax": 3, "duracaoS": 20 } },
+        "vagas": 1,
+        "sugestaoCampos": ["passivo.params", "vagas"]
+      },
+      {
+        "id": "linha_de_frente",
+        "name": "Linha de frente",
+        "bonus": "+10% de defesa perto dos inimigos",
+        "passivo": { "kind": "numero", "raio": 3, "condicao": { "inimigosPertoMin": 1 }, "stats": [{ "stat": "defense", "pct": 10 }] },
+        "vagas": 1,
+        "sugestaoCampos": ["passivo.raio", "vagas"]
+      },
+      {
+        "id": "atiradores",
+        "name": "Atiradores",
+        "bonus": "+1 de alcance",
+        "passivo": { "kind": "numero", "gancho": "alcance_extra", "params": { "tiles": 1 } },
+        "vagas": 1,
+        "sugestaoCampos": ["vagas"]
+      },
+      {
+        "id": "engenharia",
+        "name": "Engenharia",
+        "bonus": "Pode construir ou reparar no meio da luta",
+        "passivo": { "kind": "regra", "gancho": "construir_em_luta" },
+        "vagas": 1,
+        "sugestaoCampos": ["vagas"]
+      },
+      {
+        "id": "medico_de_campo",
+        "name": "Médico de campo",
+        "bonus": "A primeira cura a cada 5 s sai mais forte",
+        "passivo": { "kind": "recarga", "trigger": "ao_curar", "recargaS": 5, "gancho": "primeira_cura_forte", "params": { "curaMult": 1.5 } },
+        "vagas": 1,
+        "sugestaoCampos": ["passivo.params", "vagas"]
+      },
+      {
+        "id": "radio",
+        "name": "Rádio",
+        "bonus": "Recebe informação do comando e vê reforços inimigos chegando",
+        "passivo": { "kind": "regra", "gancho": "info_do_comando", "params": { "revelaReforcos": true, "avisoAntesS": 5 } },
+        "vagas": 1,
+        "sugestaoCampos": ["passivo.params.avisoAntesS", "vagas"]
+      }
+    ]
+  },
+  "foraDoPiloto": [
+    "Cargos eleitos: votação da Assembleia e escolha por participação no Consórcio",
+    "Ciclo semanal de renovação dos cargos",
+    "Comboios e convocação para arenas e invasões",
+    "No piloto, só a Liderança de cada margem é ocupada por IA (Lazzaro Prati na Esquerda e Rolf Halvorsen na Direita); os outros cargos ficam vagos"
+  ]
+}

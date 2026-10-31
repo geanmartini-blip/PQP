@@ -1,0 +1,942 @@
+[
+  {
+    "id": "peao_brabo",
+    "name": "Peão Brabo",
+    "classe": "combatente",
+    "papel": "tanque",
+    "margem": "esquerda",
+    "instituicao": "brigada_popular",
+    "treinador": "wesley",
+    "habilidadesMarca": { "marca_1": "segura_o_peao", "marca_2": "rodeio" },
+    "talentosChave": [
+      { "name": "Couro Grosso", "texto": "a redução de dano da provocação vale também para os aliados perto" },
+      { "name": "Berrante", "texto": "a provocação dobra de raio e atordoa por 1 s" }
+    ],
+    "buildExemplo": "Curral: Couro Grosso com o talento de papel Muralha",
+    "virada": {
+      "id": "virada_peao_brabo",
+      "name": "Desconstruído",
+      "texto": "por 10 s, cada golpe que ele segura cura um aliado, e o bordão vira \"Isso aí é serviço de todo mundo\""
+    },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "chapéu de peão", "artes": ["chapeu_peao", "chapeu_peao_gigante"] },
+      { "parte": "cintura", "elemento": "fivela TOURO", "artes": ["fivela_touro_pequena", "fivela_touro"] }
+    ],
+    "visualTreinador": "Chapéu maior que o corpo, fivela do tamanho de um prato escrita TOURO, camisa xadrez aberta, bigode e botina, com um touro-espírito translúcido bufando atrás",
+    "poses": [
+      "Laço benzido girando",
+      "peito estufado com uma seta piscando \"VEM NI MIM\"",
+      "montado no inimigo, em rodeio"
+    ],
+    "piada": "Costas: adesivo \"100% MACHO\" descascando. Com Desconstruído, vira \"100% PARCEIRO\" e ele ganha um avental",
+    "costas": { "descricao": "Adesivo descascando nas costas da camisa xadrez.", "texto": "100% MACHO" },
+    "paletasTraje": [
+      { "id": "peao_brabo_p1", "name": "Rodeio da Brigada", "cores": ["#A8463F", "#5B6B2E", "#D9A93A", "#6B4429", "#2E211A", "#F1E6C8"] },
+      { "id": "peao_brabo_p2", "name": "Poeira da Estrada", "cores": ["#8C6A43", "#4F5A2A", "#C9A13B", "#5A3A22", "#2A1E16", "#E6D3A8"] },
+      { "id": "peao_brabo_p3", "name": "Festa do Peão", "cores": ["#3F6EA8", "#A8463F", "#E3B341", "#7A4E2C", "#1F2430", "#F3EBD3"] }
+    ],
+    "efeitos": {
+      "estilo": "encanto",
+      "descricao": "Folhas, brilho verde e espíritos translúcidos.",
+      "proprios": ["touro-espírito translúcido bufando atrás", "laço benzido girando", "seta piscando \"VEM NI MIM\" no peito estufado"]
+    },
+    "sugestaoCampos": ["paletasTraje"]
+  },
+  {
+    "id": "iogue_furioso",
+    "name": "Iogue Furioso",
+    "classe": "combatente",
+    "papel": "dano",
+    "margem": "esquerda",
+    "instituicao": "brigada_popular",
+    "treinador": "dev_kumar",
+    "habilidadesMarca": { "marca_1": "respiracao", "marca_2": "fim_da_paz" },
+    "talentosChave": [
+      { "name": "Fúria", "texto": "mais dano quanto menos vida" },
+      { "name": "Bote em Cadeia", "texto": "cada inimigo derrotado zera a recarga da habilidade 1" }
+    ],
+    "buildExemplo": "Berserker: Fúria com roubo de vida",
+    "virada": { "id": "virada_iogue_furioso", "name": "Tigre Desperto", "texto": "vira tigre por 20 s, com +40% de dano" },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "coque", "artes": ["coque_iogue"] },
+      { "parte": "costas", "elemento": "tapetinho de yoga enrolado nas costas", "artes": ["tapete_yoga_enrolado"] }
+    ],
+    "visualTreinador": "Coque, roupa de linho, olheira funda, tapetinho de yoga enrolado nas costas e uma veia pulsando na testa",
+    "poses": [
+      "Lótus flutuando com aura azul",
+      "meio virado, com um braço de tigre e o resto ainda zen",
+      "tigre inteiro, ainda de coque"
+    ],
+    "piada": "Medidor de calma em cima da cabeça, do verde ao vermelho; garrafinha de kombucha na cintura",
+    "costas": { "descricao": "Etiqueta costurada no tapetinho de yoga enrolado nas costas.", "texto": "PAZ INTERIOR (EM MANUTENÇÃO)", "sugestao": true },
+    "paletasTraje": [
+      { "id": "iogue_furioso_p1", "name": "Linho Cru", "cores": ["#E8DCC0", "#5B6B2E", "#7FB0D8", "#8A6A48", "#3A2E25", "#F6F0E0"] },
+      { "id": "iogue_furioso_p2", "name": "Chá Verde", "cores": ["#9DB47A", "#6B4429", "#5FA8C8", "#7A5A3A", "#2F3324", "#EEF1DE"] },
+      { "id": "iogue_furioso_p3", "name": "Tigre Contido", "cores": ["#D98A3A", "#2E211A", "#E85A3A", "#6B4429", "#1E1A16", "#F4E3C4"] }
+    ],
+    "efeitos": {
+      "estilo": "encanto",
+      "descricao": "Folhas, brilho verde e espíritos translúcidos.",
+      "proprios": ["lótus flutuando com aura azul", "braço de tigre espiritual no meio da virada", "medidor de calma do verde ao vermelho"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "cidadao_revolucionario",
+    "name": "Cidadão Revolucionário",
+    "classe": "combatente",
+    "papel": "suporte",
+    "margem": "esquerda",
+    "instituicao": "brigada_popular",
+    "treinador": "jacques",
+    "habilidadesMarca": { "marca_1": "as_barricadas", "marca_2": "greve_geral" },
+    "talentosChave": [
+      { "name": "Discurso", "texto": "o reforço principal pega 2 aliados a mais" },
+      { "name": "Barricada Turbinada", "texto": "o bônus de dano do grupo sobe para 30%" }
+    ],
+    "buildExemplo": "Comuna: Discurso com calçado de velocidade",
+    "virada": { "id": "virada_cidadao_revolucionario", "name": "Revolução Permanente", "texto": "barricada gigante por 20 s que puxa os inimigos para ela" },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "boina", "artes": ["boina_revolucionaria"] },
+      { "parte": "mao_secundaria", "elemento": "xícara de café sempre na mão", "artes": ["xicara_cafe"] }
+    ],
+    "visualTreinador": "Boina, bigode fino, cachecol de três cores, camisa listrada e xícara de café sempre na mão",
+    "poses": [
+      "Em cima de uma barricada de cadeiras de bistrô",
+      "discurso no megafone com a xícara erguida",
+      "fincando a placa GREVE no chão"
+    ],
+    "piada": "Costas: lista de reivindicações enrolada que arrasta no chão e cresce a cada nível",
+    "costas": { "descricao": "Lista de reivindicações enrolada que arrasta no chão e cresce a cada nível.", "texto": "REIVINDICAÇÕES: 1. CAFÉ", "sugestaoCampos": ["texto"] },
+    "paletasTraje": [
+      { "id": "cidadao_revolucionario_p1", "name": "Bistrô da Brigada", "cores": ["#3B4E8C", "#5B6B2E", "#C0392B", "#6B4429", "#1E1E24", "#F1E6C8"] },
+      { "id": "cidadao_revolucionario_p2", "name": "Café Pingado", "cores": ["#6B4429", "#5B6B2E", "#A8463F", "#4A3020", "#22180F", "#EADBC0"] },
+      { "id": "cidadao_revolucionario_p3", "name": "Barricada Noturna", "cores": ["#2F3A4A", "#8C7A5B", "#D4A13A", "#5A3E28", "#14161C", "#DCD3C0"] }
+    ],
+    "efeitos": {
+      "estilo": "encanto",
+      "descricao": "Folhas, brilho verde e espíritos translúcidos.",
+      "proprios": ["barricada de cadeiras de bistrô", "megafone com a xícara erguida", "placa GREVE fincada no chão"]
+    },
+    "sugestaoCampos": ["paletasTraje", "silhueta"]
+  },
+  {
+    "id": "babushka",
+    "name": "Babushka",
+    "classe": "atirador",
+    "papel": "tanque",
+    "margem": "esquerda",
+    "instituicao": "guarda_comunitaria",
+    "treinador": "olga",
+    "habilidadesMarca": { "marca_1": "voce_esta_muito_magro", "marca_2": "xale_de_la" },
+    "talentosChave": [
+      { "name": "Xale", "texto": "o escudo também devolve os projéteis" },
+      { "name": "Chumbo Grosso", "texto": "a área de controle dobra de tamanho" }
+    ],
+    "buildExemplo": "Vovó Fortaleza: Xale e munição extra",
+    "virada": { "id": "virada_babushka", "name": "Sopa da Vó", "texto": "o grupo perto volta a 100% de vida" },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "lenço florido", "artes": ["lenco_florido"] },
+      { "parte": "mao_secundaria", "elemento": "sacola de feira com pão", "artes": ["sacola_feira_pao"] }
+    ],
+    "visualTreinador": "Lenço florido, casaco de pele falsa enorme, sacola de feira com pão e espingarda benzida com um ramo de flores no cano",
+    "poses": [
+      "Atirando apoiada na sacola",
+      "Xale de Lã aberto como escudo gigante",
+      "oferecendo um prato de sopa ao inimigo"
+    ],
+    "piada": "Rolo de massa na cintura, mira de crochê e olhar de julgamento no retrato",
+    "costas": { "descricao": "Bordado de crochê nas costas do casaco de pele falsa.", "texto": "COMEU?", "sugestao": true },
+    "paletasTraje": [
+      { "id": "babushka_p1", "name": "Feira de Domingo", "cores": ["#B8434F", "#8C6B4F", "#E5E234", "#6A4A2E", "#2B2420", "#F4F4EE"] },
+      { "id": "babushka_p2", "name": "Inverno Rigoroso", "cores": ["#3E6B8C", "#A99A86", "#E5E234", "#5A3E28", "#22252A", "#EDEBE4"] },
+      { "id": "babushka_p3", "name": "Vó de Festa", "cores": ["#7A3F8C", "#6B7031", "#E8C547", "#6A4A2E", "#241E26", "#F7EFE6"] }
+    ],
+    "efeitos": {
+      "estilo": "encanto",
+      "descricao": "Folhas, brilho verde e espíritos translúcidos.",
+      "proprios": ["Xale de Lã aberto como escudo gigante", "prato de sopa fumegante", "ramo de flores no cano da espingarda benzida"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "arqueiro_das_estepes",
+    "name": "Arqueiro das Estepes",
+    "classe": "atirador",
+    "papel": "dano",
+    "margem": "esquerda",
+    "instituicao": "guarda_comunitaria",
+    "treinador": "batu",
+    "habilidadesMarca": { "marca_1": "tiro_girando", "marca_2": "galope" },
+    "talentosChave": [
+      { "name": "Mira Firme", "texto": "enquanto você não toma dano, a chance de crítico sobe 5% por segundo, até 50%" },
+      { "name": "Galope", "texto": "atira sem perder velocidade andando" }
+    ],
+    "buildExemplo": "Duelista: Saque Rápido com cabeça de precisão",
+    "virada": { "id": "virada_arqueiro_das_estepes", "name": "Horda", "texto": "por 10 s, cada tiro dispara mais 2 flechas de cavaleiros-espírito" },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "chapéu de pele pontudo", "artes": ["chapeu_pele_pontudo"] },
+      { "parte": "acompanhante", "elemento": "pônei-espírito pequeno demais", "artes": ["ponei_espirito", "ponei_espirito_desanimado"] }
+    ],
+    "visualTreinador": "Chapéu de pele pontudo, arco recurvo e um cavalo-espírito que é um pônei pequeno demais para ele",
+    "poses": [
+      "Tiro girando, com linhas de movimento",
+      "galope com os pés arrastando no chão",
+      "parado no pônei, que bufa"
+    ],
+    "piada": "O pônei-espírito tem cara de quem quer pedir demissão",
+    "costas": { "descricao": "Aljava nas costas com um adesivo de para-choque.", "texto": "SE ESTÁ LENDO ISSO, O PÔNEI CAIU", "sugestao": true },
+    "paletasTraje": [
+      { "id": "arqueiro_das_estepes_p1", "name": "Estepe Verde", "cores": ["#6B7031", "#C9A14A", "#E5E234", "#6A4A2E", "#2A2620", "#E8E2CC"] },
+      { "id": "arqueiro_das_estepes_p2", "name": "Céu Aberto", "cores": ["#3F6E9E", "#B07A3C", "#E3C04A", "#5E4228", "#1F2229", "#EEF0EA"] },
+      { "id": "arqueiro_das_estepes_p3", "name": "Poeira Vermelha", "cores": ["#9E4A35", "#7A6A4A", "#E5B234", "#5A3E28", "#2A1E1A", "#F1E4D0"] }
+    ],
+    "efeitos": {
+      "estilo": "encanto",
+      "descricao": "Folhas, brilho verde e espíritos translúcidos.",
+      "proprios": ["tiro girando com linhas de movimento", "cavalo-espírito translúcido que é um pônei pequeno demais", "flechas teleguiadas com rastro de folhas"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "cacador_de_crocodilo",
+    "name": "Caçador de Crocodilo",
+    "classe": "atirador",
+    "papel": "suporte",
+    "margem": "esquerda",
+    "instituicao": "guarda_comunitaria",
+    "treinador": "bazza",
+    "habilidadesMarca": { "marca_1": "crikey", "marca_2": "armadilha_de_laco" },
+    "talentosChave": [
+      { "name": "Crikey!", "texto": "a marca pula para o inimigo mais perto quando o alvo cai" },
+      { "name": "Armadilha", "texto": "o controle dura o dobro" }
+    ],
+    "buildExemplo": "Controlador: armadilhas com adorno de controle",
+    "virada": { "id": "virada_cacador_de_crocodilo", "name": "O Bicho Grande", "texto": "um crocodilo-espírito luta do lado dele por 20 s" },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "chapéu safári", "artes": ["chapeu_safari", "chapeu_safari_dentes"] },
+      { "parte": "bracos", "elemento": "curativos pelo corpo", "artes": ["curativos_poucos", "curativos_muitos"] }
+    ],
+    "visualTreinador": "Chapéu safári com dentes de crocodilo, bermuda cáqui, camisa de 14 bolsos e curativo pelo corpo todo",
+    "poses": [
+      "Armando o laço",
+      "apontando com olhos brilhando e o balão \"Crikey!\"",
+      "abraçado a um crocodilo que morde o chapéu dele"
+    ],
+    "piada": "Os curativos aumentam a cada nível",
+    "costas": { "descricao": "Remendo costurado nas costas da camisa de 14 bolsos.", "texto": "SE ELE MORDER, É CARINHO", "sugestao": true },
+    "paletasTraje": [
+      { "id": "cacador_de_crocodilo_p1", "name": "Cáqui de Expedição", "cores": ["#B4A372", "#8A7A55", "#E5E234", "#6A4A2E", "#2E2A20", "#F4F4EE"] },
+      { "id": "cacador_de_crocodilo_p2", "name": "Pântano", "cores": ["#6B7031", "#7D6B4A", "#D9C24A", "#5A4028", "#24261E", "#ECE8D8"] },
+      { "id": "cacador_de_crocodilo_p3", "name": "Turista Perdido", "cores": ["#D9844A", "#3F7E8C", "#E5E234", "#6A4A2E", "#2A2420", "#FBF6EA"] }
+    ],
+    "efeitos": {
+      "estilo": "encanto",
+      "descricao": "Folhas, brilho verde e espíritos translúcidos.",
+      "proprios": ["balão \"Crikey!\" com olhos brilhando", "laço armado no chão", "crocodilo-espírito translúcido mordendo o chapéu"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "druida_rabugento",
+    "name": "Druida Rabugento",
+    "classe": "elemental",
+    "papel": "tanque",
+    "margem": "esquerda",
+    "instituicao": "escola_dos_saberes",
+    "treinador": "seamus",
+    "habilidadesMarca": { "marca_1": "circulo_de_pedras", "marca_2": "sai_do_meu_gramado" },
+    "talentosChave": [
+      { "name": "Círculo Vivo", "texto": "o totem se reconstrói sozinho" },
+      { "name": "Escudo Partilhado", "texto": "escudo dividido entre todos os aliados perto" }
+    ],
+    "buildExemplo": "Fortaleza: totem vivo com set Turbina",
+    "virada": { "id": "virada_druida_rabugento", "name": "Círculo Completo", "texto": "3 totens de uma vez, e o círculo dá +30% de defesa ao grupo" },
+    "silhueta": [
+      { "parte": "rosto", "elemento": "barba comprida", "artes": ["barba_longa", "barba_arrastando"] },
+      { "parte": "mao_principal", "elemento": "cajado com a placa \"SAIA DA GRAMA\"", "artes": ["cajado_placa"] }
+    ],
+    "visualTreinador": "Barba que arrasta no chão, túnica de musgo, sandália de pedra e cajado com a placa \"SAIA DA GRAMA\"",
+    "poses": [
+      "Fincando um menir-totem",
+      "apontando bravo com um \"!\" em cima",
+      "cochilando em pé no círculo de pedras"
+    ],
+    "piada": "Um passarinho fez ninho na barba e reclama junto",
+    "costas": { "descricao": "Remendo de musgo nas costas da túnica, bordado com linha de cipó.", "texto": "NO MEU TEMPO ERA MELHOR", "sugestao": true },
+    "paletasTraje": [
+      { "id": "druida_rabugento_p1", "name": "Musgo Antigo", "cores": ["#5E7A3A", "#6E4B2F", "#C68E2E", "#7D7468", "#2C2A22", "#EFE3C2"] },
+      { "id": "druida_rabugento_p2", "name": "Outono Rabugento", "cores": ["#A0632E", "#5A3E26", "#D9A13A", "#8A8070", "#2A2018", "#F0E2C4"] },
+      { "id": "druida_rabugento_p3", "name": "Neblina da Mata", "cores": ["#4F7A6E", "#6E5A44", "#B8C25A", "#888C86", "#1E2624", "#E4EBDC"] }
+    ],
+    "efeitos": {
+      "estilo": "encanto",
+      "descricao": "Folhas, brilho verde e espíritos translúcidos.",
+      "proprios": ["menir-totem fincado", "\"!\" bravo em cima da cabeça", "círculo de pedras com musgo brilhando"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "bruxa_do_trovao",
+    "name": "Bruxa do Trovão",
+    "classe": "elemental",
+    "papel": "dano",
+    "margem": "esquerda",
+    "instituicao": "escola_dos_saberes",
+    "treinador": "sigrid",
+    "habilidadesMarca": { "marca_1": "skal", "marca_2": "fim_de_festa" },
+    "talentosChave": [
+      { "name": "Corrente em Cadeia", "texto": "o raio salta para mais 2 inimigos" },
+      { "name": "Sobrecarga", "texto": "um golpe enorme que gasta todo o recurso" }
+    ],
+    "buildExemplo": "Saideira: Corrente em Cadeia e recurso máximo",
+    "virada": { "id": "virada_bruxa_do_trovao", "name": "Saideira dos Deuses", "texto": "raios em todos os inimigos à vista por 6 s" },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "capacete de chifres", "artes": ["capacete_chifres_simples", "capacete_chifres_replica"] },
+      { "parte": "mao_secundaria", "elemento": "chifre de beber", "artes": ["chifre_de_beber", "chifre_de_beber_faiscando"] }
+    ],
+    "visualTreinador": "Tranças, capacete de chifres com etiqueta \"RÉPLICA\" e um chifre de beber transbordando faísca",
+    "poses": [
+      "Brinde que faz cair um raio",
+      "Fim de Festa, com tempestade e confete",
+      "soluço que solta faísca"
+    ],
+    "piada": "Bochechas sempre vermelhas; o chifre nunca esvazia",
+    "costas": { "descricao": "Capa curta de lã com um bordado torto de caneca.", "texto": "SAIDEIRA", "sugestao": true },
+    "paletasTraje": [
+      { "id": "bruxa_do_trovao_p1", "name": "Trovão Azul", "cores": ["#4F9CB4", "#6E4B2F", "#E8C547", "#8A8C86", "#22262E", "#EFE3C2"] },
+      { "id": "bruxa_do_trovao_p2", "name": "Hidromel", "cores": ["#C68E2E", "#5E3A22", "#F0D24A", "#9A8A6A", "#2A1E14", "#F4E8CC"] },
+      { "id": "bruxa_do_trovao_p3", "name": "Aurora", "cores": ["#5E9E3A", "#3E3A5E", "#9AE0F0", "#8C8C9A", "#1C1C2A", "#E8F0EC"] }
+    ],
+    "efeitos": {
+      "estilo": "encanto",
+      "descricao": "Folhas, brilho verde e espíritos translúcidos.",
+      "proprios": ["brinde que faz cair um raio", "tempestade com confete", "soluço que solta faísca"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "curandeira_dos_andes",
+    "name": "Curandeira dos Andes",
+    "classe": "elemental",
+    "papel": "cura",
+    "margem": "esquerda",
+    "instituicao": "escola_dos_saberes",
+    "treinador": "ayaan_quispe",
+    "habilidadesMarca": { "marca_1": "agua_da_nascente", "marca_2": "lhama_cuspidora" },
+    "talentosChave": [
+      { "name": "Segunda Chance", "texto": "levanta sozinho o aliado que cair perto de você; recarga de 120 s" },
+      { "name": "Chuva Mansa", "texto": "cura menor, mas em todos" }
+    ],
+    "buildExemplo": "Anjo da Guarda: Segunda Chance com adorno de reanimação",
+    "virada": { "id": "virada_curandeira_dos_andes", "name": "Nascente", "texto": "a poça cobre a área toda e cura o grupo por 10 s" },
+    "silhueta": [
+      { "parte": "torso", "elemento": "poncho", "artes": ["poncho_simples", "poncho_colorido"] },
+      { "parte": "cabeca", "elemento": "chapéu de aba", "artes": ["chapeu_aba", "chapeu_aba_alta"] }
+    ],
+    "visualTreinador": "Poncho colorido, chapéu de aba e um totem de lhama de madeira",
+    "poses": [
+      "Balde de Água da Nascente",
+      "lhama cuspindo num inimigo",
+      "mostrando a senha de fila \"Nº 347\""
+    ],
+    "piada": "Uma fila de pacientes em miniatura atrás dela",
+    "costas": { "descricao": "Placa de senha de fila pendurada nas costas do poncho.", "texto": "PRÓXIMO: Nº 348", "sugestao": true },
+    "paletasTraje": [
+      { "id": "curandeira_dos_andes_p1", "name": "Poncho da Nascente", "cores": ["#C0392B", "#6E4B2F", "#E8B23A", "#4F9CB4", "#2A2420", "#EFE3C2"] },
+      { "id": "curandeira_dos_andes_p2", "name": "Altiplano", "cores": ["#3E7E9E", "#7A5A3A", "#E07A3A", "#5E9E3A", "#24262A", "#F3EBD8"] },
+      { "id": "curandeira_dos_andes_p3", "name": "Feira de Cores", "cores": ["#8E3E8C", "#5E9E3A", "#F0C23A", "#C68E2E", "#26202A", "#F6EEDC"] }
+    ],
+    "efeitos": {
+      "estilo": "encanto",
+      "descricao": "Folhas, brilho verde e espíritos translúcidos.",
+      "proprios": ["poça da Água da Nascente brilhando", "lhama cuspindo num inimigo", "senha de fila \"Nº 347\" pipocando"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "luchador_sagrado",
+    "name": "Luchador Sagrado",
+    "classe": "mascarado",
+    "papel": "tanque",
+    "margem": "esquerda",
+    "instituicao": "trupe_do_povo",
+    "treinador": "el_relampago",
+    "habilidadesMarca": { "marca_1": "la_mascara_no_cae", "marca_2": "voadora" },
+    "talentosChave": [
+      { "name": "Máscara", "texto": "o escudo é 50% maior e, quando quebra, empurra os inimigos" },
+      { "name": "Laço", "texto": "divide com você o dano de um aliado" }
+    ],
+    "buildExemplo": "Imortal: Laço com roubo de vida",
+    "virada": { "id": "virada_luchador_sagrado", "name": "Máscara Eterna", "texto": "imune a dano por 5 s" },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "máscara de luchador", "artes": ["mascara_luchador_simples", "mascara_luchador_raio"] },
+      { "parte": "costas", "elemento": "capa de cortina de teatro", "artes": ["capa_cortina_curta", "capa_cortina"] }
+    ],
+    "visualTreinador": "Máscara de luchador com raio dourado, capa feita de cortina de teatro, cinturão de papelão e botas brilhantes",
+    "poses": [
+      "Voadora",
+      "braços cruzados em pose heroica",
+      "segurando a máscara com as duas mãos para não cair"
+    ],
+    "piada": "Um olho de espírito que pisca na testa da máscara",
+    "costas": { "descricao": "Etiqueta de figurino costurada na capa de cortina.", "texto": "PROPRIEDADE DA TRUPE — DEVOLVER", "sugestao": true },
+    "paletasTraje": [
+      { "id": "luchador_sagrado_p1", "name": "Cortina do Cinema", "cores": ["#6E1F2E", "#1E1A1C", "#D4AF37", "#B08D3C", "#141012", "#EDE0C4"] },
+      { "id": "luchador_sagrado_p2", "name": "Relâmpago Verde", "cores": ["#2E7A4A", "#1E1A1C", "#E8C547", "#B08D3C", "#121614", "#EDE0C4"] },
+      { "id": "luchador_sagrado_p3", "name": "Noite de Gala", "cores": ["#2A3E8C", "#6E1F2E", "#E0E0E8", "#B08D3C", "#14141E", "#F2EEE6"] }
+    ],
+    "efeitos": {
+      "estilo": "encanto",
+      "descricao": "Folhas, brilho verde e espíritos translúcidos.",
+      "proprios": ["olho de espírito que pisca na testa da máscara", "voadora com rastro de espírito", "escudo dourado em volta na La Máscara No Cae"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "diva_da_opera",
+    "name": "Diva da Ópera",
+    "classe": "mascarado",
+    "papel": "dano",
+    "margem": "esquerda",
+    "instituicao": "trupe_do_povo",
+    "treinador": "donna_valentina",
+    "habilidadesMarca": { "marca_1": "aria_amaldicoada", "marca_2": "nota_aguda" },
+    "talentosChave": [
+      { "name": "Ária", "texto": "a área dura o dobro" },
+      { "name": "Nota Aguda", "texto": "o efeito pega todos em volta do alvo" }
+    ],
+    "buildExemplo": "Caçador de Elite: contra elites e chefes",
+    "virada": { "id": "virada_diva_da_opera", "name": "Grand Finale", "texto": "a nota final atordoa todos os inimigos à vista por 2 s" },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "peruca alta", "artes": ["peruca_alta_simples", "peruca_alta_passarinho"] },
+      { "parte": "rosto", "elemento": "máscara veneziana", "artes": ["mascara_veneziana"] }
+    ],
+    "visualTreinador": "Vestido que ocupa dois tiles, máscara veneziana, leque e peruca alta com um passarinho dentro",
+    "poses": [
+      "Nota aguda com ondas e vidro estilhaçando",
+      "recebendo flores numa reverência",
+      "desmaio dramático"
+    ],
+    "piada": "O vestido arrasta os aliados que passam perto",
+    "costas": { "descricao": "Cauda do vestido com uma etiqueta bordada a ouro.", "texto": "NÃO PISE", "sugestao": true },
+    "paletasTraje": [
+      { "id": "diva_da_opera_p1", "name": "Estreia", "cores": ["#6E1F2E", "#1E1A1C", "#D4AF37", "#B08D3C", "#141012", "#F2E8D8"] },
+      { "id": "diva_da_opera_p2", "name": "Veneza à Noite", "cores": ["#2E3A6E", "#1E1A1C", "#C8C8D8", "#B08D3C", "#12141E", "#EDE6F2"] },
+      { "id": "diva_da_opera_p3", "name": "Ária de Primavera", "cores": ["#56632E", "#6E1F2E", "#E8C0C8", "#B08D3C", "#1E1A1C", "#F4EEDC"] }
+    ],
+    "efeitos": {
+      "estilo": "encanto",
+      "descricao": "Folhas, brilho verde e espíritos translúcidos.",
+      "proprios": ["nota aguda com ondas e vidro estilhaçando", "flores caindo na reverência", "névoa de espírito na Ária Amaldiçoada"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "malandro",
+    "name": "Malandro",
+    "classe": "mascarado",
+    "papel": "suporte",
+    "margem": "esquerda",
+    "instituicao": "trupe_do_povo",
+    "treinador": "tiao",
+    "habilidadesMarca": { "marca_1": "rasteira", "marca_2": "gingado" },
+    "talentosChave": [
+      { "name": "Gingado", "texto": "o bônus de velocidade sobe para 40%" },
+      { "name": "Rasteira em Cadeia", "texto": "a área da Rasteira ou do Encore dobra" }
+    ],
+    "buildExemplo": "Showman: Palco Gigante com talentos cruzados da ala de dano",
+    "virada": { "id": "virada_malandro", "name": "Golpe do Século", "texto": "rasteira em todos os inimigos à vista, que caem por 2 s e deixam cair o dobro de Semente" },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "chapéu de palha", "artes": ["chapeu_palha_malandro"] },
+      { "parte": "torso", "elemento": "terno branco impecável", "artes": ["camisa_social_branca", "terno_branco_impecavel"] }
+    ],
+    "visualTreinador": "Terno branco impecável, chapéu de palha, sapato bicolor, palito e cordão",
+    "poses": [
+      "Gingado",
+      "dando uma rasteira e catando a Semente que cai",
+      "encostado num poste"
+    ],
+    "piada": "O terno nunca suja, nem no esgoto",
+    "costas": { "descricao": "Etiqueta de lavanderia pendurada para fora da gola do terno.", "texto": "LAVAR A SECO (NUNCA PRECISOU)", "sugestao": true },
+    "paletasTraje": [
+      { "id": "malandro_p1", "name": "Terno de Domingo", "cores": ["#D8C48A", "#6E1F2E", "#D4AF37", "#8A6A3A", "#1E1A1C", "#F8F6F0"] },
+      { "id": "malandro_p2", "name": "Gafieira", "cores": ["#C8B47A", "#2E5A3E", "#E0C050", "#7A5A32", "#141614", "#F4F1E8"] },
+      { "id": "malandro_p3", "name": "Madrugada", "cores": ["#BFA878", "#3A2A4E", "#C9A13B", "#6A5030", "#18141E", "#EDEAE2"] }
+    ],
+    "efeitos": {
+      "estilo": "encanto",
+      "descricao": "Folhas, brilho verde e espíritos translúcidos.",
+      "proprios": ["gingado com rastro de folhas", "Semente caindo na rasteira", "terno que brilha limpo no meio da lama"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "sumo_cibernetico",
+    "name": "Sumô Cibernético",
+    "classe": "combatente",
+    "papel": "tanque",
+    "margem": "direita",
+    "instituicao": "torcida_furia_neon",
+    "treinador": "takeshi",
+    "habilidadesMarca": { "marca_1": "barriga_hidraulica", "marca_2": "empurrao" },
+    "talentosChave": [
+      { "name": "Barriga Blindada", "texto": "a redução de dano da provocação vale também para os aliados perto" },
+      { "name": "Grito de Arena", "texto": "a provocação dobra de raio e atordoa por 1 s" }
+    ],
+    "buildExemplo": "Curral: Couro Grosso com o talento de papel Muralha",
+    "virada": { "id": "virada_sumo_cibernetico", "name": "Yokozuna", "texto": "por 10 s, não pode ser empurrado, e a barriga devolve 60% do dano" },
+    "silhueta": [
+      { "parte": "torso", "elemento": "barriga hidráulica", "artes": ["barriga_hidraulica_simples", "barriga_hidraulica_cromada"] },
+      { "parte": "cabeca", "elemento": "coque com antena", "artes": ["coque_antena"] }
+    ],
+    "visualTreinador": "Barriga hidráulica cromada com manômetro, coque com antena e mawashi de LED",
+    "poses": [
+      "Barrigada",
+      "pisada de sumô com vapor saindo dos pistões",
+      "sentado tomando energético"
+    ],
+    "piada": "Aviso na barriga: \"MANTENHA DISTÂNCIA\"",
+    "costas": { "descricao": "Pistões nas costas soltando vapor, com um letreiro de LED rolando.", "texto": "DÊ PASSAGEM", "sugestao": true },
+    "paletasTraje": [
+      { "id": "sumo_cibernetico_p1", "name": "Cromo da Arquibancada", "cores": ["#A43BFF", "#7D7E80", "#B6FF2E", "#C8CDD3", "#141217", "#F5F5F7"] },
+      { "id": "sumo_cibernetico_p2", "name": "Óleo Hidráulico", "cores": ["#2E2E36", "#7D7E80", "#FF8A1E", "#A8AEB6", "#0E0E12", "#E8E8EC"] },
+      { "id": "sumo_cibernetico_p3", "name": "Neon Lunar", "cores": ["#2EE6C8", "#5A5C66", "#FF3EA5", "#D0D4DA", "#121218", "#F2F2F6"] }
+    ],
+    "efeitos": {
+      "estilo": "maquina",
+      "descricao": "Faíscas, glitch, neon e notificações pipocando.",
+      "proprios": ["vapor saindo dos pistões na pisada", "manômetro da barriga subindo", "faíscas na barrigada"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "o_fiel",
+    "name": "O Fiel",
+    "classe": "combatente",
+    "papel": "dano",
+    "margem": "direita",
+    "instituicao": "torcida_furia_neon",
+    "treinador": "edson",
+    "habilidadesMarca": { "marca_1": "invasao_de_campo", "marca_2": "sinalizador" },
+    "talentosChave": [
+      { "name": "Fúria", "texto": "mais dano quanto menos vida" },
+      { "name": "Arquibancada", "texto": "cada inimigo derrotado zera a recarga da habilidade 1" }
+    ],
+    "buildExemplo": "Berserker: Fúria com roubo de vida",
+    "virada": { "id": "virada_o_fiel", "name": "Consciência", "texto": "por 15 s, protege o aliado mais fraco e ganha +50% de dano para cada aliado caído perto" },
+    "silhueta": [
+      { "parte": "bracos", "elemento": "manoplas nas cores do Neon FC", "artes": ["manoplas_simples", "manoplas_neon_fc"] },
+      { "parte": "cabeca", "elemento": "viseira", "artes": ["viseira"] }
+    ],
+    "visualTreinador": "Regata, viseira, cicatriz na sobrancelha, cachecol e manoplas pintadas nas cores do Neon FC",
+    "poses": [
+      "Invasão de Campo, correndo",
+      "sinalizador na mão",
+      "com Consciência, levantando um torcedor do Raiz FC"
+    ],
+    "piada": "Costas da regata: \"FIEL ATÉ O BOLETO\"",
+    "costas": { "descricao": "Estampa nas costas da regata.", "texto": "FIEL ATÉ O BOLETO" },
+    "paletasTraje": [
+      { "id": "o_fiel_p1", "name": "Cores do Neon FC", "cores": ["#A43BFF", "#141217", "#B6FF2E", "#7D7E80", "#0C0B0E", "#F5F5F7"] },
+      { "id": "o_fiel_p2", "name": "Jogo Fora de Casa", "cores": ["#F5F5F7", "#A43BFF", "#B6FF2E", "#7D7E80", "#141217", "#E0E0E6"] },
+      { "id": "o_fiel_p3", "name": "Clássico Noturno", "cores": ["#5A1E8C", "#2A2A30", "#2EE6F0", "#6A6C70", "#0E0D12", "#ECECF0"] }
+    ],
+    "efeitos": {
+      "estilo": "maquina",
+      "descricao": "Faíscas, glitch, neon e notificações pipocando.",
+      "proprios": ["fogo de sinalizador em cone", "rastro de neon na Invasão de Campo", "faíscas nas manoplas"]
+    },
+    "sugestaoCampos": ["paletasTraje", "silhueta"]
+  },
+  {
+    "id": "monstro_da_academia",
+    "name": "Monstro da Academia",
+    "classe": "combatente",
+    "papel": "suporte",
+    "margem": "direita",
+    "instituicao": "torcida_furia_neon",
+    "treinador": "thalysson",
+    "habilidadesMarca": { "marca_1": "bora_monstro", "marca_2": "live_motivacional" },
+    "talentosChave": [
+      { "name": "Bora em Dobro", "texto": "o reforço principal pega 2 aliados a mais" },
+      { "name": "Live Turbinada", "texto": "o bônus de dano do grupo sobe para 30%" }
+    ],
+    "buildExemplo": "Comuna: Discurso com calçado de velocidade",
+    "virada": { "id": "virada_monstro_da_academia", "name": "Shape Inexplicável", "texto": "a Live Motivacional dobra e pega o grupo todo por 15 s" },
+    "silhueta": [
+      { "parte": "bracos", "elemento": "braços gigantes", "artes": ["bracos_inchados", "bracos_gigantes"] },
+      { "parte": "pernas", "elemento": "pernas finas de quem pulou o treino de perna", "artes": ["pernas_palito"] }
+    ],
+    "visualTreinador": "Braços gigantes, pernas finas de quem pulou o treino de perna, pau de selfie com a live ligada e galão de água",
+    "poses": [
+      "Bíceps com contador de curtidas subindo",
+      "grito de \"BORA\" com corações",
+      "selfie no meio da luta"
+    ],
+    "piada": "Pernas de palito em todas as poses",
+    "costas": { "descricao": "Estampa nas costas da regata cavada.", "texto": "SEM DOR, SEM CURTIDA", "sugestao": true },
+    "paletasTraje": [
+      { "id": "monstro_da_academia_p1", "name": "Shape de Live", "cores": ["#B6FF2E", "#A43BFF", "#FF3E5E", "#7D7E80", "#141217", "#F5F5F7"] },
+      { "id": "monstro_da_academia_p2", "name": "Pré-Treino", "cores": ["#FF6A13", "#141217", "#FF3E5E", "#7D7E80", "#0C0B0E", "#F5F5F7"] },
+      { "id": "monstro_da_academia_p3", "name": "Dia de Braço", "cores": ["#2EA8FF", "#A43BFF", "#FF3E5E", "#8A8C90", "#141217", "#F0F0F4"] }
+    ],
+    "efeitos": {
+      "estilo": "maquina",
+      "descricao": "Faíscas, glitch, neon e notificações pipocando.",
+      "proprios": ["contador de curtidas subindo no bíceps", "grito de \"BORA\" com corações", "notificação de live pipocando"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "tropa_de_choque",
+    "name": "Tropa de Choque",
+    "classe": "atirador",
+    "papel": "tanque",
+    "margem": "direita",
+    "instituicao": "pm_do_consorcio",
+    "treinador": "big_mo",
+    "habilidadesMarca": { "marca_1": "nome_na_lista", "marca_2": "cordao_de_isolamento" },
+    "talentosChave": [
+      { "name": "Escudo de Choque", "texto": "o escudo também devolve os projéteis" },
+      { "name": "Cordão Duplo", "texto": "a área de controle dobra de tamanho" }
+    ],
+    "buildExemplo": "Vovó Fortaleza: Xale e munição extra",
+    "virada": { "id": "virada_tropa_de_choque", "name": "Muralha de Escudos", "texto": "bloqueia todo dano à distância contra o grupo por 4 s" },
+    "silhueta": [
+      { "parte": "rosto", "elemento": "óculos escuros à noite", "artes": ["oculos_escuros"] },
+      { "parte": "mao_secundaria", "elemento": "escudo de choque", "artes": ["escudo_choque_simples", "escudo_hoje_nao"] }
+    ],
+    "visualTreinador": "Armadura de choque, óculos escuros à noite, escudo escrito \"HOJE NÃO\" e prancheta da lista",
+    "poses": [
+      "Escudo em bloqueio",
+      "conferindo a lista",
+      "braços cruzados"
+    ],
+    "piada": "Cordão de isolamento de veludo vermelho, de balada",
+    "costas": { "descricao": "Estampa nas costas da armadura, ao lado do cordão de veludo enrolado.", "texto": "VOCÊ NÃO ESTÁ NA LISTA", "sugestao": true },
+    "paletasTraje": [
+      { "id": "tropa_de_choque_p1", "name": "Choque Premium", "cores": ["#4A4E54", "#2EA8FF", "#B3122E", "#9AA0A8", "#121417", "#F2F4F6"] },
+      { "id": "tropa_de_choque_p2", "name": "Turno da Madrugada", "cores": ["#1E2228", "#FFC21A", "#8C1A2E", "#7A8088", "#0A0C0E", "#E6E8EA"] },
+      { "id": "tropa_de_choque_p3", "name": "Evento VIP", "cores": ["#3A3E6E", "#2EE6F0", "#C21A4A", "#B0B6BE", "#121426", "#F4F4FA"] }
+    ],
+    "efeitos": {
+      "estilo": "maquina",
+      "descricao": "Faíscas, glitch, neon e notificações pipocando.",
+      "proprios": ["escudo em bloqueio soltando faísca", "faixa do cordão de isolamento brilhando no chão", "notificação \"NOME NÃO ENCONTRADO\" em cima do inimigo"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "cowboy_cromado",
+    "name": "Cowboy Cromado",
+    "classe": "atirador",
+    "papel": "dano",
+    "margem": "direita",
+    "instituicao": "pm_do_consorcio",
+    "treinador": "dusty",
+    "habilidadesMarca": { "marca_1": "yeehaw_exe", "marca_2": "duelo_ao_meio_dia" },
+    "talentosChave": [
+      { "name": "Mira Firme", "texto": "enquanto você não toma dano, a chance de crítico sobe 5% por segundo, até 50%" },
+      { "name": "Saque Rápido", "texto": "atira sem perder velocidade andando" }
+    ],
+    "buildExemplo": "Duelista: Saque Rápido com cabeça de precisão",
+    "virada": { "id": "virada_cowboy_cromado", "name": "Meio-Dia Eterno", "texto": "por 8 s, todo ataque contra o alvo marcado é crítico" },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "chapéu de cowboy", "artes": ["chapeu_cowboy_simples", "chapeu_cowboy_gps"] },
+      { "parte": "bracos", "elemento": "braço cromado", "artes": ["braco_cromado_simples", "braco_cromado"] }
+    ],
+    "visualTreinador": "Chapéu com GPS piscando, braço cromado, revólver com mira laser e espora de LED",
+    "poses": [
+      "Saque rápido",
+      "duelo ao meio-dia com uma planta seca de holograma rolando",
+      "girando o revólver"
+    ],
+    "piada": "Ele carrega o próprio projetor de planta seca de faroeste",
+    "costas": { "descricao": "Projetor de planta seca preso nas costas, com um adesivo de estrela de xerife.", "texto": "XERIFE — ASSINATURA MENSAL", "sugestaoCampos": ["texto"] },
+    "paletasTraje": [
+      { "id": "cowboy_cromado_p1", "name": "Meio-Dia Cromado", "cores": ["#4A4E54", "#2EA8FF", "#FF3E3E", "#C8CDD3", "#121417", "#F2F4F6"] },
+      { "id": "cowboy_cromado_p2", "name": "Poeira Digital", "cores": ["#7A5A3A", "#FFC21A", "#FF3E3E", "#B8BEC6", "#1E1A16", "#F0EAE0"] },
+      { "id": "cowboy_cromado_p3", "name": "Faroeste Neon", "cores": ["#2A2A3A", "#FF3EA5", "#2EE6F0", "#D0D4DA", "#0E0E14", "#F4F2F8"] }
+    ],
+    "efeitos": {
+      "estilo": "maquina",
+      "descricao": "Faíscas, glitch, neon e notificações pipocando.",
+      "proprios": ["mira laser no alvo", "planta seca de holograma rolando no duelo", "GPS piscando no chapéu"]
+    },
+    "sugestaoCampos": ["paletasTraje", "silhueta"]
+  },
+  {
+    "id": "diretor_de_nollywood",
+    "name": "Diretor de Nollywood",
+    "classe": "atirador",
+    "papel": "suporte",
+    "margem": "direita",
+    "instituicao": "pm_do_consorcio",
+    "treinador": "chidi",
+    "habilidadesMarca": { "marca_1": "corta", "marca_2": "plano_sequencia" },
+    "talentosChave": [
+      { "name": "Corta!", "texto": "a marca pula para o inimigo mais perto quando o alvo cai" },
+      { "name": "Plano-Sequência", "texto": "o controle dura o dobro" }
+    ],
+    "buildExemplo": "Controlador: armadilhas com adorno de controle",
+    "virada": { "id": "virada_diretor_de_nollywood", "name": "Blockbuster", "texto": "por 8 s, o grupo tem recargas pela metade e +50% de velocidade" },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "boné virado", "artes": ["bone_virado"] },
+      { "parte": "acompanhante", "elemento": "drones-câmera em órbita", "artes": ["drone_camera_um", "drones_camera_dois"] }
+    ],
+    "visualTreinador": "Boné virado, claquete, megafone e dois drones-câmera em órbita",
+    "poses": [
+      "\"Corta!\" com flash",
+      "brigando com um drone",
+      "filmando o inimigo de perto"
+    ],
+    "piada": "Cadeira de diretor dobrável com o nome escrito errado",
+    "costas": { "descricao": "Cadeira de diretor dobrável presa nas costas, com o nome escrito errado.", "texto": "CHIDY", "sugestaoCampos": ["texto"] },
+    "paletasTraje": [
+      { "id": "diretor_de_nollywood_p1", "name": "Set de Filmagem", "cores": ["#4A4E54", "#FFC21A", "#2EA8FF", "#9AA0A8", "#121417", "#F2F4F6"] },
+      { "id": "diretor_de_nollywood_p2", "name": "Pós-Produção", "cores": ["#2E3A2E", "#E8E8E8", "#FF6A13", "#8A9088", "#0E120E", "#F0F2EE"] },
+      { "id": "diretor_de_nollywood_p3", "name": "Tapete Vermelho", "cores": ["#8C1A2E", "#FFC21A", "#2EA8FF", "#B8B0A8", "#1A1214", "#F6F0EC"] }
+    ],
+    "efeitos": {
+      "estilo": "maquina",
+      "descricao": "Faíscas, glitch, neon e notificações pipocando.",
+      "proprios": ["flash do \"Corta!\"", "dois drones-câmera em órbita", "moldura de gravação REC sobre o alvo marcado"]
+    },
+    "sugestaoCampos": ["paletasTraje", "silhueta"]
+  },
+  {
+    "id": "engenheira_de_gambiarra",
+    "name": "Engenheira de Gambiarra",
+    "classe": "elemental",
+    "papel": "tanque",
+    "margem": "direita",
+    "instituicao": "universidade_neon",
+    "treinador": "mei_lin_zhao",
+    "habilidadesMarca": { "marca_1": "funciona_nao_pergunta", "marca_2": "robo_geladeira" },
+    "talentosChave": [
+      { "name": "Sucata Infinita", "texto": "o totem se reconstrói sozinho" },
+      { "name": "Escudo Partilhado", "texto": "escudo dividido entre todos os aliados perto" }
+    ],
+    "buildExemplo": "Fortaleza: totem vivo com set Turbina",
+    "virada": { "id": "virada_engenheira_de_gambiarra", "name": "Mecha de Sucata", "texto": "junta os robôs num robô gigante que ela pilota por 20 s" },
+    "silhueta": [
+      { "parte": "rosto", "elemento": "óculos de solda", "artes": ["oculos_solda"] },
+      { "parte": "acompanhante", "elemento": "robô feito de geladeira", "artes": ["robo_frigobar", "robo_geladeira_skate"] }
+    ],
+    "visualTreinador": "Macacão sujo de graxa, óculos de solda, fita prata em tudo e um robô feito de geladeira com rodinhas de skate",
+    "poses": [
+      "Chave de fenda soltando faísca",
+      "robô-geladeira abrindo a porta com luz saindo",
+      "levantando a barreira de sucata"
+    ],
+    "piada": "Lacre \"GARANTIA VIOLADA\" em todas as peças",
+    "costas": { "descricao": "Lacre grande nas costas do macacão.", "texto": "GARANTIA VIOLADA" },
+    "paletasTraje": [
+      { "id": "engenheira_de_gambiarra_p1", "name": "Graxa e Fita", "cores": ["#3F5A7A", "#8E949C", "#FF6A13", "#C0C6CE", "#15171A", "#F4F7FB"] },
+      { "id": "engenheira_de_gambiarra_p2", "name": "Ferro-Velho", "cores": ["#7A5A3A", "#5A5E64", "#FFC21A", "#B0B4BA", "#1A1614", "#ECE8E2"] },
+      { "id": "engenheira_de_gambiarra_p3", "name": "Laboratório Limpo (Por Enquanto)", "cores": ["#F4F7FB", "#1F6BFF", "#FF6A13", "#A8AEB6", "#15171A", "#E8EEF6"] }
+    ],
+    "efeitos": {
+      "estilo": "maquina",
+      "descricao": "Faíscas, glitch, neon e notificações pipocando.",
+      "proprios": ["chave de fenda soltando faísca", "robô-geladeira abrindo a porta com luz saindo", "barreira de sucata se remontando"]
+    },
+    "sugestaoCampos": ["paletasTraje", "silhueta"]
+  },
+  {
+    "id": "doktor_klaus",
+    "name": "Doktor Klaus",
+    "classe": "elemental",
+    "papel": "dano",
+    "margem": "direita",
+    "instituicao": "universidade_neon",
+    "treinador": "klaus",
+    "habilidadesMarca": { "marca_1": "experimento_instavel", "marca_2": "fur_wissenschaft" },
+    "talentosChave": [
+      { "name": "Corrente em Cadeia", "texto": "o raio salta para mais 2 inimigos" },
+      { "name": "Sobrecarga", "texto": "um golpe enorme que gasta todo o recurso" }
+    ],
+    "buildExemplo": "Saideira: Corrente em Cadeia e recurso máximo",
+    "virada": { "id": "virada_doktor_klaus", "name": "Ciência Exata", "texto": "explosão gigante que nunca sai pela culatra" },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "cabelo arrepiado de eletricidade", "artes": ["cabelo_arrepiado", "cabelo_arrepiado_faiscando"] },
+      { "parte": "costas", "elemento": "bobina de Tesla nas costas", "artes": ["bobina_tesla_pequena", "bobina_tesla"] }
+    ],
+    "visualTreinador": "Jaleco chamuscado, cabelo arrepiado de eletricidade, óculos de proteção e uma bobina de Tesla nas costas",
+    "poses": [
+      "Raio em cadeia",
+      "experimento explodindo com o cabelo pegando fogo",
+      "mostrando a patente carimbada"
+    ],
+    "piada": "Placa nas costas: \"0 DIAS SEM ACIDENTE\"",
+    "costas": { "descricao": "Placa pendurada nas costas, sob a bobina de Tesla.", "texto": "0 DIAS SEM ACIDENTE" },
+    "paletasTraje": [
+      { "id": "doktor_klaus_p1", "name": "Jaleco Chamuscado", "cores": ["#1F6BFF", "#7AD8FF", "#FF6A13", "#8E949C", "#15171A", "#F4F7FB"] },
+      { "id": "doktor_klaus_p2", "name": "Alta Tensão", "cores": ["#FFC21A", "#B6FF2E", "#FF3E3E", "#7A8088", "#121212", "#F0F0E8"] },
+      { "id": "doktor_klaus_p3", "name": "Plasma", "cores": ["#7A3BFF", "#FF3EA5", "#FF6A13", "#9A94A8", "#140F1E", "#F2EEF8"] }
+    ],
+    "efeitos": {
+      "estilo": "maquina",
+      "descricao": "Faíscas, glitch, neon e notificações pipocando.",
+      "proprios": ["raio em cadeia", "experimento explodindo com o cabelo pegando fogo", "fumaça de culatra com glitch"]
+    },
+    "sugestaoCampos": ["paletasTraje", "silhueta"]
+  },
+  {
+    "id": "coach_de_bem_estar",
+    "name": "Coach de Bem-Estar",
+    "classe": "elemental",
+    "papel": "cura",
+    "margem": "direita",
+    "instituicao": "universidade_neon",
+    "treinador": "brooke",
+    "habilidadesMarca": { "marca_1": "vibracoes_positivas", "marca_2": "detox" },
+    "talentosChave": [
+      { "name": "Segunda Chance", "texto": "levanta sozinho o aliado que cair perto de você; recarga de 120 s" },
+      { "name": "Vibrações", "texto": "cura menor, mas em todos" }
+    ],
+    "buildExemplo": "Anjo da Guarda: Segunda Chance com adorno de reanimação",
+    "virada": { "id": "virada_coach_de_bem_estar", "name": "Retiro", "texto": "levanta todos os aliados caídos perto com metade da vida" },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "viseira", "artes": ["viseira"] },
+      { "parte": "mao_secundaria", "elemento": "garrafa d'água gigante", "artes": ["garrafa_agua_media", "garrafa_agua_gigante"] }
+    ],
+    "visualTreinador": "Legging, viseira, garrafa d'água gigante e uma aura de nanobots rosa",
+    "poses": [
+      "Pose de yoga com nanobots",
+      "cura com coração rosa",
+      "oferecendo o cartão dourado do plano Ouro"
+    ],
+    "piada": "Crachá \"COACH QUÂNTICA CERTIFICADA\"",
+    "costas": { "descricao": "Estampa nas costas do top esportivo.", "texto": "PLANO OURO — PERGUNTE-ME COMO", "sugestao": true },
+    "paletasTraje": [
+      { "id": "coach_de_bem_estar_p1", "name": "Plano Ouro", "cores": ["#1F6BFF", "#15171A", "#FF8AD0", "#8E949C", "#0E0F12", "#F4F7FB"] },
+      { "id": "coach_de_bem_estar_p2", "name": "Detox Verde", "cores": ["#7ED957", "#3A3E44", "#FF8AD0", "#A0A6AE", "#15171A", "#F6FAF2"] },
+      { "id": "coach_de_bem_estar_p3", "name": "Gratidão Laranja", "cores": ["#FF6A13", "#F4F7FB", "#FF8AD0", "#8E949C", "#15171A", "#FFF4EC"] }
+    ],
+    "efeitos": {
+      "estilo": "maquina",
+      "descricao": "Faíscas, glitch, neon e notificações pipocando.",
+      "proprios": ["nanobots rosa", "cura com coração rosa", "cartão dourado do plano Ouro brilhando"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "atendente_imortal",
+    "name": "Atendente Imortal",
+    "classe": "mascarado",
+    "papel": "tanque",
+    "margem": "direita",
+    "instituicao": "agencia_neon",
+    "treinador": "katia",
+    "habilidadesMarca": { "marca_1": "aguarde_na_linha", "marca_2": "protocolo" },
+    "talentosChave": [
+      { "name": "Protocolo", "texto": "o escudo é 50% maior e, quando quebra, empurra os inimigos" },
+      { "name": "Transferência de Ligação", "texto": "divide com você o dano de um aliado" }
+    ],
+    "buildExemplo": "Imortal: Laço com roubo de vida",
+    "virada": { "id": "virada_atendente_imortal", "name": "Protocolo Infinito", "texto": "prende todos os inimigos perto por até 6 s, até alguém bater neles" },
+    "silhueta": [
+      { "parte": "rosto", "elemento": "headset de atendimento", "artes": ["headset_atendimento"] },
+      { "parte": "veiculo", "elemento": "cadeira de escritório com rodinhas", "artes": ["cadeira_escritorio"] }
+    ],
+    "visualTreinador": "Headset, cadeira de escritório com rodinhas em que ela anda, caneca \"MELHOR ATENDENTE DO MÊS — 2071\" e escudo holográfico \"AGUARDE\"",
+    "poses": [
+      "Deslizando de cadeira",
+      "barra de carregamento travada em 99% em cima do inimigo",
+      "escudo erguido"
+    ],
+    "piada": "Sorriso de atendimento que nunca muda, nem apanhando",
+    "costas": { "descricao": "Estampa nas costas do blazer corporativo.", "texto": "AVALIE COM 5 ESTRELAS", "sugestao": true },
+    "paletasTraje": [
+      { "id": "atendente_imortal_p1", "name": "Central de Atendimento", "cores": ["#2A2E3A", "#2EE6F0", "#FF3EA5", "#BFC5CC", "#111015", "#FFFFFF"] },
+      { "id": "atendente_imortal_p2", "name": "Pós-Venda", "cores": ["#5A2E6E", "#FF3EA5", "#2EE6F0", "#BFC5CC", "#160F1A", "#F6F0FA"] },
+      { "id": "atendente_imortal_p3", "name": "Plantão de Feriado", "cores": ["#2E6E5A", "#FFC21A", "#FF3EA5", "#BFC5CC", "#0F1614", "#F2FAF6"] }
+    ],
+    "efeitos": {
+      "estilo": "maquina",
+      "descricao": "Faíscas, glitch, neon e notificações pipocando.",
+      "proprios": ["barra de carregamento travada em 99%", "escudo holográfico \"AGUARDE\"", "notificação \"SUA LIGAÇÃO É IMPORTANTE\" pipocando"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "hacker_da_aldeia",
+    "name": "Hacker da Aldeia",
+    "classe": "mascarado",
+    "papel": "dano",
+    "margem": "direita",
+    "instituicao": "agencia_neon",
+    "treinador": "kaua_ferreira",
+    "habilidadesMarca": { "marca_1": "virus_em_rede", "marca_2": "derrubada" },
+    "talentosChave": [
+      { "name": "Vírus em Rede", "texto": "a área dura o dobro" },
+      { "name": "Derrubada", "texto": "o efeito pega todos em volta do alvo" }
+    ],
+    "buildExemplo": "Caçador de Elite: contra elites e chefes",
+    "virada": { "id": "virada_hacker_da_aldeia", "name": "Apagão Seletivo", "texto": "desliga toda a tecnologia inimiga à vista por 3 s" },
+    "silhueta": [
+      { "parte": "torso", "elemento": "moletom com grafismo da aldeia em pixel", "artes": ["moletom_grafismo_simples", "moletom_grafismo_aldeia"] },
+      { "parte": "rosto", "elemento": "fones", "artes": ["fones_grandes"] }
+    ],
+    "visualTreinador": "Moletom com grafismo da aldeia em pixel, fones, notebook com adesivo \"FIBRA ÓTICA NA ALDEIA\" e uma rede de dormir com roteador pendurado",
+    "poses": [
+      "Digitando com código verde subindo",
+      "vírus em forma de insetos de pixel",
+      "servidor de bilionário pegando fogo ao fundo"
+    ],
+    "piada": "Parado, ele luta deitado na rede",
+    "costas": { "descricao": "Adesivo colado no capuz do moletom.", "texto": "SEU SERVIDOR CAIU? DE NADA", "sugestao": true },
+    "paletasTraje": [
+      { "id": "hacker_da_aldeia_p1", "name": "Lan House", "cores": ["#1E2A1E", "#2EE6F0", "#3EFF6A", "#BFC5CC", "#111015", "#FFFFFF"] },
+      { "id": "hacker_da_aldeia_p2", "name": "Fibra Ótica", "cores": ["#2E2E5A", "#FF3EA5", "#2EE6F0", "#A8B0B8", "#0E0E18", "#F2F2FA"] },
+      { "id": "hacker_da_aldeia_p3", "name": "Madrugada de Deploy", "cores": ["#5A1E1E", "#FFC21A", "#3EFF6A", "#BFC5CC", "#120E0E", "#FAF4F0"] }
+    ],
+    "efeitos": {
+      "estilo": "maquina",
+      "descricao": "Faíscas, glitch, neon e notificações pipocando.",
+      "proprios": ["código verde subindo", "vírus em forma de insetos de pixel", "servidor de bilionário pegando fogo ao fundo"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas", "silhueta"]
+  },
+  {
+    "id": "idol",
+    "name": "Idol",
+    "classe": "mascarado",
+    "papel": "suporte",
+    "margem": "direita",
+    "instituicao": "agencia_neon",
+    "treinador": "li_wei",
+    "habilidadesMarca": { "marca_1": "fanchant", "marca_2": "encore" },
+    "talentosChave": [
+      { "name": "Fanchant", "texto": "o bônus de velocidade sobe para 40%" },
+      { "name": "Palco Gigante", "texto": "a área da Rasteira ou do Encore dobra" }
+    ],
+    "buildExemplo": "Showman: Palco Gigante com talentos cruzados da ala de dano",
+    "virada": { "id": "virada_idol", "name": "Turnê Mundial", "texto": "show de 10 s em que o Fanchant pega o grupo inteiro e zera as recargas de todos" },
+    "silhueta": [
+      { "parte": "cabeca", "elemento": "franja perfeita de cabelo pastel", "artes": ["franja_pastel"] },
+      { "parte": "acompanhante", "elemento": "caixas de som voadoras", "artes": ["caixa_som_voadora", "caixas_som_voadoras_duas"] }
+    ],
+    "visualTreinador": "Cabelo pastel de franja perfeita, jaqueta brilhante, microfone de headset, caixas de som voadoras e palco holográfico",
+    "poses": [
+      "Coreografia",
+      "Fanchant com corações e ondas sonoras",
+      "Encore puxando os inimigos para o palco, com chuva de confete"
+    ],
+    "piada": "Bastões de luz de fãs-holograma aparecem atrás dele a cada combo",
+    "costas": { "descricao": "Estampa de lantejoula nas costas da jaqueta brilhante.", "texto": "TRAINEE Nº 1 (DE 4.000)", "sugestao": true },
+    "paletasTraje": [
+      { "id": "idol_p1", "name": "Estreia Pastel", "cores": ["#FF3EA5", "#2EE6F0", "#E8ECF2", "#BFC5CC", "#111015", "#FFC8E8"] },
+      { "id": "idol_p2", "name": "Menta", "cores": ["#2EE6F0", "#FF3EA5", "#FFFFFF", "#BFC5CC", "#111015", "#B8F4E8"] },
+      { "id": "idol_p3", "name": "Lilás de Comeback", "cores": ["#9A6EFF", "#FFC21A", "#FFFFFF", "#BFC5CC", "#111015", "#D8C8FF"] }
+    ],
+    "efeitos": {
+      "estilo": "maquina",
+      "descricao": "Faíscas, glitch, neon e notificações pipocando.",
+      "proprios": ["ondas sonoras e corações do Fanchant", "palco holográfico com chuva de confete", "bastões de luz de fãs-holograma a cada combo"]
+    },
+    "sugestaoCampos": ["paletasTraje", "costas"]
+  }
+]

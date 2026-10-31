@@ -1,0 +1,343 @@
+{
+  "escalas": {
+    "apagaoAbaixoDe": 15,
+    "comEnergiaAPartirDe": 50,
+    "poluicaoMax": 10,
+    "bonus": {
+      "direitaComEnergia": 10,
+      "direitaApagao": -20,
+      "esquerdaPoluicaoZero": 10,
+      "esquerdaPorPontoDePoluicao": -10,
+      "esquerdaNatureza": 5,
+      "direitaCidade": 5
+    },
+    "tamanhoDoMundo": { "w": 240, "h": 320 },
+    "precedencia": ["ilha_do_farol", "mirante", "usina_da_ponte", "juncal", "rio_claro"],
+    "sugestaoCampos": ["apagaoAbaixoDe", "comEnergiaAPartirDe", "poluicaoMax", "tamanhoDoMundo", "precedencia"]
+  },
+  "regioes": [
+    {
+      "id": "delta",
+      "name": "Delta",
+      "tipo": "natureza",
+      "margemDona": "neutra",
+      "emPiloto": true,
+      "descricao": "Rio abaixo, a vila de palafitas onde todo mundo começa e onde ninguém tem lado.",
+      "medidores": { "energia": 30, "influencia": { "esquerda": 10, "direita": 10 }, "poluicao": 2, "opiniaoPublica": 0, "precoDeVida": 110 },
+      "mapa": { "x": 40, "y": 270, "w": 160, "h": 50 },
+      "vizinhas": ["rio_claro", "margem_esquerda", "vale_das_chamines", "ilha_do_farol"],
+      "pontosDeControle": ["pc_cais_do_delta"],
+      "depositos": [],
+      "lugares": ["palafitas_do_delta", "cadastro_do_delta", "cais_do_delta", "posto_do_delta", "bar_do_porto", "ringue_do_porto", "feira_de_pulgas"],
+      "masmorras": [],
+      "sugestaoCampos": ["medidores", "mapa", "vizinhas", "pontosDeControle"]
+    },
+    {
+      "id": "margem_esquerda",
+      "name": "Margem Esquerda",
+      "tipo": "cidade",
+      "margemDona": "esquerda",
+      "emPiloto": true,
+      "descricao": "Casas baixas, hortas, mutirões e a feira. A Casa da Assembleia, onde a reunião começa às oito e termina quando termina. A Brigada Popular, num galpão de trem; a Guarda Comunitária, com uma guarita por quarteirão; a Escola dos Saberes, debaixo de uma figueira enorme; a Trupe do Povo, no antigo cinema. Mais acima, o Planalto do Trigo.",
+      "medidores": { "energia": 35, "influencia": { "esquerda": 85, "direita": 5 }, "poluicao": 1, "opiniaoPublica": 40, "precoDeVida": 90 },
+      "mapa": { "x": 0, "y": 110, "w": 104, "h": 160 },
+      "vizinhas": ["planalto_do_trigo", "juncal", "usina_da_ponte", "rio_claro", "delta"],
+      "pontosDeControle": ["pc_casa_da_assembleia", "pc_feira"],
+      "depositos": ["deposito_da_feira"],
+      "lugares": ["casa_da_assembleia", "sede_brigada_popular", "sede_guarda_comunitaria", "sede_escola_dos_saberes", "sede_trupe_do_povo", "feira_da_esquerda", "mutiroes", "radio_do_povo", "praca_do_xadrez", "biblioteca_municipal", "murais_de_lucia_barreto", "bueiros_da_esquerda"],
+      "masmorras": ["cartorio_da_assembleia", "esgotos"],
+      "sugestaoCampos": ["medidores", "mapa", "vizinhas", "pontosDeControle", "depositos"]
+    },
+    {
+      "id": "margem_direita",
+      "name": "Margem Direita",
+      "tipo": "cidade",
+      "margemDona": "direita",
+      "emPiloto": true,
+      "descricao": "Torres, trens suspensos e telões. A Torre do Consórcio, de vidro espelhado, onde a Diretoria se reúne em realidade aumentada. A sede da Fúria Neon, colada no estádio; o batalhão da PM, com estúdio de gravação próprio; a Universidade Neon, com catraca por mensalidade; a Agência Neon, onde todo mundo é talento até o contrato acabar. O shopping, os prédios de cápsulas e, mais abaixo, o Vale das Chaminés.",
+      "medidores": { "energia": 80, "influencia": { "esquerda": 5, "direita": 85 }, "poluicao": 4, "opiniaoPublica": -40, "precoDeVida": 130 },
+      "mapa": { "x": 136, "y": 50, "w": 104, "h": 160 },
+      "vizinhas": ["juncal", "usina_da_ponte", "vale_das_chamines", "rio_claro", "serra_da_chopindita"],
+      "pontosDeControle": ["pc_torre_do_consorcio", "pc_shopping"],
+      "depositos": ["deposito_do_consorcio"],
+      "lugares": ["torre_do_consorcio", "sede_torcida_furia_neon", "sede_pm_do_consorcio", "sede_universidade_neon", "sede_agencia_neon", "shopping", "predios_de_capsulas", "hospital_antigo", "ferro_velho", "radio_velha", "bueiros_da_direita"],
+      "masmorras": ["arquivo_da_universidade", "esgotos"],
+      "sugestaoCampos": ["medidores", "mapa", "vizinhas", "pontosDeControle", "depositos"]
+    },
+    {
+      "id": "usina_da_ponte",
+      "name": "Usina da Ponte",
+      "tipo": "cidade",
+      "margemDona": "neutra",
+      "emPiloto": true,
+      "descricao": "O coração da cidade, metade ponte e metade barragem, com um posto de controle de cada margem nas pontas.",
+      "medidores": { "energia": 100, "influencia": { "esquerda": 40, "direita": 40 }, "poluicao": 2, "opiniaoPublica": 0, "precoDeVida": 120 },
+      "mapa": { "x": 96, "y": 150, "w": 48, "h": 24 },
+      "vizinhas": ["margem_esquerda", "margem_direita", "rio_claro"],
+      "pontosDeControle": ["pc_ponte_esquerda", "pc_ponte_direita"],
+      "depositos": [],
+      "lugares": ["barragem_da_usina", "estadio_das_margens", "marco_do_tenente_vidal", "museu_da_cidade_unida", "teatro_abandonado", "cambio_da_ponte", "entrada_galerias_da_usina", "estacao_fechada"],
+      "masmorras": ["galerias_da_usina", "poroes_do_teatro", "metro_inacabado"],
+      "sugestaoCampos": ["medidores", "mapa", "vizinhas", "lugares", "masmorras"]
+    },
+    {
+      "id": "juncal",
+      "name": "Floresta do Juncal",
+      "tipo": "natureza",
+      "margemDona": "neutra",
+      "emPiloto": true,
+      "descricao": "Mata fechada entre as margens, casa do Curupira e caminho dos contrabandistas.",
+      "medidores": { "energia": 5, "influencia": { "esquerda": 30, "direita": 20 }, "poluicao": 0, "opiniaoPublica": 10, "precoDeVida": 80 },
+      "mapa": { "x": 90, "y": 50, "w": 46, "h": 60 },
+      "vizinhas": ["planalto_do_trigo", "margem_esquerda", "margem_direita", "serra_da_chopindita", "rio_claro"],
+      "pontosDeControle": ["pc_clareira_do_juncal"],
+      "depositos": ["deposito_do_capataz"],
+      "lugares": ["mata_do_curupira", "trilha_dos_contrabandistas"],
+      "masmorras": [],
+      "sugestaoCampos": ["margemDona", "medidores", "mapa", "vizinhas", "pontosDeControle", "depositos"]
+    },
+    {
+      "id": "rio_claro",
+      "name": "Rio Claro",
+      "tipo": "natureza",
+      "margemDona": "neutra",
+      "emPiloto": false,
+      "descricao": "O rio que parte Duas Margens ao meio. A fumaça das fábricas desce por ele, e cada margem jura que a sujeira é culpa da outra.",
+      "medidores": { "energia": 0, "influencia": { "esquerda": 20, "direita": 20 }, "poluicao": 3, "opiniaoPublica": 0, "precoDeVida": 100 },
+      "mapa": { "x": 104, "y": 14, "w": 32, "h": 256 },
+      "vizinhas": ["delta", "margem_esquerda", "margem_direita", "usina_da_ponte", "juncal", "ilha_do_farol", "serra_da_chopindita"],
+      "pontosDeControle": [],
+      "depositos": [],
+      "lugares": [],
+      "masmorras": [],
+      "sugestaoCampos": ["tipo", "descricao", "medidores", "mapa", "vizinhas"]
+    },
+    {
+      "id": "planalto_do_trigo",
+      "name": "Planalto do Trigo",
+      "tipo": "natureza",
+      "margemDona": "esquerda",
+      "emPiloto": false,
+      "descricao": "Campos de trigo acima da Margem Esquerda, onde as roças coletivas alimentam a margem inteira e a comissão da colheita se reúne mais do que colhe.",
+      "medidores": { "energia": 20, "influencia": { "esquerda": 85, "direita": 5 }, "poluicao": 0, "opiniaoPublica": 50, "precoDeVida": 85 },
+      "mapa": { "x": 0, "y": 50, "w": 90, "h": 60 },
+      "vizinhas": ["serra_da_chopindita", "juncal", "margem_esquerda"],
+      "pontosDeControle": ["pc_planalto"],
+      "depositos": ["deposito_do_planalto"],
+      "lugares": [],
+      "masmorras": [],
+      "sugestaoCampos": ["descricao", "medidores", "mapa", "vizinhas", "pontosDeControle", "depositos"]
+    },
+    {
+      "id": "vale_das_chamines",
+      "name": "Vale das Chaminés",
+      "tipo": "cidade",
+      "margemDona": "direita",
+      "emPiloto": false,
+      "descricao": "Abaixo da Margem Direita, as fábricas do Consórcio soltam fumaça dia e noite, e o colaborador do turno da noite paga a própria máscara de ar.",
+      "medidores": { "energia": 70, "influencia": { "esquerda": 5, "direita": 85 }, "poluicao": 6, "opiniaoPublica": -30, "precoDeVida": 120 },
+      "mapa": { "x": 136, "y": 210, "w": 104, "h": 60 },
+      "vizinhas": ["margem_direita", "delta", "rio_claro"],
+      "pontosDeControle": ["pc_vale"],
+      "depositos": ["deposito_do_vale"],
+      "lugares": [],
+      "masmorras": [],
+      "sugestaoCampos": ["descricao", "medidores", "mapa", "vizinhas", "pontosDeControle", "depositos"]
+    },
+    {
+      "id": "serra_da_chopindita",
+      "name": "Serra da Chopindita",
+      "tipo": "natureza",
+      "margemDona": "esquerda",
+      "emPiloto": false,
+      "descricao": "Minas, túneis e trilhas. No alto, onde a névoa esconde, o Mirante.",
+      "medidores": { "energia": 10, "influencia": { "esquerda": 60, "direita": 30 }, "poluicao": 1, "opiniaoPublica": 10, "precoDeVida": 100 },
+      "mapa": { "x": 20, "y": 0, "w": 200, "h": 50 },
+      "vizinhas": ["planalto_do_trigo", "juncal", "margem_direita", "mirante", "rio_claro"],
+      "pontosDeControle": ["pc_minas_da_serra"],
+      "depositos": [],
+      "lugares": ["mina_velha_da_serra", "entrada_minas_fundas"],
+      "masmorras": ["minas_fundas"],
+      "sugestaoCampos": ["medidores", "mapa", "vizinhas", "pontosDeControle"]
+    },
+    {
+      "id": "mirante",
+      "name": "Mirante",
+      "tipo": "mista",
+      "margemDona": "mirante",
+      "emPiloto": false,
+      "descricao": "No alto da Serra, onde há mata intocada, rio limpo e tecnologia que nunca apaga. No Mirante não tem assembleia nem boleto.",
+      "medidores": { "energia": 100, "influencia": { "esquerda": 0, "direita": 0 }, "poluicao": 0, "opiniaoPublica": 0, "precoDeVida": 300 },
+      "mapa": { "x": 100, "y": 0, "w": 40, "h": 14 },
+      "vizinhas": ["serra_da_chopindita"],
+      "pontosDeControle": [],
+      "depositos": [],
+      "lugares": ["condominio_do_mirante"],
+      "masmorras": [],
+      "sugestaoCampos": ["tipo", "medidores", "mapa", "vizinhas"]
+    },
+    {
+      "id": "ilha_do_farol",
+      "name": "Ilha do Farol",
+      "tipo": "cidade",
+      "margemDona": "neutra",
+      "emPiloto": false,
+      "descricao": "A antiga rádio da cidade unida. De lá a Eco transmite, ninguém sabe como.",
+      "medidores": { "energia": 40, "influencia": { "esquerda": 10, "direita": 10 }, "poluicao": 1, "opiniaoPublica": 0, "precoDeVida": 100 },
+      "mapa": { "x": 112, "y": 228, "w": 16, "h": 16 },
+      "vizinhas": ["rio_claro", "delta"],
+      "pontosDeControle": ["pc_ilha_do_farol"],
+      "depositos": [],
+      "lugares": ["arquivo_da_ilha_do_farol"],
+      "masmorras": [],
+      "sugestaoCampos": ["tipo", "medidores", "mapa", "vizinhas", "pontosDeControle"]
+    }
+  ],
+  "encontros": {
+    "descricao": "Quando dois personagens se cruzam no mapa, abre uma roda de interação.",
+    "fases": "No começo, os encontros são com personagens de IA e com o seu grupo, como co-op; a interação livre entre jogadores abre numa fase seguinte.",
+    "alvosNoPiloto": ["ia", "grupo"],
+    "interacaoLivre": {
+      "descricao": "A interação livre entre jogadores abre numa fase seguinte.",
+      "emPiloto": false
+    },
+    "raioTiles": 2,
+    "acoes": [
+      {
+        "id": "cumprimentar",
+        "name": "Cumprimentar",
+        "oQueFaz": "Registra o encontro; encontrar a mesma pessoa várias vezes cria vínculo, que dá bônus juntos",
+        "alvos": ["ia", "grupo", "jogador"],
+        "emPiloto": true,
+        "vinculo": {
+          "encontrosParaVinculo": 3,
+          "intervaloMinEntreEncontrosMin": 60,
+          "bonus": [{ "stat": "damage", "pct": 5 }, { "stat": "healing", "pct": 5 }],
+          "sugestao": true
+        }
+      },
+      {
+        "id": "trocar",
+        "name": "Trocar",
+        "oQueFaz": "Troca de itens e recursos na hora",
+        "alvos": ["ia", "grupo", "jogador"],
+        "emPiloto": true
+      },
+      {
+        "id": "negociar",
+        "name": "Negociar",
+        "oQueFaz": "Trégua, pedágio, propina ou desconto, conforme quem é o outro",
+        "alvos": ["ia", "jogador"],
+        "emPiloto": true,
+        "opcoes": [
+          { "id": "tregua", "name": "Trégua", "descricao": "Com patrulha ou esquadrão da outra margem: ninguém ataca ninguém por 5 minutos." },
+          { "id": "pedagio", "name": "Pedágio", "descricao": "Com quem guarda um caminho, como os capangas do Capataz: paga e passa." },
+          { "id": "propina", "name": "Propina", "descricao": "Com fiscal da comissão ou drone de cobrança: paga e o problema some, até o próximo." },
+          { "id": "desconto", "name": "Desconto", "descricao": "Com vendedor ou contrabandista de IA: preço menor na próxima compra." }
+        ],
+        "sugestaoCampos": ["opcoes.0.descricao", "opcoes.1.descricao", "opcoes.2.descricao", "opcoes.3.descricao"]
+      },
+      {
+        "id": "seguir",
+        "name": "Seguir",
+        "oQueFaz": "Grupo temporário pelo mapa",
+        "alvos": ["ia", "grupo", "jogador"],
+        "emPiloto": true
+      },
+      {
+        "id": "recrutar",
+        "name": "Recrutar",
+        "oQueFaz": "Chama um personagem de IA para o grupo, pagando Semente, Crédito ou reputação",
+        "alvos": ["ia"],
+        "emPiloto": true,
+        "recrutar": {
+          "precos": [
+            { "moeda": "semente", "valor": 30 },
+            { "moeda": "credito", "valor": 60 },
+            { "moeda": "reputacao", "valor": 20 }
+          ],
+          "duraMin": 30,
+          "grupoMax": 4,
+          "sugestao": true
+        }
+      },
+      {
+        "id": "deixar_rastro",
+        "name": "Deixar rastro",
+        "oQueFaz": "Bilhete, marca ou armadilha para quem passar depois",
+        "alvos": ["ia", "grupo", "jogador"],
+        "emPiloto": true,
+        "opcoes": [
+          { "id": "bilhete", "name": "Bilhete", "descricao": "Recado escrito no chão, que só quem passar depois lê." },
+          { "id": "marca", "name": "Marca", "descricao": "Sinal no mapa para o grupo seguir." },
+          { "id": "armadilha", "name": "Armadilha", "descricao": "Pega o próximo personagem de IA inimigo que passar; avisa no chão antes de fechar." }
+        ],
+        "rastro": { "duraMin": 30, "maxAtivosPorJogador": 3, "sugestao": true },
+        "sugestaoCampos": ["opcoes.0.descricao", "opcoes.1.descricao", "opcoes.2.descricao"]
+      },
+      {
+        "id": "atacar",
+        "name": "Atacar",
+        "oQueFaz": "Contra IA, abre combate ali mesmo; contra jogadores, só nas arenas",
+        "alvos": ["ia", "jogador"],
+        "emPiloto": true,
+        "atacar": { "contraIa": "abre_combate", "contraJogador": "so_nas_arenas" }
+      },
+      {
+        "id": "render_se",
+        "name": "Render-se",
+        "oQueFaz": "Perde parte do que carrega, mas não morre",
+        "alvos": ["ia", "jogador"],
+        "emPiloto": true,
+        "renderSe": {
+          "perdePct": 25,
+          "perde": ["moedas", "materiais"],
+          "naoMorre": true,
+          "sugestaoCampos": ["perdePct", "perde"]
+        }
+      }
+    ],
+    "sugestaoCampos": ["alvosNoPiloto", "raioTiles"]
+  },
+  "competicao": {
+    "pontosDeControle": {
+      "texto": "Os pontos de controle do mapa mudam de dono por influência: obras, comboios, propaganda e missões. Nada de combate entre jogadores no mapa.",
+      "mudamPor": ["obras", "comboios", "propaganda", "missoes"],
+      "combateEntreJogadoresNoMapa": false
+    },
+    "cicloSemanal": {
+      "texto": "No domingo à noite, a Assembleia vota e a Diretoria fecha o trimestre. Cargos renovam, o mapa é pontuado e a margem com mais influência ganha um bônus pequeno na semana.",
+      "dia": "domingo",
+      "hora": "21:00",
+      "cargosRenovam": true,
+      "mapaPontuado": true,
+      "pontuacao": "Cada região vale 1 ponto para a margem com mais influência nela (empate: ninguém leva); a Usina da Ponte vale 2.",
+      "bonusMargemLider": {
+        "descricao": "+3% de XP de grupo e +3% de produção nas estruturas da margem durante a semana.",
+        "stats": [{ "stat": "xp", "pct": 3 }],
+        "producaoPct": 3,
+        "duraDias": 7,
+        "sugestao": true
+      },
+      "foraDoPiloto": true,
+      "sugestaoCampos": ["hora", "pontuacao"]
+    },
+    "equilibrio": {
+      "texto": "A margem com menos jogadores online recebe esquadrões de IA extras e um bônus de quem está por baixo; a margem dominante paga mais caro para manter o que tem.",
+      "criterio": "jogadores_online",
+      "diferencaMinPct": 20,
+      "esquadroesIaExtras": 1,
+      "bonusPorBaixoPct": 10,
+      "custoManutencaoDominantePct": 15,
+      "recalculaACadaMin": 60,
+      "foraDoPiloto": false,
+      "sugestaoCampos": ["diferencaMinPct", "esquadroesIaExtras", "bonusPorBaixoPct", "custoManutencaoDominantePct", "recalculaACadaMin", "foraDoPiloto"]
+    },
+    "duelos": {
+      "texto": "Fora das arenas, só por convite aceito.",
+      "foraDasArenas": "so_por_convite_aceito",
+      "foraDoPiloto": true,
+      "sugestaoCampos": ["foraDoPiloto"]
+    }
+  }
+}

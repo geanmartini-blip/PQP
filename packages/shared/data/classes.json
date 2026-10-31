@@ -1,0 +1,214 @@
+[
+  {
+    "id": "combatente",
+    "name": "Combatente",
+    "damageType": "impacto",
+    "resource": {
+      "esquerda": {
+        "id": "folego",
+        "name": "Fôlego",
+        "max": 100,
+        "regenPorS": 10,
+        "ganhoPorPctVidaPerdida": 0.5,
+        "description": "Enche rápido e acaba mais rápido ainda. Apanhar também devolve um pouco: raiva é combustível.",
+        "sugestaoCampos": ["max", "regenPorS", "ganhoPorPctVidaPerdida", "description"]
+      },
+      "direita": {
+        "id": "folego",
+        "name": "Fôlego",
+        "max": 100,
+        "regenPorS": 10,
+        "ganhoPorPctVidaPerdida": 0.5,
+        "description": "Enche rápido e acaba mais rápido ainda. A hidráulica ajuda, o pulmão continua sendo o seu.",
+        "sugestaoCampos": ["max", "regenPorS", "ganhoPorPctVidaPerdida", "description"]
+      }
+    },
+    "description": {
+      "esquerda": "Briga no corpo a corpo com força de espírito e vira fera",
+      "direita": "Briga no corpo a corpo com metal e hidráulica e monta armadura no meio da luta"
+    },
+    "institution": {
+      "esquerda": "brigada_popular",
+      "direita": "torcida_furia_neon"
+    },
+    "abilities": ["arrancada", "pancadao", "casca_grossa", "grito_de_guerra"],
+    "basicAttack": "basico_combatente",
+    "special": "especial_combatente",
+    "wings": [
+      { "papel": "tanque", "esquerda": "peao_brabo", "direita": "sumo_cibernetico" },
+      { "papel": "dano", "esquerda": "iogue_furioso", "direita": "o_fiel" },
+      { "papel": "suporte", "esquerda": "cidadao_revolucionario", "direita": "monstro_da_academia" }
+    ],
+    "loadoutPreAla": {
+      "nivelMin": 8,
+      "nivelMax": 11,
+      "botoes": ["arrancada", "pancadao", "casca_grossa"],
+      "sugestaoCampos": ["botoes"]
+    },
+    "slot3Padrao": "arrancada",
+    "slot3PorPapel": {
+      "tanque": "casca_grossa",
+      "dano": "arrancada",
+      "suporte": "pancadao"
+    },
+    "sugestaoCampos": ["slot3Padrao", "slot3PorPapel"]
+  },
+  {
+    "id": "atirador",
+    "name": "Atirador",
+    "damageType": "perfurante",
+    "resource": {
+      "esquerda": {
+        "id": "municao",
+        "name": "Munição",
+        "max": 100,
+        "regenPorS": 8,
+        "description": "Cartucho benzido não cai do céu, mas a Olga sempre acha mais um no fundo da sacola.",
+        "sugestaoCampos": ["max", "regenPorS", "description"]
+      },
+      "direita": {
+        "id": "municao",
+        "name": "Munição",
+        "max": 100,
+        "regenPorS": 8,
+        "description": "Pente inteligente que recarrega sozinho. A assinatura do pente também se renova sozinha.",
+        "sugestaoCampos": ["max", "regenPorS", "description"]
+      }
+    },
+    "description": {
+      "esquerda": "Arco, espingarda velha benzida e laço",
+      "direita": "Revólver inteligente, escopeta e drones"
+    },
+    "institution": {
+      "esquerda": "guarda_comunitaria",
+      "direita": "pm_do_consorcio"
+    },
+    "abilities": ["rajada", "chuva_de_chumbo", "recuo", "mira_marcada"],
+    "basicAttack": "basico_atirador",
+    "special": "especial_atirador",
+    "wings": [
+      { "papel": "tanque", "esquerda": "babushka", "direita": "tropa_de_choque" },
+      { "papel": "dano", "esquerda": "arqueiro_das_estepes", "direita": "cowboy_cromado" },
+      { "papel": "suporte", "esquerda": "cacador_de_crocodilo", "direita": "diretor_de_nollywood" }
+    ],
+    "loadoutPreAla": {
+      "nivelMin": 8,
+      "nivelMax": 11,
+      "botoes": ["rajada", "chuva_de_chumbo", "recuo"],
+      "sugestaoCampos": ["botoes"]
+    },
+    "slot3Padrao": "recuo",
+    "slot3PorPapel": {
+      "tanque": "chuva_de_chumbo",
+      "dano": "recuo",
+      "suporte": "chuva_de_chumbo"
+    },
+    "sugestaoCampos": ["slot3Padrao", "slot3PorPapel"]
+  },
+  {
+    "id": "elemental",
+    "name": "Elemental",
+    "damageType": "energia",
+    "resource": {
+      "esquerda": {
+        "id": "espirito",
+        "name": "Espírito",
+        "max": 100,
+        "regenPorS": 7,
+        "description": "Volta devagar, como tudo que vem da mata. Reclamar não acelera.",
+        "sugestaoCampos": ["max", "regenPorS", "description"]
+      },
+      "direita": {
+        "id": "bateria",
+        "name": "Bateria",
+        "max": 100,
+        "regenPorS": 7,
+        "description": "Carrega sozinha em 3 horas, segundo a caixa. Na prática, durante a luta mesmo.",
+        "sugestaoCampos": ["max", "regenPorS", "description"]
+      }
+    },
+    "description": {
+      "esquerda": "Elementos e até 2 totens que agem sozinhos",
+      "direita": "Ciência maluca e até 2 robôs que agem sozinhos"
+    },
+    "institution": {
+      "esquerda": "escola_dos_saberes",
+      "direita": "universidade_neon"
+    },
+    "abilities": ["totem_ou_robo", "explosao_elemental", "onda", "recarga"],
+    "basicAttack": "basico_elemental",
+    "special": "especial_elemental",
+    "wings": [
+      { "papel": "tanque", "esquerda": "druida_rabugento", "direita": "engenheira_de_gambiarra" },
+      { "papel": "dano", "esquerda": "bruxa_do_trovao", "direita": "doktor_klaus" },
+      { "papel": "cura", "esquerda": "curandeira_dos_andes", "direita": "coach_de_bem_estar" }
+    ],
+    "loadoutPreAla": {
+      "nivelMin": 8,
+      "nivelMax": 11,
+      "botoes": ["totem_ou_robo", "explosao_elemental", "onda"],
+      "sugestaoCampos": ["botoes"]
+    },
+    "slot3Padrao": "recarga",
+    "slot3PorPapel": {
+      "tanque": "onda",
+      "dano": "totem_ou_robo",
+      "cura": "recarga"
+    },
+    "sugestaoCampos": ["slot3Padrao", "slot3PorPapel"]
+  },
+  {
+    "id": "mascarado",
+    "name": "Mascarado",
+    "damageType": "espirito",
+    "resource": {
+      "esquerda": {
+        "id": "foco",
+        "name": "Foco",
+        "max": 100,
+        "regenPorS": 5,
+        "ganhoPorAcertoBasico": 3,
+        "description": "Sobe com a plateia: cada golpe certeiro devolve um pouco. Vaia não conta.",
+        "sugestaoCampos": ["max", "regenPorS", "ganhoPorAcertoBasico", "description"]
+      },
+      "direita": {
+        "id": "foco",
+        "name": "Foco",
+        "max": 100,
+        "regenPorS": 5,
+        "ganhoPorAcertoBasico": 3,
+        "description": "Sobe com o engajamento: cada golpe certeiro devolve um pouco. Notificação não conta.",
+        "sugestaoCampos": ["max", "regenPorS", "ganhoPorAcertoBasico", "description"]
+      }
+    },
+    "description": {
+      "esquerda": "Máscara, voz e lábia",
+      "direita": "Holograma, vírus e palco"
+    },
+    "institution": {
+      "esquerda": "trupe_do_povo",
+      "direita": "agencia_neon"
+    },
+    "abilities": ["sumico", "maldicao_ou_virus", "confusao", "animacao"],
+    "basicAttack": "basico_mascarado",
+    "special": "especial_mascarado",
+    "wings": [
+      { "papel": "tanque", "esquerda": "luchador_sagrado", "direita": "atendente_imortal" },
+      { "papel": "dano", "esquerda": "diva_da_opera", "direita": "hacker_da_aldeia" },
+      { "papel": "suporte", "esquerda": "malandro", "direita": "idol" }
+    ],
+    "loadoutPreAla": {
+      "nivelMin": 8,
+      "nivelMax": 11,
+      "botoes": ["maldicao_ou_virus", "confusao", "sumico"],
+      "sugestaoCampos": ["botoes"]
+    },
+    "slot3Padrao": "maldicao_ou_virus",
+    "slot3PorPapel": {
+      "tanque": "confusao",
+      "dano": "maldicao_ou_virus",
+      "suporte": "animacao"
+    },
+    "sugestaoCampos": ["slot3Padrao", "slot3PorPapel"]
+  }
+]

@@ -1,0 +1,388 @@
+{
+  "etapas": [
+    {
+      "id": "delta",
+      "name": "Delta",
+      "nivelMin": 1,
+      "nivelMax": 7,
+      "descricao": "O jogador cria o próprio personagem e começa igual a todos, sem lado e sem classe, como em Rookgaard. Tutorial e chefe Bruno Ferro no 7.",
+      "eventos": ["criacao_de_personagem", "tutorial_dos_controles", "chefe_bruno_ferro"],
+      "emPiloto": true
+    },
+    {
+      "id": "travessia",
+      "name": "Travessia",
+      "nivelMin": 8,
+      "nivelMax": 8,
+      "descricao": "Escolhe a margem e entra numa instituição, que define a classe. Missão de entrada da instituição.",
+      "eventos": ["escolhe_margem", "entra_na_instituicao", "missao_de_entrada", "recebe_guia"],
+      "emPiloto": true
+    },
+    {
+      "id": "instituicao",
+      "name": "Instituição",
+      "nivelMin": 8,
+      "nivelMax": 19,
+      "descricao": "Missões da instituição e da margem. No 12, escolhe a ala, que é o arquétipo. No 19, conhece os líderes.",
+      "eventos": ["missoes_da_instituicao", "escolhe_ala", "conhece_os_lideres"],
+      "emPiloto": true
+    },
+    {
+      "id": "arena_da_ponte",
+      "name": "Arena da Ponte",
+      "nivelMin": 20,
+      "nivelMax": 20,
+      "descricao": "Guerra entre as margens numa arena, com os líderes como chefes de IA.",
+      "eventos": ["arena_da_ponte"],
+      "emPiloto": false
+    },
+    {
+      "id": "noite_escura_e_acordo",
+      "name": "Noite Escura e Acordo",
+      "nivelMin": 20,
+      "nivelMax": 20,
+      "descricao": "A barragem racha, o Mirante é revelado, o povo assina o Acordo.",
+      "eventos": ["noite_escura", "acordo"],
+      "emPiloto": false
+    },
+    {
+      "id": "partes_seguintes",
+      "name": "Partes seguintes",
+      "nivelMin": 21,
+      "nivelMax": null,
+      "descricao": "Invasões ao Mirante por alas, competição sem fim, masmorras, colossos e arenas nos níveis 40 e 60.",
+      "eventos": ["invasoes_ao_mirante", "masmorras", "colossos", "arena_da_serra", "arena_do_farol"],
+      "emPiloto": false
+    }
+  ],
+  "capitulos": [
+    {
+      "id": "a_roda",
+      "name": "A Roda",
+      "margem": "esquerda",
+      "nivelMin": 8,
+      "nivelMax": 11,
+      "descricao": "Você se apresenta na Assembleia, escolhe o seu espírito guia e faz o primeiro mutirão. Descobre que a energia da sua rua foi cortada para a Direita pagar mais caro por ela."
+    },
+    {
+      "id": "a_licenca",
+      "name": "A Licença",
+      "margem": "esquerda",
+      "nivelMin": 12,
+      "nivelMax": 15,
+      "descricao": "Você escolhe a ala e passa a treinar com o treinador dela, como o Wesley ou a Olga. A Sahl Energia quer abrir uma mina na mata, e a comissão de licenças está dividida: Teodoro quer negociar, Lazzaro quer guerra. Sua escolha muda as missões do grupo. No caminho, você descobre que a comissão está parada há dois anos por falta de quórum."
+    },
+    {
+      "id": "o_rio_turvo",
+      "name": "O Rio Turvo",
+      "margem": "esquerda",
+      "nivelMin": 16,
+      "nivelMax": 19,
+      "descricao": "O rio fica turvo, o Encanto falha e você investiga. Acha o relatório da barragem no porão do Cartório da Assembleia, embaixo de três mil atas, e vê pela primeira vez um cabo que sobe a Serra."
+    },
+    {
+      "id": "o_primeiro_contrato",
+      "name": "O Primeiro Contrato",
+      "margem": "direita",
+      "nivelMin": 8,
+      "nivelMax": 11,
+      "descricao": "Sua IA de bolso te ativa, você assina o contrato da instituição e faz o primeiro bico para a Sahl Energia. Descobre que o seu pagamento já vem descontado do aluguel da cápsula."
+    },
+    {
+      "id": "a_mata_fechada",
+      "name": "A Mata Fechada",
+      "margem": "direita",
+      "nivelMin": 12,
+      "nivelMax": 15,
+      "descricao": "Você escolhe a ala e passa a treinar com o treinador dela, como o Li Wei ou o Doktor Klaus. A Sahl manda você abrir caminho na mata para uma mina, e você conhece quem mora lá. Ajuda a empresa, a mata ou os dois; a escolha muda as missões do grupo."
+    },
+    {
+      "id": "siga_o_dinheiro",
+      "name": "Siga o Dinheiro",
+      "margem": "direita",
+      "nivelMin": 16,
+      "nivelMax": 19,
+      "descricao": "Um apagão derruba metade da Direita. Com Klara Lindqvist, você segue o dinheiro da energia, acha o relatório arquivado como \"custo não previsto\" e o mesmo cabo subindo a Serra."
+    }
+  ],
+  "marcos": [
+    {
+      "nivel": 1,
+      "id": "cadastro_do_delta",
+      "name": "Cadastro do Delta",
+      "descricao": "Você cria o seu personagem no cadastro do Delta, numa ficha que o Seu Jacó preenche com uma caneta que falha.",
+      "desbloqueia": ["criacao_de_personagem", "maquina_de_visual", "visual_delta"],
+      "emPiloto": true
+    },
+    {
+      "nivel": 7,
+      "id": "chefe_bruno_ferro",
+      "name": "Bruno Ferro, o Capataz",
+      "descricao": "No nível 7, o chefe é Bruno Ferro, o Capataz, que está levando o barco de um vizinho por uma dívida.",
+      "desbloqueia": ["travessia"],
+      "emPiloto": true
+    },
+    {
+      "nivel": 8,
+      "id": "travessia",
+      "name": "A travessia",
+      "descricao": "Seu Jacó leva você de barco até a ponte. Você escolhe a margem e entra numa instituição; a missão de entrada é o primeiro trabalho, e o seu guia aparece: um espírito na Esquerda, uma IA de bolso na Direita.",
+      "desbloqueia": ["margem", "instituicao", "classe", "guia", "visual_uniforme", "habilidades_da_classe", "especial_da_classe", "patente_inicial"],
+      "emPiloto": true
+    },
+    {
+      "nivel": 10,
+      "id": "primeiro_talento",
+      "name": "Primeiro talento",
+      "descricao": "Um talento a cada 5 níveis, a partir do 10.",
+      "desbloqueia": ["talento_instituicao"],
+      "emPiloto": true
+    },
+    {
+      "nivel": 12,
+      "id": "escolhe_a_ala",
+      "name": "Escolha da ala",
+      "descricao": "No 12, escolhe a ala, que é o arquétipo, e passa a treinar com o treinador dela.",
+      "desbloqueia": ["arquetipo", "treinador_da_ala", "habilidades_marca", "visual_aprendiz", "emote_do_bordao"],
+      "emPiloto": true
+    },
+    {
+      "nivel": 15,
+      "id": "talento_de_papel",
+      "name": "Talento de papel",
+      "descricao": "No 15, 1 de 3 talentos do seu papel: tanque, dano, suporte ou cura.",
+      "desbloqueia": ["talento_papel"],
+      "emPiloto": true
+    },
+    {
+      "nivel": 19,
+      "id": "os_lideres",
+      "name": "Os líderes",
+      "descricao": "O seu líder aparece num telão e dá a ordem da guerra, e você espiona o líder do outro lado.",
+      "desbloqueia": [],
+      "emPiloto": false
+    },
+    {
+      "nivel": 20,
+      "id": "talento_chave_e_veterano",
+      "name": "Talento-chave e traje de veterano",
+      "descricao": "No 20, 1 de 2 talentos-chave do arquétipo, o que define a build, e o traje de veterano: mais adereços e a piada nas costas.",
+      "desbloqueia": ["talento_chave", "visual_veterano"],
+      "emPiloto": true
+    },
+    {
+      "nivel": 20,
+      "id": "arena_da_ponte",
+      "name": "Arena da Ponte, Noite Escura e Acordo",
+      "descricao": "A guerra acontece na Arena da Ponte; na noite depois, a barragem racha, o Mirante é revelado e o povo assina o Acordo.",
+      "desbloqueia": ["arena_da_ponte", "noite_escura", "acordo"],
+      "emPiloto": false
+    },
+    {
+      "nivel": 40,
+      "id": "arena_da_serra",
+      "name": "Arena da Serra",
+      "descricao": "Minas e trilhas, com a escavadeira acordando.",
+      "desbloqueia": ["visual_mestre", "arena_da_serra"],
+      "emPiloto": false
+    },
+    {
+      "nivel": 60,
+      "id": "arena_do_farol",
+      "name": "Arena do Farol",
+      "descricao": "A Ilha do Farol e as torres de rádio.",
+      "desbloqueia": ["visual_lendario", "arena_do_farol", "talento_lenda"],
+      "emPiloto": false
+    }
+  ],
+  "calendarioTalentos": {
+    "niveis": [
+      { "nivel": 10, "grupos": ["instituicao"], "name": "Instituição", "escolha": "1 de 3 da sua instituição", "fontes": ["propria_lista"], "quantidadeOpcoes": 3, "emPiloto": true },
+      { "nivel": 15, "grupos": ["papel"], "name": "Papel", "escolha": "1 de 3 do seu papel: tanque, dano, suporte ou cura", "fontes": ["propria_lista"], "quantidadeOpcoes": 3, "emPiloto": true },
+      { "nivel": 20, "grupos": ["chave"], "name": "Chave", "escolha": "1 de 2 talentos-chave do arquétipo; é o que define a build", "fontes": ["propria_lista"], "quantidadeOpcoes": 2, "emPiloto": true },
+      { "nivel": 25, "grupos": ["margem"], "name": "Margem", "escolha": "1 de 3 da sua margem", "fontes": ["propria_lista"], "quantidadeOpcoes": 3, "emPiloto": false },
+      { "nivel": 30, "grupos": ["virada", "chave", "papel"], "name": "Virada", "escolha": "A virada do arquétipo, o talento-chave que ficou de fora ou mais 1 do papel", "fontes": ["virada_do_arquetipo", "chave_que_ficou_de_fora", "propria_lista"], "emPiloto": false },
+      { "nivel": 35, "grupos": ["chave"], "name": "Cruzado", "escolha": "1 talento-chave de outra ala da mesma instituição", "fontes": ["outra_ala_mesma_instituicao"], "emPiloto": false },
+      { "nivel": 40, "grupos": ["instituicao"], "name": "Instituição II", "escolha": "Mais 1 da lista da instituição", "fontes": ["propria_lista"], "emPiloto": false },
+      { "nivel": 45, "grupos": ["margem"], "name": "Margem II", "escolha": "Mais 1 da lista da margem", "fontes": ["propria_lista"], "emPiloto": false },
+      { "nivel": 50, "grupos": ["papel"], "name": "Papel II", "escolha": "Mais 1 da lista do papel", "fontes": ["propria_lista"], "emPiloto": false },
+      { "nivel": 55, "grupos": ["guia"], "name": "Guia", "escolha": "1 de 3 evoluções do espírito ou da IA de bolso", "fontes": ["evolucao_do_guia"], "quantidadeOpcoes": 3, "emPiloto": false },
+      { "nivel": 60, "grupos": ["lenda"], "name": "Lenda", "escolha": "1 de 3 talentos lendários da classe", "fontes": ["lista_da_classe"], "quantidadeOpcoes": 3, "emPiloto": false }
+    ],
+    "livre": {
+      "aPartirDe": 65,
+      "aCadaNiveis": 5,
+      "regra": "A cada 5 níveis, mais 1 de qualquer lista já aberta."
+    },
+    "maestria": {
+      "regra": "Com tudo completo, Maestria: +3% num atributo a cada 5 níveis.",
+      "pctPorAtributo": 3,
+      "aCadaNiveis": 5,
+      "atributos": ["hp", "attack", "defense", "speed"],
+      "sugestaoCampos": ["atributos"]
+    },
+    "regraNiveisSemTalento": "Os níveis sem talento dão atributos: +6% em Vida, Ataque e Defesa e +2% em Velocidade (talents.json, regras.nivelSemTalento)."
+  },
+  "visualPorNivel": [
+    { "id": "delta", "nivel": 1, "name": "Roupa do Delta", "descricao": "Roupa do Delta: camiseta \"Lembrança do Delta\", bermuda e chinelo, em 6 cores.", "emPiloto": true },
+    { "id": "uniforme", "nivel": 8, "name": "Uniforme da instituição", "descricao": "Uniforme da instituição.", "emPiloto": true },
+    { "id": "aprendiz", "nivel": 12, "name": "Traje de aprendiz", "descricao": "Traje de aprendiz: o adereço principal do treinador, simplificado.", "emPiloto": true },
+    { "id": "veterano", "nivel": 20, "name": "Traje de veterano", "descricao": "Traje de veterano: mais adereços e a piada nas costas.", "emPiloto": true },
+    { "id": "virada", "nivel": 30, "name": "Variante da virada", "descricao": "Variante da virada, como o avental do Peão Desconstruído.", "emPiloto": false },
+    { "id": "mestre", "nivel": 40, "name": "Traje de mestre", "descricao": "Traje de mestre, igual ao do treinador.", "emPiloto": false },
+    { "id": "lendario", "nivel": 60, "name": "Traje lendário", "descricao": "Traje lendário, além do treinador, com aura própria.", "emPiloto": false }
+  ],
+  "xp": {
+    "semTeto": true,
+    "formula": {
+      "tipo": "potencia",
+      "base": 50,
+      "expoente": 1.6,
+      "arredondamento": "round",
+      "texto": "xpParaProximo(n) = round(50 * n^1.6), sem teto: cada nível pede mais XP que o anterior."
+    },
+    "tabela": [
+      { "nivel": 1, "xpParaProximo": 50, "xpAcumulado": 0 },
+      { "nivel": 2, "xpParaProximo": 152, "xpAcumulado": 50 },
+      { "nivel": 3, "xpParaProximo": 290, "xpAcumulado": 202 },
+      { "nivel": 4, "xpParaProximo": 459, "xpAcumulado": 492 },
+      { "nivel": 5, "xpParaProximo": 657, "xpAcumulado": 951 },
+      { "nivel": 6, "xpParaProximo": 879, "xpAcumulado": 1608 },
+      { "nivel": 7, "xpParaProximo": 1125, "xpAcumulado": 2487 },
+      { "nivel": 8, "xpParaProximo": 1393, "xpAcumulado": 3612 },
+      { "nivel": 9, "xpParaProximo": 1682, "xpAcumulado": 5005 },
+      { "nivel": 10, "xpParaProximo": 1991, "xpAcumulado": 6687 },
+      { "nivel": 11, "xpParaProximo": 2318, "xpAcumulado": 8678 },
+      { "nivel": 12, "xpParaProximo": 2665, "xpAcumulado": 10996 },
+      { "nivel": 13, "xpParaProximo": 3029, "xpAcumulado": 13661 },
+      { "nivel": 14, "xpParaProximo": 3410, "xpAcumulado": 16690 },
+      { "nivel": 15, "xpParaProximo": 3808, "xpAcumulado": 20100 },
+      { "nivel": 16, "xpParaProximo": 4222, "xpAcumulado": 23908 },
+      { "nivel": 17, "xpParaProximo": 4653, "xpAcumulado": 28130 },
+      { "nivel": 18, "xpParaProximo": 5098, "xpAcumulado": 32783 },
+      { "nivel": 19, "xpParaProximo": 5559, "xpAcumulado": 37881 },
+      { "nivel": 20, "xpParaProximo": 6034, "xpAcumulado": 43440 }
+    ],
+    "ritmoEsperado": {
+      "tutorialXpPorMin": 120,
+      "grupoXpPorMin": 220,
+      "minutosAteNivel7": 21,
+      "horasDoNivel8ao20": 3
+    },
+    "regrasDoDoc": {
+      "soLutaEmGrupoDaXp": true,
+      "grupoMinimoPersonagens": 2,
+      "contaPlantonistasEIa": true,
+      "bonusPorJogadorAoVivoPct": 15,
+      "plantaoMultXp": 0.5,
+      "fontes": ["patrulhas", "missoes_de_grupo", "masmorras", "arenas", "colossos", "invasoes", "eventos"]
+    },
+    "sugestaoCampos": ["formula", "tabela", "ritmoEsperado"]
+  },
+  "morte": {
+    "regra": "Morte: perde parte do XP do nível e volta ao QG da margem. Em arena e invasão, volta na próxima onda de reforço, a cada 20 segundos.",
+    "perdePctDoXpDoNivel": 10,
+    "podeDescerDeNivel": false,
+    "voltaPara": "qg_da_margem",
+    "semPerdaAteNivel": 7,
+    "arenaEInvasao": { "reforcoACadaS": 20, "perdeXp": false, "sugestaoCampos": ["perdeXp"] },
+    "plantonistaPerdeXp": false,
+    "sugestaoCampos": ["perdePctDoXpDoNivel", "podeDescerDeNivel", "semPerdaAteNivel", "plantonistaPerdeXp"]
+  },
+  "botoes": [
+    {
+      "id": "delta",
+      "nivelMin": 1,
+      "nivelMax": 7,
+      "basico": "basico_combatente",
+      "botoes": [],
+      "especial": "nenhum",
+      "item": true,
+      "classeEscolhidaNoQg": false,
+      "descricao": "No Delta, sem lado e sem classe: ataque básico automático (o corpo a corpo do Combatente, com visual de remo, igual a balance.personagemDelta.ataqueBasico), item e saque automático. Sem classe não há habilidade nem Especial: os botões de habilidade e o Especial aparecem no 8, quando a instituição define a classe. O tutorial vai liberando os controles.",
+      "desbloqueioTutorial": [
+        { "nivel": 1, "controle": "joystick", "descricao": "Joystick que aparece onde o polegar toca; tocar no chão leva até lá." },
+        { "nivel": 1, "controle": "alvo_e_basico", "descricao": "Alvo automático no inimigo mais perto à vista e ataque básico automático." },
+        { "nivel": 1, "controle": "saque_automatico", "descricao": "O saque é coletado sozinho, com filtro de raridade." },
+        { "nivel": 2, "controle": "troca_de_alvo", "descricao": "Tocar perto de um inimigo troca o alvo." },
+        { "nivel": 3, "controle": "item", "descricao": "Poção no botão de item." },
+        { "nivel": 4, "controle": "aviso_no_chao", "descricao": "Sair do aviso de ataque no chão." },
+        { "nivel": 5, "controle": "reanimar", "descricao": "Ficar 3 s ao lado de um aliado caído para levantar." },
+        { "nivel": 6, "controle": "modo_automatico", "descricao": "Ligar o modo automático com uma Doutrina pronta." }
+      ],
+      "sugestaoCampos": ["basico", "botoes", "especial", "desbloqueioTutorial"]
+    },
+    {
+      "id": "classe",
+      "nivelMin": 8,
+      "nivelMax": 11,
+      "basico": "basico_da_classe",
+      "botoes": ["classe", "classe", "classe"],
+      "especial": "especial_da_classe",
+      "item": true,
+      "classeEscolhidaNoQg": true,
+      "descricao": "Entre os níveis 8 e 11, antes de escolher a ala, os 3 botões são habilidades da classe.",
+      "desbloqueioTutorial": [
+        { "nivel": 8, "controle": "habilidades", "descricao": "Os 3 botões grandes de habilidade: tocar usa; segurar e arrastar só posiciona áreas, com guia de alcance." },
+        { "nivel": 8, "controle": "especial", "descricao": "O Especial brilha quando pronto; carrega batendo, apanhando e curando." }
+      ],
+      "sugestaoCampos": ["desbloqueioTutorial"]
+    },
+    {
+      "id": "ala",
+      "nivelMin": 12,
+      "nivelMax": 29,
+      "basico": "basico_da_classe",
+      "botoes": ["marca_1", "marca_2", "classe"],
+      "especial": "especial_da_classe",
+      "item": true,
+      "classeEscolhidaNoQg": true,
+      "descricao": "Botões 1 e 2: habilidades marca do arquétipo. Botão 3: uma das 4 habilidades da classe, escolhida no QG."
+    },
+    {
+      "id": "virada",
+      "nivelMin": 30,
+      "nivelMax": null,
+      "basico": "basico_da_classe",
+      "botoes": ["marca_1", "marca_2", "classe"],
+      "especial": "virada_ou_especial_da_classe",
+      "item": true,
+      "classeEscolhidaNoQg": true,
+      "descricao": "O Especial vira a virada do arquétipo no nível 30, se o jogador escolher a virada como talento."
+    }
+  ],
+  "padraoPorClasse": {
+    "combatente": {
+      "basico": "basico_combatente",
+      "especial": "especial_combatente",
+      "habilidades": ["arrancada", "pancadao", "casca_grossa", "grito_de_guerra"],
+      "botoesNivel8a11": ["arrancada", "pancadao", "casca_grossa"],
+      "botao3Padrao": "arrancada",
+      "sugestaoCampos": ["botoesNivel8a11", "botao3Padrao"]
+    },
+    "atirador": {
+      "basico": "basico_atirador",
+      "especial": "especial_atirador",
+      "habilidades": ["rajada", "chuva_de_chumbo", "recuo", "mira_marcada"],
+      "botoesNivel8a11": ["rajada", "chuva_de_chumbo", "recuo"],
+      "botao3Padrao": "mira_marcada",
+      "sugestaoCampos": ["botoesNivel8a11", "botao3Padrao"]
+    },
+    "elemental": {
+      "basico": "basico_elemental",
+      "especial": "especial_elemental",
+      "habilidades": ["totem_ou_robo", "explosao_elemental", "onda", "recarga"],
+      "botoesNivel8a11": ["totem_ou_robo", "explosao_elemental", "recarga"],
+      "botao3Padrao": "explosao_elemental",
+      "sugestaoCampos": ["botoesNivel8a11", "botao3Padrao"]
+    },
+    "mascarado": {
+      "basico": "basico_mascarado",
+      "especial": "especial_mascarado",
+      "habilidades": ["sumico", "maldicao_ou_virus", "confusao", "animacao"],
+      "botoesNivel8a11": ["maldicao_ou_virus", "confusao", "sumico"],
+      "botao3Padrao": "animacao",
+      "sugestaoCampos": ["botoesNivel8a11", "botao3Padrao"]
+    }
+  }
+}

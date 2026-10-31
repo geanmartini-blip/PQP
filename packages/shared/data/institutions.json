@@ -1,0 +1,368 @@
+{
+  "instituicoes": [
+    {
+      "id": "brigada_popular",
+      "name": "Brigada Popular",
+      "margem": "esquerda",
+      "classe": "combatente",
+      "qg": "casa_da_assembleia",
+      "predio": { "descricao": "Num galpão de trem.", "regiao": "margem_esquerda" },
+      "baseTrainer": "jacques",
+      "uniformeBase": { "name": "Brigadista Novato", "traje": "base_brigada_popular" },
+      "alas": ["peao_brabo", "iogue_furioso", "cidadao_revolucionario"],
+      "missaoEntrada": {
+        "id": "entrada_brigada_popular",
+        "texto": "Discurso na roda e uma briga de verdade contra contrabandistas"
+      },
+      "patentes": ["Brigadista", "Cabo do Povo", "Comandante de Pelotão"],
+      "emblema": { "descricao": "Punho segurando uma muda de planta numa coroa de trigo." },
+      "paleta": [
+        { "name": "vermelho desbotado", "hex": "#A8463F" },
+        { "name": "verde-musgo", "hex": "#5B6B2E" },
+        { "name": "bege", "hex": "#CDB892" },
+        { "name": "marrom", "hex": "#6B4429" },
+        { "name": "creme", "hex": "#F1E6C8" }
+      ],
+      "corDestaque": { "name": "vermelho desbotado", "hex": "#A8463F" },
+      "recursoVisual": "encanto",
+      "efeitos": "Encanto em folhas, brilho verde e espíritos translúcidos.",
+      "loja": "loja_brigada_popular",
+      "quadroMissoes": "quadro_brigada_popular",
+      "salaTreino": "treino_brigada_popular",
+      "sugestaoCampos": ["paleta.hex", "corDestaque"]
+    },
+    {
+      "id": "guarda_comunitaria",
+      "name": "Guarda Comunitária",
+      "margem": "esquerda",
+      "classe": "atirador",
+      "qg": "casa_da_assembleia",
+      "predio": { "descricao": "Com uma guarita por quarteirão.", "regiao": "margem_esquerda" },
+      "baseTrainer": "olga",
+      "uniformeBase": { "name": "Vigia de Quarteirão", "traje": "base_guarda_comunitaria" },
+      "alas": ["babushka", "arqueiro_das_estepes", "cacador_de_crocodilo"],
+      "missaoEntrada": {
+        "id": "entrada_guarda_comunitaria",
+        "texto": "Uma semana de ronda no quarteirão sem dedurar ninguém à toa"
+      },
+      "patentes": ["Vigia", "Chefe de Quarteirão", "Chefe de Bairro"],
+      "emblema": { "descricao": "Olho dentro de uma casinha com cerca." },
+      "paleta": [
+        { "name": "verde-oliva", "hex": "#6B7031" },
+        { "name": "amarelo refletivo", "hex": "#E5E234" },
+        { "name": "cinza", "hex": "#8A8C86" },
+        { "name": "marrom", "hex": "#6A4A2E" },
+        { "name": "branco", "hex": "#F4F4EE" }
+      ],
+      "corDestaque": { "name": "amarelo refletivo", "hex": "#E5E234" },
+      "recursoVisual": "encanto",
+      "efeitos": "Encanto em folhas, brilho verde e espíritos translúcidos.",
+      "loja": "loja_guarda_comunitaria",
+      "quadroMissoes": "quadro_guarda_comunitaria",
+      "salaTreino": "treino_guarda_comunitaria",
+      "sugestaoCampos": ["paleta.hex", "corDestaque"]
+    },
+    {
+      "id": "escola_dos_saberes",
+      "name": "Escola dos Saberes",
+      "margem": "esquerda",
+      "classe": "elemental",
+      "qg": "casa_da_assembleia",
+      "predio": { "descricao": "Debaixo de uma figueira enorme.", "regiao": "margem_esquerda" },
+      "baseTrainer": "seamus",
+      "uniformeBase": { "name": "Aprendiz", "traje": "base_escola_dos_saberes" },
+      "alas": ["druida_rabugento", "bruxa_do_trovao", "curandeira_dos_andes"],
+      "missaoEntrada": {
+        "id": "entrada_escola_dos_saberes",
+        "texto": "Uma noite na mata com um espírito, sem fugir"
+      },
+      "patentes": ["Aprendiz", "Sabedor", "Ancião"],
+      "emblema": { "descricao": "Árvore com um livro aberto no lugar da copa." },
+      "paleta": [
+        { "name": "verde-folha", "hex": "#5E9E3A" },
+        { "name": "marrom-casca", "hex": "#6E4B2F" },
+        { "name": "ocre", "hex": "#C68E2E" },
+        { "name": "azul-água", "hex": "#4F9CB4" },
+        { "name": "creme", "hex": "#EFE3C2" }
+      ],
+      "corDestaque": { "name": "verde-folha", "hex": "#5E9E3A" },
+      "recursoVisual": "encanto",
+      "efeitos": "Encanto em folhas, brilho verde e espíritos translúcidos.",
+      "loja": "loja_escola_dos_saberes",
+      "quadroMissoes": "quadro_escola_dos_saberes",
+      "salaTreino": "treino_escola_dos_saberes",
+      "sugestaoCampos": ["paleta.hex", "corDestaque"]
+    },
+    {
+      "id": "trupe_do_povo",
+      "name": "Trupe do Povo",
+      "margem": "esquerda",
+      "classe": "mascarado",
+      "qg": "casa_da_assembleia",
+      "predio": { "descricao": "No antigo cinema.", "regiao": "margem_esquerda" },
+      "baseTrainer": "tiao",
+      "uniformeBase": { "name": "Figurante", "traje": "base_trupe_do_povo" },
+      "alas": ["luchador_sagrado", "diva_da_opera", "malandro"],
+      "missaoEntrada": {
+        "id": "entrada_trupe_do_povo",
+        "texto": "Estreia no palco da praça com a plateia jogando tomate"
+      },
+      "patentes": ["Figurante", "Ator", "Diretor de Cena"],
+      "emblema": { "descricao": "Máscara sorrindo com uma lágrima pintada." },
+      "paleta": [
+        { "name": "vinho", "hex": "#6E1F2E" },
+        { "name": "dourado-velho", "hex": "#B08D3C" },
+        { "name": "preto", "hex": "#1E1A1C" },
+        { "name": "creme", "hex": "#EDE0C4" },
+        { "name": "verde-musgo", "hex": "#56632E" }
+      ],
+      "corDestaque": { "name": "dourado-velho", "hex": "#B08D3C" },
+      "recursoVisual": "encanto",
+      "efeitos": "Encanto em folhas, brilho verde e espíritos translúcidos.",
+      "loja": "loja_trupe_do_povo",
+      "quadroMissoes": "quadro_trupe_do_povo",
+      "salaTreino": "treino_trupe_do_povo",
+      "sugestaoCampos": ["paleta.hex", "corDestaque"]
+    },
+    {
+      "id": "torcida_furia_neon",
+      "name": "Torcida Fúria Neon",
+      "nomeCompleto": "Torcida Organizada Fúria Neon",
+      "margem": "direita",
+      "classe": "combatente",
+      "qg": "torre_do_consorcio",
+      "predio": { "descricao": "A sede da Fúria Neon, colada no estádio.", "regiao": "margem_direita" },
+      "baseTrainer": "edson",
+      "uniformeBase": { "name": "Torcedor Organizado", "traje": "base_torcida_furia_neon" },
+      "alas": ["sumo_cibernetico", "o_fiel", "monstro_da_academia"],
+      "missaoEntrada": {
+        "id": "entrada_torcida_furia_neon",
+        "texto": "Teste de arquibancada: aguentar 90 minutos de canto e uma briga de saída"
+      },
+      "patentes": ["Torcedor", "Organizado", "Diretoria da Torcida"],
+      "emblema": { "descricao": "Caveira de neon com coroa de louros e uma bola." },
+      "paleta": [
+        { "name": "preto", "hex": "#141217" },
+        { "name": "roxo-neon", "hex": "#A43BFF" },
+        { "name": "verde-limão", "hex": "#B6FF2E" },
+        { "name": "cinza-concreto", "hex": "#7D7E80" },
+        { "name": "branco", "hex": "#F5F5F7" }
+      ],
+      "corDestaque": { "name": "roxo-neon", "hex": "#A43BFF" },
+      "recursoVisual": "maquina",
+      "efeitos": "Máquina em faíscas, glitch, neon e notificações pipocando.",
+      "loja": "loja_torcida_furia_neon",
+      "quadroMissoes": "quadro_torcida_furia_neon",
+      "salaTreino": "treino_torcida_furia_neon",
+      "sugestaoCampos": ["paleta.hex", "corDestaque"]
+    },
+    {
+      "id": "pm_do_consorcio",
+      "name": "PM do Consórcio",
+      "margem": "direita",
+      "classe": "atirador",
+      "qg": "torre_do_consorcio",
+      "predio": { "descricao": "O batalhão da PM, com estúdio de gravação próprio.", "regiao": "margem_direita" },
+      "baseTrainer": "dusty",
+      "uniformeBase": { "name": "Soldado Terceirizado", "traje": "base_pm_do_consorcio" },
+      "alas": ["tropa_de_choque", "cowboy_cromado", "diretor_de_nollywood"],
+      "missaoEntrada": {
+        "id": "entrada_pm_do_consorcio",
+        "texto": "Concurso, curso relâmpago e a assinatura de um contrato que ninguém lê"
+      },
+      "patentes": ["Soldado", "Sargento", "Capitão"],
+      "emblema": { "descricao": "Escudo com cifrão estilizado e uma câmera." },
+      "paleta": [
+        { "name": "cinza-chumbo", "hex": "#4A4E54" },
+        { "name": "azul-neon", "hex": "#2EA8FF" },
+        { "name": "preto", "hex": "#121417" },
+        { "name": "amarelo-alerta", "hex": "#FFC21A" },
+        { "name": "branco", "hex": "#F2F4F6" }
+      ],
+      "corDestaque": { "name": "azul-neon", "hex": "#2EA8FF" },
+      "recursoVisual": "maquina",
+      "efeitos": "Máquina em faíscas, glitch, neon e notificações pipocando.",
+      "loja": "loja_pm_do_consorcio",
+      "quadroMissoes": "quadro_pm_do_consorcio",
+      "salaTreino": "treino_pm_do_consorcio",
+      "sugestaoCampos": ["paleta.hex", "corDestaque"]
+    },
+    {
+      "id": "universidade_neon",
+      "name": "Universidade Neon",
+      "margem": "direita",
+      "classe": "elemental",
+      "qg": "torre_do_consorcio",
+      "predio": { "descricao": "Com catraca por mensalidade.", "regiao": "margem_direita" },
+      "baseTrainer": "klaus",
+      "uniformeBase": { "name": "Calouro", "traje": "base_universidade_neon" },
+      "alas": ["engenheira_de_gambiarra", "doktor_klaus", "coach_de_bem_estar"],
+      "missaoEntrada": {
+        "id": "entrada_universidade_neon",
+        "texto": "Vestibular, trote e a primeira mensalidade"
+      },
+      "patentes": ["Calouro", "Veterano", "Mestre", "Doutor"],
+      "emblema": { "descricao": "Capelo de formatura com um plugue de tomada." },
+      "paleta": [
+        { "name": "azul-elétrico", "hex": "#1F6BFF" },
+        { "name": "branco", "hex": "#F4F7FB" },
+        { "name": "cinza", "hex": "#8E949C" },
+        { "name": "laranja de segurança", "hex": "#FF6A13" },
+        { "name": "preto", "hex": "#15171A" }
+      ],
+      "corDestaque": { "name": "laranja de segurança", "hex": "#FF6A13" },
+      "recursoVisual": "maquina",
+      "efeitos": "Máquina em faíscas, glitch, neon e notificações pipocando.",
+      "loja": "loja_universidade_neon",
+      "quadroMissoes": "quadro_universidade_neon",
+      "salaTreino": "treino_universidade_neon",
+      "masmorra": "arquivo_da_universidade",
+      "sugestaoCampos": ["paleta.hex", "corDestaque"]
+    },
+    {
+      "id": "agencia_neon",
+      "name": "Agência Neon",
+      "margem": "direita",
+      "classe": "mascarado",
+      "qg": "torre_do_consorcio",
+      "predio": { "descricao": "A Agência, onde todo mundo é talento até o contrato acabar.", "regiao": "margem_direita" },
+      "baseTrainer": "katia",
+      "uniformeBase": { "name": "Trainee", "traje": "base_agencia_neon" },
+      "alas": ["atendente_imortal", "hacker_da_aldeia", "idol"],
+      "missaoEntrada": {
+        "id": "entrada_agencia_neon",
+        "texto": "Audição, contrato de exclusividade e cem seguidores em uma hora"
+      },
+      "patentes": ["Trainee", "Talento", "Estrela"],
+      "emblema": { "descricao": "Estrela com um olho de holograma no meio." },
+      "paleta": [
+        { "name": "rosa-neon", "hex": "#FF3EA5" },
+        { "name": "ciano", "hex": "#2EE6F0" },
+        { "name": "branco", "hex": "#FFFFFF" },
+        { "name": "prata", "hex": "#BFC5CC" },
+        { "name": "preto", "hex": "#111015" }
+      ],
+      "corDestaque": { "name": "rosa-neon", "hex": "#FF3EA5" },
+      "recursoVisual": "maquina",
+      "efeitos": "Máquina em faíscas, glitch, neon e notificações pipocando.",
+      "loja": "loja_agencia_neon",
+      "quadroMissoes": "quadro_agencia_neon",
+      "salaTreino": "treino_agencia_neon",
+      "sugestaoCampos": ["paleta.hex", "corDestaque"]
+    }
+  ],
+  "qgs": [
+    {
+      "id": "casa_da_assembleia",
+      "name": "Casa da Assembleia",
+      "margem": "esquerda",
+      "predio": { "descricao": "A Casa da Assembleia, onde a reunião começa às oito e termina quando termina.", "regiao": "margem_esquerda" },
+      "governo": "Assembleia aberta toda noite, Conselho eleito e uma comissão para cada assunto",
+      "patentesMargem": ["Membro", "Militante", "Conselheiro", "Comissário"],
+      "moeda": "semente",
+      "canal": "Roda",
+      "instituicoes": ["brigada_popular", "guarda_comunitaria", "escola_dos_saberes", "trupe_do_povo"],
+      "maquinaVisual": "espelho_da_benzedeira",
+      "loja": "loja_casa_da_assembleia",
+      "plantao": {
+        "id": "plantao_casa_da_assembleia",
+        "descricao": "Quando você sai do jogo, seu personagem fica de plantão no QG da margem, comandado pela Doutrina. Qualquer um da sua margem pode levá-lo para masmorras, colossos e invasões.",
+        "xpMult": 0.5,
+        "regras": [
+          "Ganha metade do XP e parte do loot, entregues com um relatório quando você volta.",
+          "Plantonista não perde itens, não anda pelo mapa, não entra em arena e não conta para o bônus de jogador ao vivo."
+        ]
+      },
+      "servicos": ["maquina_de_visual", "loja", "plantao", "refazer_talentos", "escolher_habilidade_3", "volta_ao_cair"],
+      "masmorra": "cartorio_da_assembleia"
+    },
+    {
+      "id": "torre_do_consorcio",
+      "name": "Torre do Consórcio",
+      "margem": "direita",
+      "predio": { "descricao": "A Torre do Consórcio, de vidro espelhado, onde a Diretoria se reúne em realidade aumentada.", "regiao": "margem_direita" },
+      "governo": "Acionistas, Diretoria, gerentes e colaboradores",
+      "patentesMargem": ["Colaborador", "Parceiro", "Gerente", "Diretor"],
+      "moeda": "credito",
+      "canal": "Diretoria",
+      "instituicoes": ["torcida_furia_neon", "pm_do_consorcio", "universidade_neon", "agencia_neon"],
+      "maquinaVisual": "cabine_neon",
+      "loja": "loja_torre_do_consorcio",
+      "plantao": {
+        "id": "plantao_torre_do_consorcio",
+        "descricao": "Quando você sai do jogo, seu personagem fica de plantão no QG da margem, comandado pela Doutrina. Qualquer um da sua margem pode levá-lo para masmorras, colossos e invasões.",
+        "xpMult": 0.5,
+        "regras": [
+          "Ganha metade do XP e parte do loot, entregues com um relatório quando você volta.",
+          "Plantonista não perde itens, não anda pelo mapa, não entra em arena e não conta para o bônus de jogador ao vivo."
+        ]
+      },
+      "servicos": ["maquina_de_visual", "loja", "plantao", "refazer_talentos", "escolher_habilidade_3", "volta_ao_cair"]
+    }
+  ],
+  "maquinasVisual": [
+    {
+      "id": "espelho_da_benzedeira",
+      "name": "Espelho da Benzedeira",
+      "local": "casa_da_assembleia",
+      "localTipo": "qg",
+      "margem": "esquerda",
+      "gratis": true,
+      "semLimite": true,
+      "altera": ["corpo", "pele", "rosto", "cabelo", "cor_do_cabelo", "detalhes", "paleta_do_traje", "visual_mostrado"],
+      "nuncaAltera": ["silhueta_da_ala"],
+      "mostraTermosAntesDeAbrir": false,
+      "descricao": "Espelho de moldura de madeira entalhada, com ramos de arruda pendurados. Grátis e sem limite de uso: muda corpo, pele, rosto, cabelo, detalhes e a cor do traje (3 paletas por ala), e escolhe qual visual já liberado mostrar. Nunca troca a silhueta da ala.",
+      "atendente": "benzedeira_do_espelho",
+      "sugestaoCampos": ["descricao", "atendente"]
+    },
+    {
+      "id": "cabine_neon",
+      "name": "Cabine Neon",
+      "local": "torre_do_consorcio",
+      "localTipo": "qg",
+      "margem": "direita",
+      "gratis": true,
+      "semLimite": true,
+      "altera": ["corpo", "pele", "rosto", "cabelo", "cor_do_cabelo", "detalhes", "paleta_do_traje", "visual_mostrado"],
+      "nuncaAltera": ["silhueta_da_ala"],
+      "mostraTermosAntesDeAbrir": true,
+      "termosDeUso": {
+        "titulo": "Termos de Uso da Cabine Neon (versão 47.3, revisada hoje)",
+        "clausulas": [
+          "1. A Cabine Neon é gratuita. A gratuidade é um benefício concedido pelo Consórcio e pode ser reavaliada a qualquer momento, sem aviso, para o seu bem.",
+          "2. Ao entrar, você cede ao Consórcio o direito de usar a sua nova aparência em telões, campanhas e no material de treinamento de colaboradores, em qualquer mídia que exista ou venha a ser inventada.",
+          "3. A Cabine mede o seu rosto para fins de segurança, publicidade direcionada e cálculo de score.",
+          "4. Mudar de visual não altera o seu score. Exceto quando altera.",
+          "5. A silhueta da sua ala é patrimônio da instituição e não pode ser removida, alugada nem sublocada.",
+          "6. A Cabine não se responsabiliza por cortes de cabelo escolhidos pelo próprio colaborador.",
+          "7. Em caso de apagão, o seu visual fica salvo como estava no último quadro aceso.",
+          "8. O tempo gasto lendo estes termos não conta como hora trabalhada.",
+          "9. Reclamações devem ser enviadas à Central de Atendimento da Agência Neon. Sua ligação é muito importante para nós.",
+          "10. Somos uma família. Famílias não se processam: qualquer conflito vai para a arbitragem por contrato do Consórcio.",
+          "11. Ao tocar em ACEITO, você declara que leu tudo, como todo mundo."
+        ],
+        "botao": "ACEITO",
+        "rolarAteOFim": true,
+        "sugestao": true
+      },
+      "descricao": "Cabine de vidro com luz de neon e um anúncio rodando na porta. Grátis e sem limite de uso, e mesmo assim mostra os termos de uso inteiros antes de abrir. Muda corpo, pele, rosto, cabelo, detalhes e a cor do traje (3 paletas por ala), e escolhe qual visual já liberado mostrar. Nunca troca a silhueta da ala.",
+      "atendente": "funcionario_da_cabine_neon",
+      "sugestaoCampos": ["termosDeUso", "descricao", "atendente"]
+    },
+    {
+      "id": "maquina_visual_delta",
+      "name": "Espelho do Cadastro",
+      "local": "cadastro_do_delta",
+      "localTipo": "lugar",
+      "gratis": true,
+      "semLimite": true,
+      "altera": ["corpo", "pele", "rosto", "cabelo", "cor_do_cabelo", "detalhes", "paleta_do_traje", "visual_mostrado"],
+      "nuncaAltera": ["silhueta_da_ala"],
+      "mostraTermosAntesDeAbrir": false,
+      "descricao": "Espelho rachado pregado numa estaca da palafita, ao lado do cadastro do Delta: a Máquina de Visual neutra do Delta, sem lado. Grátis e sem limite de uso, como as dos QGs; no Delta só existe a roupa do Delta, nas 6 cores.",
+      "atendente": "seu_jaco",
+      "sugestaoCampos": ["name", "descricao", "atendente"]
+    }
+  ]
+}

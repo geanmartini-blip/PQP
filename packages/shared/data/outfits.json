@@ -1,0 +1,1245 @@
+{
+  "gradeBoneco": {
+    "largura": 32,
+    "altura": 48,
+    "cabeca": [0, 19],
+    "torso": [20, 33],
+    "pernas": [34, 43],
+    "pes": [44, 47],
+    "sugestao": true
+  },
+  "especificacaoSprite": {
+    "tilePx": 32,
+    "boneco": { "w": 32, "h": 48 },
+    "direcoes": 4,
+    "alturaEmCabecas": 2.5,
+    "retratoPx": 64,
+    "emblemaPx": 64,
+    "quadros": { "parado": 2, "andandoPorDirecao": 6, "basico": 3, "marca": 4, "especial": 6, "vitoria": 3, "derrota": 3 },
+    "basicoAndando": true,
+    "kitMesmasAnimacoes": true,
+    "coresPorFicha": 5
+  },
+  "prompts": {
+    "kitDeCriacao": "Pixel art character creator kit for a 2D top-down online RPG in the style of Tibia and\nHabbo Hotel, funny and satirical. Chibi proportions (about 2.5 heads tall), 32x48 px\ncharacters, 4 directions. Separate rows: 5 body types (short, medium, tall and skinny,\nbuff, potbellied) in a plain tank top and shorts; 15 skin tones including sunburnt red,\ntank-top tan lines and sleepless grey; 16 faces with fight, victory and defeat\nexpressions, including sleepy face, awkward smile and villain eyebrows; 20 hairstyles\n(including bald, mullet, comb-over, afro, mohawk and a cap); beard, moustache, goatee,\nglasses, scar, mole, gold tooth, dark circles and a tattoo with a misspelled name; the\nstarter outfit (t-shirt printed \"Lembrança do Delta\", shorts, flip-flops). Every part on a\ntransparent background, aligned to the same anchor so the layers stack. At the end, three\nassembled silly characters on a dark tiled floor. No real brands, no text except row\nlabels and the t-shirt print.",
+    "fichaTemplate": "Pixel art character sprite sheet for a 2D top-down online RPG in the style of Tibia and\nHabbo Hotel. Clean, high-quality pixel art, chibi proportions (about 2.5 heads tall),\nbold readable silhouettes, satirical and funny, dark tiled floor background.\n\nLayout: 4 rows. Row 1 titled \"BASE – {base}\", rows 2 to 4 titled \"EVOLUÇÃO – {arquétipo}\".\nIn each row: the character in 4 directions (front, side, back, other side) on the left,\nand 3 action poses with signature props on the right. Right column titled \"DETALHES\":\nclose-up pixel portrait, the institution emblem ({emblema}) and 5 palette swatches.\nSection titles on dark plaques with small icons, serif font.\n\nCharacters (keep the joke visible in props, faces and back prints):\n- Base: {visual da base}\n- {arquétipo 1}: {visual}; poses: {3 poses}\n- {arquétipo 2}: {visual}; poses: {3 poses}\n- {arquétipo 3}: {visual}; poses: {3 poses}\n\nPalette: {paleta}. Effects: {green leaves and translucent spirits | sparks, glitch, neon}.\nNo real brands, no real people, no text except the titles and the printed jokes.",
+    "fichaExemploAgencia": "Pixel art character sprite sheet for a 2D top-down online RPG in the style of Tibia and\nHabbo Hotel. Clean, high-quality pixel art, chibi proportions (about 2.5 heads tall),\nbold readable silhouettes, satirical and funny, dark tiled floor background.\n\nLayout: 4 rows. Row 1 \"BASE – TRAINEE\", row 2 \"EVOLUÇÃO – ATENDENTE IMORTAL\", row 3\n\"EVOLUÇÃO – HACKER DA ALDEIA\", row 4 \"EVOLUÇÃO – IDOL\". In each row: 4 directions on the\nleft, 3 action poses on the right. Right column \"DETALHES\": portrait of the Idol, emblem\n(a star with a hologram eye) and 5 palette swatches.\n\n- Base: cheap suit one size too big, giant \"TALENTO\" badge, headset, ring light clipped\n  to the shoulder, forced smile. Poses: unrolling a contract down to the floor, selfie,\n  pointing at the ring light. A long exclusivity contract drags behind him.\n- Atendente Imortal: headset, rolling office chair she rides around, mug \"MELHOR\n  ATENDENTE DO MÊS 2071\", hologram shield \"AGUARDE\". Poses: sliding on the chair, a\n  loading bar stuck at 99% over an enemy, shield up. Customer-service smile that never\n  changes.\n- Hacker da Aldeia: hoodie with pixel village patterns, headphones, laptop with sticker\n  \"FIBRA ÓTICA NA ALDEIA\", a hammock with a router hanging from it. Poses: typing with\n  green code rising, pixel-bug viruses swarming, a billionaire's server on fire behind\n  him. When idle he fights lying in the hammock.\n- Idol: pastel hair with a perfect fringe, sparkly jacket, headset mic, flying speaker\n  drones, holographic stage. Poses: dance choreography, fanchant with hearts and sound\n  waves, encore with confetti rain. Hologram fan lightsticks pop up behind him.\n\nPalette: neon pink, cyan, white, silver, black. Effects: sparks, glitch, neon.\nNo real brands, no real people, no text except the titles and the printed jokes."
+  },
+  "ordemDesenho": ["aura", "veiculo", "costas", "pernas", "pes", "torso", "cintura", "bracos", "rosto", "cabeca", "mao_secundaria", "mao_principal", "acompanhante"],
+  "regras": [
+    "O que cobre a cabeça esconde o cabelo, mas o rosto e os detalhes sempre aparecem.",
+    "A Máquina de Visual troca corpo, pele, rosto, cabelo, detalhes, a paleta do traje (3 por ala) e o visual mostrado, e nunca tira a silhueta da ala.",
+    "O traje da ala é a base, e cada item muda a sua parte dentro do estilo da ala. A raridade aparece: comum é simples, raro ganha detalhe, único tem visual próprio e set completo muda a silhueta.",
+    "A mesma calça rara vira calça de rodeio no Peão Brabo e calça brilhante de palco no Idol.",
+    "Itens de outra classe não podem ser usados. Itens sem classe adotam sozinhos o estilo da ala.",
+    "Camadas que saem do quadro de 32x48 (vestido de dois tiles, peruca alta, chapéu maior que o corpo) declaram larguraPx (camada larga centrada) ou overflowTopoPx no artCatalog; a caixa de colisão e o alvo continuam no boneco de 32x48.",
+    "Cores das camadas: índice da paleta do traje (0 principal, 1 secundária, 2 destaque, 3 couro ou metal, 4 escuro, 5 claro) ou \"pele\" e \"cabelo\" do próprio jogador.",
+    "Parte sem camada mostra o corpo do kit de criação (regata e bermuda lisas).",
+    "Evoluir é ficar mais forte e mais ridículo: o aprendiz tem o adereço principal do treinador, simplificado; o veterano soma adereços e a piada nas costas.",
+    "De costas, a parte costas é desenhada por último, porque as costas são o que mais aparece andando pelo mapa.",
+    "Virada (30), mestre (40) e lendário (60) ficam fora do piloto: estão só descritos."
+  ],
+  "artCatalog": [
+    { "arte": "chapeu_coco", "parte": "cabeca", "descricao": "Chapéu-coco preto: domo de 12 px de largura sobre a cabeça, aba fina de 16 px na linha 7." },
+    { "arte": "chapeu_peao", "parte": "cabeca", "descricao": "Chapéu de peão de aba larga (22 px), copa amassada de 6 px, faixa de couro." },
+    { "arte": "chapeu_peao_gigante", "parte": "cabeca", "descricao": "Chapéu de peão maior que o corpo: aba de 40 px saindo 4 px por cada lado do sprite, copa de 10 px, faixa trançada.", "larguraPx": 40, "sugestaoCampos": ["larguraPx"] },
+    { "arte": "coque_iogue", "parte": "cabeca", "descricao": "Cabelo puxado para trás com coque redondo de 6 px no alto, na cor do cabelo do jogador." },
+    { "arte": "medidor_calma", "parte": "cabeca", "escondeCabelo": false, "descricao": "Barrinha de 12x3 px flutuando 2 px acima da cabeça, com ponteiro.", "animacao": "o ponteiro anda do verde ao vermelho conforme a vida cai" },
+    { "arte": "boina_revolucionaria", "parte": "cabeca", "descricao": "Boina caída para um lado, 16 px de largura, com cabinho de 1 px no topo." },
+    { "arte": "lenco_florido", "parte": "cabeca", "descricao": "Lenço amarrado sob o queixo cobrindo a cabeça, com 4 a 6 florzinhas de 2 px em cor clara." },
+    { "arte": "chapeu_pele_pontudo", "parte": "cabeca", "descricao": "Chapéu de pele com borda felpuda de 3 px e ponta alta de 8 px, levemente torta." },
+    { "arte": "chapeu_safari", "parte": "cabeca", "descricao": "Chapéu safári cáqui de aba média (20 px) com fita escura." },
+    { "arte": "chapeu_safari_dentes", "parte": "cabeca", "descricao": "Chapéu safári com fileira de 5 dentes de crocodilo brancos (1x2 px) na fita e uma marca de mordida na aba." },
+    { "arte": "capacete_chifres_simples", "parte": "cabeca", "descricao": "Capacete redondo de metal com dois chifres curtos (3 px) para cima." },
+    { "arte": "capacete_chifres_replica", "parte": "cabeca", "descricao": "Capacete de metal com chifres grandes curvados (6 px) e etiqueta de papel pendurada num chifre.", "animacao": "a etiqueta balança ao andar" },
+    { "arte": "trancas_laterais", "parte": "cabeca", "escondeCabelo": false, "descricao": "Duas tranças grossas de 3 px caindo do capacete até o ombro, na cor do cabelo do jogador." },
+    { "arte": "chapeu_aba", "parte": "cabeca", "descricao": "Chapéu de feltro de aba reta (18 px) e copa baixa." },
+    { "arte": "chapeu_aba_alta", "parte": "cabeca", "descricao": "Chapéu de feltro de copa alta (8 px) com fita colorida e pompom de 2 px." },
+    { "arte": "mascara_luchador_simples", "parte": "cabeca", "descricao": "Máscara de luchador cobrindo a cabeça inteira, com aberturas nos olhos e na boca para o rosto aparecer." },
+    { "arte": "mascara_luchador_raio", "parte": "cabeca", "descricao": "Máscara de luchador com raio dourado de 2 px na testa e contorno brilhante nos olhos." },
+    { "arte": "olho_espirito_testa", "parte": "cabeca", "escondeCabelo": false, "translucido": true, "descricao": "Olho de 4x3 px no meio da testa da máscara, semitransparente.", "animacao": "pisca a cada 3 s" },
+    { "arte": "peruca_alta_simples", "parte": "cabeca", "descricao": "Peruca alta e branca de 10 px acima da cabeça, com cachos de 2 px." },
+    { "arte": "peruca_alta_passarinho", "parte": "cabeca", "descricao": "Peruca de 14 px de altura (sai do topo do sprite) com um passarinho de 3 px sentado dentro de um buraco.", "animacao": "o passarinho põe a cabeça para fora", "overflowTopoPx": 8, "sugestaoCampos": ["overflowTopoPx"] },
+    { "arte": "chapeu_palha_malandro", "parte": "cabeca", "descricao": "Chapéu de palha de aba curta, inclinado, com fita escura." },
+    { "arte": "coque_antena", "parte": "cabeca", "descricao": "Coque de sumô no alto da cabeça (cor do cabelo) com uma antena de metal de 4 px espetada.", "animacao": "ponta da antena pisca" },
+    { "arte": "viseira", "parte": "cabeca", "escondeCabelo": false, "descricao": "Viseira esportiva: faixa de 2 px na testa e aba de 6 px para a frente; o cabelo aparece por cima." },
+    { "arte": "chapeu_cowboy_simples", "parte": "cabeca", "descricao": "Chapéu de cowboy de abas viradas para cima (22 px)." },
+    { "arte": "chapeu_cowboy_gps", "parte": "cabeca", "descricao": "Chapéu de cowboy com um módulo de GPS de 3x2 px na faixa.", "animacao": "luz do GPS pisca" },
+    { "arte": "bone_virado", "parte": "cabeca", "descricao": "Boné com a aba virada para trás, 3 px saindo na nuca." },
+    { "arte": "cabelo_arrepiado", "parte": "cabeca", "descricao": "Cabelo todo espetado para cima e para os lados em pontas de 3 px, na cor do cabelo do jogador." },
+    { "arte": "cabelo_arrepiado_faiscando", "parte": "cabeca", "descricao": "Cabelo espetado com pontas chamuscadas e faíscas de 1 px entre as pontas.", "animacao": "faíscas pulam entre as pontas" },
+    { "arte": "franja_pastel", "parte": "cabeca", "descricao": "Cabelo pastel com franja reta e perfeita na altura das sobrancelhas, laterais lisas até a orelha; usa a cor clara da paleta, nunca a do cabelo." },
+    { "arte": "oculos_tortos", "parte": "rosto", "descricao": "Óculos redondos de aro fino, um lado 1 px mais alto que o outro." },
+    { "arte": "mascara_comedia_tragedia", "parte": "rosto", "descricao": "Meia máscara: metade sorrindo, metade triste, cobrindo olhos e nariz; boca do jogador aparece." },
+    { "arte": "pintura_trote", "parte": "rosto", "descricao": "Rabiscos de tinta de trote nas bochechas e um X na testa." },
+    { "arte": "headset_trainee", "parte": "rosto", "descricao": "Headset fino com microfone de 3 px até o canto da boca." },
+    { "arte": "olheira_funda", "parte": "rosto", "descricao": "Duas olheiras escuras de 4x1 px sob os olhos." },
+    { "arte": "veia_testa", "parte": "rosto", "descricao": "Veia em zigue-zague de 3 px na testa, em tom de pele escurecido.", "animacao": "pulsa quando usa habilidade" },
+    { "arte": "curativo_nariz", "parte": "rosto", "descricao": "Curativo em X de 3 px na ponta do nariz." },
+    { "arte": "barba_longa", "parte": "rosto", "descricao": "Barba cheia até o peito (8 px abaixo do queixo), na cor do cabelo do jogador." },
+    { "arte": "barba_arrastando", "parte": "rosto", "descricao": "Barba que desce do queixo até o chão, por cima do torso e das pernas, terminando em ponta na linha 47." },
+    { "arte": "passarinho_ninho_barba", "parte": "rosto", "descricao": "Ninho de 4 px no meio da barba com um passarinho de 3 px.", "animacao": "o passarinho abre o bico junto com o dono" },
+    { "arte": "bochechas_vermelhas", "parte": "rosto", "descricao": "Duas manchas de 2x1 px nas bochechas, no tom da pele puxado para o vermelho." },
+    { "arte": "mascara_veneziana", "parte": "rosto", "descricao": "Máscara veneziana em volta dos olhos, pontas para cima e bordado dourado; boca aparece." },
+    { "arte": "palito", "parte": "rosto", "descricao": "Palito de dente de 3 px no canto da boca.", "animacao": "troca de canto parado" },
+    { "arte": "cicatriz_sobrancelha", "parte": "rosto", "descricao": "Corte de 1 px atravessando uma sobrancelha." },
+    { "arte": "oculos_escuros", "parte": "rosto", "descricao": "Óculos escuros retangulares de 10x2 px com brilho de 1 px." },
+    { "arte": "oculos_solda", "parte": "rosto", "descricao": "Óculos de solda redondos e grossos, lentes escuras, alça na cabeça." },
+    { "arte": "oculos_protecao", "parte": "rosto", "descricao": "Óculos de proteção de laboratório, lente clara e grande, um pouco embaçados." },
+    { "arte": "headset_atendimento", "parte": "rosto", "descricao": "Headset de call center com fone numa orelha e microfone até a boca, luz de 1 px acesa." },
+    { "arte": "sorriso_atendimento", "parte": "rosto", "descricao": "Sorriso largo fixo de 6 px por cima da boca do rosto escolhido; não muda nem nas expressões de derrota." },
+    { "arte": "fones_grandes", "parte": "rosto", "descricao": "Fones de ouvido grandes, conchas de 4x5 px dos dois lados da cabeça." },
+    { "arte": "microfone_headset", "parte": "rosto", "descricao": "Microfone de palco preso na orelha, haste curva até a boca." },
+    { "arte": "camiseta_lembranca_delta", "parte": "torso", "descricao": "Camiseta de manga curta com a estampa \"Lembrança do Delta\" em 2 linhas de letra miúda e uma palafita de 4 px." },
+    { "arte": "camiseta_desbotada_estampa", "parte": "torso", "descricao": "Camiseta desbotada com manchas claras e estampa de punho pequeno com o texto." },
+    { "arte": "camiseta_lisa", "parte": "torso", "descricao": "Camiseta lisa de manga curta." },
+    { "arte": "colete_refletivo", "parte": "torso", "descricao": "Colete por cima da roupa com duas faixas refletivas horizontais de 1 px." },
+    { "arte": "binoculo_pescoco", "parte": "torso", "descricao": "Binóculo de 5x3 px pendurado no pescoço por uma tira." },
+    { "arte": "tunica_estopa", "parte": "torso", "descricao": "Túnica de saco de estopa até o joelho, textura de trama em xadrez de 1 px, corda na cintura." },
+    { "arte": "cracha_pendurado", "parte": "torso", "descricao": "Crachá retangular de 5x4 px pendurado num cordão, com o texto em letra miúda." },
+    { "arte": "malha_teatro", "parte": "torso", "descricao": "Malha justa de teatro, manga longa, sem detalhe." },
+    { "arte": "camisa_neon_fc", "parte": "torso", "descricao": "Camisa de time com gola em V, escudo do Neon FC e logo inventado de casa de aposta no peito." },
+    { "arte": "farda_cinza", "parte": "torso", "descricao": "Farda de manga longa com bolsos no peito e o texto em letra pequena nas costas." },
+    { "arte": "colete_qr_code", "parte": "torso", "descricao": "Colete tático com um QR code de 5x5 px no peito." },
+    { "arte": "camera_corporal_apagada", "parte": "torso", "descricao": "Câmera corporal de 3x3 px no ombro, com a luz sempre apagada." },
+    { "arte": "moletom_universidade", "parte": "torso", "descricao": "Moletom com capuz e o texto da universidade em duas linhas no peito." },
+    { "arte": "terno_grande", "parte": "torso", "descricao": "Terno barato um número maior: ombros caídos 2 px para fora, mangas cobrindo as mãos." },
+    { "arte": "cracha_gigante", "parte": "torso", "descricao": "Crachá enorme de 9x6 px no peito com o texto em letras grandes." },
+    { "arte": "camisa_xadrez_fechada", "parte": "torso", "descricao": "Camisa xadrez abotoada, quadrados de 2 px em duas cores." },
+    { "arte": "camisa_xadrez_aberta", "parte": "torso", "descricao": "Camisa xadrez aberta até a barriga, mostrando o peito, mangas dobradas." },
+    { "arte": "camiseta_linho", "parte": "torso", "descricao": "Bata de linho clara de gola redonda, solta no corpo." },
+    { "arte": "tunica_linho", "parte": "torso", "descricao": "Túnica de linho longa até o meio da coxa, com fenda lateral." },
+    { "arte": "camisa_listrada", "parte": "torso", "descricao": "Camisa de listras horizontais de 1 px, gola canoa." },
+    { "arte": "cachecol_tricolor", "parte": "torso", "descricao": "Cachecol de três faixas verticais de cor, enrolado no pescoço com uma ponta caindo na frente." },
+    { "arte": "casaco_pele_falsa_curto", "parte": "torso", "descricao": "Casaco de pele falsa até o quadril, borda felpuda irregular de 2 px." },
+    { "arte": "casaco_pele_falsa_enorme", "parte": "torso", "descricao": "Casaco de pele falsa enorme até o joelho, 4 px mais largo que o corpo de cada lado, gola alta felpuda." },
+    { "arte": "tunica_montaria", "parte": "torso", "descricao": "Túnica de montaria transpassada, fechada de lado, gola alta e faixa colorida no peito." },
+    { "arte": "camisa_bolsos_simples", "parte": "torso", "descricao": "Camisa cáqui de manga curta com 4 bolsos." },
+    { "arte": "camisa_14_bolsos", "parte": "torso", "descricao": "Camisa cáqui coberta de bolsos de 2x2 px (14 no total, contando os das costas), alguns estufados." },
+    { "arte": "tunica_musgo", "parte": "torso", "descricao": "Túnica longa até os pés, textura de musgo em manchas de 1 px." },
+    { "arte": "tunica_musgo_longa", "parte": "torso", "descricao": "Túnica de musgo arrastando no chão, com folhinhas e um cogumelo de 2 px na barra." },
+    { "arte": "tunica_viking_simples", "parte": "torso", "descricao": "Túnica de lã até o joelho com barra trançada." },
+    { "arte": "tunica_viking", "parte": "torso", "descricao": "Túnica de lã com barra trançada, broche redondo no ombro e manto curto." },
+    { "arte": "poncho_simples", "parte": "torso", "descricao": "Poncho liso até a cintura com uma faixa de cor na barra." },
+    { "arte": "poncho_colorido", "parte": "torso", "descricao": "Poncho com faixas geométricas de 1 e 2 px em três cores e franja na barra." },
+    { "arte": "malha_regata", "parte": "torso", "descricao": "Malha de teatro sem manga, justa, de lutador." },
+    { "arte": "vestido_opera_curto", "parte": "torso", "descricao": "Vestido de ópera até o chão com saia rodada de 26 px de largura." },
+    { "arte": "vestido_opera_dois_tiles", "parte": "torso", "descricao": "Vestido que ocupa dois tiles: saia de 64 px de largura, que sai do sprite de 32 px e é desenhada numa camada larga centrada; babados e laços dourados.", "larguraPx": 64 },
+    { "arte": "camisa_social_branca", "parte": "torso", "descricao": "Camisa social branca de manga longa, impecável, colarinho aberto." },
+    { "arte": "terno_branco_impecavel", "parte": "torso", "descricao": "Terno branco de lapela larga, lenço no bolso e sem uma ruga; nunca recebe sujeira nem manchas de dano." },
+    { "arte": "cordao_pescoco", "parte": "torso", "descricao": "Cordão dourado grosso de 1 px com pingente de 2 px." },
+    { "arte": "barriga_hidraulica_simples", "parte": "torso", "descricao": "Barriga redonda de metal fosco de 20 px de largura com dois parafusos." },
+    { "arte": "barriga_hidraulica_cromada", "parte": "torso", "descricao": "Barriga cromada de 22 px com manômetro redondo de 4 px no umbigo e o aviso em letra miúda.", "animacao": "o ponteiro do manômetro sobe ao apanhar" },
+    { "arte": "regata_torcida", "parte": "torso", "descricao": "Regata larga de torcida, cava funda, número nas costas." },
+    { "arte": "cachecol_torcida", "parte": "torso", "descricao": "Cachecol de torcida listrado, pendurado no pescoço com as pontas soltas." },
+    { "arte": "regata_cavada", "parte": "torso", "descricao": "Regata super cavada que mostra o tronco de lado." },
+    { "arte": "armadura_choque_leve", "parte": "torso", "descricao": "Colete de choque com ombreiras pequenas de 3 px." },
+    { "arte": "armadura_choque", "parte": "torso", "descricao": "Armadura de choque completa, ombreiras de 5 px, placas no peito e no abdômen." },
+    { "arte": "camisa_cowboy", "parte": "torso", "descricao": "Camisa de cowboy com pala pontuda e botões de pressão brilhando." },
+    { "arte": "colete_producao", "parte": "torso", "descricao": "Colete de produção cheio de bolsos e um walkie-talkie preso no peito." },
+    { "arte": "macacao_graxa", "parte": "torso", "descricao": "Parte de cima de macacão com manchas de graxa de 1 a 2 px e mangas arregaçadas." },
+    { "arte": "lacres_garantia", "parte": "torso", "descricao": "Lacres de 2x1 px espalhados pelo traje, nas juntas das peças." },
+    { "arte": "jaleco", "parte": "torso", "descricao": "Jaleco branco até o joelho, bolso com canetas." },
+    { "arte": "jaleco_chamuscado", "parte": "torso", "descricao": "Jaleco com a barra queimada em dentes de 1 px e manchas pretas de explosão." },
+    { "arte": "top_esportivo", "parte": "torso", "descricao": "Top esportivo com jaqueta corta-vento amarrada na cintura." },
+    { "arte": "blazer_corporativo", "parte": "torso", "descricao": "Blazer corporativo justo com crachá de cordão e lenço no pescoço." },
+    { "arte": "moletom_grafismo_simples", "parte": "torso", "descricao": "Moletom com capuz e uma faixa de grafismo geométrico em pixel no peito." },
+    { "arte": "moletom_grafismo_aldeia", "parte": "torso", "descricao": "Moletom com grafismo geométrico da aldeia em pixel no corpo inteiro e cabos saindo do bolso." },
+    { "arte": "jaqueta_brilhante_simples", "parte": "torso", "descricao": "Jaqueta curta de palco com alguns pixels brilhando." },
+    { "arte": "jaqueta_brilhante", "parte": "torso", "descricao": "Jaqueta de palco coberta de lantejoula, ombreiras e corrente.", "animacao": "brilhos piscam em sequência" },
+    { "arte": "bracadeira", "parte": "bracos", "descricao": "Braçadeira de 3 px no braço esquerdo, na cor da instituição." },
+    { "arte": "tomate_ombro", "parte": "bracos", "descricao": "Tomate esmagado de 4 px no ombro, com respingos." },
+    { "arte": "tatuagem_qr_code", "parte": "bracos", "descricao": "QR code de 3x3 px tatuado no antebraço." },
+    { "arte": "ring_light_ombro", "parte": "bracos", "descricao": "Anel de luz de 6 px preso num braço articulado no ombro.", "animacao": "acende quando ele ataca" },
+    { "arte": "curativos_poucos", "parte": "bracos", "descricao": "Dois curativos cruzados nos braços." },
+    { "arte": "curativos_muitos", "parte": "bracos", "descricao": "Curativos e esparadrapo no braço inteiro, um pendurado solto." },
+    { "arte": "manoplas_simples", "parte": "bracos", "descricao": "Manoplas acolchoadas de 4 px nas mãos, em duas cores." },
+    { "arte": "manoplas_neon_fc", "parte": "bracos", "descricao": "Manoplas grandes de 6 px pintadas nas cores do Neon FC, com o escudo do clube." },
+    { "arte": "bracos_inchados", "parte": "bracos", "descricao": "Braços musculosos 2 px mais grossos que o normal, na cor da pele." },
+    { "arte": "bracos_gigantes", "parte": "bracos", "descricao": "Braços enormes, 5 px mais grossos de cada lado, bíceps redondos; contraste total com as pernas de palito." },
+    { "arte": "braco_cromado_simples", "parte": "bracos", "descricao": "Antebraço direito de metal cromado com uma junta." },
+    { "arte": "braco_cromado", "parte": "bracos", "descricao": "Braço direito inteiro cromado, com juntas, cabos e uma luz de 1 px no pulso." },
+    { "arte": "fita_prata", "parte": "bracos", "descricao": "Fita prata enrolada nos pulsos e nos cotovelos, com pontas soltas." },
+    { "arte": "bermuda_delta", "parte": "pernas", "descricao": "Bermuda folgada até o joelho, cordão na cintura." },
+    { "arte": "bermuda_tactel", "parte": "pernas", "descricao": "Bermuda de tactel com faixa lateral de 1 px e brilho." },
+    { "arte": "bermuda_lisa", "parte": "pernas", "descricao": "Bermuda lisa até o joelho." },
+    { "arte": "malha_teatro_pernas", "parte": "pernas", "descricao": "Calça de malha justa de teatro." },
+    { "arte": "calca_farda", "parte": "pernas", "descricao": "Calça de farda com bolso lateral." },
+    { "arte": "calca_moletom", "parte": "pernas", "descricao": "Calça de moletom com punho no tornozelo." },
+    { "arte": "calca_terno_grande", "parte": "pernas", "descricao": "Calça de terno comprida demais, embolando 2 px no sapato." },
+    { "arte": "calca_jeans_surrada", "parte": "pernas", "descricao": "Calça jeans surrada com joelho claro." },
+    { "arte": "calca_linho", "parte": "pernas", "descricao": "Calça de linho larga, amarrada no tornozelo." },
+    { "arte": "calca_social_surrada", "parte": "pernas", "descricao": "Calça social com remendo de 2 px no joelho." },
+    { "arte": "saia_longa", "parte": "pernas", "descricao": "Saia longa e rodada até o tornozelo." },
+    { "arte": "calca_montaria", "parte": "pernas", "descricao": "Calça de montaria larga enfiada na bota." },
+    { "arte": "bermuda_caqui", "parte": "pernas", "descricao": "Bermuda cáqui de bolsos laterais." },
+    { "arte": "calca_la", "parte": "pernas", "descricao": "Calça de lã grossa com faixa bordada na barra." },
+    { "arte": "calca_luta", "parte": "pernas", "descricao": "Calça de luta justa com raio lateral." },
+    { "arte": "calca_branca", "parte": "pernas", "descricao": "Calça branca de vinco perfeito." },
+    { "arte": "pernas_palito", "parte": "pernas", "descricao": "Pernas finas de 2 px cada, na cor da pele, com shortinho curto por cima." },
+    { "arte": "calca_cargo", "parte": "pernas", "descricao": "Calça cargo com bolsos laterais estufados." },
+    { "arte": "macacao_graxa_pernas", "parte": "pernas", "descricao": "Parte de baixo do macacão, manchada de graxa, com uma perna dobrada." },
+    { "arte": "legging", "parte": "pernas", "descricao": "Legging justa com faixa lateral brilhante." },
+    { "arte": "calca_social", "parte": "pernas", "descricao": "Calça social reta de escritório." },
+    { "arte": "calca_palco", "parte": "pernas", "descricao": "Calça de palco justa com pixels de brilho." },
+    { "arte": "chinelo_delta", "parte": "pes", "descricao": "Chinelo de dedo com tira de 1 px." },
+    { "arte": "chinelo_com_meia", "parte": "pes", "descricao": "Chinelo de dedo por cima de meia até a canela." },
+    { "arte": "chinelo", "parte": "pes", "descricao": "Chinelo de dedo simples." },
+    { "arte": "sandalia_couro", "parte": "pes", "descricao": "Sandália de couro de tiras cruzadas." },
+    { "arte": "sapatilha_teatro", "parte": "pes", "descricao": "Sapatilha preta de teatro, bico redondo." },
+    { "arte": "tenis_de_mola", "parte": "pes", "descricao": "Tênis com molas de 2 px no calcanhar.", "animacao": "molas comprimem ao pisar" },
+    { "arte": "coturno", "parte": "pes", "descricao": "Coturno de cano alto com cadarço." },
+    { "arte": "tenis_basico", "parte": "pes", "descricao": "Tênis comum de sola branca." },
+    { "arte": "sapato_social_gasto", "parte": "pes", "descricao": "Sapato social com o bico gasto e sola descolando 1 px." },
+    { "arte": "botina", "parte": "pes", "descricao": "Botina de couro de bico redondo, salto baixo." },
+    { "arte": "chinelo_couro", "parte": "pes", "descricao": "Chinelo de couro de tira larga." },
+    { "arte": "sapato_couro_gasto", "parte": "pes", "descricao": "Sapato de couro gasto, cadarço desamarrado." },
+    { "arte": "botinha_feltro", "parte": "pes", "descricao": "Botinha de feltro grossa até o tornozelo." },
+    { "arte": "bota_montaria", "parte": "pes", "descricao": "Bota de montaria de bico virado para cima." },
+    { "arte": "bota_trilha", "parte": "pes", "descricao": "Bota de trilha enlameada com meião dobrado." },
+    { "arte": "sandalia_pedra", "parte": "pes", "descricao": "Sandália com sola de pedra de 2 px de altura e tiras de cipó." },
+    { "arte": "bota_pele", "parte": "pes", "descricao": "Bota de pele amarrada com tiras de couro." },
+    { "arte": "botas_brilhantes_simples", "parte": "pes", "descricao": "Botas de luta de cano alto com 1 pixel de brilho." },
+    { "arte": "botas_brilhantes", "parte": "pes", "descricao": "Botas de luta de cano alto brilhantes, com raio lateral.", "animacao": "brilho corre pela bota" },
+    { "arte": "sapato_salto", "parte": "pes", "descricao": "Sapato de salto que mal aparece sob o vestido." },
+    { "arte": "sapato_bicolor", "parte": "pes", "descricao": "Sapato bicolor: bico e calcanhar escuros, meio claro." },
+    { "arte": "chinelo_slide", "parte": "pes", "descricao": "Chinelo slide largo com meia." },
+    { "arte": "bota_cowboy", "parte": "pes", "descricao": "Bota de cowboy de bico fino e salto." },
+    { "arte": "bota_espora_led", "parte": "pes", "descricao": "Bota de cowboy com espora de LED de 2 px no calcanhar.", "animacao": "espora acende a cada passo" },
+    { "arte": "bota_seguranca", "parte": "pes", "descricao": "Bota de segurança com biqueira de metal descascada." },
+    { "arte": "tenis_corrida", "parte": "pes", "descricao": "Tênis de corrida com sola grossa colorida." },
+    { "arte": "tenis_palco", "parte": "pes", "descricao": "Tênis de plataforma de palco, sola de 2 px." },
+    { "arte": "pintura_costas_torta", "parte": "costas", "descricao": "Texto pintado à mão nas costas da camiseta, letras tortas e de tamanhos diferentes, com um respingo de tinta." },
+    { "arte": "mochila_panfletos", "parte": "costas", "descricao": "Mochila pendurada num ombro só, estufada, com 3 panfletos de 2x3 px saindo pela boca." },
+    { "arte": "bordado_costas", "parte": "costas", "descricao": "Texto bordado nas costas com um desenho torto de 3 px ao lado (um olho na Guarda)." },
+    { "arte": "mochila_escolar", "parte": "costas", "descricao": "Mochila escolar com alça remendada e um livro saindo." },
+    { "arte": "bandeira_enrolada", "parte": "costas", "descricao": "Mastro de bandeira de 1 px atravessado nas costas com o pano enrolado." },
+    { "arte": "mochila_cadeado_assinatura", "parte": "costas", "descricao": "Mochila com um livro para fora preso por um cadeado de 2 px." },
+    { "arte": "contrato_arrastando", "parte": "costas", "descricao": "Rolo de papel preso nas costas que desce e arrasta 6 px no chão atrás do personagem.", "animacao": "o papel balança ao andar" },
+    { "arte": "adesivo_descascando", "parte": "costas", "descricao": "Adesivo retangular nas costas com o canto descascando para fora." },
+    { "arte": "tapete_yoga_enrolado", "parte": "costas", "descricao": "Tapetinho de yoga enrolado em rolo de 4x14 px atravessado nas costas, com etiqueta." },
+    { "arte": "lista_reivindicacoes", "parte": "costas", "descricao": "Rolo de papel que sai das costas e arrasta no chão, com linhas de texto miúdo.", "animacao": "fica 1 px mais comprido a cada nível" },
+    { "arte": "aljava", "parte": "costas", "descricao": "Aljava de couro com 4 flechas para fora e um adesivo retangular." },
+    { "arte": "patch_costas", "parte": "costas", "descricao": "Remendo costurado nas costas com texto em duas linhas." },
+    { "arte": "remendo_costas", "parte": "costas", "descricao": "Remendo de musgo com texto bordado em cipó." },
+    { "arte": "capa_curta", "parte": "costas", "descricao": "Capa curta até a cintura com texto bordado." },
+    { "arte": "senha_costas", "parte": "costas", "descricao": "Placa de senha de fila de 6x4 px pendurada num barbante nas costas." },
+    { "arte": "capa_cortina_curta", "parte": "costas", "descricao": "Capa curta de pano de cortina com argolas de cortina no ombro." },
+    { "arte": "capa_cortina", "parte": "costas", "descricao": "Capa longa de cortina de teatro, pregas verticais de 1 px, franja dourada e argolas no ombro.", "animacao": "esvoaça ao correr" },
+    { "arte": "cauda_vestido", "parte": "costas", "descricao": "Cauda do vestido arrastando 8 px atrás, com etiqueta bordada." },
+    { "arte": "etiqueta_costas", "parte": "costas", "descricao": "Etiqueta de roupa pendurada para fora da gola, com texto miúdo." },
+    { "arte": "pistoes_vapor", "parte": "costas", "descricao": "Dois pistões verticais nas costas com letreiro de LED entre eles.", "animacao": "soltam baforadas de vapor" },
+    { "arte": "estampa_costas", "parte": "costas", "descricao": "Estampa de texto nas costas da peça de cima, em letras de 3 px." },
+    { "arte": "cordao_veludo", "parte": "costas", "descricao": "Cordão de isolamento de veludo vermelho enrolado no ombro, com os dois pedestais dourados de 2 px pendurados." },
+    { "arte": "projetor_planta_seca", "parte": "costas", "descricao": "Projetor cilíndrico preso nas costas, com lente virada para o chão e adesivo de estrela." },
+    { "arte": "cadeira_diretor_dobrada", "parte": "costas", "descricao": "Cadeira de diretor dobrada nas costas, com o nome escrito errado no encosto de lona." },
+    { "arte": "lacre_costas", "parte": "costas", "descricao": "Lacre grande de 10x3 px colado nas costas, meio rasgado." },
+    { "arte": "bobina_tesla_pequena", "parte": "costas", "descricao": "Bobina de Tesla de 4x8 px presa nas costas, com esfera no topo." },
+    { "arte": "bobina_tesla", "parte": "costas", "descricao": "Bobina de Tesla de 6x14 px que passa da cabeça, com esfera no topo.", "animacao": "raios de 1 px saltam da esfera" },
+    { "arte": "placa_costas", "parte": "costas", "descricao": "Placa de segurança do trabalho pendurada nas costas, com o número em destaque." },
+    { "arte": "pochete", "parte": "cintura", "descricao": "Pochete atravessada de 6x3 px." },
+    { "arte": "cinto_maquininha", "parte": "cintura", "descricao": "Cinto com maquininha de cartão de 3x4 px no coldre." },
+    { "arte": "fivela_touro_pequena", "parte": "cintura", "descricao": "Fivela oval de 6x4 px escrita TOURO." },
+    { "arte": "fivela_touro", "parte": "cintura", "descricao": "Fivela do tamanho de um prato (12x8 px) escrita TOURO, com chifres em relevo.", "animacao": "reflete um brilho ao parar" },
+    { "arte": "garrafinha_kombucha", "parte": "cintura", "descricao": "Garrafinha de 2x4 px pendurada no cinto, com bolhas." },
+    { "arte": "rolo_de_massa", "parte": "cintura", "descricao": "Rolo de massa de madeira enfiado no cinto como arma." },
+    { "arte": "faixa_cintura", "parte": "cintura", "descricao": "Faixa larga amarrada na cintura com as pontas caindo." },
+    { "arte": "cinto_couro_fivela", "parte": "cintura", "descricao": "Cinto de couro largo com fivela redonda." },
+    { "arte": "cinturao_papelao", "parte": "cintura", "descricao": "Cinturão de campeão feito de papelão pintado de dourado, com a borda amassada." },
+    { "arte": "mawashi_led", "parte": "cintura", "descricao": "Mawashi grosso com fileira de LEDs de 1 px.", "animacao": "LEDs correm em sequência" },
+    { "arte": "prancheta_lista", "parte": "cintura", "descricao": "Prancheta presa no cinto com a lista de nomes." },
+    { "arte": "coldre", "parte": "cintura", "descricao": "Cinto de balas com coldre baixo na coxa." },
+    { "arte": "cajado_vassoura_folha", "parte": "mao_principal", "descricao": "Cabo de vassoura de 1x18 px com uma folha de 3 px na ponta." },
+    { "arte": "cassetete_lanterna", "parte": "mao_principal", "descricao": "Cassetete com lanterna na ponta.", "animacao": "facho de luz no ataque" },
+    { "arte": "laco_benzido", "parte": "mao_principal", "descricao": "Laço de corda enrolado na mão, com brilho verde de benzimento.", "animacao": "gira acima da cabeça no ataque" },
+    { "arte": "espingarda_benzida_flores", "parte": "mao_principal", "descricao": "Espingarda velha de cano longo com um ramo de flores amarrado no cano." },
+    { "arte": "espingarda_benzida_flores_croche", "parte": "mao_principal", "descricao": "A mesma espingarda com o ramo de flores no cano e uma mira de crochê de 3x3 px, um círculo de linha com uma cruz no meio, amarrada em cima do cano." },
+    { "arte": "arco_recurvo", "parte": "mao_principal", "descricao": "Arco recurvo de 14 px de altura com pontas viradas." },
+    { "arte": "laco_captura", "parte": "mao_principal", "descricao": "Vara com laço de captura de bicho na ponta." },
+    { "arte": "cajado_placa", "parte": "mao_principal", "descricao": "Cajado retorcido de 22 px com uma placa de 8x4 px pregada no topo." },
+    { "arte": "pau_selfie_live", "parte": "mao_principal", "descricao": "Pau de selfie de 10 px com celular na ponta e luz vermelha de live.", "animacao": "luz de live pisca" },
+    { "arte": "revolver_mira_laser", "parte": "mao_principal", "descricao": "Revólver cromado com mira laser.", "animacao": "linha de laser de 1 px até o alvo" },
+    { "arte": "megafone_direcao", "parte": "mao_principal", "descricao": "Megafone de diretor de 5x4 px." },
+    { "arte": "chave_fenda_faisca", "parte": "mao_principal", "descricao": "Chave de fenda grande.", "animacao": "solta faísca na ponta" },
+    { "arte": "caneca_atendente", "parte": "mao_principal", "descricao": "Caneca de 3x4 px com texto miúdo e fumaça de café." },
+    { "arte": "prancheta_quem_entrou", "parte": "mao_secundaria", "descricao": "Prancheta de 4x6 px com duas colunas de risquinhos e o texto." },
+    { "arte": "notebook_adesivos", "parte": "mao_secundaria", "descricao": "Notebook aberto de 6x4 px coberto de adesivos coloridos de 1 px." },
+    { "arte": "xicara_cafe", "parte": "mao_secundaria", "descricao": "Xícara de café com pires, fumaça de 1 px subindo.", "animacao": "fumaça sobe sempre" },
+    { "arte": "sacola_feira_pao", "parte": "mao_secundaria", "descricao": "Sacola de feira de 6x7 px com um pão comprido saindo." },
+    { "arte": "chifre_de_beber", "parte": "mao_secundaria", "descricao": "Chifre de beber curvo de 5 px com espuma na boca." },
+    { "arte": "chifre_de_beber_faiscando", "parte": "mao_secundaria", "descricao": "Chifre de beber transbordando faísca; nunca esvazia.", "animacao": "faíscas escorrem pela borda" },
+    { "arte": "totem_lhama_mini", "parte": "mao_secundaria", "descricao": "Totem de lhama de madeira de 4x6 px seguro na mão." },
+    { "arte": "totem_lhama", "parte": "mao_secundaria", "descricao": "Totem de lhama de madeira de 6x10 px, pescoço comprido e orelhas em pé.", "animacao": "bochecha estufa antes de cuspir" },
+    { "arte": "leque", "parte": "mao_secundaria", "descricao": "Leque aberto de 6x4 px com bordado." },
+    { "arte": "lata_energetico", "parte": "mao_secundaria", "descricao": "Lata de energético de 2x4 px com um raio desenhado." },
+    { "arte": "galao_agua", "parte": "mao_secundaria", "descricao": "Galão de água de 5x7 px com alça." },
+    { "arte": "escudo_choque_simples", "parte": "mao_secundaria", "descricao": "Escudo de choque transparente de 8x14 px, sem texto." },
+    { "arte": "escudo_hoje_nao", "parte": "mao_secundaria", "descricao": "Escudo de choque de 10x16 px com o texto em letras grandes." },
+    { "arte": "claquete", "parte": "mao_secundaria", "descricao": "Claquete listrada de 5x4 px.", "animacao": "bate ao usar habilidade" },
+    { "arte": "patente_carimbada", "parte": "mao_secundaria", "descricao": "Folha de 4x5 px com um carimbo vermelho redondo." },
+    { "arte": "garrafa_agua_media", "parte": "mao_secundaria", "descricao": "Garrafa d'água de 3x6 px com canudo." },
+    { "arte": "garrafa_agua_gigante", "parte": "mao_secundaria", "descricao": "Garrafa d'água gigante de 5x12 px com marcações de horário." },
+    { "arte": "escudo_holo_aguarde", "parte": "mao_secundaria", "descricao": "Escudo holográfico retangular de 10x12 px com o texto e uma barra de carregamento.", "translucido": true, "animacao": "barra de carregamento enche até 99% e trava" },
+    { "arte": "notebook_fibra_otica", "parte": "mao_secundaria", "descricao": "Notebook aberto de 6x4 px com um adesivo grande e código verde na tela." },
+    { "arte": "ponei_espirito", "parte": "acompanhante", "translucido": true, "descricao": "Pônei-espírito de 14x12 px, pequeno demais, ao lado do dono; translúcido com brilho verde." },
+    { "arte": "ponei_espirito_desanimado", "parte": "acompanhante", "translucido": true, "descricao": "O mesmo pônei-espírito com olhos semicerrados, orelhas caídas e cara de quem quer pedir demissão.", "animacao": "bufa a cada poucos segundos" },
+    { "arte": "fila_pacientes_mini", "parte": "acompanhante", "descricao": "Fila de 3 pacientes em miniatura (6 px de altura) atrás dela, um com senha na mão.", "animacao": "a fila anda junto, sem nunca chegar a vez" },
+    { "arte": "drone_camera_um", "parte": "acompanhante", "descricao": "Drone-câmera de 5x3 px flutuando sobre o ombro, com luz vermelha de gravação.", "animacao": "orbita devagar" },
+    { "arte": "drones_camera_dois", "parte": "acompanhante", "descricao": "Dois drones-câmera em órbita em volta da cabeça, em lados opostos.", "animacao": "orbitam e apontam para o alvo" },
+    { "arte": "robo_frigobar", "parte": "acompanhante", "descricao": "Frigobar de 8x10 px com dois braços de cabide e fita prata.", "animacao": "porta abre e acende uma luz" },
+    { "arte": "robo_geladeira_skate", "parte": "acompanhante", "descricao": "Robô feito de geladeira de 12x18 px sobre rodinhas de skate, com ventilador na cabeça e lacres.", "animacao": "desliza atrás da dona" },
+    { "arte": "nanobots_rosa", "parte": "acompanhante", "descricao": "Nuvem de 8 a 10 pontinhos rosa de 1 px girando em volta do corpo.", "animacao": "giram em órbita e formam um coração ao curar" },
+    { "arte": "caixa_som_voadora", "parte": "acompanhante", "descricao": "Caixa de som de 5x6 px flutuando ao lado da cabeça, com hélice.", "animacao": "cone pulsa no ritmo" },
+    { "arte": "caixas_som_voadoras_duas", "parte": "acompanhante", "descricao": "Duas caixas de som voadoras, uma de cada lado, pulsando em ondas de 1 px.", "animacao": "cones pulsam e ondas saem a cada ataque" },
+    { "arte": "bastoes_luz_fas_holo", "parte": "aura", "translucido": true, "descricao": "Três a cinco bastões de luz de 1x5 px, seguros por mãos de fãs-holograma de 4 px, que aparecem em arco atrás dele.", "animacao": "aparecem balançando a cada combo e somem em glitch" },
+    { "arte": "cadeira_escritorio", "parte": "veiculo", "descricao": "Cadeira de escritório com rodinhas sob o personagem sentado; no andar, desliza em vez das 6 poses de passo.", "animacao": "rodinhas giram ao deslizar" },
+    { "arte": "rede_roteador", "parte": "veiculo", "descricao": "Rede de dormir de 24 px pendurada entre dois postes de 1 px, com um roteador de luz verde pendurado; parado, ele luta deitado nela.", "animacao": "balança devagar parado" }
+  ],
+  "tiers": [
+    {
+      "id": "delta",
+      "tier": "delta",
+      "nivel": 1,
+      "name": "Roupa do Delta",
+      "descricao": "Camiseta \"Lembrança do Delta\", bermuda e chinelo, em 6 cores.",
+      "paletas": [
+        { "id": "delta_branco_encardido", "name": "Branco Encardido", "cores": ["#E9E4D6", "#3E6E8C", "#4F5A6A", "#2E6E9E"] },
+        { "id": "delta_azul_rio", "name": "Azul Rio", "cores": ["#3E7EA8", "#F4F0E4", "#C8B88A", "#E8E2D0"] },
+        { "id": "delta_laranja_boia", "name": "Laranja Boia", "cores": ["#F07A2E", "#FFFFFF", "#3A4A5A", "#2E2E2E"] },
+        { "id": "delta_verde_palafita", "name": "Verde Palafita", "cores": ["#5E8E4A", "#F2E6C0", "#6E5A40", "#C0392B"] },
+        { "id": "delta_amarelo_sol", "name": "Amarelo Sol", "cores": ["#F0C83A", "#2E4A6E", "#5A7A3A", "#3E7EA8"] },
+        { "id": "delta_cinza_lodo", "name": "Cinza Lodo", "cores": ["#7E8278", "#E8E0C8", "#3E4238", "#8A5A3A"] }
+      ],
+      "camadas": [
+        { "parte": "torso", "arte": "camiseta_lembranca_delta", "cores": [0, 1], "texto": "Lembrança do Delta" },
+        { "parte": "pernas", "arte": "bermuda_delta", "cores": [2] },
+        { "parte": "pes", "arte": "chinelo_delta", "cores": [3] }
+      ],
+      "sugestaoCampos": ["paletas"]
+    },
+    {
+      "id": "base_brigada_popular",
+      "tier": "base",
+      "nivel": 8,
+      "instituicao": "brigada_popular",
+      "name": "Brigadista Novato",
+      "poses": ["Megafone de lata reciclada", "Cabo de enxada", "Tampa de panela como escudo"],
+      "descricao": "Camiseta desbotada da \"Assembleia de 2071\", bermuda de tactel, chinelo com meia, braçadeira e mochila estourando de panfleto. Costas: \"COMISSÃO DE FRENTE\", pintado à mão e torto.",
+      "paletas": [{ "id": "brigada_popular_oficial", "name": "Oficial da Brigada", "cores": ["#A8463F", "#5B6B2E", "#CDB892", "#6B4429", "#F1E6C8"] }],
+      "camadas": [
+        { "parte": "torso", "arte": "camiseta_desbotada_estampa", "cores": [0, 4], "texto": "Assembleia de 2071" },
+        { "parte": "pernas", "arte": "bermuda_tactel", "cores": [1] },
+        { "parte": "pes", "arte": "chinelo_com_meia", "cores": [3, 4] },
+        { "parte": "bracos", "arte": "bracadeira", "cores": [0] },
+        { "parte": "costas", "arte": "pintura_costas_torta", "cores": [4], "texto": "COMISSÃO DE FRENTE" },
+        { "parte": "costas", "arte": "mochila_panfletos", "cores": [3, 4] }
+      ],
+      "sugestaoCampos": ["paletas"]
+    },
+    {
+      "id": "base_guarda_comunitaria",
+      "tier": "base",
+      "nivel": 8,
+      "instituicao": "guarda_comunitaria",
+      "name": "Vigia de Quarteirão",
+      "poses": ["Olhando de binóculo", "Apitando de bochecha cheia", "Estilingue"],
+      "descricao": "Colete refletivo, braçadeira, chinelo, binóculo no pescoço e prancheta \"QUEM ENTROU / QUEM SAIU\". Costas: \"ESTOU DE OLHO\", com um olho bordado torto.",
+      "paletas": [{ "id": "guarda_comunitaria_oficial", "name": "Oficial da Guarda", "cores": ["#6B7031", "#E5E234", "#8A8C86", "#6A4A2E", "#F4F4EE"] }],
+      "camadas": [
+        { "parte": "torso", "arte": "camiseta_lisa", "cores": [0], "sugestao": true },
+        { "parte": "torso", "arte": "colete_refletivo", "cores": [1, 2] },
+        { "parte": "torso", "arte": "binoculo_pescoco", "cores": [2, 3] },
+        { "parte": "bracos", "arte": "bracadeira", "cores": [0] },
+        { "parte": "pernas", "arte": "bermuda_lisa", "cores": [2], "sugestao": true },
+        { "parte": "pes", "arte": "chinelo", "cores": [3] },
+        { "parte": "mao_secundaria", "arte": "prancheta_quem_entrou", "cores": [4, 3], "texto": "QUEM ENTROU / QUEM SAIU" },
+        { "parte": "costas", "arte": "bordado_costas", "cores": [1], "texto": "ESTOU DE OLHO" }
+      ],
+      "sugestaoCampos": ["paletas"]
+    },
+    {
+      "id": "base_escola_dos_saberes",
+      "tier": "base",
+      "nivel": 8,
+      "instituicao": "escola_dos_saberes",
+      "name": "Aprendiz",
+      "poses": ["Lendo um livro maior que ele", "Plantando um totem que ainda é muda", "Regador"],
+      "descricao": "Túnica de saco de estopa, mochila escolar, óculos tortos e um cajado que é cabo de vassoura com uma folha. Crachá \"ESTAGIÁRIO DO SABER (HÁ 7 ANOS)\".",
+      "paletas": [{ "id": "escola_dos_saberes_oficial", "name": "Oficial da Escola", "cores": ["#5E9E3A", "#6E4B2F", "#C68E2E", "#4F9CB4", "#EFE3C2"] }],
+      "camadas": [
+        { "parte": "torso", "arte": "tunica_estopa", "cores": [2, 1] },
+        { "parte": "torso", "arte": "cracha_pendurado", "cores": [4], "texto": "ESTAGIÁRIO DO SABER (HÁ 7 ANOS)" },
+        { "parte": "rosto", "arte": "oculos_tortos", "cores": [1] },
+        { "parte": "costas", "arte": "mochila_escolar", "cores": [3, 1] },
+        { "parte": "mao_principal", "arte": "cajado_vassoura_folha", "cores": [1, 0] },
+        { "parte": "pes", "arte": "sandalia_couro", "cores": [1], "sugestao": true }
+      ],
+      "sugestaoCampos": ["paletas"]
+    },
+    {
+      "id": "base_trupe_do_povo",
+      "tier": "base",
+      "nivel": 8,
+      "instituicao": "trupe_do_povo",
+      "name": "Figurante",
+      "poses": ["Reverência exagerada", "Trocando de máscara", "Levando um tomate na cara"],
+      "descricao": "Malha preta de teatro, chapéu-coco e máscara de comédia de um lado e tragédia do outro. Tomate esmagado permanente no ombro.",
+      "paletas": [{ "id": "trupe_do_povo_oficial", "name": "Oficial da Trupe", "cores": ["#6E1F2E", "#B08D3C", "#1E1A1C", "#EDE0C4", "#56632E"] }],
+      "camadas": [
+        { "parte": "torso", "arte": "malha_teatro", "cores": [2] },
+        { "parte": "pernas", "arte": "malha_teatro_pernas", "cores": [2] },
+        { "parte": "cabeca", "arte": "chapeu_coco", "cores": [2, 0] },
+        { "parte": "rosto", "arte": "mascara_comedia_tragedia", "cores": [3, 1] },
+        { "parte": "bracos", "arte": "tomate_ombro", "cores": [0] },
+        { "parte": "pes", "arte": "sapatilha_teatro", "cores": [2], "sugestao": true }
+      ],
+      "sugestaoCampos": ["paletas"]
+    },
+    {
+      "id": "base_torcida_furia_neon",
+      "tier": "base",
+      "nivel": 8,
+      "instituicao": "torcida_furia_neon",
+      "name": "Torcedor Organizado",
+      "poses": ["Batendo bumbo", "Erguendo sinalizador", "Girando a bandeira"],
+      "descricao": "Camisa do Neon FC patrocinada por casa de aposta, bermuda, tênis de mola, pochete e bandeira enrolada. Tatuagem de QR code do sócio-torcedor no braço.",
+      "paletas": [{ "id": "torcida_furia_neon_oficial", "name": "Oficial da Fúria", "cores": ["#141217", "#A43BFF", "#B6FF2E", "#7D7E80", "#F5F5F7"] }],
+      "camadas": [
+        { "parte": "torso", "arte": "camisa_neon_fc", "cores": [1, 0, 2], "texto": "NEON FC" },
+        { "parte": "pernas", "arte": "bermuda_lisa", "cores": [0] },
+        { "parte": "pes", "arte": "tenis_de_mola", "cores": [4, 2] },
+        { "parte": "cintura", "arte": "pochete", "cores": [0, 2] },
+        { "parte": "costas", "arte": "bandeira_enrolada", "cores": [1, 2] },
+        { "parte": "bracos", "arte": "tatuagem_qr_code", "cores": [0] }
+      ],
+      "sugestaoCampos": ["paletas"]
+    },
+    {
+      "id": "base_pm_do_consorcio",
+      "tier": "base",
+      "nivel": 8,
+      "instituicao": "pm_do_consorcio",
+      "name": "Soldado Terceirizado",
+      "poses": ["Lanterna na cara de alguém", "Apito", "Cobrando \"taxa de proteção\" na maquininha"],
+      "descricao": "Farda cinza com \"PROTEÇÃO PREMIUM\", colete com QR code, câmera corporal, cassetete-lanterna e maquininha de cartão no cinto. A luz da câmera corporal está sempre apagada.",
+      "paletas": [{ "id": "pm_do_consorcio_oficial", "name": "Oficial da PM", "cores": ["#4A4E54", "#2EA8FF", "#121417", "#FFC21A", "#F2F4F6"] }],
+      "camadas": [
+        { "parte": "torso", "arte": "farda_cinza", "cores": [0], "texto": "PROTEÇÃO PREMIUM" },
+        { "parte": "torso", "arte": "colete_qr_code", "cores": [2, 4] },
+        { "parte": "torso", "arte": "camera_corporal_apagada", "cores": [2] },
+        { "parte": "pernas", "arte": "calca_farda", "cores": [0] },
+        { "parte": "pes", "arte": "coturno", "cores": [2], "sugestao": true },
+        { "parte": "cintura", "arte": "cinto_maquininha", "cores": [2, 3] },
+        { "parte": "mao_principal", "arte": "cassetete_lanterna", "cores": [2, 3] }
+      ],
+      "sugestaoCampos": ["paletas"]
+    },
+    {
+      "id": "base_universidade_neon",
+      "tier": "base",
+      "nivel": 8,
+      "instituicao": "universidade_neon",
+      "name": "Calouro",
+      "poses": ["Digitando no notebook", "Montando um robô de copo plástico", "Segurando o boleto da mensalidade"],
+      "descricao": "Moletom \"UNIVERSIDADE NEON — MENSALIDADE EM ATRASO\", rosto pintado do trote, mochila e notebook cheio de adesivo. O livro da mochila tem cadeado de assinatura.",
+      "paletas": [{ "id": "universidade_neon_oficial", "name": "Oficial da Universidade", "cores": ["#1F6BFF", "#F4F7FB", "#8E949C", "#FF6A13", "#15171A"] }],
+      "camadas": [
+        { "parte": "torso", "arte": "moletom_universidade", "cores": [0, 1], "texto": "UNIVERSIDADE NEON — MENSALIDADE EM ATRASO" },
+        { "parte": "rosto", "arte": "pintura_trote", "cores": [3, 0] },
+        { "parte": "costas", "arte": "mochila_cadeado_assinatura", "cores": [2, 3] },
+        { "parte": "mao_secundaria", "arte": "notebook_adesivos", "cores": [2, 3] },
+        { "parte": "pernas", "arte": "calca_moletom", "cores": [2], "sugestao": true },
+        { "parte": "pes", "arte": "tenis_basico", "cores": [1, 4], "sugestao": true }
+      ],
+      "sugestaoCampos": ["paletas"]
+    },
+    {
+      "id": "base_agencia_neon",
+      "tier": "base",
+      "nivel": 8,
+      "instituicao": "agencia_neon",
+      "name": "Trainee",
+      "poses": ["Desenrolando um contrato até o chão", "Selfie", "Sorriso forçado apontando para a ring light"],
+      "descricao": "Terno barato um número maior, crachá gigante \"TALENTO\", headset e ring light presa no ombro. O contrato de exclusividade arrasta atrás dele.",
+      "paletas": [{ "id": "agencia_neon_oficial", "name": "Oficial da Agência", "cores": ["#FF3EA5", "#2EE6F0", "#FFFFFF", "#BFC5CC", "#111015"] }],
+      "camadas": [
+        { "parte": "torso", "arte": "terno_grande", "cores": [4, 2] },
+        { "parte": "pernas", "arte": "calca_terno_grande", "cores": [4] },
+        { "parte": "torso", "arte": "cracha_gigante", "cores": [0, 2], "texto": "TALENTO" },
+        { "parte": "rosto", "arte": "headset_trainee", "cores": [4, 1] },
+        { "parte": "bracos", "arte": "ring_light_ombro", "cores": [2, 1] },
+        { "parte": "costas", "arte": "contrato_arrastando", "cores": [2, 4] },
+        { "parte": "pes", "arte": "sapato_social_gasto", "cores": [4], "sugestao": true }
+      ],
+      "sugestaoCampos": ["paletas"]
+    },
+
+    {
+      "id": "peao_brabo_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "peao_brabo",
+      "name": "Peão Brabo Aprendiz",
+      "descricao": "O chapéu de peão e a fivela TOURO, ainda de tamanho normal, sobre camisa xadrez fechada.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "chapeu_peao", "cores": [3, 4] },
+        { "parte": "cintura", "arte": "fivela_touro_pequena", "cores": [2], "texto": "TOURO" },
+        { "parte": "torso", "arte": "camisa_xadrez_fechada", "cores": [0, 5], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_jeans_surrada", "cores": [1], "sugestao": true },
+        { "parte": "pes", "arte": "botina", "cores": [3] },
+        { "parte": "bracos", "arte": "bracadeira", "cores": [0], "sugestao": true }
+      ]
+    },
+    {
+      "id": "peao_brabo_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "peao_brabo",
+      "name": "Peão Brabo Veterano",
+      "descricao": "Chapéu maior que o corpo, fivela do tamanho de um prato, camisa xadrez aberta, laço benzido e o adesivo \"100% MACHO\" descascando nas costas.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "chapeu_peao_gigante", "cores": [3, 4] },
+        { "parte": "cintura", "arte": "fivela_touro", "cores": [2], "texto": "TOURO" },
+        { "parte": "torso", "arte": "camisa_xadrez_aberta", "cores": [0, 5] },
+        { "parte": "pernas", "arte": "calca_jeans_surrada", "cores": [1], "sugestao": true },
+        { "parte": "pes", "arte": "botina", "cores": [3] },
+        { "parte": "mao_principal", "arte": "laco_benzido", "cores": [3, 2] },
+        { "parte": "costas", "arte": "adesivo_descascando", "cores": [5, 0], "texto": "100% MACHO" }
+      ]
+    },
+    { "id": "peao_brabo_virada", "tier": "virada", "nivel": 30, "arquetipo": "peao_brabo", "name": "Peão Desconstruído", "descricao": "Ganha um avental por cima da camisa xadrez, e o adesivo das costas vira \"100% PARCEIRO\".", "foraDoPiloto": true },
+    { "id": "peao_brabo_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "peao_brabo", "name": "Peão Brabo Mestre", "descricao": "Igual ao treinador Wesley: o visual completo da ficha, com o touro-espírito translúcido bufando atrás.", "foraDoPiloto": true },
+    { "id": "peao_brabo_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "peao_brabo", "name": "Peão Brabo Lendário", "descricao": "Além do treinador: chapéu com chifres de touro-espírito e aura de poeira dourada de arena, com o touro inteiro bufando ao lado.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "iogue_furioso_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "iogue_furioso",
+      "name": "Iogue Furioso Aprendiz",
+      "descricao": "Coque e tapetinho de yoga enrolado nas costas, com bata de linho.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "coque_iogue", "cores": ["cabelo"] },
+        { "parte": "costas", "arte": "tapete_yoga_enrolado", "cores": [2, 0] },
+        { "parte": "torso", "arte": "camiseta_linho", "cores": [0] },
+        { "parte": "pernas", "arte": "calca_linho", "cores": [0] },
+        { "parte": "pes", "arte": "chinelo_couro", "cores": [3], "sugestao": true },
+        { "parte": "bracos", "arte": "bracadeira", "cores": [1], "sugestao": true }
+      ]
+    },
+    {
+      "id": "iogue_furioso_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "iogue_furioso",
+      "name": "Iogue Furioso Veterano",
+      "descricao": "Coque, túnica de linho, olheira funda, veia pulsando na testa, medidor de calma em cima da cabeça e garrafinha de kombucha na cintura.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "coque_iogue", "cores": ["cabelo"] },
+        { "parte": "cabeca", "arte": "medidor_calma", "cores": [1, 2] },
+        { "parte": "rosto", "arte": "olheira_funda", "cores": [4] },
+        { "parte": "rosto", "arte": "veia_testa", "cores": ["pele"] },
+        { "parte": "torso", "arte": "tunica_linho", "cores": [0, 5] },
+        { "parte": "pernas", "arte": "calca_linho", "cores": [0] },
+        { "parte": "pes", "arte": "chinelo_couro", "cores": [3], "sugestao": true },
+        { "parte": "cintura", "arte": "garrafinha_kombucha", "cores": [2, 3] },
+        { "parte": "costas", "arte": "tapete_yoga_enrolado", "cores": [2, 0], "texto": "PAZ INTERIOR (EM MANUTENÇÃO)", "sugestaoCampos": ["texto"] }
+      ]
+    },
+    { "id": "iogue_furioso_virada", "tier": "virada", "nivel": 30, "arquetipo": "iogue_furioso", "name": "Tigre Desperto", "descricao": "Variante de tigre inteiro, ainda de coque, com o tapetinho preso no lombo e o medidor de calma travado no vermelho.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "iogue_furioso_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "iogue_furioso", "name": "Iogue Furioso Mestre", "descricao": "Igual ao treinador Dev Kumar: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "iogue_furioso_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "iogue_furioso", "name": "Iogue Furioso Lendário", "descricao": "Além do treinador: listras de tigre na túnica e aura de lótus que fica vermelha quando a paciência acaba.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "cidadao_revolucionario_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "cidadao_revolucionario",
+      "name": "Cidadão Revolucionário Aprendiz",
+      "descricao": "Boina, camisa listrada e a xícara de café sempre na mão, ainda de bermuda de tactel.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "boina_revolucionaria", "cores": [4] },
+        { "parte": "mao_secundaria", "arte": "xicara_cafe", "cores": [5, 3] },
+        { "parte": "torso", "arte": "camisa_listrada", "cores": [0, 5] },
+        { "parte": "pernas", "arte": "bermuda_tactel", "cores": [1], "sugestao": true },
+        { "parte": "pes", "arte": "chinelo_com_meia", "cores": [3, 5], "sugestao": true },
+        { "parte": "bracos", "arte": "bracadeira", "cores": [2], "sugestao": true }
+      ]
+    },
+    {
+      "id": "cidadao_revolucionario_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "cidadao_revolucionario",
+      "name": "Cidadão Revolucionário Veterano",
+      "descricao": "Boina, cachecol de três cores, camisa listrada, xícara de café e a lista de reivindicações arrastando no chão.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "boina_revolucionaria", "cores": [4] },
+        { "parte": "mao_secundaria", "arte": "xicara_cafe", "cores": [5, 3] },
+        { "parte": "torso", "arte": "camisa_listrada", "cores": [0, 5] },
+        { "parte": "torso", "arte": "cachecol_tricolor", "cores": [0, 5, 2] },
+        { "parte": "pernas", "arte": "calca_social_surrada", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "sapato_couro_gasto", "cores": [3], "sugestao": true },
+        { "parte": "costas", "arte": "lista_reivindicacoes", "cores": [5, 4], "texto": "REIVINDICAÇÕES: 1. CAFÉ", "sugestaoCampos": ["texto"] }
+      ]
+    },
+    { "id": "cidadao_revolucionario_virada", "tier": "virada", "nivel": 30, "arquetipo": "cidadao_revolucionario", "name": "Revolução Permanente", "descricao": "Barricada de cadeiras de bistrô presa nas costas como mochila, lista de reivindicações dobrando de tamanho e xícara fumegante.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "cidadao_revolucionario_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "cidadao_revolucionario", "name": "Cidadão Revolucionário Mestre", "descricao": "Igual ao treinador Jacques: o visual completo da ficha, com o bigode fino.", "foraDoPiloto": true },
+    { "id": "cidadao_revolucionario_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "cidadao_revolucionario", "name": "Cidadão Revolucionário Lendário", "descricao": "Além do treinador: bandeira tricolor esvoaçando nas costas e aura de panfletos girando em volta.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "babushka_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "babushka",
+      "name": "Babushka Aprendiz",
+      "descricao": "Lenço florido e sacola de feira com pão, num casaco de pele falsa ainda curto.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "lenco_florido", "cores": [0, 5] },
+        { "parte": "mao_secundaria", "arte": "sacola_feira_pao", "cores": [3, 5] },
+        { "parte": "torso", "arte": "casaco_pele_falsa_curto", "cores": [1, 5], "sugestao": true },
+        { "parte": "pernas", "arte": "saia_longa", "cores": [0], "sugestao": true },
+        { "parte": "pes", "arte": "chinelo", "cores": [3], "sugestao": true },
+        { "parte": "bracos", "arte": "bracadeira", "cores": [2], "sugestao": true }
+      ]
+    },
+    {
+      "id": "babushka_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "babushka",
+      "name": "Babushka Veterana",
+      "descricao": "Lenço florido, casaco de pele falsa enorme, sacola de feira, espingarda benzida com flores no cano e mira de crochê, e rolo de massa na cintura.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "lenco_florido", "cores": [0, 5] },
+        { "parte": "mao_secundaria", "arte": "sacola_feira_pao", "cores": [3, 5] },
+        { "parte": "torso", "arte": "casaco_pele_falsa_enorme", "cores": [1, 5] },
+        { "parte": "pernas", "arte": "saia_longa", "cores": [0], "sugestao": true },
+        { "parte": "pes", "arte": "botinha_feltro", "cores": [3], "sugestao": true },
+        { "parte": "cintura", "arte": "rolo_de_massa", "cores": [3] },
+        { "parte": "mao_principal", "arte": "espingarda_benzida_flores_croche", "cores": [3, 0, 5] },
+        { "parte": "costas", "arte": "bordado_costas", "cores": [2], "texto": "COMEU?", "sugestao": true }
+      ]
+    },
+    { "id": "babushka_virada", "tier": "virada", "nivel": 30, "arquetipo": "babushka", "name": "Sopa da Vó", "descricao": "Panela de sopa gigante na sacola, concha na mão e avental florido por cima do casaco.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "babushka_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "babushka", "name": "Babushka Mestre", "descricao": "Igual à treinadora Olga: o visual completo da ficha, com a mira de crochê na espingarda.", "foraDoPiloto": true },
+    { "id": "babushka_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "babushka", "name": "Babushka Lendária", "descricao": "Além da treinadora: xale de lã flutuando como capa e aura de vapor de sopa que cheira a domingo.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "arqueiro_das_estepes_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "arqueiro_das_estepes",
+      "name": "Arqueiro das Estepes Aprendiz",
+      "descricao": "Chapéu de pele pontudo e o pônei-espírito pequeno demais, ainda de túnica simples.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "chapeu_pele_pontudo", "cores": [1, 5] },
+        { "parte": "acompanhante", "arte": "ponei_espirito", "cores": [5] },
+        { "parte": "torso", "arte": "tunica_montaria", "cores": [0, 2], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_montaria", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "bota_montaria", "cores": [3], "sugestao": true },
+        { "parte": "bracos", "arte": "bracadeira", "cores": [2], "sugestao": true }
+      ]
+    },
+    {
+      "id": "arqueiro_das_estepes_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "arqueiro_das_estepes",
+      "name": "Arqueiro das Estepes Veterano",
+      "descricao": "Chapéu de pele pontudo, arco recurvo, aljava nas costas e o pônei-espírito com cara de quem quer pedir demissão.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "chapeu_pele_pontudo", "cores": [1, 5] },
+        { "parte": "acompanhante", "arte": "ponei_espirito_desanimado", "cores": [5] },
+        { "parte": "torso", "arte": "tunica_montaria", "cores": [0, 2], "sugestao": true },
+        { "parte": "cintura", "arte": "faixa_cintura", "cores": [2], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_montaria", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "bota_montaria", "cores": [3], "sugestao": true },
+        { "parte": "mao_principal", "arte": "arco_recurvo", "cores": [3] },
+        { "parte": "costas", "arte": "aljava", "cores": [3, 4], "texto": "SE ESTÁ LENDO ISSO, O PÔNEI CAIU", "sugestao": true }
+      ]
+    },
+    { "id": "arqueiro_das_estepes_virada", "tier": "virada", "nivel": 30, "arquetipo": "arqueiro_das_estepes", "name": "Horda", "descricao": "Dois cavaleiros-espírito translúcidos galopam ao lado; o pônei ganha um chapéu de pele e continua infeliz.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "arqueiro_das_estepes_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "arqueiro_das_estepes", "name": "Arqueiro das Estepes Mestre", "descricao": "Igual ao treinador Batu: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "arqueiro_das_estepes_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "arqueiro_das_estepes", "name": "Arqueiro das Estepes Lendário", "descricao": "Além do treinador: o pônei finalmente cresce para um cavalo-espírito de verdade e a aura é um vento de estepe com capim voando.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "cacador_de_crocodilo_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "cacador_de_crocodilo",
+      "name": "Caçador de Crocodilo Aprendiz",
+      "descricao": "Chapéu safári e os primeiros curativos, de camisa cáqui com poucos bolsos.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "chapeu_safari", "cores": [1, 3] },
+        { "parte": "bracos", "arte": "curativos_poucos", "cores": [5] },
+        { "parte": "torso", "arte": "camisa_bolsos_simples", "cores": [0], "sugestao": true },
+        { "parte": "pernas", "arte": "bermuda_caqui", "cores": [0] },
+        { "parte": "pes", "arte": "bota_trilha", "cores": [3], "sugestao": true },
+        { "parte": "bracos", "arte": "bracadeira", "cores": [2], "sugestao": true }
+      ]
+    },
+    {
+      "id": "cacador_de_crocodilo_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "cacador_de_crocodilo",
+      "name": "Caçador de Crocodilo Veterano",
+      "descricao": "Chapéu safári com dentes de crocodilo, camisa de 14 bolsos, bermuda cáqui, laço de captura e curativos pelo corpo todo.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "chapeu_safari_dentes", "cores": [1, 5] },
+        { "parte": "bracos", "arte": "curativos_muitos", "cores": [5] },
+        { "parte": "rosto", "arte": "curativo_nariz", "cores": [5] },
+        { "parte": "torso", "arte": "camisa_14_bolsos", "cores": [0, 3] },
+        { "parte": "pernas", "arte": "bermuda_caqui", "cores": [0] },
+        { "parte": "pes", "arte": "bota_trilha", "cores": [3], "sugestao": true },
+        { "parte": "mao_principal", "arte": "laco_captura", "cores": [3] },
+        { "parte": "costas", "arte": "patch_costas", "cores": [2], "texto": "SE ELE MORDER, É CARINHO", "sugestao": true }
+      ]
+    },
+    { "id": "cacador_de_crocodilo_virada", "tier": "virada", "nivel": 30, "arquetipo": "cacador_de_crocodilo", "name": "O Bicho Grande", "descricao": "Crocodilo-espírito translúcido enorme enrolado nos ombros, mordendo o chapéu; curativo no corpo inteiro.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "cacador_de_crocodilo_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "cacador_de_crocodilo", "name": "Caçador de Crocodilo Mestre", "descricao": "Igual ao treinador Bazza: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "cacador_de_crocodilo_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "cacador_de_crocodilo", "name": "Caçador de Crocodilo Lendário", "descricao": "Além do treinador: mais curativo do que roupa e aura de olhos de bicho brilhando no mato em volta.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "druida_rabugento_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "druida_rabugento",
+      "name": "Druida Rabugento Aprendiz",
+      "descricao": "Barba comprida até o peito e o cajado com a placa \"SAIA DA GRAMA\", de túnica de musgo.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "rosto", "arte": "barba_longa", "cores": ["cabelo"] },
+        { "parte": "mao_principal", "arte": "cajado_placa", "cores": [1, 5], "texto": "SAIA DA GRAMA" },
+        { "parte": "torso", "arte": "tunica_musgo", "cores": [0, 1] },
+        { "parte": "pes", "arte": "sandalia_pedra", "cores": [3] }
+      ]
+    },
+    {
+      "id": "druida_rabugento_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "druida_rabugento",
+      "name": "Druida Rabugento Veterano",
+      "descricao": "Barba que arrasta no chão com um passarinho fazendo ninho, túnica de musgo longa, sandália de pedra e o cajado com a placa.",
+      "camadas": [
+        { "parte": "rosto", "arte": "barba_arrastando", "cores": ["cabelo"] },
+        { "parte": "rosto", "arte": "passarinho_ninho_barba", "cores": [2, 1] },
+        { "parte": "mao_principal", "arte": "cajado_placa", "cores": [1, 5], "texto": "SAIA DA GRAMA" },
+        { "parte": "torso", "arte": "tunica_musgo_longa", "cores": [0, 1] },
+        { "parte": "pes", "arte": "sandalia_pedra", "cores": [3] },
+        { "parte": "costas", "arte": "remendo_costas", "cores": [0], "texto": "NO MEU TEMPO ERA MELHOR", "sugestao": true }
+      ]
+    },
+    { "id": "druida_rabugento_virada", "tier": "virada", "nivel": 30, "arquetipo": "druida_rabugento", "name": "Círculo Completo", "descricao": "Três menires pequenos orbitam em volta; a barba ganha flores e o passarinho, um ninho maior.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "druida_rabugento_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "druida_rabugento", "name": "Druida Rabugento Mestre", "descricao": "Igual ao treinador Seamus: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "druida_rabugento_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "druida_rabugento", "name": "Druida Rabugento Lendário", "descricao": "Além do treinador: a barba vira um gramado com plaquinhas e a aura é um círculo de pedras flutuando que reclama baixinho.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "bruxa_do_trovao_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "bruxa_do_trovao",
+      "name": "Bruxa do Trovão Aprendiz",
+      "descricao": "Capacete de chifres curtos e chifre de beber, de túnica de lã simples.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "capacete_chifres_simples", "cores": [3, 5] },
+        { "parte": "mao_secundaria", "arte": "chifre_de_beber", "cores": [5, 2] },
+        { "parte": "torso", "arte": "tunica_viking_simples", "cores": [0, 1], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_la", "cores": [1], "sugestao": true },
+        { "parte": "pes", "arte": "bota_pele", "cores": [3], "sugestao": true }
+      ]
+    },
+    {
+      "id": "bruxa_do_trovao_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "bruxa_do_trovao",
+      "name": "Bruxa do Trovão Veterana",
+      "descricao": "Tranças, capacete de chifres com etiqueta \"RÉPLICA\", chifre de beber transbordando faísca e bochechas sempre vermelhas.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "capacete_chifres_replica", "cores": [3, 5], "texto": "RÉPLICA" },
+        { "parte": "cabeca", "arte": "trancas_laterais", "cores": ["cabelo"] },
+        { "parte": "rosto", "arte": "bochechas_vermelhas", "cores": ["pele"] },
+        { "parte": "mao_secundaria", "arte": "chifre_de_beber_faiscando", "cores": [5, 2] },
+        { "parte": "torso", "arte": "tunica_viking", "cores": [0, 1], "sugestao": true },
+        { "parte": "cintura", "arte": "cinto_couro_fivela", "cores": [3], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_la", "cores": [1], "sugestao": true },
+        { "parte": "pes", "arte": "bota_pele", "cores": [3], "sugestao": true },
+        { "parte": "costas", "arte": "capa_curta", "cores": [0], "texto": "SAIDEIRA", "sugestao": true }
+      ]
+    },
+    { "id": "bruxa_do_trovao_virada", "tier": "virada", "nivel": 30, "arquetipo": "bruxa_do_trovao", "name": "Saideira dos Deuses", "descricao": "Chifres do capacete faiscando, nuvem de tempestade particular em cima da cabeça e chifre transbordando raio.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "bruxa_do_trovao_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "bruxa_do_trovao", "name": "Bruxa do Trovão Mestre", "descricao": "Igual à treinadora Sigrid: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "bruxa_do_trovao_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "bruxa_do_trovao", "name": "Bruxa do Trovão Lendária", "descricao": "Além da treinadora: capacete com etiqueta \"ORIGINAL\" e aura de raios pequenos com confete.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "curandeira_dos_andes_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "curandeira_dos_andes",
+      "name": "Curandeira dos Andes Aprendiz",
+      "descricao": "Poncho liso, chapéu de aba e um totem de lhama em miniatura.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "chapeu_aba", "cores": [1] },
+        { "parte": "torso", "arte": "poncho_simples", "cores": [0, 2] },
+        { "parte": "mao_secundaria", "arte": "totem_lhama_mini", "cores": [1, 5], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_la", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "sandalia_couro", "cores": [1], "sugestao": true }
+      ]
+    },
+    {
+      "id": "curandeira_dos_andes_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "curandeira_dos_andes",
+      "name": "Curandeira dos Andes Veterana",
+      "descricao": "Poncho colorido, chapéu de aba alta, totem de lhama de madeira e uma fila de pacientes em miniatura atrás dela.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "chapeu_aba_alta", "cores": [1, 2] },
+        { "parte": "torso", "arte": "poncho_colorido", "cores": [0, 2, 5] },
+        { "parte": "mao_secundaria", "arte": "totem_lhama", "cores": [1, 5] },
+        { "parte": "acompanhante", "arte": "fila_pacientes_mini", "cores": [4, 5] },
+        { "parte": "pernas", "arte": "calca_la", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "sandalia_couro", "cores": [1], "sugestao": true },
+        { "parte": "costas", "arte": "senha_costas", "cores": [5, 4], "texto": "PRÓXIMO: Nº 348", "sugestao": true }
+      ]
+    },
+    { "id": "curandeira_dos_andes_virada", "tier": "virada", "nivel": 30, "arquetipo": "curandeira_dos_andes", "name": "Nascente", "descricao": "Poncho com bordado de rio que brilha e a lhama-totem com um laço de festa.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "curandeira_dos_andes_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "curandeira_dos_andes", "name": "Curandeira dos Andes Mestre", "descricao": "Igual à treinadora Ayaan Quispe: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "curandeira_dos_andes_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "curandeira_dos_andes", "name": "Curandeira dos Andes Lendária", "descricao": "Além da treinadora: a fila de pacientes finalmente anda e a aura é uma garoa de água de nascente.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "luchador_sagrado_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "luchador_sagrado",
+      "name": "Luchador Sagrado Aprendiz",
+      "descricao": "Máscara de luchador simples e capa curta de cortina, com cinturão de papelão.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "mascara_luchador_simples", "cores": [0, 2] },
+        { "parte": "costas", "arte": "capa_cortina_curta", "cores": [0] },
+        { "parte": "torso", "arte": "malha_regata", "cores": [4], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_luta", "cores": [0], "sugestao": true },
+        { "parte": "pes", "arte": "botas_brilhantes_simples", "cores": [2], "sugestao": true },
+        { "parte": "cintura", "arte": "cinturao_papelao", "cores": [2, 5] }
+      ]
+    },
+    {
+      "id": "luchador_sagrado_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "luchador_sagrado",
+      "name": "Luchador Sagrado Veterano",
+      "descricao": "Máscara de luchador com raio dourado e o olho de espírito piscando na testa, capa de cortina de teatro, cinturão de papelão e botas brilhantes.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "mascara_luchador_raio", "cores": [0, 2] },
+        { "parte": "cabeca", "arte": "olho_espirito_testa", "cores": [5] },
+        { "parte": "costas", "arte": "capa_cortina", "cores": [0, 2], "texto": "PROPRIEDADE DA TRUPE — DEVOLVER", "sugestaoCampos": ["texto"] },
+        { "parte": "torso", "arte": "malha_regata", "cores": [4], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_luta", "cores": [0], "sugestao": true },
+        { "parte": "pes", "arte": "botas_brilhantes", "cores": [2, 5] },
+        { "parte": "cintura", "arte": "cinturao_papelao", "cores": [2, 5] }
+      ]
+    },
+    { "id": "luchador_sagrado_virada", "tier": "virada", "nivel": 30, "arquetipo": "luchador_sagrado", "name": "Máscara Eterna", "descricao": "Máscara dourada inteira com o olho de espírito aberto e capa de cortina com franja dourada.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "luchador_sagrado_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "luchador_sagrado", "name": "Luchador Sagrado Mestre", "descricao": "Igual ao treinador El Relámpago: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "luchador_sagrado_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "luchador_sagrado", "name": "Luchador Sagrado Lendário", "descricao": "Além do treinador: o espírito antigo da máscara aparece inteiro atrás dele, de braços cruzados, e a aura é um holofote de ringue.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "diva_da_opera_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "diva_da_opera",
+      "name": "Diva da Ópera Aprendiz",
+      "descricao": "Peruca alta, máscara veneziana e leque, num vestido de ópera ainda de um tile.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "peruca_alta_simples", "cores": [5] },
+        { "parte": "rosto", "arte": "mascara_veneziana", "cores": [2, 0] },
+        { "parte": "torso", "arte": "vestido_opera_curto", "cores": [0, 2], "sugestao": true },
+        { "parte": "pes", "arte": "sapato_salto", "cores": [4], "sugestao": true },
+        { "parte": "mao_secundaria", "arte": "leque", "cores": [2, 4] }
+      ]
+    },
+    {
+      "id": "diva_da_opera_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "diva_da_opera",
+      "name": "Diva da Ópera Veterana",
+      "descricao": "Vestido que ocupa dois tiles, máscara veneziana, leque e peruca alta com um passarinho dentro.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "peruca_alta_passarinho", "cores": [5, 2] },
+        { "parte": "rosto", "arte": "mascara_veneziana", "cores": [2, 0] },
+        { "parte": "torso", "arte": "vestido_opera_dois_tiles", "cores": [0, 2] },
+        { "parte": "costas", "arte": "cauda_vestido", "cores": [0], "texto": "NÃO PISE", "sugestao": true },
+        { "parte": "pes", "arte": "sapato_salto", "cores": [4], "sugestao": true },
+        { "parte": "mao_secundaria", "arte": "leque", "cores": [2, 4] }
+      ]
+    },
+    { "id": "diva_da_opera_virada", "tier": "virada", "nivel": 30, "arquetipo": "diva_da_opera", "name": "Grand Finale", "descricao": "Vestido com cauda de três tiles e coroa de flores jogadas pela plateia.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "diva_da_opera_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "diva_da_opera", "name": "Diva da Ópera Mestre", "descricao": "Igual à treinadora Donna Valentina: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "diva_da_opera_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "diva_da_opera", "name": "Diva da Ópera Lendária", "descricao": "Além da treinadora: lustre de cristal flutuando sobre a cabeça e aura de pétalas e vidro estilhaçado.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "malandro_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "malandro",
+      "name": "Malandro Aprendiz",
+      "descricao": "Chapéu de palha e palito, de camisa social branca e calça de vinco, ainda sem o paletó.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "chapeu_palha_malandro", "cores": [0, 4] },
+        { "parte": "torso", "arte": "camisa_social_branca", "cores": [5] },
+        { "parte": "pernas", "arte": "calca_branca", "cores": [5] },
+        { "parte": "pes", "arte": "sapato_bicolor", "cores": [5, 4] },
+        { "parte": "rosto", "arte": "palito", "cores": [0] }
+      ]
+    },
+    {
+      "id": "malandro_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "malandro",
+      "name": "Malandro Veterano",
+      "descricao": "Terno branco impecável, chapéu de palha, sapato bicolor, palito e cordão. O terno nunca suja, nem no esgoto.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "chapeu_palha_malandro", "cores": [0, 4] },
+        { "parte": "torso", "arte": "terno_branco_impecavel", "cores": [5, 1] },
+        { "parte": "torso", "arte": "cordao_pescoco", "cores": [2] },
+        { "parte": "pernas", "arte": "calca_branca", "cores": [5] },
+        { "parte": "pes", "arte": "sapato_bicolor", "cores": [5, 4] },
+        { "parte": "rosto", "arte": "palito", "cores": [0] },
+        { "parte": "costas", "arte": "etiqueta_costas", "cores": [5, 4], "texto": "LAVAR A SECO (NUNCA PRECISOU)", "sugestao": true }
+      ]
+    },
+    { "id": "malandro_virada", "tier": "virada", "nivel": 30, "arquetipo": "malandro", "name": "Golpe do Século", "descricao": "Terno branco com risca dourada, chapéu com pena e Sementes saltando dos bolsos.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "malandro_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "malandro", "name": "Malandro Mestre", "descricao": "Igual ao treinador Tião: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "malandro_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "malandro", "name": "Malandro Lendário", "descricao": "Além do treinador: um poste-espírito para encostar que segue ele pelo mapa e aura de Sementes girando como confete.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "sumo_cibernetico_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "sumo_cibernetico",
+      "name": "Sumô Cibernético Aprendiz",
+      "descricao": "Barriga hidráulica ainda fosca, coque com antena e mawashi de LED.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "coque_antena", "cores": ["cabelo", 3] },
+        { "parte": "torso", "arte": "barriga_hidraulica_simples", "cores": [3, 2] },
+        { "parte": "cintura", "arte": "mawashi_led", "cores": [0, 2] },
+        { "parte": "pes", "arte": "chinelo_slide", "cores": [4], "sugestao": true }
+      ]
+    },
+    {
+      "id": "sumo_cibernetico_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "sumo_cibernetico",
+      "name": "Sumô Cibernético Veterano",
+      "descricao": "Barriga hidráulica cromada com manômetro e o aviso \"MANTENHA DISTÂNCIA\", coque com antena, mawashi de LED, pistões nas costas e lata de energético.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "coque_antena", "cores": ["cabelo", 3] },
+        { "parte": "torso", "arte": "barriga_hidraulica_cromada", "cores": [3, 2], "texto": "MANTENHA DISTÂNCIA" },
+        { "parte": "cintura", "arte": "mawashi_led", "cores": [0, 2] },
+        { "parte": "pes", "arte": "chinelo_slide", "cores": [4], "sugestao": true },
+        { "parte": "mao_secundaria", "arte": "lata_energetico", "cores": [2, 4] },
+        { "parte": "costas", "arte": "pistoes_vapor", "cores": [3, 4], "texto": "DÊ PASSAGEM", "sugestao": true }
+      ]
+    },
+    { "id": "sumo_cibernetico_virada", "tier": "virada", "nivel": 30, "arquetipo": "sumo_cibernetico", "name": "Yokozuna", "descricao": "Corda trançada de LED na cintura e barriga com dois manômetros no vermelho.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "sumo_cibernetico_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "sumo_cibernetico", "name": "Sumô Cibernético Mestre", "descricao": "Igual ao treinador Takeshi: o visual completo da ficha, com o cinto de energia.", "foraDoPiloto": true },
+    { "id": "sumo_cibernetico_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "sumo_cibernetico", "name": "Sumô Cibernético Lendário", "descricao": "Além do treinador: barriga com tela de placar e aura de vapor neon que treme o chão.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "o_fiel_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "o_fiel",
+      "name": "O Fiel Aprendiz",
+      "descricao": "Viseira, regata da torcida e manoplas acolchoadas.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "viseira", "cores": [4, 2] },
+        { "parte": "bracos", "arte": "manoplas_simples", "cores": [0, 2] },
+        { "parte": "torso", "arte": "regata_torcida", "cores": [0, 5] },
+        { "parte": "pernas", "arte": "bermuda_lisa", "cores": [1], "sugestao": true },
+        { "parte": "pes", "arte": "tenis_de_mola", "cores": [5, 2], "sugestao": true }
+      ]
+    },
+    {
+      "id": "o_fiel_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "o_fiel",
+      "name": "O Fiel Veterano",
+      "descricao": "Regata, viseira, cicatriz na sobrancelha, cachecol e manoplas pintadas nas cores do Neon FC. Costas da regata: \"FIEL ATÉ O BOLETO\".",
+      "camadas": [
+        { "parte": "cabeca", "arte": "viseira", "cores": [4, 2] },
+        { "parte": "bracos", "arte": "manoplas_neon_fc", "cores": [0, 2, 4] },
+        { "parte": "rosto", "arte": "cicatriz_sobrancelha", "cores": ["pele"] },
+        { "parte": "torso", "arte": "regata_torcida", "cores": [0, 5] },
+        { "parte": "torso", "arte": "cachecol_torcida", "cores": [0, 2] },
+        { "parte": "pernas", "arte": "bermuda_lisa", "cores": [1], "sugestao": true },
+        { "parte": "pes", "arte": "tenis_de_mola", "cores": [5, 2], "sugestao": true },
+        { "parte": "costas", "arte": "estampa_costas", "cores": [5], "texto": "FIEL ATÉ O BOLETO" }
+      ]
+    },
+    { "id": "o_fiel_virada", "tier": "virada", "nivel": 30, "arquetipo": "o_fiel", "name": "Consciência", "descricao": "Cachecol amarrado com um do Raiz FC e, nas poses, levantando um torcedor do Raiz FC.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "o_fiel_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "o_fiel", "name": "O Fiel Mestre", "descricao": "Igual ao treinador Edson: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "o_fiel_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "o_fiel", "name": "O Fiel Lendário", "descricao": "Além do treinador: manoplas metade Neon FC e metade Raiz FC e aura de arquibancada cantando junto.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "monstro_da_academia_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "monstro_da_academia",
+      "name": "Monstro da Academia Aprendiz",
+      "descricao": "Braços inchados, pernas de palito e galão de água.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "bracos", "arte": "bracos_inchados", "cores": ["pele"] },
+        { "parte": "pernas", "arte": "pernas_palito", "cores": ["pele", 0] },
+        { "parte": "torso", "arte": "regata_cavada", "cores": [0, 4], "sugestao": true },
+        { "parte": "pes", "arte": "tenis_de_mola", "cores": [5, 1], "sugestao": true },
+        { "parte": "mao_secundaria", "arte": "galao_agua", "cores": [5, 3] }
+      ]
+    },
+    {
+      "id": "monstro_da_academia_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "monstro_da_academia",
+      "name": "Monstro da Academia Veterano",
+      "descricao": "Braços gigantes, pernas finas de quem pulou o treino de perna, pau de selfie com a live ligada e galão de água.",
+      "camadas": [
+        { "parte": "bracos", "arte": "bracos_gigantes", "cores": ["pele"] },
+        { "parte": "pernas", "arte": "pernas_palito", "cores": ["pele", 0] },
+        { "parte": "torso", "arte": "regata_cavada", "cores": [0, 4], "sugestao": true },
+        { "parte": "pes", "arte": "tenis_de_mola", "cores": [5, 1], "sugestao": true },
+        { "parte": "mao_principal", "arte": "pau_selfie_live", "cores": [4, 2] },
+        { "parte": "mao_secundaria", "arte": "galao_agua", "cores": [5, 3] },
+        { "parte": "costas", "arte": "estampa_costas", "cores": [5], "texto": "SEM DOR, SEM CURTIDA", "sugestao": true }
+      ]
+    },
+    { "id": "monstro_da_academia_virada", "tier": "virada", "nivel": 30, "arquetipo": "monstro_da_academia", "name": "Shape Inexplicável", "descricao": "Braços ainda maiores, contador de curtidas flutuando e pernas ainda mais finas.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "monstro_da_academia_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "monstro_da_academia", "name": "Monstro da Academia Mestre", "descricao": "Igual ao treinador Thalysson: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "monstro_da_academia_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "monstro_da_academia", "name": "Monstro da Academia Lendário", "descricao": "Além do treinador: as pernas continuam de palito e a aura é uma chuva de corações e notificações de \"VOCÊ É INSPIRAÇÃO\".", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "tropa_de_choque_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "tropa_de_choque",
+      "name": "Tropa de Choque Aprendiz",
+      "descricao": "Óculos escuros à noite, colete de choque e escudo sem texto.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "rosto", "arte": "oculos_escuros", "cores": [4] },
+        { "parte": "mao_secundaria", "arte": "escudo_choque_simples", "cores": [3, 5] },
+        { "parte": "torso", "arte": "armadura_choque_leve", "cores": [0, 4], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_farda", "cores": [0], "sugestao": true },
+        { "parte": "pes", "arte": "coturno", "cores": [4], "sugestao": true }
+      ]
+    },
+    {
+      "id": "tropa_de_choque_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "tropa_de_choque",
+      "name": "Tropa de Choque Veterano",
+      "descricao": "Armadura de choque, óculos escuros à noite, escudo escrito \"HOJE NÃO\", prancheta da lista e o cordão de isolamento de veludo vermelho.",
+      "camadas": [
+        { "parte": "rosto", "arte": "oculos_escuros", "cores": [4] },
+        { "parte": "mao_secundaria", "arte": "escudo_hoje_nao", "cores": [3, 5], "texto": "HOJE NÃO" },
+        { "parte": "torso", "arte": "armadura_choque", "cores": [0, 4] },
+        { "parte": "cintura", "arte": "prancheta_lista", "cores": [5, 4] },
+        { "parte": "pernas", "arte": "calca_farda", "cores": [0], "sugestao": true },
+        { "parte": "pes", "arte": "coturno", "cores": [4], "sugestao": true },
+        { "parte": "costas", "arte": "cordao_veludo", "cores": [2, 3] },
+        { "parte": "costas", "arte": "estampa_costas", "cores": [5], "texto": "VOCÊ NÃO ESTÁ NA LISTA", "sugestao": true }
+      ]
+    },
+    { "id": "tropa_de_choque_virada", "tier": "virada", "nivel": 30, "arquetipo": "tropa_de_choque", "name": "Muralha de Escudos", "descricao": "Escudo duplo, \"HOJE NÃO\" de um lado e \"NEM AMANHÃ\" do outro, e o cordão de veludo cercando o grupo.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "tropa_de_choque_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "tropa_de_choque", "name": "Tropa de Choque Mestre", "descricao": "Igual ao treinador Big Mo: o visual completo da ficha, com a escopeta inteligente.", "foraDoPiloto": true },
+    { "id": "tropa_de_choque_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "tropa_de_choque", "name": "Tropa de Choque Lendário", "descricao": "Além do treinador: tapete vermelho sob os pés e aura de luz de balada girando.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "cowboy_cromado_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "cowboy_cromado",
+      "name": "Cowboy Cromado Aprendiz",
+      "descricao": "Chapéu de cowboy e antebraço cromado, de camisa de pala e bota.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "chapeu_cowboy_simples", "cores": [0, 3] },
+        { "parte": "bracos", "arte": "braco_cromado_simples", "cores": [3] },
+        { "parte": "torso", "arte": "camisa_cowboy", "cores": [5, 0], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_jeans_surrada", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "bota_cowboy", "cores": [4], "sugestao": true }
+      ]
+    },
+    {
+      "id": "cowboy_cromado_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "cowboy_cromado",
+      "name": "Cowboy Cromado Veterano",
+      "descricao": "Chapéu com GPS piscando, braço cromado, revólver com mira laser, espora de LED e o próprio projetor de planta seca de faroeste.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "chapeu_cowboy_gps", "cores": [0, 1] },
+        { "parte": "bracos", "arte": "braco_cromado", "cores": [3, 1] },
+        { "parte": "torso", "arte": "camisa_cowboy", "cores": [5, 0], "sugestao": true },
+        { "parte": "cintura", "arte": "coldre", "cores": [0], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_jeans_surrada", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "bota_espora_led", "cores": [4, 1] },
+        { "parte": "mao_principal", "arte": "revolver_mira_laser", "cores": [3, 2] },
+        { "parte": "costas", "arte": "projetor_planta_seca", "cores": [3, 1], "texto": "XERIFE — ASSINATURA MENSAL", "sugestaoCampos": ["texto"] }
+      ]
+    },
+    { "id": "cowboy_cromado_virada", "tier": "virada", "nivel": 30, "arquetipo": "cowboy_cromado", "name": "Meio-Dia Eterno", "descricao": "Sol de holograma fixo atrás da cabeça e dois revólveres com mira laser.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "cowboy_cromado_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "cowboy_cromado", "name": "Cowboy Cromado Mestre", "descricao": "Igual ao treinador Dusty: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "cowboy_cromado_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "cowboy_cromado", "name": "Cowboy Cromado Lendário", "descricao": "Além do treinador: corpo meio cromado e aura de poeira digital com plantas secas de holograma rolando em volta.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "diretor_de_nollywood_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "diretor_de_nollywood",
+      "name": "Diretor de Nollywood Aprendiz",
+      "descricao": "Boné virado, claquete e um drone-câmera só.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "bone_virado", "cores": [1, 4] },
+        { "parte": "acompanhante", "arte": "drone_camera_um", "cores": [3, 1] },
+        { "parte": "torso", "arte": "colete_producao", "cores": [0, 5], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_cargo", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "tenis_basico", "cores": [5, 4], "sugestao": true },
+        { "parte": "mao_secundaria", "arte": "claquete", "cores": [4, 5] }
+      ]
+    },
+    {
+      "id": "diretor_de_nollywood_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "diretor_de_nollywood",
+      "name": "Diretor de Nollywood Veterano",
+      "descricao": "Boné virado, claquete, megafone, dois drones-câmera em órbita e a cadeira de diretor dobrável com o nome escrito errado.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "bone_virado", "cores": [1, 4] },
+        { "parte": "acompanhante", "arte": "drones_camera_dois", "cores": [3, 1] },
+        { "parte": "torso", "arte": "colete_producao", "cores": [0, 5], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_cargo", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "tenis_basico", "cores": [5, 4], "sugestao": true },
+        { "parte": "mao_secundaria", "arte": "claquete", "cores": [4, 5] },
+        { "parte": "mao_principal", "arte": "megafone_direcao", "cores": [2, 4] },
+        { "parte": "costas", "arte": "cadeira_diretor_dobrada", "cores": [3, 5], "texto": "CHIDY", "sugestaoCampos": ["texto"] }
+      ]
+    },
+    { "id": "diretor_de_nollywood_virada", "tier": "virada", "nivel": 30, "arquetipo": "diretor_de_nollywood", "name": "Blockbuster", "descricao": "Óculos escuros de estreia, três drones-câmera e um tapete vermelho que desenrola no chão.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "diretor_de_nollywood_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "diretor_de_nollywood", "name": "Diretor de Nollywood Mestre", "descricao": "Igual ao treinador Chidi: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "diretor_de_nollywood_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "diretor_de_nollywood", "name": "Diretor de Nollywood Lendário", "descricao": "Além do treinador: a cadeira finalmente com o nome certo e aura de holofotes cruzados com letreiro de estreia.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "engenheira_de_gambiarra_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "engenheira_de_gambiarra",
+      "name": "Engenheira de Gambiarra Aprendiz",
+      "descricao": "Óculos de solda, macacão sujo de graxa, fita prata nos pulsos e um robô de frigobar.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "rosto", "arte": "oculos_solda", "cores": [3, 4] },
+        { "parte": "acompanhante", "arte": "robo_frigobar", "cores": [5, 3] },
+        { "parte": "torso", "arte": "macacao_graxa", "cores": [0, 4] },
+        { "parte": "pernas", "arte": "macacao_graxa_pernas", "cores": [0, 4] },
+        { "parte": "pes", "arte": "bota_seguranca", "cores": [4, 2], "sugestao": true },
+        { "parte": "bracos", "arte": "fita_prata", "cores": [3] }
+      ]
+    },
+    {
+      "id": "engenheira_de_gambiarra_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "engenheira_de_gambiarra",
+      "name": "Engenheira de Gambiarra Veterana",
+      "descricao": "Macacão sujo de graxa, óculos de solda, fita prata em tudo, chave de fenda soltando faísca, o robô feito de geladeira com rodinhas de skate e lacres \"GARANTIA VIOLADA\" em todas as peças.",
+      "camadas": [
+        { "parte": "rosto", "arte": "oculos_solda", "cores": [3, 4] },
+        { "parte": "acompanhante", "arte": "robo_geladeira_skate", "cores": [5, 3] },
+        { "parte": "torso", "arte": "macacao_graxa", "cores": [0, 4] },
+        { "parte": "torso", "arte": "lacres_garantia", "cores": [2] },
+        { "parte": "pernas", "arte": "macacao_graxa_pernas", "cores": [0, 4] },
+        { "parte": "pes", "arte": "bota_seguranca", "cores": [4, 2], "sugestao": true },
+        { "parte": "bracos", "arte": "fita_prata", "cores": [3] },
+        { "parte": "mao_principal", "arte": "chave_fenda_faisca", "cores": [2, 3] },
+        { "parte": "costas", "arte": "lacre_costas", "cores": [2, 5], "texto": "GARANTIA VIOLADA" }
+      ]
+    },
+    { "id": "engenheira_de_gambiarra_virada", "tier": "virada", "nivel": 30, "arquetipo": "engenheira_de_gambiarra", "name": "Mecha de Sucata", "descricao": "Variante pilotando o robô gigante de geladeira, ventilador e fita, com ela aparecendo pela porta do congelador.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "engenheira_de_gambiarra_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "engenheira_de_gambiarra", "name": "Engenheira de Gambiarra Mestre", "descricao": "Igual à treinadora Mei Lin Zhao: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "engenheira_de_gambiarra_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "engenheira_de_gambiarra", "name": "Engenheira de Gambiarra Lendária", "descricao": "Além da treinadora: mochila de sucata com braços mecânicos e aura de parafusos e faíscas orbitando.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "doktor_klaus_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "doktor_klaus",
+      "name": "Doktor Klaus Aprendiz",
+      "descricao": "Cabelo arrepiado de eletricidade, óculos de proteção, jaleco e uma bobina de Tesla pequena nas costas.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "cabelo_arrepiado", "cores": ["cabelo"] },
+        { "parte": "costas", "arte": "bobina_tesla_pequena", "cores": [3, 1] },
+        { "parte": "rosto", "arte": "oculos_protecao", "cores": [3, 5] },
+        { "parte": "torso", "arte": "jaleco", "cores": [5, 2], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_moletom", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "tenis_basico", "cores": [4, 5], "sugestao": true }
+      ]
+    },
+    {
+      "id": "doktor_klaus_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "doktor_klaus",
+      "name": "Doktor Klaus Veterano",
+      "descricao": "Jaleco chamuscado, cabelo arrepiado faiscando, óculos de proteção, bobina de Tesla nas costas, a patente carimbada na mão e a placa \"0 DIAS SEM ACIDENTE\".",
+      "camadas": [
+        { "parte": "cabeca", "arte": "cabelo_arrepiado_faiscando", "cores": ["cabelo", 1] },
+        { "parte": "costas", "arte": "bobina_tesla", "cores": [3, 1] },
+        { "parte": "rosto", "arte": "oculos_protecao", "cores": [3, 5] },
+        { "parte": "torso", "arte": "jaleco_chamuscado", "cores": [5, 4] },
+        { "parte": "pernas", "arte": "calca_social_surrada", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "sapato_couro_gasto", "cores": [4], "sugestao": true },
+        { "parte": "mao_secundaria", "arte": "patente_carimbada", "cores": [5, 0] },
+        { "parte": "costas", "arte": "placa_costas", "cores": [5, 4], "texto": "0 DIAS SEM ACIDENTE" }
+      ]
+    },
+    { "id": "doktor_klaus_virada", "tier": "virada", "nivel": 30, "arquetipo": "doktor_klaus", "name": "Ciência Exata", "descricao": "Jaleco novo e limpo pela primeira vez, óculos de proteção na testa e bobina dupla.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "doktor_klaus_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "doktor_klaus", "name": "Doktor Klaus Mestre", "descricao": "Igual ao treinador Klaus: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "doktor_klaus_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "doktor_klaus", "name": "Doktor Klaus Lendário", "descricao": "Além do treinador: a placa vira \"-3 DIAS SEM ACIDENTE\" e a aura é uma gaiola de Faraday de raios azuis.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "coach_de_bem_estar_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "coach_de_bem_estar",
+      "name": "Coach de Bem-Estar Aprendiz",
+      "descricao": "Viseira, legging e uma garrafa d'água ainda de tamanho normal.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "viseira", "cores": [0, 5] },
+        { "parte": "mao_secundaria", "arte": "garrafa_agua_media", "cores": [5, 1] },
+        { "parte": "torso", "arte": "top_esportivo", "cores": [0, 5], "sugestao": true },
+        { "parte": "pernas", "arte": "legging", "cores": [1] },
+        { "parte": "pes", "arte": "tenis_corrida", "cores": [5, 0], "sugestao": true }
+      ]
+    },
+    {
+      "id": "coach_de_bem_estar_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "coach_de_bem_estar",
+      "name": "Coach de Bem-Estar Veterana",
+      "descricao": "Legging, viseira, garrafa d'água gigante, nanobots rosa em volta e o crachá \"COACH QUÂNTICA CERTIFICADA\".",
+      "camadas": [
+        { "parte": "cabeca", "arte": "viseira", "cores": [0, 5] },
+        { "parte": "mao_secundaria", "arte": "garrafa_agua_gigante", "cores": [5, 1] },
+        { "parte": "torso", "arte": "top_esportivo", "cores": [0, 5], "sugestao": true },
+        { "parte": "torso", "arte": "cracha_pendurado", "cores": [2], "texto": "COACH QUÂNTICA CERTIFICADA" },
+        { "parte": "pernas", "arte": "legging", "cores": [1] },
+        { "parte": "pes", "arte": "tenis_corrida", "cores": [5, 0], "sugestao": true },
+        { "parte": "acompanhante", "arte": "nanobots_rosa", "cores": [2] },
+        { "parte": "costas", "arte": "estampa_costas", "cores": [2], "texto": "PLANO OURO — PERGUNTE-ME COMO", "sugestao": true }
+      ]
+    },
+    { "id": "coach_de_bem_estar_virada", "tier": "virada", "nivel": 30, "arquetipo": "coach_de_bem_estar", "name": "Retiro", "descricao": "Túnica de retiro, coroa de flores e os nanobots rosa formando um coração em volta.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "coach_de_bem_estar_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "coach_de_bem_estar", "name": "Coach de Bem-Estar Mestre", "descricao": "Igual à treinadora Brooke: o visual completo da ficha, com a aura de nanobots rosa.", "foraDoPiloto": true },
+    { "id": "coach_de_bem_estar_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "coach_de_bem_estar", "name": "Coach de Bem-Estar Lendária", "descricao": "Além da treinadora: cartão do plano Diamante preso na viseira e aura de nanobots em forma de mandala.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "atendente_imortal_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "atendente_imortal",
+      "name": "Atendente Imortal Aprendiz",
+      "descricao": "Headset de atendimento e a cadeira de escritório com rodinhas, de blazer corporativo.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "rosto", "arte": "headset_atendimento", "cores": [4, 1] },
+        { "parte": "veiculo", "arte": "cadeira_escritorio", "cores": [4, 3] },
+        { "parte": "torso", "arte": "blazer_corporativo", "cores": [0, 5], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_social", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "sapato_social_gasto", "cores": [4], "sugestao": true }
+      ]
+    },
+    {
+      "id": "atendente_imortal_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "atendente_imortal",
+      "name": "Atendente Imortal Veterana",
+      "descricao": "Headset, cadeira de escritório com rodinhas, caneca \"MELHOR ATENDENTE DO MÊS — 2071\", escudo holográfico \"AGUARDE\" e o sorriso de atendimento que nunca muda.",
+      "camadas": [
+        { "parte": "rosto", "arte": "headset_atendimento", "cores": [4, 1] },
+        { "parte": "rosto", "arte": "sorriso_atendimento", "cores": [5] },
+        { "parte": "veiculo", "arte": "cadeira_escritorio", "cores": [4, 3] },
+        { "parte": "torso", "arte": "blazer_corporativo", "cores": [0, 5], "sugestao": true },
+        { "parte": "pernas", "arte": "calca_social", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "sapato_social_gasto", "cores": [4], "sugestao": true },
+        { "parte": "mao_principal", "arte": "caneca_atendente", "cores": [5, 2], "texto": "MELHOR ATENDENTE DO MÊS — 2071" },
+        { "parte": "mao_secundaria", "arte": "escudo_holo_aguarde", "cores": [1, 5], "texto": "AGUARDE" },
+        { "parte": "costas", "arte": "estampa_costas", "cores": [1], "texto": "AVALIE COM 5 ESTRELAS", "sugestao": true }
+      ]
+    },
+    { "id": "atendente_imortal_virada", "tier": "virada", "nivel": 30, "arquetipo": "atendente_imortal", "name": "Protocolo Infinito", "descricao": "Cadeira com quatro braços de suporte e uma fila de barras de carregamento em 99% em volta.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "atendente_imortal_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "atendente_imortal", "name": "Atendente Imortal Mestre", "descricao": "Igual à treinadora Kátia: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "atendente_imortal_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "atendente_imortal", "name": "Atendente Imortal Lendária", "descricao": "Além da treinadora: a caneca vira \"MELHOR ATENDENTE DO SÉCULO\" e a aura é uma música de espera que nunca termina.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "hacker_da_aldeia_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "hacker_da_aldeia",
+      "name": "Hacker da Aldeia Aprendiz",
+      "descricao": "Moletom com uma faixa de grafismo da aldeia, fones e o notebook com adesivo \"FIBRA ÓTICA NA ALDEIA\".",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "torso", "arte": "moletom_grafismo_simples", "cores": [0, 2] },
+        { "parte": "rosto", "arte": "fones_grandes", "cores": [4, 1] },
+        { "parte": "pernas", "arte": "calca_moletom", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "tenis_basico", "cores": [5, 4], "sugestao": true },
+        { "parte": "mao_secundaria", "arte": "notebook_fibra_otica", "cores": [3, 2], "texto": "FIBRA ÓTICA NA ALDEIA" }
+      ]
+    },
+    {
+      "id": "hacker_da_aldeia_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "hacker_da_aldeia",
+      "name": "Hacker da Aldeia Veterano",
+      "descricao": "Moletom com grafismo da aldeia em pixel, fones, notebook com adesivo e a rede de dormir com roteador pendurado, onde ele luta deitado quando para.",
+      "camadas": [
+        { "parte": "torso", "arte": "moletom_grafismo_aldeia", "cores": [0, 2, 1] },
+        { "parte": "rosto", "arte": "fones_grandes", "cores": [4, 1] },
+        { "parte": "pernas", "arte": "calca_moletom", "cores": [4], "sugestao": true },
+        { "parte": "pes", "arte": "tenis_basico", "cores": [5, 4], "sugestao": true },
+        { "parte": "mao_secundaria", "arte": "notebook_fibra_otica", "cores": [3, 2], "texto": "FIBRA ÓTICA NA ALDEIA" },
+        { "parte": "veiculo", "arte": "rede_roteador", "cores": [1, 2] },
+        { "parte": "costas", "arte": "estampa_costas", "cores": [2], "texto": "SEU SERVIDOR CAIU? DE NADA", "sugestao": true }
+      ]
+    },
+    { "id": "hacker_da_aldeia_virada", "tier": "virada", "nivel": 30, "arquetipo": "hacker_da_aldeia", "name": "Apagão Seletivo", "descricao": "A rede vira uma cama suspensa com três roteadores e o notebook projeta código verde no ar.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "hacker_da_aldeia_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "hacker_da_aldeia", "name": "Hacker da Aldeia Mestre", "descricao": "Igual ao treinador Kauã Ferreira: o visual completo da ficha.", "foraDoPiloto": true },
+    { "id": "hacker_da_aldeia_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "hacker_da_aldeia", "name": "Hacker da Aldeia Lendário", "descricao": "Além do treinador: grafismo da aldeia brilhando em neon pelo moletom e aura de insetos de pixel orbitando como vaga-lumes.", "foraDoPiloto": true, "sugestao": true },
+
+    {
+      "id": "idol_aprendiz", "tier": "aprendiz", "nivel": 12, "arquetipo": "idol",
+      "name": "Idol Aprendiz",
+      "descricao": "Cabelo pastel de franja perfeita, microfone de headset e uma caixa de som voadora.",
+      "sugestaoCampos": ["descricao"],
+      "camadas": [
+        { "parte": "cabeca", "arte": "franja_pastel", "cores": [5] },
+        { "parte": "acompanhante", "arte": "caixa_som_voadora", "cores": [4, 1] },
+        { "parte": "torso", "arte": "jaqueta_brilhante_simples", "cores": [0, 2], "sugestao": true },
+        { "parte": "rosto", "arte": "microfone_headset", "cores": [3] },
+        { "parte": "pernas", "arte": "calca_palco", "cores": [4, 2], "sugestao": true },
+        { "parte": "pes", "arte": "tenis_palco", "cores": [2, 0], "sugestao": true }
+      ]
+    },
+    {
+      "id": "idol_veterano", "tier": "veterano", "nivel": 20, "arquetipo": "idol",
+      "name": "Idol Veterano",
+      "descricao": "Cabelo pastel de franja perfeita, jaqueta brilhante, microfone de headset, duas caixas de som voadoras e bastões de luz de fãs-holograma que aparecem atrás dele a cada combo.",
+      "camadas": [
+        { "parte": "cabeca", "arte": "franja_pastel", "cores": [5] },
+        { "parte": "acompanhante", "arte": "caixas_som_voadoras_duas", "cores": [4, 1] },
+        { "parte": "aura", "arte": "bastoes_luz_fas_holo", "cores": [0, 1] },
+        { "parte": "torso", "arte": "jaqueta_brilhante", "cores": [0, 2, 1] },
+        { "parte": "rosto", "arte": "microfone_headset", "cores": [3] },
+        { "parte": "pernas", "arte": "calca_palco", "cores": [4, 2], "sugestao": true },
+        { "parte": "pes", "arte": "tenis_palco", "cores": [2, 0], "sugestao": true },
+        { "parte": "costas", "arte": "estampa_costas", "cores": [2], "texto": "TRAINEE Nº 1 (DE 4.000)", "sugestao": true }
+      ]
+    },
+    { "id": "idol_virada", "tier": "virada", "nivel": 30, "arquetipo": "idol", "name": "Turnê Mundial", "descricao": "Palco holográfico portátil sob os pés, quatro caixas de som voadoras e confete permanente.", "foraDoPiloto": true, "sugestaoCampos": ["descricao"] },
+    { "id": "idol_mestre", "tier": "mestre", "nivel": 40, "arquetipo": "idol", "name": "Idol Mestre", "descricao": "Igual ao treinador Li Wei: o visual completo da ficha, com o palco holográfico.", "foraDoPiloto": true },
+    { "id": "idol_lendario", "tier": "lendario", "nivel": 60, "arquetipo": "idol", "name": "Idol Lendário", "descricao": "Além do treinador: franja que não se mexe nem com explosão e aura de bastões de luz de fãs-holograma em volta, sempre.", "foraDoPiloto": true, "sugestao": true }
+  ]
+}

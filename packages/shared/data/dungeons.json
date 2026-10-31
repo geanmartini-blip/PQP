@@ -1,0 +1,369 @@
+{
+  "regras": {
+    "equipeMax": 4,
+    "composicao": ["jogador", "plantonista", "ia"],
+    "tempoReal": true,
+    "quemNaoJogaUsa": "doutrina",
+    "salvaNoUltimoAndarVencido": true,
+    "qualquerMembroContinua": true,
+    "chefeACadaAndares": 5,
+    "semFundo": true,
+    "tiposDeSala": ["combate", "armadilha", "enigma", "evento", "descanso", "tesouro", "chefe"],
+    "recompensasTexto": "Recompensas: XP, peças de set, únicos, materiais e plantas de estruturas. Toda semana sai o ranking de profundidade por margem.",
+    "ranking": {
+      "periodo": "semanal",
+      "porMargem": true,
+      "criterio": "andar_mais_fundo",
+      "premios": [
+        { "posicaoAte": 1, "recompensas": [{ "kind": "reputacao", "quantidade": 200 }, { "kind": "item", "tabela": "loot_chefe", "quantidade": 1 }] },
+        { "posicaoAte": 10, "recompensas": [{ "kind": "reputacao", "quantidade": 80 }, { "kind": "item", "tabela": "loot_elite", "quantidade": 1 }] },
+        { "posicaoAte": 100, "recompensas": [{ "kind": "reputacao", "quantidade": 20 }] }
+      ],
+      "sugestaoCampos": ["premios"]
+    }
+  },
+  "masmorras": [
+    {
+      "id": "galerias_da_usina",
+      "name": "Galerias da Usina",
+      "entrada": "Por baixo da ponte",
+      "oQueTem": "Água subindo, turbinas, mercenários",
+      "chefe": { "name": "A Bomba Descontrolada", "inimigo": "bomba_descontrolada" },
+      "regioes": ["usina_da_ponte"],
+      "lugaresDeEntrada": ["entrada_galerias_da_usina"],
+      "emPiloto": true,
+      "detalhe": {
+        "andares": [
+          { "andar": 1, "name": "Casa de Máquinas", "salas": ["gal_corredor_de_manutencao", "gal_armario_do_turno", "gal_casa_de_bombas"], "dificuldade": 1, "sugestao": true },
+          { "andar": 2, "name": "As Comportas", "salas": ["gal_casa_de_bombas", "gal_painel_das_comportas", "gal_sala_das_turbinas", "gal_sala_de_controle"], "dificuldade": 1.15, "sugestao": true },
+          {
+            "andar": 3,
+            "name": "Galeria Alagada",
+            "salas": ["gal_galeria_alagada", "gal_radio_esquecido", "gal_corredor_de_manutencao", "gal_cofre_da_manutencao"],
+            "aguaSubindo": { "comecaS": 30, "tilesPorMinuto": 2, "perigo": "agua_subindo" },
+            "dificuldade": 1.3,
+            "sugestao": true
+          },
+          { "andar": 4, "name": "O Duto do Cabo", "salas": ["gal_acampamento_mercenario", "gal_quadro_de_forca", "gal_sala_das_turbinas", "gal_sala_de_controle"], "dificuldade": 1.45, "sugestao": true },
+          {
+            "andar": 5,
+            "name": "Reator da Barragem",
+            "salas": ["gal_antecamara_do_reator", "gal_sala_de_controle", "gal_reator_da_barragem"],
+            "aguaSubindo": { "comecaS": 60, "tilesPorMinuto": 1, "perigo": "agua_subindo" },
+            "dificuldade": 1.6,
+            "sugestao": true
+          }
+        ],
+        "salas": [
+          {
+            "id": "gal_corredor_de_manutencao",
+            "tipo": "combate",
+            "name": "Corredor de Manutenção",
+            "descricao": "Corredor estreito com canos pingando. Mercenários do Sombra fazem ronda com dois crachás no peito.",
+            "tamanho": { "w": 24, "h": 12 },
+            "ondas": [
+              { "inimigos": [{ "inimigo": "mercenario_do_sombra", "quantidade": 3, "tier": "normal" }], "atrasoS": 0 },
+              { "inimigos": [{ "inimigo": "mercenario_do_sombra", "quantidade": 2, "tier": "normal" }, { "inimigo": "enguia_eletrica", "quantidade": 2, "tier": "normal" }], "atrasoS": 4 }
+            ],
+            "recompensas": [],
+            "sugestao": true
+          },
+          {
+            "id": "gal_casa_de_bombas",
+            "tipo": "combate",
+            "name": "Casa de Bombas",
+            "descricao": "Tanques de água e bombas velhas. As enguias elétricas acham que a sala é delas.",
+            "tamanho": { "w": 20, "h": 16 },
+            "ondas": [
+              { "inimigos": [{ "inimigo": "enguia_eletrica", "quantidade": 4, "tier": "normal" }], "atrasoS": 0 },
+              { "inimigos": [{ "inimigo": "turbina_desgovernada", "quantidade": 1, "tier": "normal" }, { "inimigo": "enguia_eletrica", "quantidade": 2, "tier": "normal" }, { "inimigo": "enguia_eletrica", "quantidade": 1, "tier": "elite", "afixos": ["rapido"] }], "atrasoS": 4 }
+            ],
+            "recompensas": [],
+            "sugestao": true
+          },
+          {
+            "id": "gal_sala_das_turbinas",
+            "tipo": "armadilha",
+            "name": "Sala das Turbinas",
+            "descricao": "Turbinas giram sem controle e puxam quem chega perto. O círculo no chão avisa antes da sucção.",
+            "tamanho": { "w": 22, "h": 18 },
+            "perigos": ["succao_da_turbina", "descarga_eletrica"],
+            "ondas": [{ "inimigos": [{ "inimigo": "turbina_desgovernada", "quantidade": 2, "tier": "normal" }], "atrasoS": 0 }],
+            "recompensas": [],
+            "sugestao": true
+          },
+          {
+            "id": "gal_galeria_alagada",
+            "tipo": "armadilha",
+            "name": "Galeria Alagada",
+            "descricao": "A água sobe enquanto você atravessa. Quem fica no fundo anda devagar e leva choque das enguias.",
+            "tamanho": { "w": 28, "h": 14 },
+            "perigos": ["agua_subindo", "descarga_eletrica"],
+            "ondas": [{ "inimigos": [{ "inimigo": "enguia_eletrica", "quantidade": 5, "tier": "normal" }], "atrasoS": 0 }],
+            "recompensas": [],
+            "sugestao": true
+          },
+          {
+            "id": "gal_painel_das_comportas",
+            "tipo": "enigma",
+            "name": "Painel das Comportas",
+            "descricao": "Um painel com vinte alavancas e nenhuma etiqueta. A planta da usina diz qual abre a passagem.",
+            "tamanho": { "w": 16, "h": 16 },
+            "enigma": {
+              "descricao": "Abrir as comportas na ordem certa para a água baixar.",
+              "licoes": ["licao_plantas_de_ana_ferreira", "licao_luz_de_cesar_portollan"],
+              "semLicao": {
+                "descricao": "Tentativa e erro: cada alavanca errada solta uma leva de enguias.",
+                "ondas": [{ "inimigos": [{ "inimigo": "enguia_eletrica", "quantidade": 6, "tier": "normal" }], "atrasoS": 0 }],
+                "duracaoS": 60
+              },
+              "recompensaPorLicao": [{ "kind": "item", "tabela": "loot_normal", "quantidade": 1 }]
+            },
+            "recompensas": [],
+            "sugestao": true
+          },
+          {
+            "id": "gal_quadro_de_forca",
+            "tipo": "enigma",
+            "name": "Quadro de Força",
+            "descricao": "Os disjuntores do duto foram religados por alguém que não queria ser achado.",
+            "tamanho": { "w": 16, "h": 14 },
+            "enigma": {
+              "descricao": "Religar os disjuntores na sequência para abrir a porta do duto.",
+              "licoes": ["licao_luz_de_cesar_portollan", "licao_plantas_de_ana_ferreira"],
+              "semLicao": {
+                "descricao": "Religar no braço: cada erro dá choque e acorda uma turbina.",
+                "ondas": [{ "inimigos": [{ "inimigo": "turbina_desgovernada", "quantidade": 2, "tier": "normal" }], "atrasoS": 0 }],
+                "duracaoS": 45
+              },
+              "recompensaPorLicao": [{ "kind": "recurso", "recurso": "pecas", "quantidade": 15 }]
+            },
+            "recompensas": [],
+            "sugestao": true
+          },
+          {
+            "id": "gal_radio_esquecido",
+            "tipo": "evento",
+            "name": "Rádio Esquecido",
+            "descricao": "Um rádio velho chia no meio da galeria. Numa frequência, uma voz fala de um relatório que ninguém leu.",
+            "tamanho": { "w": 12, "h": 12 },
+            "evento": {
+              "descricao": "O que fazer com o rádio?",
+              "opcoes": [
+                { "id": "sintonizar", "texto": "Sintonizar e ouvir até o fim.", "recompensas": [{ "kind": "desbloqueio", "chave": "pista_de_historia", "quantidade": 1, "descricao": "A Eco fala de um relatório da barragem" }], "ligaFlags": ["eco_ouvida_nas_galerias"] },
+                { "id": "desmontar", "texto": "Desmontar para vender as peças.", "recompensas": [{ "kind": "recurso", "recurso": "pecas", "quantidade": 10 }], "ligaFlags": [] }
+              ]
+            },
+            "recompensas": [],
+            "sugestao": true
+          },
+          {
+            "id": "gal_acampamento_mercenario",
+            "tipo": "evento",
+            "name": "Acampamento dos Mercenários",
+            "descricao": "Mercenários do Sombra dividem o pagamento em volta de uma lata. Os crachás são das duas margens.",
+            "tamanho": { "w": 20, "h": 16 },
+            "evento": {
+              "descricao": "Eles ainda não te viram.",
+              "opcoes": [
+                {
+                  "id": "atacar",
+                  "texto": "Atacar e pegar o pagamento.",
+                  "recompensas": [{ "kind": "item", "tabela": "loot_elite", "quantidade": 1 }],
+                  "ondas": [{ "inimigos": [{ "inimigo": "mercenario_do_sombra", "quantidade": 4, "tier": "normal" }, { "inimigo": "mercenario_do_sombra", "quantidade": 1, "tier": "elite", "afixos": ["blindado"] }], "atrasoS": 0 }],
+                  "ligaFlags": []
+                },
+                { "id": "passar", "texto": "Passar de fininho e ler os crachás.", "recompensas": [{ "kind": "desbloqueio", "chave": "pista_de_historia", "quantidade": 1, "descricao": "O Sombra é pago pelas duas tesourarias" }], "ligaFlags": [] }
+              ]
+            },
+            "recompensas": [],
+            "sugestao": true
+          },
+          {
+            "id": "gal_sala_de_controle",
+            "tipo": "descanso",
+            "name": "Sala de Controle",
+            "descricao": "Uma cadeira giratória, uma garrafa térmica e um aviso: \"Proibido descansar em serviço\".",
+            "tamanho": { "w": 12, "h": 10 },
+            "descanso": { "curaPct": 100, "recursoPct": 50, "levantaCaidos": true },
+            "recompensas": [],
+            "sugestao": true
+          },
+          {
+            "id": "gal_armario_do_turno",
+            "tipo": "tesouro",
+            "name": "Armário do Turno da Noite",
+            "descricao": "Armários de quem trabalhou na usina antes da divisão. Alguns ainda têm cadeado.",
+            "tamanho": { "w": 10, "h": 10 },
+            "tesouro": { "tabela": "loot_normal", "rolagens": 2 },
+            "recompensas": [],
+            "sugestao": true
+          },
+          {
+            "id": "gal_cofre_da_manutencao",
+            "tipo": "tesouro",
+            "name": "Cofre da Manutenção",
+            "descricao": "O cofre onde a manutenção guardava peça boa. A senha está escrita embaixo, claro.",
+            "tamanho": { "w": 10, "h": 10 },
+            "tesouro": { "tabela": "loot_elite", "rolagens": 1 },
+            "recompensas": [{ "kind": "recurso", "recurso": "chopindita", "quantidade": 3 }],
+            "sugestao": true
+          },
+          {
+            "id": "gal_antecamara_do_reator",
+            "tipo": "combate",
+            "name": "Antecâmara do Reator",
+            "descricao": "A última porta antes do reator. Os mercenários do Sombra guardam o que plantaram.",
+            "tamanho": { "w": 22, "h": 16 },
+            "ondas": [
+              { "inimigos": [{ "inimigo": "mercenario_do_sombra", "quantidade": 4, "tier": "normal" }, { "inimigo": "mercenario_do_sombra", "quantidade": 1, "tier": "elite", "afixos": ["blindado"] }], "atrasoS": 0 },
+              { "inimigos": [{ "inimigo": "turbina_desgovernada", "quantidade": 1, "tier": "elite", "afixos": ["explode_ao_morrer"] }, { "inimigo": "enguia_eletrica", "quantidade": 3, "tier": "normal" }], "atrasoS": 5 }
+            ],
+            "recompensas": [],
+            "sugestao": true
+          },
+          {
+            "id": "gal_reator_da_barragem",
+            "tipo": "chefe",
+            "name": "Reator da Barragem",
+            "descricao": "A Bomba Descontrolada está presa ao pé da barragem, com um visor que conta para trás e não sabe parar.",
+            "tamanho": { "w": 26, "h": 26 },
+            "chefe": {
+              "inimigo": "bomba_descontrolada",
+              "fases": [
+                { "vidaAbaixoPct": 75, "descricao": "A sala começa a alagar.", "perigos": ["agua_subindo"], "sugestao": true },
+                { "vidaAbaixoPct": 50, "descricao": "As turbinas disparam e os mercenários voltam para buscar a bomba.", "perigos": ["succao_da_turbina"], "reforcos": { "inimigos": [{ "inimigo": "mercenario_do_sombra", "quantidade": 3, "tier": "normal" }], "atrasoS": 0 }, "sugestao": true },
+                { "vidaAbaixoPct": 25, "descricao": "Contagem final: descargas por toda a sala.", "perigos": ["descarga_eletrica"], "sugestao": true }
+              ]
+            },
+            "recompensas": [],
+            "sugestao": true
+          }
+        ],
+        "perigos": [
+          {
+            "id": "agua_subindo",
+            "name": "Água subindo",
+            "descricao": "A água sobe aos poucos. Quem está no fundo anda devagar e toma dano leve enquanto estiver molhado.",
+            "avisoMs": 0,
+            "intervaloS": 1,
+            "efeitos": [{ "kind": "lentidao", "pct": 30, "duracaoMs": 1000 }, { "kind": "dano_continuo", "multPorTick": 0.03, "tickMs": 1000, "duracaoMs": 1000 }],
+            "sugestao": true
+          },
+          {
+            "id": "succao_da_turbina",
+            "name": "Sucção da turbina",
+            "descricao": "A turbina puxa quem estiver perto e bate com a pá. O círculo no chão aparece antes.",
+            "avisoMs": 1000,
+            "intervaloS": 8,
+            "raio": 3,
+            "efeitos": [{ "kind": "puxar", "paraCentro": true, "duracaoMs": 1000 }, { "kind": "dano", "mult": 0.6 }],
+            "sugestao": true
+          },
+          {
+            "id": "descarga_eletrica",
+            "name": "Descarga elétrica",
+            "descricao": "Fios soltos na água descarregam em círculo. O chão faísca antes do choque.",
+            "avisoMs": 900,
+            "intervaloS": 6,
+            "raio": 2.5,
+            "efeitos": [{ "kind": "dano", "mult": 0.8 }, { "kind": "lentidao", "pct": 40, "duracaoMs": 1500 }],
+            "sugestao": true
+          }
+        ],
+        "inimigos": {
+          "normais": ["mercenario_do_sombra", "turbina_desgovernada", "enguia_eletrica"],
+          "elites": ["mercenario_do_sombra", "turbina_desgovernada", "enguia_eletrica"],
+          "chefes": ["bomba_descontrolada"]
+        },
+        "semFundo": {
+          "aPartirDoAndar": 6,
+          "salasPorAndar": [3, 5],
+          "pesos": { "combate": 5, "armadilha": 2, "enigma": 1, "evento": 1, "descanso": 1, "tesouro": 1 },
+          "chefeACadaAndares": 5,
+          "chefes": ["bomba_descontrolada"],
+          "vidaPctPorAndar": 12,
+          "danoPctPorAndar": 8,
+          "saquePctPorAndar": 10,
+          "chanceElitePorAndarPct": 3,
+          "sugestaoCampos": ["salasPorAndar", "pesos", "chefes", "vidaPctPorAndar", "danoPctPorAndar", "saquePctPorAndar", "chanceElitePorAndarPct"]
+        },
+        "recompensas": {
+          "tabelas": { "normal": "loot_normal", "elite": "loot_elite", "chefe": "loot_chefe_galerias" },
+          "porAndar": [{ "kind": "xp", "quantidade": 300 }, { "kind": "recurso", "recurso": "pecas", "quantidade": 5 }],
+          "chefe": [
+            { "kind": "xp", "quantidade": 1500 },
+            { "kind": "item", "tabela": "loot_chefe_galerias", "quantidade": 1 },
+            { "kind": "recurso", "recurso": "pecas", "quantidade": 30 },
+            { "kind": "planta", "estrutura": "deposito" }
+          ],
+          "primeiraVez": [{ "kind": "desbloqueio", "chave": "atalho_galerias", "descricao": "Atalho da entrada direto para o último andar de chefe vencido" }],
+          "sugestaoCampos": ["porAndar", "chefe", "primeiraVez"]
+        }
+      }
+    },
+    {
+      "id": "minas_fundas",
+      "name": "Minas Fundas",
+      "entrada": "Serra",
+      "oQueTem": "Desabamentos e contrabandistas",
+      "chefe": { "name": "A Broca, que ganhou vontade própria" },
+      "regioes": ["serra_da_chopindita"],
+      "lugaresDeEntrada": ["entrada_minas_fundas"],
+      "emPiloto": false
+    },
+    {
+      "id": "esgotos",
+      "name": "Esgotos",
+      "entrada": "Bueiros das duas margens",
+      "oQueTem": "Túneis por baixo da linha amarela, gangues",
+      "chefe": { "name": "O Rei dos Esgotos" },
+      "regioes": ["margem_esquerda", "margem_direita"],
+      "lugaresDeEntrada": ["bueiros_da_esquerda", "bueiros_da_direita"],
+      "emPiloto": false,
+      "sugestaoCampos": ["lugaresDeEntrada"]
+    },
+    {
+      "id": "metro_inacabado",
+      "name": "Metrô Inacabado",
+      "entrada": "Estação fechada",
+      "oQueTem": "Trens parados e gente morando nos túneis",
+      "chefe": { "name": "O Maquinista" },
+      "regioes": ["usina_da_ponte"],
+      "lugaresDeEntrada": ["estacao_fechada"],
+      "emPiloto": false,
+      "sugestaoCampos": ["regioes", "lugaresDeEntrada"]
+    },
+    {
+      "id": "poroes_do_teatro",
+      "name": "Porões do Teatro",
+      "entrada": "Teatro abandonado",
+      "oQueTem": "Espelhos e cenários que mudam",
+      "chefe": { "name": "O Diretor" },
+      "regioes": ["usina_da_ponte"],
+      "lugaresDeEntrada": ["teatro_abandonado"],
+      "emPiloto": false,
+      "sugestaoCampos": ["regioes"]
+    },
+    {
+      "id": "arquivo_da_universidade",
+      "name": "Arquivo da Universidade",
+      "entrada": "Subsolo da Universidade Neon",
+      "oQueTem": "Teses abandonadas e experimentos soltos",
+      "chefe": { "name": "O Orientador" },
+      "regioes": ["margem_direita"],
+      "lugaresDeEntrada": ["sede_universidade_neon"],
+      "emPiloto": false
+    },
+    {
+      "id": "cartorio_da_assembleia",
+      "name": "Cartório da Assembleia",
+      "entrada": "Porão da Casa da Assembleia",
+      "oQueTem": "Pilhas de ata, carimbos e comissões esquecidas",
+      "chefe": { "name": "O Relator" },
+      "regioes": ["margem_esquerda"],
+      "lugaresDeEntrada": ["casa_da_assembleia"],
+      "emPiloto": false
+    }
+  ]
+}

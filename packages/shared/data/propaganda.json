@@ -1,0 +1,81 @@
+{
+  "regras": {
+    "descricao": [
+      "Cartazes colados no mapa mudam a opinião da região; quem estiver no cargo de Comunicação desenha os oficiais.",
+      "A rádio de cada margem toca discursos e notícias, conforme o perfil de quem manda.",
+      "Escândalos derrubam cargos e personagens de IA.",
+      "A Eco, rádio pirata, conta o que as duas margens escondem."
+    ],
+    "cartaz": {
+      "opiniaoPorCartaz": 2,
+      "duracaoH": 24,
+      "maxPorRegiaoPorMargem": 10,
+      "oficialMult": 2,
+      "patrulhaArranca": true,
+      "sugestao": true
+    },
+    "radio": {
+      "opiniaoPorHoraPorTorre": 1,
+      "alcanceRegioes": 1,
+      "fraseACadaMin": 3,
+      "sugestao": true
+    },
+    "licaoArquivoDoFarol": "licao_fitas_de_rosa_tavares",
+    "escandalo": {
+      "descricao": "Um escândalo publicado tira opinião pública da margem do alvo e pode derrubar quem foi pego do cargo; o personagem de IA vai para os bastidores.",
+      "sugestaoCampos": ["descricao"]
+    },
+    "eco": {
+      "descricao": "A Eco transmite toda noite da Ilha do Farol, nas duas margens ao mesmo tempo, e revela uma sabotagem ou um objetivo secreto por noite.",
+      "horario": { "inicio": "22:00", "fim": "00:00" },
+      "revelaPorNoite": 1,
+      "sugestaoCampos": ["horario", "revelaPorNoite"]
+    }
+  },
+  "cartazes": [
+    { "id": "cartaz_fabrica_acende", "texto": "A fábrica deles acende enquanto o seu bairro apaga.", "side": "esquerda", "fonte": "cartaz", "par": "cartaz_luz_fila" },
+    { "id": "cartaz_quem_polui", "texto": "Quem polui o rio não merece a Serra.", "side": "esquerda", "fonte": "cartaz", "par": "cartaz_energia_premium" },
+    { "id": "cartaz_assembleia_decide", "texto": "A Assembleia decide. Juntos. Depois do intervalo.", "side": "esquerda", "fonte": "cartaz", "par": "cartaz_parte_da_familia" },
+    { "id": "cartaz_luz_fila", "texto": "Sua luz não deveria depender de uma fila.", "side": "direita", "fonte": "cartaz", "par": "cartaz_fabrica_acende" },
+    { "id": "cartaz_energia_premium", "texto": "Energia premium: agora com 12% menos apagão.", "side": "direita", "fonte": "cartaz", "par": "cartaz_quem_polui" },
+    { "id": "cartaz_parte_da_familia", "texto": "No Consórcio, você é parte da família. Parcele o seu sonho.", "side": "direita", "fonte": "cartaz", "par": "cartaz_assembleia_decide" }
+  ],
+  "radioDoPovo": [
+    { "id": "rdp_assembleia_oito", "texto": "Atenção, companheiros: a Assembleia de hoje começa às oito e termina quando termina.", "side": "esquerda", "fonte": "radio_do_povo", "sugestao": true },
+    { "id": "rdp_quorum", "texto": "A comissão de programação informa que o programa de hoje atrasou por falta de quórum.", "side": "esquerda", "fonte": "radio_do_povo", "sugestao": true },
+    { "id": "rdp_guarda", "texto": "Recado da Guarda Comunitária: vizinho que reclama demais da cota vai receber uma visita. De carinho.", "side": "esquerda", "fonte": "radio_do_povo", "sugestao": true },
+    { "id": "rdp_previsao", "texto": "Previsão do tempo: céu limpo na Esquerda, fumaça chegando da Direita a partir das três.", "side": "esquerda", "fonte": "radio_do_povo", "sugestao": true },
+    { "id": "rdp_feira", "texto": "A feira de hoje tem fila. Sim, a de ontem também. A de amanhã já está se formando.", "side": "esquerda", "fonte": "radio_do_povo", "sugestao": true },
+    { "id": "rdp_nayra", "texto": "Mensagem da Nayra Sundaram para o povo, lida por mim, como sempre, porque ela está muito ocupada sendo do povo.", "side": "esquerda", "fonte": "radio_do_povo", "sugestao": true },
+    { "id": "rdp_raiz_fc", "texto": "Raiz FC perdeu de novo, mas a Assembleia votou e o resultado moral foi vitória.", "side": "esquerda", "fonte": "radio_do_povo", "sugestao": true },
+    { "id": "rdp_retrato", "texto": "Lembrete: o retrato da Nayra na parede não é obrigatório. A comissão de retratos só vai passar para conferir.", "side": "esquerda", "fonte": "radio_do_povo", "sugestao": true }
+  ],
+  "teloesAgencia": [
+    { "id": "tel_colaborador", "texto": "Você não é empregado. Você é colaborador. Colabore.", "side": "direita", "fonte": "telao_agencia", "sugestao": true },
+    { "id": "tel_upgrade", "texto": "Faltou luz? Faça o upgrade para a Energia premium.", "side": "direita", "fonte": "telao_agencia", "sugestao": true },
+    { "id": "tel_grafico", "texto": "Kenji Albrecht garante: o gráfico vai subir. O gráfico de quê, ele explica no próximo trimestre.", "side": "direita", "fonte": "telao_agencia", "sugestao": true },
+    { "id": "tel_plano_ouro", "texto": "Plano de saúde Ouro: porque fila é coisa dos outros.", "side": "direita", "fonte": "telao_agencia", "sugestao": true },
+    { "id": "tel_score", "texto": "Seu score caiu? Talvez você não tenha acreditado o bastante.", "side": "direita", "fonte": "telao_agencia", "sugestao": true },
+    { "id": "tel_classico", "texto": "Neon FC contra Raiz FC: compre o ingresso, o sinalizador e o seguro.", "side": "direita", "fonte": "telao_agencia", "sugestao": true },
+    { "id": "tel_familia", "texto": "Somos uma família. Uma família com juros compostos.", "side": "direita", "fonte": "telao_agencia", "sugestao": true },
+    { "id": "tel_360", "texto": "Apartamento em 360 parcelas: seus netos vão adorar terminar de pagar.", "side": "direita", "fonte": "telao_agencia", "sugestao": true }
+  ],
+  "eco": [
+    { "id": "eco_boa_noite", "texto": "Boa noite, Duas Margens. Hoje faltou luz nos dois lados do rio. Engraçado, né? Nos dois.", "side": null, "fonte": "eco", "autor": "eco", "sugestao": true },
+    { "id": "eco_relatorio", "texto": "Tem um relatório de três anos atrás que ninguém leu. Pergunta para a comissão. Pergunta para o trimestre.", "side": null, "fonte": "eco", "autor": "eco", "sugestao": true },
+    { "id": "eco_sombra", "texto": "O Sombra recebeu de novo. Das duas tesourarias. Que coincidência bonita.", "side": null, "fonte": "eco", "autor": "eco", "sugestao": true },
+    { "id": "eco_luz_la_em_cima", "texto": "Pergunta para quem manda: de onde vem a luz que nunca apaga lá no alto da Serra?", "side": null, "fonte": "eco", "autor": "eco", "sugestao": true },
+    { "id": "eco_capataz", "texto": "O Capataz vendeu chopindita para a Esquerda, para a Direita, e entregou mais alto que as duas.", "side": null, "fonte": "eco", "autor": "eco", "sugestao": true },
+    { "id": "eco_telao", "texto": "Já repararam que ninguém lembra de ter visto os dois líderes de perto? Eu reparei.", "side": null, "fonte": "eco", "autor": "eco", "sugestao": true },
+    { "id": "eco_assinei", "texto": "Eu sei que o relatório existe porque eu assinei. Agora vocês também sabem.", "side": null, "fonte": "eco", "autor": "eco", "depoisDe": "noite_escura_vivida","sugestao": true },
+    { "id": "eco_fim", "texto": "A ponte é de quem atravessa.", "side": null, "fonte": "eco", "autor": "eco" }
+  ],
+  "lideres": [
+    { "id": "lider_nayra_futuro", "texto": "O futuro é do povo, e a oportunidade é de todos.", "side": "esquerda", "fonte": "lider", "autor": "nayra_sundaram", "par": "lider_kenji_futuro", "sugestao": true },
+    { "id": "lider_kenji_futuro", "texto": "A oportunidade é do povo, e o futuro é de todos.", "side": "direita", "fonte": "lider", "autor": "kenji_albrecht", "par": "lider_nayra_futuro", "sugestao": true },
+    { "id": "lider_nayra_dignidade", "texto": "Nossa dignidade não tem preço, e a luz vai voltar para quem merece.", "side": "esquerda", "fonte": "lider", "autor": "nayra_sundaram", "par": "lider_kenji_dignidade", "sugestao": true },
+    { "id": "lider_kenji_dignidade", "texto": "A luz vai voltar para quem merece, e nossa dignidade não tem preço.", "side": "direita", "fonte": "lider", "autor": "kenji_albrecht", "par": "lider_nayra_dignidade", "sugestao": true },
+    { "id": "lider_nayra_culpa", "texto": "A culpa é da outra margem, e a vitória será nossa.", "side": "esquerda", "fonte": "lider", "autor": "nayra_sundaram", "par": "lider_kenji_culpa", "sugestao": true },
+    { "id": "lider_kenji_culpa", "texto": "A vitória é da nossa margem, e a culpa será da outra.", "side": "direita", "fonte": "lider", "autor": "kenji_albrecht", "par": "lider_nayra_culpa", "sugestao": true }
+  ]
+}

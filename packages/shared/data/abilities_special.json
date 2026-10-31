@@ -1,0 +1,574 @@
+[
+  {
+    "id": "especial_combatente",
+    "name": "Fera ou Armadura",
+    "nomePorMargem": { "esquerda": "Fera Solta", "direita": "Armadura Completa" },
+    "ownerKey": "combatente",
+    "slot": "especial",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 0,
+    "cargaS": 60,
+    "effects": [
+      { "kind": "dano", "mult": 3, "target": "inimigos_area" },
+      { "kind": "controle", "cc": "derrubar", "duracaoMs": 1000, "target": "inimigos_area" },
+      { "kind": "reducao_dano", "pct": 25, "duracaoMs": 6000, "target": "self" }
+    ],
+    "description": "Vira fera (Esquerda) ou monta a armadura no meio da luta (Direita): golpe no chão com dano forte em volta, derruba por 1 s e dá 25% de redução de dano por 6 s.",
+    "visual": {
+      "esquerda": "O corpo vira uma fera-espírito translúcida e bate as duas patas no chão.",
+      "direita": "Placas de metal voam e se encaixam numa armadura hidráulica, que soca o chão."
+    },
+    "sugestao": true
+  },
+  {
+    "id": "especial_atirador",
+    "name": "Saraivada ou Enxame",
+    "nomePorMargem": { "esquerda": "Saraivada Benzida", "direita": "Enxame de Drones" },
+    "ownerKey": "atirador",
+    "slot": "especial",
+    "type": "area_alvo",
+    "range": 4,
+    "rangeDoAlcance": true,
+    "radius": 3,
+    "cooldownS": 0,
+    "cargaS": 60,
+    "effects": [
+      {
+        "kind": "campo",
+        "duracaoMs": 3000,
+        "tickMs": 500,
+        "efeitos": [
+          { "kind": "dano", "mult": 0.6, "target": "inimigos_area" }
+        ]
+      }
+    ],
+    "description": "Chuva pesada de tiros numa área grande por 3 s: flechas e chumbo benzido na Esquerda, um enxame de drones na Direita.",
+    "visual": {
+      "esquerda": "Céu escurece de flechas com fitas benzidas.",
+      "direita": "Enxame de drones com mira laser varrendo a área."
+    },
+    "sugestao": true
+  },
+  {
+    "id": "especial_elemental",
+    "name": "Fúria ou Pane",
+    "nomePorMargem": { "esquerda": "Fúria da Natureza", "direita": "Pane no Reator" },
+    "ownerKey": "elemental",
+    "slot": "especial",
+    "type": "area_alvo",
+    "range": 4,
+    "radius": 3.5,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      { "kind": "dano", "mult": 3.5, "target": "inimigos_area" },
+      { "kind": "lentidao", "pct": 40, "duracaoMs": 3000, "target": "inimigos_area" }
+    ],
+    "description": "Explosão elemental enorme no alvo: dano forte em área e inimigos 40% mais lentos por 3 s.",
+    "visual": {
+      "esquerda": "Raízes, raio e água explodem do chão ao mesmo tempo.",
+      "direita": "Um reator portátil entra em pane e estoura em luz azul."
+    },
+    "sugestao": true
+  },
+  {
+    "id": "especial_mascarado",
+    "name": "Baile ou Transmissão",
+    "nomePorMargem": { "esquerda": "Baile de Máscaras", "direita": "Transmissão ao Vivo" },
+    "ownerKey": "mascarado",
+    "slot": "especial",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 4,
+    "cooldownS": 0,
+    "cargaS": 60,
+    "effects": [
+      { "kind": "dano", "mult": 1.5, "target": "inimigos_area" },
+      { "kind": "controle", "cc": "confundir", "duracaoMs": 2000, "target": "inimigos_area" },
+      { "kind": "reforco", "stat": "damage", "pct": 20, "duracaoMs": 6000, "target": "aliados_area" }
+    ],
+    "description": "Show em volta: dano nos inimigos perto, que atacam a esmo por 2 s, e +20% de dano para os aliados perto por 6 s.",
+    "visual": {
+      "esquerda": "Máscaras dançando em roda, com plateia de espíritos aplaudindo.",
+      "direita": "Palco holográfico com contador de visualizações explodindo."
+    },
+    "sugestao": true
+  },
+  {
+    "id": "virada_peao_brabo",
+    "name": "Desconstruído",
+    "ownerKey": "peao_brabo",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      {
+        "kind": "gancho",
+        "gancho": "desconstruido",
+        "target": "self",
+        "params": {
+          "duracaoMs": 10000,
+          "curaPctVidaMaxPorGolpe": 5,
+          "alvoCura": "aliado_menos_vida",
+          "bordao": "Isso aí é serviço de todo mundo"
+        }
+      }
+    ],
+    "description": "Por 10 s, cada golpe que ele segura cura um aliado, e o bordão vira \"Isso aí é serviço de todo mundo\".",
+    "visual": { "esquerda": "O adesivo \"100% MACHO\" vira \"100% PARCEIRO\" e ele ganha um avental." },
+    "sugestaoCampos": ["radius", "cargaS", "effects.gancho.params.curaPctVidaMaxPorGolpe", "effects.gancho.params.alvoCura"]
+  },
+  {
+    "id": "virada_iogue_furioso",
+    "name": "Tigre Desperto",
+    "ownerKey": "iogue_furioso",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      {
+        "kind": "transformar",
+        "duracaoMs": 20000,
+        "basico": { "type": "cone", "mult": 1.3, "raio": 2, "anguloGraus": 120 },
+        "reforcos": [{ "stat": "damage", "pct": 40 }],
+        "target": "self"
+      }
+    ],
+    "description": "Vira tigre por 20 s, com +40% de dano.",
+    "sugestaoCampos": ["radius", "cargaS", "effects.transformar.basico"]
+  },
+  {
+    "id": "virada_cidadao_revolucionario",
+    "name": "Revolução Permanente",
+    "ownerKey": "cidadao_revolucionario",
+    "slot": "virada",
+    "type": "campo",
+    "range": 3,
+    "radius": 4,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      { "kind": "invocar", "invocacao": "barricada_gigante", "duracaoMs": 20000, "max": 1 }
+    ],
+    "description": "Barricada gigante por 20 s que puxa os inimigos para ela.",
+    "sugestaoCampos": ["range", "radius", "cargaS"]
+  },
+  {
+    "id": "virada_babushka",
+    "name": "Sopa da Vó",
+    "ownerKey": "babushka",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 4,
+    "cooldownS": 0,
+    "cargaS": 90,
+    "effects": [
+      { "kind": "cura", "pctVidaMax": 100, "target": "aliados_area" }
+    ],
+    "description": "O grupo perto volta a 100% de vida.",
+    "sugestaoCampos": ["radius", "cargaS"]
+  },
+  {
+    "id": "virada_arqueiro_das_estepes",
+    "name": "Horda",
+    "ownerKey": "arqueiro_das_estepes",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      { "kind": "transformar", "duracaoMs": 10000, "tirosExtras": 2, "tirosExtrasMult": 0.5, "target": "self" }
+    ],
+    "description": "Por 10 s, cada tiro dispara mais 2 flechas de cavaleiros-espírito.",
+    "sugestaoCampos": ["radius", "cargaS", "effects.transformar.tirosExtrasMult"]
+  },
+  {
+    "id": "virada_cacador_de_crocodilo",
+    "name": "O Bicho Grande",
+    "ownerKey": "cacador_de_crocodilo",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      { "kind": "invocar", "invocacao": "crocodilo_espirito", "duracaoMs": 20000, "max": 1 }
+    ],
+    "description": "Um crocodilo-espírito luta do lado dele por 20 s.",
+    "visual": { "esquerda": "Abraçado a um crocodilo que morde o chapéu dele." },
+    "sugestaoCampos": ["radius", "cargaS"]
+  },
+  {
+    "id": "virada_druida_rabugento",
+    "name": "Círculo Completo",
+    "ownerKey": "druida_rabugento",
+    "slot": "virada",
+    "type": "campo",
+    "range": 3,
+    "radius": 3,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      { "kind": "invocar", "invocacao": "circulo_de_pedras", "duracaoMs": 12000, "max": 3, "quantidade": 3 },
+      { "kind": "reforco", "stat": "defense", "pct": 30, "duracaoMs": 12000, "target": "grupo" }
+    ],
+    "description": "3 totens de uma vez, e o círculo dá +30% de defesa ao grupo.",
+    "visual": { "esquerda": "Cochilando em pé no meio do círculo de pedras." },
+    "sugestaoCampos": ["range", "radius", "cargaS", "effects.invocar.duracaoMs", "effects.reforco.duracaoMs"]
+  },
+  {
+    "id": "virada_bruxa_do_trovao",
+    "name": "Saideira dos Deuses",
+    "ownerKey": "bruxa_do_trovao",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      {
+        "kind": "campo",
+        "duracaoMs": 6000,
+        "tickMs": 1000,
+        "segueLancador": true,
+        "efeitos": [
+          { "kind": "dano", "mult": 0.6, "target": "inimigos_a_vista" }
+        ]
+      }
+    ],
+    "description": "Raios em todos os inimigos à vista por 6 s.",
+    "sugestaoCampos": ["radius", "cargaS", "effects.campo.tickMs", "effects.campo.efeitos.dano.mult"]
+  },
+  {
+    "id": "virada_curandeira_dos_andes",
+    "name": "Nascente",
+    "ownerKey": "curandeira_dos_andes",
+    "slot": "virada",
+    "type": "campo",
+    "range": 0,
+    "radius": 8,
+    "cooldownS": 0,
+    "cargaS": 90,
+    "effects": [
+      {
+        "kind": "campo",
+        "duracaoMs": 10000,
+        "tickMs": 1000,
+        "efeitos": [
+          { "kind": "cura", "pctVidaMax": 4, "target": "grupo" }
+        ]
+      }
+    ],
+    "description": "A poça cobre a área toda e cura o grupo por 10 s.",
+    "sugestaoCampos": ["radius", "cargaS", "effects.campo.tickMs", "effects.campo.efeitos.cura.pctVidaMax"]
+  },
+  {
+    "id": "virada_luchador_sagrado",
+    "name": "Máscara Eterna",
+    "ownerKey": "luchador_sagrado",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      { "kind": "imune", "duracaoMs": 5000, "aDano": true, "target": "self" }
+    ],
+    "description": "Imune a dano por 5 s.",
+    "sugestaoCampos": ["radius", "cargaS"]
+  },
+  {
+    "id": "virada_diva_da_opera",
+    "name": "Grand Finale",
+    "ownerKey": "diva_da_opera",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      { "kind": "controle", "cc": "atordoar", "duracaoMs": 2000, "target": "inimigos_a_vista" }
+    ],
+    "description": "A nota final atordoa todos os inimigos à vista por 2 s.",
+    "sugestaoCampos": ["radius", "cargaS"]
+  },
+  {
+    "id": "virada_malandro",
+    "name": "Golpe do Século",
+    "ownerKey": "malandro",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      { "kind": "controle", "cc": "derrubar", "duracaoMs": 2000, "target": "inimigos_a_vista" },
+      { "kind": "derrubar_moeda", "quantidade": 4, "target": "inimigos_a_vista" }
+    ],
+    "description": "Rasteira em todos os inimigos à vista, que caem por 2 s e deixam cair o dobro de Semente.",
+    "sugestaoCampos": ["radius", "cargaS", "effects.derrubar_moeda.quantidade"]
+  },
+  {
+    "id": "virada_sumo_cibernetico",
+    "name": "Yokozuna",
+    "ownerKey": "sumo_cibernetico",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      { "kind": "imune", "duracaoMs": 10000, "aEmpurrao": true, "target": "self" },
+      { "kind": "devolver_dano", "pct": 60, "duracaoMs": 10000, "target": "self" }
+    ],
+    "description": "Por 10 s, não pode ser empurrado, e a barriga devolve 60% do dano.",
+    "sugestaoCampos": ["radius", "cargaS"]
+  },
+  {
+    "id": "virada_o_fiel",
+    "name": "Consciência",
+    "ownerKey": "o_fiel",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 4,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      {
+        "kind": "gancho",
+        "gancho": "proteger_aliado",
+        "target": "aliado_menos_vida",
+        "params": { "duracaoMs": 15000, "danoRedirecionadoPct": 50 }
+      },
+      {
+        "kind": "gancho",
+        "gancho": "dano_por_aliado_caido",
+        "target": "self",
+        "params": { "duracaoMs": 15000, "pctPorAliado": 50, "raio": 4 }
+      }
+    ],
+    "description": "Por 15 s, protege o aliado mais fraco e ganha +50% de dano para cada aliado caído perto.",
+    "visual": { "direita": "Levantando um torcedor do Raiz FC." },
+    "sugestaoCampos": ["radius", "cargaS", "effects.gancho.params.danoRedirecionadoPct", "effects.gancho.params.raio"]
+  },
+  {
+    "id": "virada_monstro_da_academia",
+    "name": "Shape Inexplicável",
+    "ownerKey": "monstro_da_academia",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      {
+        "kind": "campo",
+        "duracaoMs": 15000,
+        "tickMs": 500,
+        "segueLancador": true,
+        "efeitos": [
+          { "kind": "reforco", "stat": "damage", "pct": 30, "duracaoMs": 1000, "target": "grupo" }
+        ]
+      }
+    ],
+    "description": "A Live Motivacional dobra e pega o grupo todo por 15 s.",
+    "sugestaoCampos": ["radius", "cargaS", "effects.campo.tickMs"]
+  },
+  {
+    "id": "virada_tropa_de_choque",
+    "name": "Muralha de Escudos",
+    "ownerKey": "tropa_de_choque",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      { "kind": "imune", "duracaoMs": 4000, "aDanoDistancia": true, "target": "grupo" }
+    ],
+    "description": "Bloqueia todo dano à distância contra o grupo por 4 s.",
+    "visual": { "direita": "Escudos \"HOJE NÃO\" em bloqueio, um colado no outro." },
+    "sugestaoCampos": ["radius", "cargaS", "visual"]
+  },
+  {
+    "id": "virada_cowboy_cromado",
+    "name": "Meio-Dia Eterno",
+    "ownerKey": "cowboy_cromado",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      {
+        "kind": "gancho",
+        "gancho": "critico_no_marcado",
+        "params": { "duracaoMs": 8000, "quem": "todos_os_atacantes" }
+      }
+    ],
+    "description": "Por 8 s, todo ataque contra o alvo marcado é crítico.",
+    "sugestaoCampos": ["radius", "cargaS"]
+  },
+  {
+    "id": "virada_diretor_de_nollywood",
+    "name": "Blockbuster",
+    "ownerKey": "diretor_de_nollywood",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 0,
+    "cargaS": 90,
+    "effects": [
+      { "kind": "reforco", "stat": "cooldownSpeed", "pct": 100, "duracaoMs": 8000, "target": "grupo" },
+      { "kind": "reforco", "stat": "moveSpeed", "pct": 50, "duracaoMs": 8000, "target": "grupo" },
+      { "kind": "reforco", "stat": "attackSpeed", "pct": 50, "duracaoMs": 8000, "target": "grupo" }
+    ],
+    "description": "Por 8 s, o grupo tem recargas pela metade e +50% de velocidade.",
+    "sugestaoCampos": ["radius", "cargaS", "effects.reforco.stat"]
+  },
+  {
+    "id": "virada_engenheira_de_gambiarra",
+    "name": "Mecha de Sucata",
+    "ownerKey": "engenheira_de_gambiarra",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      {
+        "kind": "gancho",
+        "gancho": "juntar_invocacoes",
+        "target": "self",
+        "params": { "consome": ["totem_ou_robo", "robo_geladeira", "barreira_de_sucata"] }
+      },
+      {
+        "kind": "transformar",
+        "duracaoMs": 20000,
+        "basico": { "type": "em_volta", "mult": 1.5, "raio": 2 },
+        "reforcos": [
+          { "stat": "hp", "pct": 50 },
+          { "stat": "damage", "pct": 30 },
+          { "stat": "defense", "pct": 30 }
+        ],
+        "target": "self"
+      }
+    ],
+    "description": "Junta os robôs num robô gigante que ela pilota por 20 s.",
+    "sugestaoCampos": ["radius", "cargaS", "effects.transformar.basico", "effects.transformar.reforcos"]
+  },
+  {
+    "id": "virada_doktor_klaus",
+    "name": "Ciência Exata",
+    "ownerKey": "doktor_klaus",
+    "slot": "virada",
+    "type": "area_alvo",
+    "range": 4,
+    "radius": 4,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      { "kind": "dano", "mult": 5, "target": "inimigos_area" }
+    ],
+    "description": "Explosão gigante que nunca sai pela culatra.",
+    "sugestaoCampos": ["range", "radius", "cargaS", "effects.dano.mult"]
+  },
+  {
+    "id": "virada_coach_de_bem_estar",
+    "name": "Retiro",
+    "ownerKey": "coach_de_bem_estar",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 4,
+    "cooldownS": 0,
+    "cargaS": 90,
+    "effects": [
+      { "kind": "levantar", "pctVida": 50, "target": "aliados_area" }
+    ],
+    "description": "Levanta todos os aliados caídos perto com metade da vida.",
+    "sugestaoCampos": ["radius", "cargaS"]
+  },
+  {
+    "id": "virada_atendente_imortal",
+    "name": "Protocolo Infinito",
+    "ownerKey": "atendente_imortal",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      { "kind": "controle", "cc": "prender", "duracaoMs": 6000, "quebraAoApanhar": true, "target": "inimigos_area" }
+    ],
+    "description": "Prende todos os inimigos perto por até 6 s, até alguém bater neles.",
+    "sugestaoCampos": ["radius", "cargaS"]
+  },
+  {
+    "id": "virada_hacker_da_aldeia",
+    "name": "Apagão Seletivo",
+    "ownerKey": "hacker_da_aldeia",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 0,
+    "cargaS": 75,
+    "effects": [
+      {
+        "kind": "gancho",
+        "gancho": "apagao_seletivo",
+        "target": "inimigos_a_vista",
+        "params": { "duracaoMs": 3000, "soTecnologia": true }
+      }
+    ],
+    "description": "Desliga toda a tecnologia inimiga à vista por 3 s.",
+    "sugestaoCampos": ["radius", "cargaS"]
+  },
+  {
+    "id": "virada_idol",
+    "name": "Turnê Mundial",
+    "ownerKey": "idol",
+    "slot": "virada",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 0,
+    "cargaS": 90,
+    "effects": [
+      { "kind": "zerar_recargas", "target": "grupo" },
+      {
+        "kind": "gancho",
+        "gancho": "turne_mundial",
+        "target": "self",
+        "params": { "duracaoMs": 10000, "habilidade": "fanchant", "reforcoPegaGrupo": true, "zerarRecargaDoFanchant": true }
+      }
+    ],
+    "description": "Show de 10 s em que o Fanchant pega o grupo inteiro e zera as recargas de todos.",
+    "sugestaoCampos": ["radius", "cargaS", "effects.zerar_recargas", "effects.gancho.params.zerarRecargaDoFanchant"]
+  }
+]

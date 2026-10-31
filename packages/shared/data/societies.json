@@ -1,0 +1,290 @@
+{
+  "sociedades": [
+    {
+      "id": "raizes",
+      "name": "Raízes",
+      "side": "esquerda",
+      "qg": "casa_da_assembleia",
+      "qgName": "Casa da Assembleia",
+      "moeda": "semente",
+      "canalMargem": "roda",
+      "instituicoes": ["brigada_popular", "guarda_comunitaria", "escola_dos_saberes", "trupe_do_povo"],
+      "aspectos": {
+        "governo": "Assembleia aberta toda noite, Conselho eleito e uma comissão para cada assunto",
+        "patentes": "Membro, Militante, Conselheiro, Comissário",
+        "qg": "Casa da Assembleia",
+        "moeda": "Semente, a moeda do povo",
+        "comercio": "Feira de troca e de Semente, preços tabelados e fila",
+        "moradia": "Casas de mutirão, distribuídas pela Assembleia por lista de espera",
+        "trabalho": "Cotas no Plano e cooperativas",
+        "lei": "Guarda Comunitária e Tribunal da Roda, de júri popular",
+        "saude": "Posto da Curandeira: grátis e demorado",
+        "educacao": "Escola dos Saberes, que ensina tradição",
+        "midia": "Rádio do Povo",
+        "lazer": "Festa na roda e o Raiz FC",
+        "piada": "Reunião que não acaba, culto ao líder e a vizinha com braçadeira"
+      },
+      "detalhes": [
+        { "aspecto": "governo", "texto": "A Assembleia se reúne em roda toda noite e às vezes termina depois do amanhecer. Tem comissão para tudo e uma comissão para avaliar as comissões." },
+        { "aspecto": "governo", "texto": "No jogo, a Casa da Assembleia mostra a pauta do ciclo num quadro: a prioridade da semana, as cotas do Plano e quem não cumpriu a cota.", "sugestao": true },
+        { "aspecto": "moradia", "texto": "O jogador entra na lista da Assembleia ou ergue uma casa em mutirão com outros jogadores. A casa é dele enquanto morar, mas não pode ser vendida." },
+        { "aspecto": "lei", "texto": "Quem reclama demais da cota recebe a visita da Guarda Comunitária, que é a vizinha do lado com uma braçadeira." },
+        { "aspecto": "lei", "texto": "Tribunal da Roda: quem é pego no contrabando vira réu numa roda de júri popular de NPCs; a pena é perder parte da carga e reputação, e o nome vai para a pauta da reunião.", "sugestao": true },
+        { "aspecto": "saude", "texto": "O Posto da Curandeira atende de graça, por ordem de chegada. Quem não quer esperar faz a missão Fila do Posto: lábia, troca ou atalho." },
+        { "aspecto": "midia", "texto": "A Rádio do Povo toca discursos e notícias conforme o perfil de quem manda; quem ocupa a Comunicação faz a rádio e desenha os cartazes oficiais." },
+        { "aspecto": "lazer", "texto": "Festa na roda depois da Assembleia (quando ela acaba) e o Raiz FC no clássico das margens contra o Neon FC." },
+        { "aspecto": "piada", "texto": "O retrato de Nayra Sundaram está em todas as casas, e criticar o retrato rende uma comissão." }
+      ],
+      "patentes": [
+        {
+          "id": "membro",
+          "name": "Membro",
+          "ordem": 1,
+          "reputacaoMin": 0,
+          "libera": {
+            "lojaNivel": 1,
+            "moradias": ["casa_da_lista", "casa_de_mutirao"],
+            "cargos": [],
+            "extras": ["Canal da Roda", "Vender e trocar na feira (até 5 anúncios)", "Entrar na lista de espera da Assembleia", "Participar de mutirões"]
+          },
+          "piada": "Parabéns, companheiro. Sua carteirinha sai em 3 a 5 assembleias.",
+          "sugestaoCampos": ["reputacaoMin", "libera", "piada"]
+        },
+        {
+          "id": "militante",
+          "name": "Militante",
+          "ordem": 2,
+          "reputacaoMin": 600,
+          "libera": {
+            "lojaNivel": 2,
+            "moradias": [],
+            "cargos": ["chefe_de_abastecimento", "mestre_do_mutirao"],
+            "extras": ["Puxar um mutirão (convocar outros jogadores)", "Até 10 anúncios na feira", "Sobe 1 posição na lista de espera por ciclo"]
+          },
+          "piada": "Agora você pode ser chamado para reunião às sete da manhã de domingo.",
+          "sugestaoCampos": ["reputacaoMin", "libera", "piada"]
+        },
+        {
+          "id": "conselheiro",
+          "name": "Conselheiro",
+          "ordem": 3,
+          "reputacaoMin": 2500,
+          "libera": {
+            "lojaNivel": 3,
+            "moradias": ["casa_de_mutirao_grande"],
+            "cargos": ["comandante_da_brigada", "voz_da_radio_do_povo", "chefe_da_guarda_comunitaria"],
+            "extras": ["Propor pauta na Assembleia", "Até 15 anúncios na feira"]
+          },
+          "piada": "Você não fura fila. Oficialmente.",
+          "foraDoPiloto": true,
+          "sugestaoCampos": ["reputacaoMin", "libera", "piada"]
+        },
+        {
+          "id": "comissario",
+          "name": "Comissário",
+          "ordem": 4,
+          "reputacaoMin": 8000,
+          "libera": {
+            "lojaNivel": 4,
+            "moradias": [],
+            "cargos": ["presidente_da_assembleia"],
+            "extras": ["Criar uma comissão (que nunca se reúne)", "Até 20 anúncios na feira"]
+          },
+          "piada": "Você agora avalia a comissão que avalia as comissões.",
+          "foraDoPiloto": true,
+          "sugestaoCampos": ["reputacaoMin", "libera", "piada"]
+        }
+      ],
+      "reputacao": {
+        "descricao": "A patente sobe com reputação e libera lojas, moradias melhores e cargos. Quem cumpre a cota do Plano sobe de patente; quem não cumpre vira assunto da reunião.",
+        "fontes": [
+          { "id": "missao_de_entrada", "name": "Missão de entrada da instituição", "reputacao": 100, "sugestao": true },
+          { "id": "missao_da_instituicao", "name": "Missão da instituição", "reputacao": 40, "sugestao": true },
+          { "id": "missao_de_grupo", "name": "Missão de grupo da margem", "reputacao": 60, "sugestao": true },
+          { "id": "mutirao", "name": "Participar de um mutirão", "reputacao": 80, "sugestao": true },
+          { "id": "cota_cumprida", "name": "Cumprir a cota do Plano no ciclo", "reputacao": 150, "sugestao": true },
+          { "id": "cota_nao_cumprida", "name": "Não cumprir a cota (vira assunto da reunião)", "reputacao": -50, "sugestao": true },
+          { "id": "chefe_masmorra", "name": "Derrotar o chefe de um andar de masmorra", "reputacao": 50, "sugestao": true },
+          { "id": "contrabando_flagrado", "name": "Ser pego no contrabando (Tribunal da Roda)", "reputacao": -100, "sugestao": true }
+        ],
+        "sugestaoCampos": ["fontes"]
+      }
+    },
+    {
+      "id": "consorcio_neon",
+      "name": "Consórcio Neon",
+      "side": "direita",
+      "qg": "torre_do_consorcio",
+      "qgName": "Torre do Consórcio",
+      "moeda": "credito",
+      "canalMargem": "diretoria",
+      "instituicoes": ["torcida_furia_neon", "pm_do_consorcio", "universidade_neon", "agencia_neon"],
+      "aspectos": {
+        "governo": "Acionistas, Diretoria, gerentes e colaboradores",
+        "patentes": "Colaborador, Parceiro, Gerente, Diretor",
+        "qg": "Torre do Consórcio",
+        "moeda": "Crédito, com score",
+        "comercio": "Shopping, app de entrega, preço dinâmico e assinatura de tudo",
+        "moradia": "Cápsulas de aluguel e apartamentos financiados em 360 parcelas",
+        "trabalho": "Bico por aplicativo, metas e empresa própria",
+        "lei": "PM do Consórcio e arbitragem por contrato",
+        "saude": "Planos Bronze, Prata e Ouro: rápido para quem paga",
+        "educacao": "Universidade Neon, que ensina e patenteia",
+        "midia": "Agência Neon, influencers e telões",
+        "lazer": "Balada, shopping e o Neon FC",
+        "piada": "Boleto, meta, \"somos uma família\" e o colaborador que paga para trabalhar"
+      },
+      "detalhes": [
+        { "aspecto": "governo", "texto": "A Diretoria se reúne em realidade aumentada na Torre do Consórcio, de vidro espelhado. A Diretoria diz que é uma família." },
+        { "aspecto": "trabalho", "texto": "Ninguém é empregado: todo mundo é colaborador, parceiro ou empreendedor de si mesmo." },
+        { "aspecto": "moradia", "texto": "O jogador aluga uma cápsula por ciclo ou financia um apartamento, que pode vender. Com três ciclos de atraso vem o despejo, e os móveis vão para um depósito." },
+        { "aspecto": "lei", "texto": "A PM do Consórcio protege quem tem contrato em dia. Quem não paga fica no escuro." },
+        { "aspecto": "lei", "texto": "Arbitragem por contrato: quem é pego no contrabando recebe uma notificação com cláusula que ninguém leu; perde parte da carga e score.", "sugestao": true },
+        { "aspecto": "saude", "texto": "A Clínica Premium atende na hora quem tem plano Ouro; Prata e Bronze esperam menos que o posto da Esquerda. Sem plano, paga a consulta avulsa.", "sugestao": true },
+        { "aspecto": "midia", "texto": "A Agência Neon cuida dos telões e dos influencers; quem ocupa a Comunicação faz os telões e os cartazes oficiais." },
+        { "aspecto": "lazer", "texto": "Balada e shopping abertos enquanto houver energia, e o Neon FC no clássico das margens contra o Raiz FC." },
+        { "aspecto": "piada", "texto": "O primeiro pagamento já vem descontado do aluguel da cápsula." }
+      ],
+      "patentes": [
+        {
+          "id": "colaborador",
+          "name": "Colaborador",
+          "ordem": 1,
+          "reputacaoMin": 0,
+          "libera": {
+            "lojaNivel": 1,
+            "moradias": ["capsula"],
+            "cargos": [],
+            "extras": ["Canal da Diretoria", "Lojinha no app (até 5 anúncios)", "Bico por aplicativo", "Plano de saúde Bronze"]
+          },
+          "piada": "Bem-vindo à família. Sua contribuição de boas-vindas já foi debitada.",
+          "sugestaoCampos": ["reputacaoMin", "libera", "piada"]
+        },
+        {
+          "id": "parceiro",
+          "name": "Parceiro",
+          "ordem": 2,
+          "reputacaoMin": 600,
+          "libera": {
+            "lojaNivel": 2,
+            "moradias": ["capsula_plus", "apartamento_financiado"],
+            "cargos": ["diretor_de_logistica", "diretor_de_engenharia"],
+            "extras": ["Leilão no app", "Até 10 anúncios no app", "Plano de saúde Prata"]
+          },
+          "piada": "Parceiro é colaborador que divide o prejuízo.",
+          "sugestaoCampos": ["reputacaoMin", "libera", "piada"]
+        },
+        {
+          "id": "gerente",
+          "name": "Gerente",
+          "ordem": 3,
+          "reputacaoMin": 2500,
+          "libera": {
+            "lojaNivel": 3,
+            "moradias": ["apartamento_vista_rio"],
+            "cargos": ["comandante_da_pm", "diretor_da_agencia", "diretor_de_inteligencia"],
+            "extras": ["Abrir empresa própria", "Até 15 anúncios no app", "Plano de saúde Ouro"]
+          },
+          "piada": "Agora você cobra a meta que você mesmo não bate.",
+          "foraDoPiloto": true,
+          "sugestaoCampos": ["reputacaoMin", "libera", "piada"]
+        },
+        {
+          "id": "diretor",
+          "name": "Diretor",
+          "ordem": 4,
+          "reputacaoMin": 8000,
+          "libera": {
+            "lojaNivel": 4,
+            "moradias": [],
+            "cargos": ["ceo"],
+            "extras": ["Comprar ações do Consórcio (voto extra na escolha de cargos)", "Até 20 anúncios no app"]
+          },
+          "piada": "Seu gráfico também sobe em todo telão. Ninguém lembra de ter visto você.",
+          "foraDoPiloto": true,
+          "sugestaoCampos": ["reputacaoMin", "libera", "piada"]
+        }
+      ],
+      "reputacao": {
+        "descricao": "A patente sobe com reputação e libera lojas, moradias melhores e cargos. Na Direita, reputação vem de metas batidas e de participação; o score de Crédito é outra coisa e mede se você paga em dia.",
+        "fontes": [
+          { "id": "missao_de_entrada", "name": "Missão de entrada da instituição", "reputacao": 100, "sugestao": true },
+          { "id": "missao_da_instituicao", "name": "Missão da instituição", "reputacao": 40, "sugestao": true },
+          { "id": "missao_de_grupo", "name": "Missão de grupo da margem", "reputacao": 60, "sugestao": true },
+          { "id": "bico", "name": "Concluir um bico por aplicativo", "reputacao": 20, "sugestao": true },
+          { "id": "meta_batida", "name": "Bater a meta do ciclo", "reputacao": 150, "sugestao": true },
+          { "id": "meta_nao_batida", "name": "Não bater a meta (feedback construtivo)", "reputacao": -50, "sugestao": true },
+          { "id": "chefe_masmorra", "name": "Derrotar o chefe de um andar de masmorra", "reputacao": 50, "sugestao": true },
+          { "id": "contrabando_flagrado", "name": "Ser pego no contrabando (arbitragem por contrato)", "reputacao": -100, "sugestao": true }
+        ],
+        "sugestaoCampos": ["fontes"]
+      }
+    }
+  ],
+  "canais": [
+    {
+      "id": "roda",
+      "name": "Roda",
+      "side": "esquerda",
+      "escopo": "margem",
+      "descricao": "Canal das Raízes. Ninguém cria guilda: ao escolher a margem, o jogador já entra na Roda.",
+      "quemFala": "Todo jogador da Esquerda",
+      "realtime": true
+    },
+    {
+      "id": "diretoria",
+      "name": "Diretoria",
+      "side": "direita",
+      "escopo": "margem",
+      "descricao": "Canal do Consórcio. Ninguém cria guilda: ao escolher a margem, o jogador já entra na Diretoria.",
+      "quemFala": "Todo jogador da Direita",
+      "realtime": true
+    },
+    {
+      "id": "instituicao",
+      "name": "Instituição",
+      "side": null,
+      "escopo": "instituicao",
+      "descricao": "Canal da instituição do jogador (uma por classe em cada margem).",
+      "quemFala": "Membros da instituição",
+      "realtime": true
+    },
+    {
+      "id": "equipe",
+      "name": "Equipe",
+      "side": null,
+      "escopo": "equipe",
+      "descricao": "Canal do grupo de até 4 no mapa e nas masmorras.",
+      "quemFala": "Quem está no grupo",
+      "realtime": true
+    },
+    {
+      "id": "regiao",
+      "name": "Região",
+      "side": null,
+      "escopo": "regiao",
+      "descricao": "Canal da região do mapa onde o jogador está.",
+      "quemFala": "Quem está na região",
+      "realtime": true
+    },
+    {
+      "id": "praca",
+      "name": "Praça",
+      "side": null,
+      "escopo": "cidade",
+      "descricao": "Canal da cidade inteira, das duas margens.",
+      "quemFala": "Todo mundo",
+      "realtime": true
+    },
+    {
+      "id": "radio",
+      "name": "Rádio",
+      "side": null,
+      "escopo": "transmissao",
+      "descricao": "A rádio de cada margem (Rádio do Povo na Esquerda, telões da Agência na Direita), feita por quem ocupa a Comunicação. Sem jogador no cargo, toca as frases do perfil de quem manda. A Eco, rádio pirata, entra no ar à noite nas duas margens.",
+      "quemFala": "Quem ocupa a Comunicação da margem (ou a IA)",
+      "realtime": false,
+      "sugestaoCampos": ["descricao"]
+    }
+  ]
+}

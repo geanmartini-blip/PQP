@@ -1,0 +1,371 @@
+{
+  "ciclos": {
+    "cidade": "Ciclo da cidade: semanal (housing.json, ciclo.dias = 7). Todo campo porCiclo, limitePorCiclo, jurosPctCiclo, precoPorCiclo, lucroPorCiclo e consultasPorCiclo deste arquivo conta por ele: aluguel, parcelas, assinaturas, planos, cotas, metas, score e limites de câmbio e contrabando.",
+    "producao": "Ciclo de produção: 60 min reais (faction_ai.json, regras.decisao.cicloProducaoMin). Só os campos terminados em CiclosProducao contam por ele: duração dos anúncios da feira e do app, reajuste da tabela da feira e o preço barganhado da chopindita.",
+    "sugestao": true
+  },
+  "moedas": [
+    {
+      "id": "semente",
+      "name": "Semente",
+      "side": "esquerda",
+      "descricao": "A moeda do povo. Vale na feira, nas lojas da Esquerda e no câmbio da ponte.",
+      "simbolo": "S",
+      "temScore": false,
+      "artKey": "ui/moeda_semente",
+      "sugestaoCampos": ["simbolo", "artKey"]
+    },
+    {
+      "id": "credito",
+      "name": "Crédito",
+      "side": "direita",
+      "descricao": "A moeda do Consórcio, com score. Vale no shopping, no app, na calibração e no câmbio da ponte.",
+      "simbolo": "Cr",
+      "temScore": true,
+      "artKey": "ui/moeda_credito",
+      "sugestaoCampos": ["simbolo", "artKey"]
+    }
+  ],
+  "recursos": [
+    { "id": "energia", "name": "Energia", "descricao": "A Direita depende dela; sem energia, os itens da Direita perdem força." },
+    { "id": "chopindita", "name": "Chopindita", "descricao": "Mineral da Serra cor de chope, dourado por dentro e com uma crosta branca que parece espuma." },
+    { "id": "comida", "name": "Comida", "descricao": "Sai da roça coletiva e das lições das Palafitas do Delta." },
+    { "id": "pecas", "name": "Peças", "descricao": "Saem da fábrica, do ferro-velho e das lições do Hospital antigo." }
+  ],
+  "score": {
+    "descricao": "Score de Crédito da Direita, de 0 a 1000. Sobe com conta paga em dia e meta batida; cai com atraso, despejo e flagrante. Mexe com a taxa do app, os juros e o drone de cobrança.",
+    "min": 0,
+    "max": 1000,
+    "inicial": 500,
+    "faixas": [
+      { "id": "negativado", "name": "Negativado", "min": 0, "max": 299, "taxaAppPp": 5, "jurosPctCiclo": 4, "podeFinanciar": false, "droneDeCobranca": true, "piada": "Seu nome aparece em todos os telões. Na parte de baixo." },
+      { "id": "regular", "name": "Regular", "min": 300, "max": 599, "taxaAppPp": 0, "jurosPctCiclo": 2.5, "podeFinanciar": true, "droneDeCobranca": false, "piada": "Regular é o novo bom. Segundo o nosso time de comunicação." },
+      { "id": "bom", "name": "Bom", "min": 600, "max": 799, "taxaAppPp": -2, "jurosPctCiclo": 1.5, "podeFinanciar": true, "droneDeCobranca": false },
+      { "id": "premium", "name": "Premium", "min": 800, "max": 1000, "taxaAppPp": -4, "jurosPctCiclo": 1, "podeFinanciar": true, "droneDeCobranca": false, "piada": "Parabéns: você agora recebe oferta de cartão a cada 30 segundos." }
+    ],
+    "sobe": [
+      { "id": "aluguel_em_dia", "name": "Aluguel da cápsula pago em dia", "delta": 10, "limitePorCiclo": 10 },
+      { "id": "parcela_em_dia", "name": "Parcela do apartamento paga em dia", "delta": 5, "limitePorCiclo": 5 },
+      { "id": "plano_em_dia", "name": "Plano de saúde pago em dia", "delta": 5, "limitePorCiclo": 5 },
+      { "id": "venda_no_app", "name": "Venda concluída no app", "delta": 2, "limitePorCiclo": 20 },
+      { "id": "meta_batida", "name": "Meta do ciclo batida", "delta": 25, "limitePorCiclo": 25 },
+      { "id": "negociar_boleto", "name": "Negociar o boleto (Cobrança Implacável)", "delta": 30, "limitePorCiclo": 30 },
+      { "id": "quitar_divida", "name": "Quitar crédito ou financiamento", "delta": 40, "limitePorCiclo": 0 }
+    ],
+    "cai": [
+      { "id": "atraso_aluguel", "name": "Ciclo de aluguel atrasado", "delta": -40, "limitePorCiclo": 0 },
+      { "id": "atraso_parcela", "name": "Parcela atrasada", "delta": -30, "limitePorCiclo": 0 },
+      { "id": "despejo", "name": "Despejo", "delta": -150, "limitePorCiclo": 0 },
+      { "id": "fugir_do_drone", "name": "Fugir do drone de cobrança (Cobrança Implacável)", "delta": -20, "limitePorCiclo": 0 },
+      { "id": "contrabando_flagrado", "name": "Flagrado no contrabando", "delta": -60, "limitePorCiclo": 0 },
+      { "id": "consultar_o_score", "name": "Consultar o próprio score (comportamento ansioso)", "delta": -1, "limitePorCiclo": 5 }
+    ],
+    "sugestao": true
+  },
+  "saldoInicial": {
+    "delta": {
+      "semente": 0,
+      "credito": 0,
+      "descricao": "No Delta (1 a 7) o jogador começa sem nada. Inimigos e as tarefas do Seu Jacó soltam trocados das duas moedas, porque no Delta a fila do posto e o boleto chegam do mesmo jeito."
+    },
+    "travessia": {
+      "esquerda": {
+        "semente": 120,
+        "credito": 0,
+        "extras": ["Inscrição na lista de espera da Assembleia", "Rede no galpão do mutirão até sair a casa", "Carteirinha de Membro (provisória)"]
+      },
+      "direita": {
+        "semente": 0,
+        "credito": 200,
+        "descontoAutomatico": { "motivo": "Primeiro ciclo de aluguel da cápsula, descontado do pagamento sem perguntar", "valor": 80 },
+        "score": 500,
+        "extras": ["Cápsula do primeiro ciclo (já paga, e já descontada)", "Plano Bronze de teste por 1 ciclo, com renovação automática"]
+      },
+      "trocadosDaOutraMargem": "Os trocados da moeda da outra margem ficam na carteira e só servem no câmbio da ponte ou com o Bruno Ferro."
+    },
+    "sugestao": true
+  },
+  "fontesPiloto": [
+    { "id": "drop_inimigo_normal", "name": "Inimigo comum", "moedas": ["semente", "credito"], "min": 1, "max": 5, "descricao": "Cai a moeda da margem do jogador; no Delta, cai qualquer uma das duas.", "ref": "loot.json", "sugestao": true },
+    { "id": "drop_inimigo_elite", "name": "Elite", "moedas": ["semente", "credito"], "min": 5, "max": 15, "descricao": "Elites com afixo soltam mais moeda.", "ref": "loot.json", "sugestao": true },
+    { "id": "drop_chefe", "name": "Chefe", "moedas": ["semente", "credito"], "min": 30, "max": 80, "descricao": "Bruno Ferro no Delta e o chefe do andar 5 das Galerias da Usina.", "ref": "loot.json", "sugestao": true },
+    { "id": "rasteira", "name": "Rasteira e Golpe do Século", "moedas": ["semente"], "min": 1, "max": 6, "descricao": "A Rasteira do Malandro derruba Semente dos inimigos; o Golpe do Século derruba o dobro.", "ref": "abilities_archetype.json, abilities_special.json", "sugestaoCampos": ["min", "max"] },
+    { "id": "missao", "name": "Missões", "moedas": ["semente", "credito"], "min": 30, "max": 120, "descricao": "Missões da instituição, da margem e do Delta pagam na moeda de quem dá a missão.", "ref": "missions.json", "sugestao": true },
+    { "id": "missao_de_entrada", "name": "Missão de entrada", "moedas": ["semente", "credito"], "min": 50, "max": 50, "descricao": "Paga uma vez, ao entrar na instituição.", "ref": "missions.json", "sugestao": true },
+    { "id": "masmorra", "name": "Galerias da Usina", "moedas": ["semente", "credito"], "min": 20, "max": 200, "descricao": "Moeda por andar, mais o baú do chefe no andar 5.", "ref": "dungeons.json", "sugestao": true },
+    { "id": "plantao", "name": "Plantão", "moedas": ["semente", "credito"], "min": 0, "max": 100, "descricao": "O plantonista ganha metade do XP e parte do loot, entregues com um relatório quando o jogador volta.", "sugestaoCampos": ["min", "max"] },
+    { "id": "venda_loja_npc", "name": "Venda para loja de NPC", "moedas": ["semente", "credito"], "min": 1, "max": 400, "descricao": "A loja paga 40% do preço tabelado (Esquerda) ou do preço base (Direita).", "sugestao": true },
+    { "id": "feira_e_app", "name": "Venda para outros jogadores", "moedas": ["semente", "credito"], "min": 1, "max": 5000, "descricao": "Feira na Esquerda (Semente, sem taxa) e app na Direita (Crédito, com a taxa do Consórcio).", "sugestaoCampos": ["min", "max"] },
+    { "id": "cota_do_plano", "name": "Cota do Plano cumprida", "moedas": ["semente"], "min": 80, "max": 80, "descricao": "Paga no fim do ciclo a quem cumpriu a cota.", "sugestao": true },
+    { "id": "bico", "name": "Bico por aplicativo", "moedas": ["credito"], "min": 20, "max": 60, "descricao": "Entregas e tarefas curtas no mapa da Direita, com a fatia do app descontada.", "sugestao": true },
+    { "id": "meta_batida", "name": "Meta do ciclo batida", "moedas": ["credito"], "min": 100, "max": 100, "descricao": "Bônus de meta, pago no fim do ciclo.", "sugestao": true },
+    { "id": "lugares_que_ensinam", "name": "Lugares que ensinam", "moedas": ["semente", "credito"], "min": 0, "max": 0, "descricao": "Não dão moeda: dão recursos (comida, peças, chopindita), que se vendem na feira e no app.", "sugestao": true }
+  ],
+  "sumidouros": [
+    { "id": "aluguel_capsula", "name": "Aluguel da cápsula", "moedas": ["credito"], "min": 80, "max": 285, "descricao": "Por ciclo da cidade: 80 (cápsula) a 150 (Cápsula Plus) com o preço de vida normal, até 1,9 vez isso na crise (housing.json, aluguel.formula); atraso de 3 ciclos dá despejo.", "ref": "housing.json", "sugestao": true },
+    { "id": "parcela_apartamento", "name": "Parcela do apartamento", "moedas": ["credito"], "min": 110, "max": 210, "descricao": "Uma por ciclo, 360 parcelas.", "ref": "housing.json", "sugestaoCampos": ["min", "max"] },
+    { "id": "mutirao", "name": "Materiais do mutirão", "moedas": ["semente"], "min": 0, "max": 0, "descricao": "O mutirão não custa moeda; custa comida, peças e a paciência de 3 vizinhos.", "ref": "housing.json", "sugestao": true },
+    { "id": "moveis", "name": "Móveis", "moedas": ["semente", "credito"], "min": 10, "max": 1200, "descricao": "Catálogo de móveis da moradia.", "ref": "furniture.json", "sugestao": true },
+    { "id": "calibracao", "name": "Calibração de itens da Direita", "moedas": ["credito"], "min": 50, "max": 800, "descricao": "Os itens da Direita crescem com calibração, paga em Crédito. O benzimento da Esquerda não custa moeda: vem de reputação e lições.", "ref": "items.json", "sugestaoCampos": ["min", "max"] },
+    { "id": "taxa_app", "name": "Taxa do Consórcio no app", "moedas": ["credito"], "min": 1, "max": 1000, "descricao": "12% de cada venda, mais 1 Crédito de conveniência.", "sugestao": true },
+    { "id": "spread_cambio", "name": "Spread do câmbio da ponte", "moedas": ["semente", "credito"], "min": 1, "max": 100, "descricao": "5% para cada lado, para a prefeitura da ponte.", "sugestao": true },
+    { "id": "plano_saude", "name": "Planos de saúde", "moedas": ["credito"], "min": 40, "max": 250, "descricao": "Bronze, Prata e Ouro, por ciclo.", "sugestao": true },
+    { "id": "loja_npc", "name": "Lojas de NPC", "moedas": ["semente", "credito"], "min": 3, "max": 1500, "descricao": "Consumíveis e itens comuns e raros nas instituições e no QG.", "ref": "items.json", "sugestao": true },
+    { "id": "frete", "name": "Frete do app", "moedas": ["credito"], "min": 5, "max": 30, "descricao": "Para receber a compra fora da Torre do Consórcio.", "sugestao": true },
+    { "id": "recrutar_ia", "name": "Recrutar personagem de IA", "moedas": ["semente", "credito"], "min": 30, "max": 150, "descricao": "Encontro no mundo: chama um personagem de IA para o grupo, pagando Semente, Crédito ou reputação.", "sugestaoCampos": ["min", "max"] },
+    { "id": "refazer_talentos", "name": "Refazer talentos", "moedas": ["semente", "credito"], "min": 200, "max": 200, "descricao": "Grátis até o 20; depois, custa Semente ou Crédito, só no QG e uma vez por ciclo.", "foraDoPiloto": true, "sugestaoCampos": ["min", "max"] }
+  ],
+  "lojasNpc": {
+    "descricao": "Lojas de NPC em cada instituição e no QG. A patente libera o nível da loja.",
+    "compraDoJogadorPct": 0.4,
+    "nivelMult": [1, 1.6, 2.5, 4],
+    "sugestaoCampos": ["compraDoJogadorPct", "nivelMult"]
+  },
+  "feira": {
+    "side": "esquerda",
+    "moeda": "semente",
+    "local": "feira_da_esquerda",
+    "descricao": "Troca direta entre jogadores e vendas em Semente, com preço tabelado para os itens básicos.",
+    "trocaDireta": {
+      "descricao": "Os dois lados põem itens e recursos na mesa e confirmam. Sem moeda e sem taxa.",
+      "maxItensPorLado": 6,
+      "taxa": 0,
+      "sugestaoCampos": ["maxItensPorLado", "taxa"]
+    },
+    "vendas": {
+      "descricao": "Venda em Semente. Item básico sai pelo preço da tabela; o resto tem preço livre, até um teto.",
+      "taxaPct": 0,
+      "anuncioDuraCiclosProducao": 24,
+      "tetoLivreMult": 3,
+      "sugestaoCampos": ["taxaPct", "anuncioDuraCiclosProducao", "tetoLivreMult"]
+    },
+    "precosTabelados": [
+      { "id": "comida", "name": "Comida", "precoSemente": 4, "precoBaseCredito": 9, "tipo": "recurso", "sugestaoCampos": ["precoSemente", "precoBaseCredito"] },
+      { "id": "pecas", "name": "Peças", "precoSemente": 6, "precoBaseCredito": 12, "tipo": "recurso", "sugestaoCampos": ["precoSemente", "precoBaseCredito"] },
+      { "id": "chopindita", "name": "Chopindita", "precoSemente": 20, "precoBaseCredito": 45, "tipo": "recurso", "sugestaoCampos": ["precoSemente", "precoBaseCredito"] },
+      { "id": "energia", "name": "Carga de energia", "precoSemente": 10, "precoBaseCredito": 18, "tipo": "recurso", "sugestaoCampos": ["name", "precoSemente", "precoBaseCredito"] },
+      { "id": "pao_da_feira", "name": "Pão da feira", "precoSemente": 3, "precoBaseCredito": 7, "tipo": "consumivel", "sugestao": true },
+      { "id": "cha_de_ervas", "name": "Chá de ervas", "precoSemente": 12, "precoBaseCredito": 25, "tipo": "consumivel", "sugestao": true },
+      { "id": "palha_e_tecido", "name": "Palha e tecido", "precoSemente": 5, "precoBaseCredito": 10, "tipo": "material", "sugestao": true },
+      { "id": "sucata", "name": "Sucata", "precoSemente": 4, "precoBaseCredito": 8, "tipo": "material", "sugestao": true }
+    ],
+    "fila": {
+      "descricao": "Compra de item tabelado entra na fila por ordem de chegada; quem chegou antes leva antes. A fila anda mesmo com o jogador fora da feira.",
+      "esperaPorPessoaS": 20,
+      "esperaMaxS": 180,
+      "guardaLugar": true,
+      "prioridade": "Ordem de chegada. Ninguém fura fila; quem tem patente alta só está ajudando a organizar.",
+      "sugestaoCampos": ["esperaPorPessoaS", "esperaMaxS", "guardaLugar", "prioridade"]
+    },
+    "reajuste": {
+      "descricao": "O preço de vida mexe com a feira, mas a tabela só muda quando a comissão de preços se reúne.",
+      "aCadaCiclosProducao": 24,
+      "maxPct": 10,
+      "sugestao": true
+    }
+  },
+  "app": {
+    "side": "direita",
+    "moeda": "credito",
+    "name": "App do Consórcio",
+    "descricao": "Leilão e lojinha de jogadores em Crédito, com a taxa do Consórcio em cada venda. Preço dinâmico e assinatura de tudo.",
+    "taxaConsorcioPct": 12,
+    "taxaConveniencia": 1,
+    "lojinha": {
+      "descricao": "O jogador põe o preço que quiser e o item fica à venda até alguém comprar ou o anúncio vencer.",
+      "anuncioDuraCiclosProducao": 24,
+      "sugestaoCampos": ["anuncioDuraCiclosProducao"]
+    },
+    "leilao": {
+      "descricao": "Lance mínimo, duração escolhida e lance automático até um teto.",
+      "duracoesH": [1, 6, 24],
+      "incrementoMinPct": 5,
+      "antiSniperS": 30,
+      "sugestao": true
+    },
+    "entrega": {
+      "descricao": "O app entrega a compra em qualquer lugar da Direita; na Torre do Consórcio é de graça.",
+      "freteBase": 5,
+      "porRegiao": 3,
+      "sugestao": true
+    },
+    "precoDinamico": {
+      "descricao": "Os itens básicos das lojas de NPC da Direita e a sugestão de preço do app seguem o preço dinâmico, que sobe quando chove e quando não chove.",
+      "formula": "preco = base × (1 + kDemanda × (procura − oferta) / max(1, procura + oferta)) × (precoDeVida / 100) × (apagão ? apagaoMult : 1) × (chovendo ? chuvaMult : semChuvaMult), limitado a [min × base, max × base]",
+      "kDemanda": 0.5,
+      "apagaoMult": 1.3,
+      "chuvaMult": 1.08,
+      "semChuvaMult": 1.08,
+      "min": 0.5,
+      "max": 3,
+      "recalculaACadaMin": 10,
+      "sugestaoCampos": ["formula", "kDemanda", "apagaoMult", "chuvaMult", "semChuvaMult", "min", "max", "recalculaACadaMin"]
+    },
+    "assinaturas": [
+      { "id": "ar_filtrado", "name": "Assinatura de ar filtrado", "precoPorCiclo": 15, "efeito": "+5% no bônus de descanso em casa e o selo Respiro Premium no perfil.", "piada": "Respire fundo. A primeira inspiração é grátis.", "sugestaoCampos": ["precoPorCiclo", "efeito", "piada"] },
+      { "id": "luz_premium", "name": "Energia premium", "precoPorCiclo": 25, "efeito": "Em casa, o apagão não apaga as luzes nem os móveis de neon.", "piada": "Energia premium: agora com 12% menos apagão.", "sugestaoCampos": ["precoPorCiclo", "efeito"] },
+      { "id": "frete_gratis", "name": "Frete Grátis+", "precoPorCiclo": 20, "efeito": "Frete do app zerado em qualquer região da Direita.", "piada": "Frete grátis por apenas 20 Créditos.", "sugestao": true },
+      { "id": "assinatura_das_assinaturas", "name": "Gestor de Assinaturas", "precoPorCiclo": 5, "efeito": "Mostra todas as suas assinaturas numa tela só.", "piada": "Gerencia suas assinaturas. Também é uma assinatura.", "sugestao": true }
+    ],
+    "sugestaoCampos": ["name", "taxaConsorcioPct", "taxaConveniencia"]
+  },
+  "cambio": {
+    "local": "cambio_da_ponte",
+    "descricao": "Na ponte, Semente vira Crédito e vice-versa, com cotação que acompanha o mapa.",
+    "base": 2,
+    "formula": "cotacao (Créditos por 1 Semente) = base × (1 + kInfluencia × (influenciaEsq − 50) / 50) × (1 − kEnergia × (energiaDir − 50) / 50) × (precoDeVidaDir / precoDeVidaEsq) ^ kPrecoDeVida, limitada a [min, max]. Comprar Crédito paga cotacao × (1 − spread); comprar Semente paga cotacao × (1 + spread).",
+    "variaveis": [
+      { "id": "influenciaEsq", "descricao": "Influência média da Esquerda nas regiões do mapa, de 0 a 100 (a da Direita é 100 menos isso)." },
+      { "id": "energiaDir", "descricao": "Energia média nas regiões da Direita, de 0 a 100. Apagão derruba o Crédito." },
+      { "id": "precoDeVidaDir", "descricao": "Índice de preço de vida da Direita (100 = normal); sobe na crise." },
+      { "id": "precoDeVidaEsq", "descricao": "Índice de preço de vida da Esquerda (100 = normal); sobe na crise." }
+    ],
+    "kInfluencia": 0.25,
+    "kEnergia": 0.2,
+    "kPrecoDeVida": 1,
+    "min": 0.8,
+    "max": 4,
+    "spreadPct": 5,
+    "recalculaACadaMin": 60,
+    "limitePorCicloSemente": 2000,
+    "npc": "dalva_rocha",
+    "sugestaoCampos": ["base", "formula", "variaveis", "kInfluencia", "kEnergia", "kPrecoDeVida", "min", "max", "spreadPct", "recalculaACadaMin", "limitePorCicloSemente", "npc"]
+  },
+  "contrabando": {
+    "npc": "bruno_ferro",
+    "regiao": "juncal",
+    "descricao": "Contrabando pelo Juncal, com Bruno Ferro, para quem não quer pagar taxa nem enfrentar fila. Ele vende para os dois lados e entrega lá em cima.",
+    "taxaPct": 0,
+    "fila": false,
+    "cambio": {
+      "descricao": "O Capataz troca Semente por Crédito pela cotação oficial, sem spread, mais ou menos o humor do dia.",
+      "variacaoPct": 8
+    },
+    "risco": {
+      "descricao": "Cada negócio pode dar batida da patrulha (Guarda Comunitária ou PM, conforme quem passa no Juncal).",
+      "chanceBatidaPct": 10,
+      "chanceExtraPorFaixa": { "pontos": 2, "aCada": 200 },
+      "chanceMaxPct": 40,
+      "confiscoPct": 30,
+      "reputacao": -100,
+      "score": -60,
+      "julgamento": {
+        "esquerda": "Tribunal da Roda: júri popular de vizinhos, e o seu nome vai para a pauta da reunião.",
+        "direita": "Arbitragem por contrato: multa automática conforme a cláusula 47-B, que você aceitou sem ler."
+      },
+      "sugestao": true
+    },
+    "limitePorCicloSemente": 1500,
+    "precoChopindita": {
+      "baseSemente": 12,
+      "variacaoMissaoPct": 15,
+      "regra": "A loja do contrabando (shops.json, loja_contrabando_juncal) vende a chopindita por este base, com Crédito a 2 por Semente. Cada Negócio com o Capataz muda o preço do Juncal em 15%: vencer a barganha baixa, perder sobe. Não acumula: vale o resultado da última barganha, até voltar ao base.",
+      "duraCiclosProducao": 24,
+      "sugestao": true
+    },
+    "sugestaoCampos": ["cambio", "limitePorCicloSemente"]
+  },
+  "plano": {
+    "side": "esquerda",
+    "descricao": "A Assembleia define cotas de produção, e todo jogador contribui com tempo e recursos. Quem cumpre a cota sobe de patente. Quem não cumpre vira assunto da reunião.",
+    "cotas": [
+      { "patente": "membro", "missoesDeGrupo": 2, "minutosDePlantao": 30, "recursos": [{ "recurso": "comida", "quantidade": 10 }], "sugestao": true },
+      { "patente": "militante", "missoesDeGrupo": 3, "minutosDePlantao": 60, "recursos": [{ "recurso": "comida", "quantidade": 15 }, { "recurso": "pecas", "quantidade": 5 }], "sugestao": true },
+      { "patente": "conselheiro", "missoesDeGrupo": 4, "minutosDePlantao": 90, "recursos": [{ "recurso": "comida", "quantidade": 20 }, { "recurso": "pecas", "quantidade": 10 }], "sugestao": true },
+      { "patente": "comissario", "missoesDeGrupo": 1, "minutosDePlantao": 0, "recursos": [], "sugestao": true }
+    ],
+    "cumpriu": {
+      "reputacao": 150,
+      "semente": 80,
+      "descricao": "Reputação e Semente no fim do ciclo; a reputação é o que faz subir de patente.",
+      "sugestaoCampos": ["reputacao", "semente"]
+    },
+    "naoCumpriu": {
+      "reputacao": -50,
+      "descricao": "Seu nome entra na pauta da próxima reunião, e a Guarda Comunitária passa na sua casa só para saber se está tudo bem.",
+      "sugestao": true
+    },
+    "cooperativas": "Cooperativa é um grupo de jogadores que soma as cotas: a cota do grupo é a soma das individuais, e todos cumprem ou ninguém cumpre.",
+    "sugestaoCampos": ["cooperativas"]
+  },
+  "trabalhoDireita": {
+    "bico": {
+      "descricao": "Bico por aplicativo: entregas e tarefas curtas no mapa da Direita, com a fatia do aplicativo descontada. O colaborador que paga para trabalhar.",
+      "pagamentoMin": 20,
+      "pagamentoMax": 60,
+      "taxaAppPct": 20,
+      "sugestaoCampos": ["pagamentoMin", "pagamentoMax", "taxaAppPct"]
+    },
+    "metas": {
+      "descricao": "Cada patente tem uma meta por ciclo. Bater a meta dá reputação, Crédito e score.",
+      "porPatente": [
+        { "patente": "colaborador", "bicos": 5, "missoesDeGrupo": 2, "creditosMovimentados": 300, "sugestao": true },
+        { "patente": "parceiro", "bicos": 8, "missoesDeGrupo": 3, "creditosMovimentados": 800, "sugestao": true },
+        { "patente": "gerente", "bicos": 10, "missoesDeGrupo": 4, "creditosMovimentados": 2000, "sugestao": true },
+        { "patente": "diretor", "bicos": 0, "missoesDeGrupo": 0, "creditosMovimentados": 10000, "sugestao": true }
+      ],
+      "bateu": { "reputacao": 150, "credito": 100, "score": 25, "sugestao": true },
+      "naoBateu": {
+        "reputacao": -50,
+        "descricao": "Feedback construtivo do seu gerente de IA e um convite para o workshop de resiliência (pago).",
+        "sugestao": true
+      }
+    }
+  },
+  "empresa": {
+    "side": "direita",
+    "descricao": "Qualquer jogador pode abrir um negócio (gerador, loja, oficina) e lucrar com ele. O Consórcio cobra taxa de tudo e oferece crédito com juros.",
+    "negocios": [
+      { "id": "gerador", "name": "Gerador", "custoAbertura": 3000, "lucroPorCicloMin": 150, "lucroPorCicloMax": 400, "estrutura": "gerador_a_chopindita", "efeito": "Vende energia para a região; muita energia, mais poluição.", "sugestaoCampos": ["custoAbertura", "lucroPorCicloMin", "lucroPorCicloMax", "estrutura"] },
+      { "id": "loja", "name": "Loja", "custoAbertura": 1500, "lucroPorCicloMin": 80, "lucroPorCicloMax": 250, "efeito": "Vitrine no shopping: anúncios do dono sem limite e destaque no app.", "sugestaoCampos": ["custoAbertura", "lucroPorCicloMin", "lucroPorCicloMax", "efeito"] },
+      { "id": "oficina", "name": "Oficina", "custoAbertura": 2000, "lucroPorCicloMin": 100, "lucroPorCicloMax": 300, "efeito": "Calibração 10% mais barata para quem calibra ali; o dono fica com uma parte.", "sugestaoCampos": ["custoAbertura", "lucroPorCicloMin", "lucroPorCicloMax", "efeito"] }
+    ],
+    "taxaConsorcioPct": 15,
+    "credito": {
+      "descricao": "Crédito para abrir ou tocar o negócio, com juros pela faixa de score.",
+      "limitePorPontoDeScore": 10,
+      "parcelasMax": 52,
+      "juros": "Juros por ciclo conforme a faixa de score (score.faixas[].jurosPctCiclo).",
+      "sugestao": true
+    },
+    "patenteMin": "gerente",
+    "foraDoPiloto": true,
+    "sugestaoCampos": ["taxaConsorcioPct", "patenteMin", "foraDoPiloto"]
+  },
+  "saude": {
+    "descricao": "Esquerda: posto da Curandeira, grátis e demorado. Direita: planos Bronze, Prata e Ouro, rápido para quem paga.",
+    "atendimento": {
+      "descricao": "Um atendimento enche a vida e tira o Abatido, que o jogador ganha ao voltar ao QG depois de morrer.",
+      "curaVidaPct": 100,
+      "removeAbatido": true,
+      "abatido": { "duracaoMin": 10, "atributosPct": -10 },
+      "sugestao": true
+    },
+    "posto": {
+      "id": "posto_da_curandeira",
+      "name": "Posto da Curandeira",
+      "side": "esquerda",
+      "preco": 0,
+      "esperaBaseS": 60,
+      "esperaPorPessoaS": 15,
+      "esperaMaxS": 300,
+      "atalhos": "A missão Fila do Posto consegue atendimento com lábia, troca ou atalho. Dá para sair e voltar sem perder o lugar.",
+      "sugestaoCampos": ["esperaBaseS", "esperaPorPessoaS", "esperaMaxS", "atalhos"]
+    },
+    "clinica": {
+      "id": "clinica_premium",
+      "name": "Clínica Premium",
+      "side": "direita",
+      "consultaAvulsa": 60,
+      "esperaSemPlanoS": 120,
+      "planos": [
+        { "id": "bronze", "name": "Plano Bronze", "precoPorCiclo": 40, "esperaS": 45, "consultasPorCiclo": 2, "extras": [], "patenteMin": "colaborador", "piada": "Cobre tudo, menos o que você tiver.", "sugestaoCampos": ["precoPorCiclo", "esperaS", "consultasPorCiclo", "extras", "patenteMin", "piada"] },
+        { "id": "prata", "name": "Plano Prata", "precoPorCiclo": 100, "esperaS": 15, "consultasPorCiclo": 5, "extras": ["Sala de espera com ar filtrado"], "patenteMin": "parceiro", "sugestaoCampos": ["precoPorCiclo", "esperaS", "consultasPorCiclo", "extras", "patenteMin"] },
+        { "id": "ouro", "name": "Plano Ouro", "precoPorCiclo": 250, "esperaS": 0, "consultasPorCiclo": 0, "extras": ["Atendimento em casa", "+10% de vida máxima por 10 min depois da consulta"], "patenteMin": "gerente", "piada": "O médico vai até você. O boleto também.", "sugestaoCampos": ["precoPorCiclo", "esperaS", "consultasPorCiclo", "extras", "patenteMin", "piada"] }
+      ],
+      "sugestaoCampos": ["consultaAvulsa", "esperaSemPlanoS"]
+    },
+    "delta": "No Delta, a fila do posto e o boleto chegam do mesmo jeito: o posto da palafita é grátis, tem fila e entrega um boleto de lembrança.",
+    "sugestaoCampos": ["delta"]
+  }
+}

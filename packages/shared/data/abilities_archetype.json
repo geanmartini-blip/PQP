@@ -1,0 +1,890 @@
+[
+  {
+    "id": "segura_o_peao",
+    "name": "Segura o Peão",
+    "ownerKey": "peao_brabo",
+    "slot": "marca_1",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2.5,
+    "cooldownS": 14,
+    "cost": 20,
+    "effects": [
+      { "kind": "controle", "cc": "provocar", "duracaoMs": 4000, "target": "inimigos_area" },
+      { "kind": "reducao_dano", "pct": 30, "duracaoMs": 4000, "target": "self" }
+    ],
+    "description": "Provoca os inimigos perto por 4 s e ganha 30% de redução de dano.",
+    "visual": { "esquerda": "Peito estufado com uma seta piscando \"VEM NI MIM\"." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "effects.reducao_dano.duracaoMs"]
+  },
+  {
+    "id": "rodeio",
+    "name": "Rodeio",
+    "ownerKey": "peao_brabo",
+    "slot": "marca_2",
+    "type": "travada",
+    "range": 4,
+    "radius": 0,
+    "cooldownS": 12,
+    "cost": 20,
+    "effects": [
+      { "kind": "avanco", "ate": "alvo", "salto": true },
+      { "kind": "controle", "cc": "atordoar", "duracaoMs": 1500, "target": "alvo" },
+      { "kind": "empurrar", "tiles": 2, "radius": 2, "target": "inimigos_area" }
+    ],
+    "description": "Pula no alvo, atordoa 1,5 s e empurra quem estiver em volta.",
+    "visual": { "esquerda": "Montado no inimigo, em rodeio, com o laço benzido girando." },
+    "sugestaoCampos": ["range", "cooldownS", "cost", "effects.empurrar.tiles", "effects.empurrar.radius"]
+  },
+  {
+    "id": "respiracao",
+    "name": "Respiração",
+    "ownerKey": "iogue_furioso",
+    "slot": "marca_1",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2.5,
+    "cooldownS": 14,
+    "cost": 15,
+    "effects": [
+      { "kind": "cura", "pctVidaMax": 15, "target": "self" },
+      { "kind": "lentidao", "pct": 30, "duracaoMs": 3000, "target": "inimigos_area" }
+    ],
+    "description": "Cura 15% da vida e deixa os inimigos perto lentos por 3 s.",
+    "visual": { "esquerda": "Lótus flutuando com aura azul." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "effects.lentidao.pct"]
+  },
+  {
+    "id": "fim_da_paz",
+    "name": "Fim da Paz",
+    "ownerKey": "iogue_furioso",
+    "slot": "marca_2",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 18,
+    "cost": 30,
+    "effects": [
+      { "kind": "transformar", "duracaoMs": 8000, "basico": { "type": "cone", "mult": 1.3, "raio": 2, "anguloGraus": 120 }, "target": "self" }
+    ],
+    "description": "Vira tigre por 8 s, e o ataque básico vira garrada em cone.",
+    "visual": { "esquerda": "Meio virado, com um braço de tigre e o resto ainda zen; depois o tigre inteiro, ainda de coque." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "effects.transformar.basico.mult", "effects.transformar.basico.raio", "effects.transformar.basico.anguloGraus"]
+  },
+  {
+    "id": "as_barricadas",
+    "name": "Às Barricadas!",
+    "ownerKey": "cidadao_revolucionario",
+    "slot": "marca_1",
+    "type": "campo",
+    "range": 3,
+    "radius": 3,
+    "cooldownS": 16,
+    "cost": 25,
+    "effects": [
+      { "kind": "invocar", "invocacao": "barricada", "duracaoMs": 8000, "max": 1 }
+    ],
+    "description": "Barricada por 8 s; aliados perto dela ganham +20% de dano e defesa.",
+    "visual": { "esquerda": "Em cima de uma barricada de cadeiras de bistrô, com a xícara de café erguida." },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost"]
+  },
+  {
+    "id": "greve_geral",
+    "name": "Greve Geral",
+    "ownerKey": "cidadao_revolucionario",
+    "slot": "marca_2",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 16,
+    "cost": 25,
+    "effects": [
+      { "kind": "controle", "cc": "atordoar", "duracaoMs": 1500, "target": "inimigos_area" }
+    ],
+    "description": "Atordoa os inimigos perto por 1,5 s.",
+    "visual": { "esquerda": "Fincando a placa GREVE no chão." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost"]
+  },
+  {
+    "id": "voce_esta_muito_magro",
+    "name": "Você Está Muito Magro!",
+    "ownerKey": "babushka",
+    "slot": "marca_1",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2.5,
+    "cooldownS": 14,
+    "cost": 20,
+    "effects": [
+      { "kind": "controle", "cc": "provocar", "duracaoMs": 4000, "target": "inimigos_area" },
+      { "kind": "reforco", "stat": "defense", "pct": 30, "duracaoMs": 4000, "target": "self" }
+    ],
+    "description": "Provoca os inimigos perto por 4 s e ganha defesa.",
+    "visual": { "esquerda": "Oferecendo um prato de sopa ao inimigo." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "effects.reforco.pct", "effects.reforco.duracaoMs"]
+  },
+  {
+    "id": "xale_de_la",
+    "name": "Xale de Lã",
+    "ownerKey": "babushka",
+    "slot": "marca_2",
+    "type": "campo",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 16,
+    "cost": 25,
+    "effects": [
+      {
+        "kind": "campo",
+        "duracaoMs": 5000,
+        "tickMs": 500,
+        "segueLancador": true,
+        "efeitos": [
+          { "kind": "escudo", "pctVidaMax": 15, "duracaoMs": 1000, "seguraProjeteis": true, "target": "aliados_area" }
+        ]
+      }
+    ],
+    "description": "Escudo que segura projéteis para quem está perto por 5 s.",
+    "visual": { "esquerda": "Xale de Lã aberto como escudo gigante." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "effects.campo.tickMs", "effects.campo.segueLancador", "effects.campo.efeitos.escudo.pctVidaMax"]
+  },
+  {
+    "id": "tiro_girando",
+    "name": "Tiro Girando",
+    "ownerKey": "arqueiro_das_estepes",
+    "slot": "marca_1",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3.5,
+    "cooldownS": 8,
+    "cost": 20,
+    "effects": [
+      { "kind": "dano", "mult": 1.2, "target": "inimigos_area" }
+    ],
+    "description": "Flechas em todos os inimigos em volta.",
+    "visual": { "esquerda": "Tiro girando, com linhas de movimento." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "effects.dano.mult"]
+  },
+  {
+    "id": "galope",
+    "name": "Galope",
+    "ownerKey": "arqueiro_das_estepes",
+    "slot": "marca_2",
+    "type": "travada",
+    "range": 7,
+    "radius": 0,
+    "cooldownS": 12,
+    "cost": 20,
+    "effects": [
+      { "kind": "avanco", "ate": "alvo" },
+      { "kind": "dano", "mult": 0.6, "hits": 3, "target": "alvo" }
+    ],
+    "description": "Avança até o alvo e solta 3 flechas teleguiadas.",
+    "visual": { "esquerda": "Galope no pônei-espírito, com os pés arrastando no chão." },
+    "sugestaoCampos": ["range", "cooldownS", "cost", "effects.dano.mult"]
+  },
+  {
+    "id": "crikey",
+    "name": "Crikey!",
+    "ownerKey": "cacador_de_crocodilo",
+    "slot": "marca_1",
+    "type": "travada",
+    "range": 4,
+    "radius": 0,
+    "cooldownS": 12,
+    "cost": 15,
+    "effects": [
+      { "kind": "marca", "danoRecebidoPct": 15, "duracaoMs": 8000, "target": "alvo" }
+    ],
+    "description": "Marca o alvo por 8 s, e o grupo causa +15% de dano nele.",
+    "visual": { "esquerda": "Apontando com os olhos brilhando e o balão \"Crikey!\"." },
+    "sugestaoCampos": ["range", "cooldownS", "cost"]
+  },
+  {
+    "id": "armadilha_de_laco",
+    "name": "Armadilha de Laço",
+    "ownerKey": "cacador_de_crocodilo",
+    "slot": "marca_2",
+    "type": "area_alvo",
+    "range": 4,
+    "radius": 2,
+    "cooldownS": 14,
+    "cost": 20,
+    "effects": [
+      { "kind": "controle", "cc": "prender", "duracaoMs": 1500, "target": "inimigos_area" }
+    ],
+    "description": "Prende os inimigos na área por 1,5 s.",
+    "visual": { "esquerda": "Armando o laço." },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost"]
+  },
+  {
+    "id": "circulo_de_pedras",
+    "name": "Círculo de Pedras",
+    "ownerKey": "druida_rabugento",
+    "slot": "marca_1",
+    "type": "campo",
+    "range": 3,
+    "radius": 2.5,
+    "cooldownS": 18,
+    "cost": 30,
+    "effects": [
+      { "kind": "invocar", "invocacao": "circulo_de_pedras", "duracaoMs": 10000, "max": 1 }
+    ],
+    "description": "Totem que vira muralha e provoca os inimigos perto.",
+    "visual": { "esquerda": "Fincando um menir-totem." },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost", "effects.invocar.duracaoMs"]
+  },
+  {
+    "id": "sai_do_meu_gramado",
+    "name": "Sai do Meu Gramado",
+    "ownerKey": "druida_rabugento",
+    "slot": "marca_2",
+    "type": "cone",
+    "range": 3,
+    "radius": 0,
+    "angleDeg": 90,
+    "cooldownS": 10,
+    "cost": 15,
+    "effects": [
+      { "kind": "empurrar", "tiles": 3, "target": "inimigos_area" }
+    ],
+    "description": "Empurra os inimigos para longe.",
+    "visual": { "esquerda": "Apontando bravo, com um \"!\" em cima da cabeça." },
+    "sugestaoCampos": ["range", "angleDeg", "cooldownS", "cost", "effects.empurrar.tiles"]
+  },
+  {
+    "id": "skal",
+    "name": "Skål!",
+    "ownerKey": "bruxa_do_trovao",
+    "slot": "marca_1",
+    "type": "travada",
+    "range": 4,
+    "radius": 0,
+    "cooldownS": 7,
+    "cost": 20,
+    "effects": [
+      { "kind": "dano", "mult": 1.5, "salto": { "saltos": 2, "alcance": 3, "quedaPct": 20 }, "target": "alvo" }
+    ],
+    "description": "Raio que salta para mais 2 inimigos.",
+    "visual": { "esquerda": "Brinde que faz cair um raio." },
+    "sugestaoCampos": ["range", "cooldownS", "cost", "effects.dano.mult", "effects.dano.salto.alcance", "effects.dano.salto.quedaPct"]
+  },
+  {
+    "id": "fim_de_festa",
+    "name": "Fim de Festa",
+    "ownerKey": "bruxa_do_trovao",
+    "slot": "marca_2",
+    "type": "area_alvo",
+    "range": 4,
+    "radius": 3,
+    "cooldownS": 14,
+    "cost": 30,
+    "effects": [
+      {
+        "kind": "campo",
+        "duracaoMs": 4000,
+        "tickMs": 500,
+        "efeitos": [
+          { "kind": "dano", "mult": 0.3, "target": "inimigos_area" }
+        ]
+      }
+    ],
+    "description": "Tempestade em área por 4 s.",
+    "visual": { "esquerda": "Fim de Festa, com tempestade e confete." },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost", "effects.campo.tickMs", "effects.campo.efeitos.dano.mult"]
+  },
+  {
+    "id": "agua_da_nascente",
+    "name": "Água da Nascente",
+    "ownerKey": "curandeira_dos_andes",
+    "slot": "marca_1",
+    "type": "campo",
+    "range": 4,
+    "radius": 2.5,
+    "cooldownS": 14,
+    "cost": 25,
+    "effects": [
+      {
+        "kind": "campo",
+        "duracaoMs": 5000,
+        "tickMs": 1000,
+        "efeitos": [
+          { "kind": "cura", "pctVidaMax": 4, "target": "aliados_area" }
+        ]
+      }
+    ],
+    "description": "Poça que cura quem estiver em cima por 5 s.",
+    "visual": { "esquerda": "Balde de Água da Nascente." },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost", "effects.campo.tickMs", "effects.campo.efeitos.cura.pctVidaMax"]
+  },
+  {
+    "id": "lhama_cuspidora",
+    "name": "Lhama Cuspidora",
+    "ownerKey": "curandeira_dos_andes",
+    "slot": "marca_2",
+    "type": "campo",
+    "range": 3,
+    "radius": 2,
+    "cooldownS": 18,
+    "cost": 30,
+    "effects": [
+      { "kind": "invocar", "invocacao": "lhama_cuspidora", "duracaoMs": 12000, "max": 1 }
+    ],
+    "description": "Totem de lhama que cura o aliado mais ferido e cospe no inimigo mais perto.",
+    "visual": { "esquerda": "Lhama cuspindo num inimigo." },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost", "effects.invocar.duracaoMs"]
+  },
+  {
+    "id": "la_mascara_no_cae",
+    "name": "La Máscara No Cae",
+    "ownerKey": "luchador_sagrado",
+    "slot": "marca_1",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 14,
+    "cost": 20,
+    "effects": [
+      { "kind": "escudo", "pctVidaMax": 25, "duracaoMs": 5000, "target": "self" }
+    ],
+    "description": "Escudo de 25% da vida por 5 s.",
+    "visual": { "esquerda": "Segurando a máscara com as duas mãos para não cair." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost"]
+  },
+  {
+    "id": "voadora",
+    "name": "Voadora",
+    "ownerKey": "luchador_sagrado",
+    "slot": "marca_2",
+    "type": "travada",
+    "range": 4,
+    "radius": 0,
+    "cooldownS": 12,
+    "cost": 20,
+    "effects": [
+      { "kind": "avanco", "ate": "alvo", "salto": true },
+      { "kind": "controle", "cc": "atordoar", "duracaoMs": 1000, "radius": 2, "target": "inimigos_area" }
+    ],
+    "description": "Salta no alvo e atordoa os inimigos em volta por 1 s.",
+    "visual": { "esquerda": "Voadora." },
+    "sugestaoCampos": ["range", "cooldownS", "cost", "effects.controle.radius"]
+  },
+  {
+    "id": "aria_amaldicoada",
+    "name": "Ária Amaldiçoada",
+    "ownerKey": "diva_da_opera",
+    "slot": "marca_1",
+    "type": "area_alvo",
+    "range": 4,
+    "radius": 2.5,
+    "cooldownS": 12,
+    "cost": 25,
+    "effects": [
+      {
+        "kind": "campo",
+        "duracaoMs": 5000,
+        "tickMs": 1000,
+        "efeitos": [
+          { "kind": "dano", "mult": 0.45, "target": "inimigos_area" }
+        ]
+      }
+    ],
+    "description": "Dano contínuo em área por 5 s.",
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost", "effects.campo.tickMs", "effects.campo.efeitos.dano.mult"]
+  },
+  {
+    "id": "nota_aguda",
+    "name": "Nota Aguda",
+    "ownerKey": "diva_da_opera",
+    "slot": "marca_2",
+    "type": "travada",
+    "range": 4,
+    "radius": 0,
+    "cooldownS": 10,
+    "cost": 25,
+    "effects": [
+      { "kind": "dano", "mult": 2.2, "target": "alvo" },
+      { "kind": "marca", "danoRecebidoPct": 25, "duracaoMs": 4000, "target": "alvo" }
+    ],
+    "description": "Dano forte, e o alvo recebe +25% de dano do grupo por 4 s.",
+    "visual": { "esquerda": "Nota aguda com ondas e vidro estilhaçando." },
+    "sugestaoCampos": ["range", "cooldownS", "cost", "effects.dano.mult"]
+  },
+  {
+    "id": "rasteira",
+    "name": "Rasteira",
+    "ownerKey": "malandro",
+    "slot": "marca_1",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2.5,
+    "cooldownS": 14,
+    "cost": 20,
+    "effects": [
+      { "kind": "controle", "cc": "derrubar", "duracaoMs": 1500, "target": "inimigos_area" },
+      { "kind": "derrubar_moeda", "quantidade": 2, "target": "inimigos_area" }
+    ],
+    "description": "Os inimigos perto caem por 1,5 s e deixam cair Semente.",
+    "visual": { "esquerda": "Dando uma rasteira e catando a Semente que cai." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "effects.derrubar_moeda.quantidade"]
+  },
+  {
+    "id": "gingado",
+    "name": "Gingado",
+    "ownerKey": "malandro",
+    "slot": "marca_2",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 16,
+    "cost": 20,
+    "effects": [
+      { "kind": "reforco", "stat": "speed", "pct": 25, "duracaoMs": 6000, "target": "aliados_area" }
+    ],
+    "description": "O grupo perto ganha +25% de velocidade por 6 s.",
+    "visual": { "esquerda": "Gingado." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost"]
+  },
+  {
+    "id": "barriga_hidraulica",
+    "name": "Barriga Hidráulica",
+    "ownerKey": "sumo_cibernetico",
+    "slot": "marca_1",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 14,
+    "cost": 20,
+    "effects": [
+      { "kind": "devolver_dano", "pct": 30, "duracaoMs": 6000, "target": "self" }
+    ],
+    "description": "Devolve 30% do dano recebido por 6 s.",
+    "visual": { "direita": "Pisada de sumô com vapor saindo dos pistões." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost"]
+  },
+  {
+    "id": "empurrao",
+    "name": "Empurrão",
+    "ownerKey": "sumo_cibernetico",
+    "slot": "marca_2",
+    "type": "cone",
+    "range": 3,
+    "radius": 0,
+    "angleDeg": 90,
+    "cooldownS": 10,
+    "cost": 15,
+    "effects": [
+      { "kind": "empurrar", "tiles": 3, "target": "inimigos_area" }
+    ],
+    "description": "Joga para trás os inimigos da frente.",
+    "visual": { "direita": "Barrigada." },
+    "sugestaoCampos": ["range", "angleDeg", "cooldownS", "cost", "effects.empurrar.tiles"]
+  },
+  {
+    "id": "invasao_de_campo",
+    "name": "Invasão de Campo",
+    "ownerKey": "o_fiel",
+    "slot": "marca_1",
+    "type": "travada",
+    "range": 5,
+    "radius": 0,
+    "cooldownS": 10,
+    "cost": 20,
+    "effects": [
+      { "kind": "avanco", "ate": "alvo", "bateNoCaminho": true },
+      { "kind": "dano", "mult": 1.4, "target": "inimigos_caminho" }
+    ],
+    "description": "Avança até o alvo batendo em quem estiver no caminho.",
+    "visual": { "direita": "Invasão de Campo, correndo." },
+    "sugestaoCampos": ["range", "cooldownS", "cost", "effects.dano.mult"]
+  },
+  {
+    "id": "sinalizador",
+    "name": "Sinalizador",
+    "ownerKey": "o_fiel",
+    "slot": "marca_2",
+    "type": "cone",
+    "range": 3,
+    "radius": 0,
+    "angleDeg": 60,
+    "cooldownS": 12,
+    "cost": 25,
+    "effects": [
+      {
+        "kind": "campo",
+        "duracaoMs": 3000,
+        "tickMs": 500,
+        "segueLancador": true,
+        "efeitos": [
+          { "kind": "dano", "mult": 0.35, "target": "inimigos_area" }
+        ]
+      }
+    ],
+    "description": "Fogo em cone por 3 s.",
+    "visual": { "direita": "Sinalizador na mão." },
+    "sugestaoCampos": ["range", "angleDeg", "cooldownS", "cost", "effects.campo.tickMs", "effects.campo.segueLancador", "effects.campo.efeitos.dano.mult"]
+  },
+  {
+    "id": "bora_monstro",
+    "name": "Bora, Monstro!",
+    "ownerKey": "monstro_da_academia",
+    "slot": "marca_1",
+    "type": "aliado",
+    "range": 4,
+    "radius": 0,
+    "cooldownS": 16,
+    "cost": 20,
+    "effects": [
+      { "kind": "reforco", "stat": "attackSpeed", "pct": 40, "duracaoMs": 5000, "target": "aliado_mais_perto" },
+      { "kind": "reforco", "stat": "cooldownSpeed", "pct": 40, "duracaoMs": 5000, "target": "aliado_mais_perto" },
+      { "kind": "reforco", "stat": "attackSpeed", "pct": 40, "duracaoMs": 5000, "target": "self" },
+      { "kind": "reforco", "stat": "cooldownSpeed", "pct": 40, "duracaoMs": 5000, "target": "self" }
+    ],
+    "description": "O aliado mais perto e você ganham +40% de velocidade de ataque e recarga por 5 s.",
+    "visual": { "direita": "Grito de \"BORA\" com corações." },
+    "sugestaoCampos": ["range", "cooldownS", "cost"]
+  },
+  {
+    "id": "live_motivacional",
+    "name": "Live Motivacional",
+    "ownerKey": "monstro_da_academia",
+    "slot": "marca_2",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 18,
+    "cost": 25,
+    "effects": [
+      {
+        "kind": "campo",
+        "duracaoMs": 8000,
+        "tickMs": 500,
+        "segueLancador": true,
+        "efeitos": [
+          { "kind": "reforco", "stat": "damage", "pct": 15, "duracaoMs": 1000, "target": "aliados_area" }
+        ]
+      }
+    ],
+    "description": "Aura de +15% de dano no grupo perto por 8 s.",
+    "visual": { "direita": "Selfie no meio da luta, com a live ligada e o contador de curtidas subindo." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "effects.campo.tickMs"]
+  },
+  {
+    "id": "nome_na_lista",
+    "name": "Nome na Lista?",
+    "ownerKey": "tropa_de_choque",
+    "slot": "marca_1",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2.5,
+    "cooldownS": 14,
+    "cost": 20,
+    "effects": [
+      { "kind": "controle", "cc": "provocar", "duracaoMs": 4000, "target": "inimigos_area" }
+    ],
+    "description": "Provoca os inimigos perto por 4 s.",
+    "visual": { "direita": "Conferindo a lista na prancheta." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost"]
+  },
+  {
+    "id": "cordao_de_isolamento",
+    "name": "Cordão de Isolamento",
+    "ownerKey": "tropa_de_choque",
+    "slot": "marca_2",
+    "type": "campo",
+    "range": 4,
+    "radius": 2.5,
+    "cooldownS": 14,
+    "cost": 20,
+    "effects": [
+      {
+        "kind": "campo",
+        "duracaoMs": 6000,
+        "tickMs": 500,
+        "efeitos": [
+          { "kind": "lentidao", "pct": 40, "duracaoMs": 1000, "target": "inimigos_area" }
+        ]
+      }
+    ],
+    "description": "Faixa no chão que deixa os inimigos lentos.",
+    "visual": { "direita": "Cordão de isolamento de veludo vermelho, de balada." },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost", "effects.campo.duracaoMs", "effects.campo.tickMs", "effects.campo.efeitos.lentidao.pct"]
+  },
+  {
+    "id": "yeehaw_exe",
+    "name": "Yeehaw.exe",
+    "ownerKey": "cowboy_cromado",
+    "slot": "marca_1",
+    "type": "travada",
+    "range": 7,
+    "radius": 0,
+    "cooldownS": 10,
+    "cost": 25,
+    "castMs": 500,
+    "effects": [
+      { "kind": "dano", "mult": 2.6, "perfura": true, "target": "inimigos_caminho" }
+    ],
+    "description": "Tiro de 0,5 s de carga que atravessa e acerta quem estiver atrás.",
+    "visual": { "direita": "Saque rápido." },
+    "sugestaoCampos": ["range", "cooldownS", "cost", "effects.dano.mult"]
+  },
+  {
+    "id": "duelo_ao_meio_dia",
+    "name": "Duelo ao Meio-Dia",
+    "ownerKey": "cowboy_cromado",
+    "slot": "marca_2",
+    "type": "travada",
+    "range": 7,
+    "radius": 0,
+    "cooldownS": 16,
+    "cost": 20,
+    "effects": [
+      { "kind": "marca", "danoRecebidoPct": 100, "duracaoMs": 6000, "soDoLancador": true, "target": "alvo" }
+    ],
+    "description": "Marca o alvo; por 6 s, dano dobrado contra ele.",
+    "visual": { "direita": "Duelo ao meio-dia com uma planta seca de holograma rolando." },
+    "sugestaoCampos": ["range", "cooldownS", "cost", "effects.marca.soDoLancador"]
+  },
+  {
+    "id": "corta",
+    "name": "Corta!",
+    "ownerKey": "diretor_de_nollywood",
+    "slot": "marca_1",
+    "type": "area_alvo",
+    "range": 4,
+    "radius": 2.5,
+    "cooldownS": 14,
+    "cost": 20,
+    "effects": [
+      { "kind": "controle", "cc": "cegar", "duracaoMs": 1500, "target": "inimigos_area" }
+    ],
+    "description": "Flash que cega os inimigos por 1,5 s.",
+    "visual": { "direita": "\"Corta!\" com flash." },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost"]
+  },
+  {
+    "id": "plano_sequencia",
+    "name": "Plano-Sequência",
+    "ownerKey": "diretor_de_nollywood",
+    "slot": "marca_2",
+    "type": "travada",
+    "range": 4,
+    "radius": 0,
+    "cooldownS": 12,
+    "cost": 15,
+    "effects": [
+      { "kind": "marca", "danoRecebidoPct": 20, "duracaoMs": 8000, "target": "alvo" }
+    ],
+    "description": "Marca o alvo por 8 s, e o grupo causa +20% de dano nele.",
+    "visual": { "direita": "Filmando o inimigo de perto." },
+    "sugestaoCampos": ["range", "cooldownS", "cost"]
+  },
+  {
+    "id": "funciona_nao_pergunta",
+    "name": "Funciona, Não Pergunta",
+    "ownerKey": "engenheira_de_gambiarra",
+    "slot": "marca_1",
+    "type": "campo",
+    "range": 3,
+    "radius": 2,
+    "cooldownS": 16,
+    "cost": 25,
+    "effects": [
+      { "kind": "invocar", "invocacao": "barreira_de_sucata", "duracaoMs": 12000, "max": 1 }
+    ],
+    "description": "Barreira de sucata que se refaz.",
+    "visual": { "direita": "Levantando a barreira de sucata." },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost", "effects.invocar.duracaoMs"]
+  },
+  {
+    "id": "robo_geladeira",
+    "name": "Robô-Geladeira",
+    "ownerKey": "engenheira_de_gambiarra",
+    "slot": "marca_2",
+    "type": "campo",
+    "range": 3,
+    "radius": 2,
+    "cooldownS": 18,
+    "cost": 30,
+    "effects": [
+      { "kind": "invocar", "invocacao": "robo_geladeira", "duracaoMs": 12000, "max": 1 }
+    ],
+    "description": "Robô que segura a frente e provoca os inimigos perto.",
+    "visual": { "direita": "Robô-geladeira abrindo a porta, com luz saindo." },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost", "effects.invocar.duracaoMs"]
+  },
+  {
+    "id": "experimento_instavel",
+    "name": "Experimento Instável",
+    "ownerKey": "doktor_klaus",
+    "slot": "marca_1",
+    "type": "travada",
+    "range": 4,
+    "radius": 0,
+    "cooldownS": 7,
+    "cost": 20,
+    "effects": [
+      { "kind": "dano", "mult": 1.5, "salto": { "saltos": 2, "alcance": 3, "quedaPct": 20 }, "target": "alvo" }
+    ],
+    "description": "Raio que salta para mais 2 inimigos.",
+    "visual": { "direita": "Raio em cadeia." },
+    "sugestaoCampos": ["range", "cooldownS", "cost", "effects.dano.mult", "effects.dano.salto.alcance", "effects.dano.salto.quedaPct"]
+  },
+  {
+    "id": "fur_wissenschaft",
+    "name": "Für Wissenschaft!",
+    "ownerKey": "doktor_klaus",
+    "slot": "marca_2",
+    "type": "area_alvo",
+    "range": 4,
+    "radius": 3,
+    "cooldownS": 16,
+    "cost": 35,
+    "effects": [
+      { "kind": "dano", "mult": 3.2, "culatra": { "chance": 0.15, "mult": 1 }, "target": "inimigos_area" }
+    ],
+    "description": "Explosão enorme, com 15% de chance de sair pela culatra.",
+    "visual": { "direita": "Experimento explodindo, com o cabelo pegando fogo." },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost", "effects.dano.mult", "effects.dano.culatra.mult"]
+  },
+  {
+    "id": "vibracoes_positivas",
+    "name": "Vibrações Positivas",
+    "ownerKey": "coach_de_bem_estar",
+    "slot": "marca_1",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 10,
+    "cost": 25,
+    "effects": [
+      { "kind": "cura", "pctVidaMax": 12, "target": "aliados_area" }
+    ],
+    "description": "Cura o grupo perto.",
+    "visual": { "direita": "Cura com coração rosa." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "effects.cura.pctVidaMax"]
+  },
+  {
+    "id": "detox",
+    "name": "Detox",
+    "ownerKey": "coach_de_bem_estar",
+    "slot": "marca_2",
+    "type": "aliado",
+    "range": 4,
+    "radius": 0,
+    "cooldownS": 12,
+    "cost": 20,
+    "effects": [
+      { "kind": "limpar", "target": "aliado_menos_vida" },
+      { "kind": "escudo", "pctVidaMax": 15, "duracaoMs": 5000, "target": "aliado_menos_vida" }
+    ],
+    "description": "Limpa os efeitos ruins do aliado mais ferido e dá escudo.",
+    "visual": { "direita": "Pose de yoga com nanobots." },
+    "sugestaoCampos": ["range", "cooldownS", "cost", "effects.escudo.pctVidaMax", "effects.escudo.duracaoMs"]
+  },
+  {
+    "id": "aguarde_na_linha",
+    "name": "Aguarde na Linha",
+    "ownerKey": "atendente_imortal",
+    "slot": "marca_1",
+    "type": "travada",
+    "range": 4,
+    "radius": 0,
+    "cooldownS": 12,
+    "cost": 20,
+    "effects": [
+      { "kind": "controle", "cc": "prender", "duracaoMs": 2000, "target": "alvo" }
+    ],
+    "description": "Prende o alvo por 2 s, com uma barra de carregamento em 99%.",
+    "visual": { "direita": "Barra de carregamento travada em 99% em cima do inimigo." },
+    "sugestaoCampos": ["range", "cooldownS", "cost"]
+  },
+  {
+    "id": "protocolo",
+    "name": "Protocolo",
+    "ownerKey": "atendente_imortal",
+    "slot": "marca_2",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 15,
+    "cost": 25,
+    "effects": [
+      { "kind": "escudo", "pctVidaMax": 30, "duracaoMs": 5000, "devolvePct": 20, "target": "self" }
+    ],
+    "description": "Escudo de 30% da vida que devolve 20% do dano bloqueado.",
+    "visual": { "direita": "Escudo holográfico \"AGUARDE\" erguido." },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "effects.escudo.duracaoMs"]
+  },
+  {
+    "id": "virus_em_rede",
+    "name": "Vírus em Rede",
+    "ownerKey": "hacker_da_aldeia",
+    "slot": "marca_1",
+    "type": "area_alvo",
+    "range": 4,
+    "radius": 2.5,
+    "cooldownS": 12,
+    "cost": 25,
+    "effects": [
+      { "kind": "dano_continuo", "multPorTick": 0.3, "tickMs": 1000, "duracaoMs": 5000, "pulaEntreProximos": true, "pulaAlcance": 3, "target": "inimigos_area" }
+    ],
+    "description": "Dano contínuo que pula entre inimigos próximos.",
+    "visual": { "direita": "Vírus em forma de insetos de pixel." },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost", "effects.dano_continuo.multPorTick", "effects.dano_continuo.tickMs", "effects.dano_continuo.duracaoMs", "effects.dano_continuo.pulaAlcance"]
+  },
+  {
+    "id": "derrubada",
+    "name": "Derrubada",
+    "ownerKey": "hacker_da_aldeia",
+    "slot": "marca_2",
+    "type": "travada",
+    "range": 4,
+    "radius": 0,
+    "cooldownS": 12,
+    "cost": 25,
+    "effects": [
+      { "kind": "dano", "mult": 2.3, "target": "alvo" },
+      { "kind": "explode_ao_morrer", "mult": 1.2, "raio": 2.5, "janelaMs": 3000, "target": "alvo" }
+    ],
+    "description": "Dano forte; se o alvo cair, ele explode em área.",
+    "visual": { "direita": "Digitando com código verde subindo; servidor de bilionário pegando fogo ao fundo." },
+    "sugestaoCampos": ["range", "cooldownS", "cost", "effects.dano.mult", "effects.explode_ao_morrer"]
+  },
+  {
+    "id": "fanchant",
+    "name": "Fanchant",
+    "ownerKey": "idol",
+    "slot": "marca_1",
+    "type": "cone",
+    "range": 4,
+    "radius": 0,
+    "angleDeg": 90,
+    "cooldownS": 12,
+    "cost": 20,
+    "effects": [
+      { "kind": "empurrar", "tiles": 2, "target": "inimigos_area" },
+      { "kind": "reforco", "stat": "speed", "pct": 25, "duracaoMs": 5000, "radius": 4, "target": "aliados_area" }
+    ],
+    "description": "Ondas sonoras que empurram os inimigos e dão +25% de velocidade aos aliados.",
+    "visual": { "direita": "Fanchant com corações e ondas sonoras." },
+    "sugestaoCampos": ["range", "angleDeg", "cooldownS", "cost", "effects.empurrar.tiles", "effects.reforco.duracaoMs", "effects.reforco.radius"]
+  },
+  {
+    "id": "encore",
+    "name": "Encore",
+    "ownerKey": "idol",
+    "slot": "marca_2",
+    "type": "area_alvo",
+    "range": 4,
+    "radius": 3,
+    "cooldownS": 16,
+    "cost": 30,
+    "effects": [
+      { "kind": "puxar", "paraCentro": true, "duracaoMs": 2000, "target": "inimigos_area" }
+    ],
+    "description": "Palco holográfico que puxa os inimigos para o centro por 2 s.",
+    "visual": { "direita": "Encore puxando os inimigos para o palco, com chuva de confete." },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost"]
+  }
+]

@@ -1,0 +1,226 @@
+[
+  {
+    "id": "totem_ou_robo",
+    "name": "Totem ou Robô",
+    "nomePorMargem": { "esquerda": "Totem", "direita": "Robô" },
+    "hpPct": 25,
+    "attackMult": 0.5,
+    "behavior": "ataca_mais_perto",
+    "range": 4,
+    "radius": 0,
+    "tickMs": 1200,
+    "effects": [],
+    "destructible": true,
+    "description": "Invocação da habilidade Totem ou Robô do Elemental: ataca sozinho o inimigo mais perto por 15 s; até 2; pode ser destruído.",
+    "visual": {
+      "esquerda": "Totem de madeira entalhada com olhos de espírito acesos.",
+      "direita": "Robô de sucata com uma antena torta e um olho de LED."
+    },
+    "sugestaoCampos": ["hpPct", "attackMult", "range", "tickMs", "visual"]
+  },
+  {
+    "id": "barricada",
+    "name": "Barricada",
+    "hpPct": 40,
+    "attackMult": 0,
+    "behavior": "muralha",
+    "range": 0,
+    "radius": 3,
+    "tickMs": 1000,
+    "effects": [
+      { "kind": "reforco", "stat": "damage", "pct": 20, "duracaoMs": 1500, "target": "aliados_area" },
+      { "kind": "reforco", "stat": "defense", "pct": 20, "duracaoMs": 1500, "target": "aliados_area" }
+    ],
+    "destructible": true,
+    "description": "Barricada do Às Barricadas! (Cidadão Revolucionário): segura a passagem por 8 s, e os aliados perto dela ganham +20% de dano e defesa.",
+    "visual": { "esquerda": "Barricada de cadeiras de bistrô empilhadas, com a placa GREVE." },
+    "sugestaoCampos": ["hpPct", "radius", "tickMs"]
+  },
+  {
+    "id": "barricada_gigante",
+    "name": "Barricada Gigante",
+    "hpPct": 100,
+    "attackMult": 0,
+    "behavior": "muralha",
+    "range": 0,
+    "radius": 5,
+    "tickMs": 1000,
+    "effects": [
+      { "kind": "puxar", "tiles": 1, "paraCentro": true, "duracaoMs": 1000, "target": "inimigos_area" },
+      { "kind": "reforco", "stat": "damage", "pct": 20, "duracaoMs": 1500, "radius": 3, "target": "aliados_area" },
+      { "kind": "reforco", "stat": "defense", "pct": 20, "duracaoMs": 1500, "radius": 3, "target": "aliados_area" }
+    ],
+    "destructible": true,
+    "description": "Barricada da Revolução Permanente: fica 20 s e puxa os inimigos para ela.",
+    "visual": { "esquerda": "Barricada gigante de móveis da praça inteira, com a lista de reivindicações pendurada." },
+    "sugestaoCampos": ["hpPct", "radius", "tickMs", "effects.puxar.tiles", "effects.reforco", "visual"]
+  },
+  {
+    "id": "circulo_de_pedras",
+    "name": "Círculo de Pedras",
+    "hpPct": 50,
+    "attackMult": 0,
+    "behavior": "muralha",
+    "range": 0,
+    "radius": 3,
+    "tickMs": 4000,
+    "effects": [
+      { "kind": "controle", "cc": "provocar", "duracaoMs": 2000, "target": "inimigos_area" }
+    ],
+    "destructible": true,
+    "description": "Totem do Druida Rabugento que vira muralha e provoca os inimigos perto.",
+    "visual": { "esquerda": "Menir-totem num círculo de pedras com musgo." },
+    "sugestaoCampos": ["hpPct", "radius", "tickMs", "effects.controle.duracaoMs"]
+  },
+  {
+    "id": "barreira_de_sucata",
+    "name": "Barreira de Sucata",
+    "hpPct": 40,
+    "attackMult": 0,
+    "behavior": "muralha",
+    "range": 0,
+    "radius": 0,
+    "effects": [],
+    "destructible": true,
+    "rebuildMs": 4000,
+    "description": "Barreira do Funciona, Não Pergunta (Engenheira de Gambiarra): segura passagem e projéteis e se refaz depois de destruída.",
+    "visual": { "direita": "Geladeira velha, ventilador e fita prata, com o lacre \"GARANTIA VIOLADA\"." },
+    "sugestaoCampos": ["hpPct", "rebuildMs"]
+  },
+  {
+    "id": "robo_geladeira",
+    "name": "Robô-Geladeira",
+    "hpPct": 60,
+    "attackMult": 0.3,
+    "behavior": "provoca",
+    "range": 1,
+    "radius": 3,
+    "tickMs": 4000,
+    "effects": [
+      { "kind": "controle", "cc": "provocar", "duracaoMs": 2000, "target": "inimigos_area" }
+    ],
+    "destructible": true,
+    "description": "Robô da Engenheira de Gambiarra que segura a frente e provoca os inimigos perto.",
+    "visual": { "direita": "Robô feito de geladeira com rodinhas de skate, abrindo a porta com luz saindo." },
+    "sugestaoCampos": ["hpPct", "attackMult", "range", "radius", "tickMs", "effects.controle.duracaoMs"]
+  },
+  {
+    "id": "lhama_cuspidora",
+    "name": "Lhama Cuspidora",
+    "hpPct": 20,
+    "attackMult": 0.6,
+    "behavior": "cura_menos_vida",
+    "range": 4,
+    "radius": 0,
+    "tickMs": 1500,
+    "effects": [
+      { "kind": "cura", "pctVidaMax": 4, "target": "aliado_menos_vida" },
+      { "kind": "dano", "mult": 1, "target": "inimigo_mais_perto" }
+    ],
+    "destructible": true,
+    "description": "Totem de lhama da Curandeira dos Andes: cura o aliado mais ferido e cospe no inimigo mais perto.",
+    "visual": { "esquerda": "Totem de lhama de madeira cuspindo num inimigo." },
+    "sugestaoCampos": ["hpPct", "attackMult", "range", "tickMs", "effects.cura.pctVidaMax", "effects.dano.mult"]
+  },
+  {
+    "id": "copia_do_sumico",
+    "name": "Cópia",
+    "hpPct": 30,
+    "attackMult": 0,
+    "behavior": "provoca",
+    "range": 0,
+    "radius": 3,
+    "tickMs": 2000,
+    "effects": [
+      { "kind": "controle", "cc": "provocar", "duracaoMs": 2000, "target": "inimigos_area" }
+    ],
+    "destructible": true,
+    "duracaoMs": 3000,
+    "description": "Cópia deixada pelo Sumiço do Mascarado: provoca os inimigos perto enquanto o dono está invisível.",
+    "visual": {
+      "esquerda": "Máscara vazia de pé, imitando o dono.",
+      "direita": "Holograma do dono, com um glitch de vez em quando."
+    },
+    "sugestaoCampos": ["hpPct", "radius", "tickMs", "duracaoMs", "effects.controle.duracaoMs", "visual"]
+  },
+  {
+    "id": "crocodilo_espirito",
+    "name": "Crocodilo-Espírito",
+    "hpPct": 80,
+    "attackMult": 1,
+    "behavior": "luta_ao_lado",
+    "range": 1,
+    "radius": 0,
+    "tickMs": 1000,
+    "effects": [],
+    "destructible": true,
+    "description": "O Bicho Grande do Caçador de Crocodilo: luta do lado dele por 20 s.",
+    "visual": { "esquerda": "Crocodilo-espírito translúcido e verde, que morde o chapéu do dono quando está à toa." },
+    "sugestaoCampos": ["hpPct", "attackMult", "tickMs", "visual"]
+  },
+  {
+    "id": "esquadrao_da_pm",
+    "name": "Esquadrão de IA da PM",
+    "hpPct": 30,
+    "attackMult": 0.4,
+    "behavior": "luta_ao_lado",
+    "range": 4,
+    "radius": 0,
+    "tickMs": 1000,
+    "effects": [],
+    "destructible": true,
+    "duracaoMs": 15000,
+    "description": "Um soldado do esquadrão de IA do talento Reforço Tático (PM do Consórcio): luta do seu lado por 15 s. A quantidade vem do efeito 'invocar' do talento.",
+    "visual": { "direita": "Soldado terceirizado com farda \"PROTEÇÃO PREMIUM\" e a câmera corporal apagada." },
+    "sugestaoCampos": ["hpPct", "attackMult", "range", "tickMs"]
+  },
+  {
+    "id": "raposa_ilusao",
+    "name": "Raposa-Ilusão",
+    "hpPct": 15,
+    "attackMult": 0,
+    "behavior": "distrai",
+    "range": 0,
+    "radius": 3,
+    "effects": [],
+    "destructible": true,
+    "duracaoMs": 3000,
+    "description": "Raposa-ilusão da Kitsune: distrai os inimigos perto por 3 s.",
+    "visual": { "esquerda": "Raposa translúcida de fogo-fátuo, com várias caudas." },
+    "sugestaoCampos": ["hpPct", "radius", "visual"]
+  },
+  {
+    "id": "holograma_de_crise",
+    "name": "Holograma da Assessoria de Crise",
+    "hpPct": 25,
+    "attackMult": 0,
+    "behavior": "absorve",
+    "range": 0,
+    "radius": 0,
+    "effects": [],
+    "destructible": true,
+    "rebuildMs": 10000,
+    "description": "Holograma do talento Assessoria de Crise (Agência Neon): recebe metade de cada crítico que o dono toma; quando quebra, volta depois de um tempo.",
+    "visual": { "direita": "Holograma de assessor de terno lendo uma nota oficial." },
+    "sugestaoCampos": ["hpPct", "rebuildMs", "visual"]
+  },
+  {
+    "id": "manifestacao_do_guia",
+    "name": "Manifestação do Guia",
+    "hpPct": 60,
+    "attackMult": 0.6,
+    "behavior": "luta_ao_lado",
+    "range": 2,
+    "radius": 0,
+    "tickMs": 1000,
+    "effects": [],
+    "destructible": true,
+    "duracaoMs": 15000,
+    "description": "O guia do talento Manifestação (nível 55): a cada 2 minutos aparece e luta do seu lado por 15 s.",
+    "visual": {
+      "esquerda": "O espírito guia em tamanho real, translúcido e brilhando no tom do Encanto.",
+      "direita": "A IA de bolso projetada como holograma de corpo inteiro, com marca d'água de versão de teste."
+    },
+    "sugestaoCampos": ["hpPct", "attackMult", "range", "tickMs", "visual"]
+  }
+]

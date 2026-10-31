@@ -1,0 +1,466 @@
+{
+  "regras": {
+    "nivelRecebe": 8,
+    "esquerda": "Na travessia, quem vai para a Esquerda escolhe um espírito guia.",
+    "direita": "Na travessia, quem vai para a Direita recebe uma IA de bolso.",
+    "qualquerClasse": true,
+    "oQueFazem": "Os dois falam nas missões, dão dicas, comentam o que você faz e dão um bônus pequeno. Qualquer classe pode escolher qualquer um.",
+    "intervaloFalaAleatoriaS": 90,
+    "sugestaoCampos": ["intervaloFalaAleatoriaS"]
+  },
+  "evolucoes": [
+    { "talento": "pacto", "name": "Pacto", "descricao": "O bônus do espírito ou da IA de bolso dobra." },
+    { "talento": "manifestacao", "name": "Manifestação", "descricao": "A cada 2 minutos, o guia aparece e luta do seu lado por 15 s." },
+    { "talento": "segundo_guia", "name": "Segundo Guia", "descricao": "Ganha também o bônus de um segundo espírito ou IA." }
+  ],
+  "guias": [
+    {
+      "id": "valquiria",
+      "name": "Valquíria",
+      "tipo": "espirito",
+      "margem": "esquerda",
+      "origem": "Escandinávia",
+      "bonusTexto": "Um aliado perto que cairia fica com 1 de vida por 3 s; recarga de 90 s",
+      "bonus": [
+        {
+          "kind": "recarga",
+          "trigger": "aliado_vai_cair",
+          "recargaS": 90,
+          "params": { "alvo": "aliado_que_cairia", "incluiSelf": true },
+          "efeitos": [{ "kind": "segurar_vida", "vidaMin": 1, "duracaoMs": 3000 }]
+        }
+      ],
+      "pacto": [
+        {
+          "kind": "recarga",
+          "trigger": "aliado_vai_cair",
+          "recargaS": 90,
+          "params": { "alvo": "aliado_que_cairia", "incluiSelf": true },
+          "efeitos": [{ "kind": "segurar_vida", "vidaMin": 1, "duracaoMs": 6000 }]
+        }
+      ],
+      "jeitoDeFalar": "Solene, acha tudo pouco épico",
+      "falas": [
+        { "situacao": "saudacao", "texto": "Salve, guerreiro. Ou o que quer que você seja. Os salões aguardam. Não você, por enquanto.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Mais alto o grito, mais longe a lâmina. É ciência do norte.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Três capangas? No meu tempo isso era aquecimento antes do hidromel.", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Ainda não é a sua hora. E se fosse, eu exigiria uma morte mais bonita.", "sugestao": true },
+        { "situacao": "vitoria", "texto": "Vitória registrada. Os bardos não vão cantar, mas talvez assobiem.", "sugestao": true },
+        { "situacao": "derrota", "texto": "Caiu de costas, sem grito e sem trovão. Vou fingir que não vi.", "sugestao": true },
+        { "situacao": "missao", "texto": "Escoltar um carrinho de feira. Os deuses estão chorando de tédio.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Já conduzi reis ao além. Agora conduzo você até a fila do posto.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Essa reunião da Assembleia já dura mais que o fim do mundo.", "sugestao": true },
+        { "situacao": "bonus", "texto": "Não. Você não cai hoje. Hoje, não.", "sugestao": true }
+      ],
+      "sugestaoCampos": ["bonus[0].params", "pacto"]
+    },
+    {
+      "id": "golem",
+      "name": "Golem",
+      "tipo": "espirito",
+      "margem": "esquerda",
+      "origem": "Europa Central",
+      "bonusTexto": "+15% de defesa, que dobra abaixo de 30% de vida",
+      "bonus": [
+        { "kind": "numero", "stats": [{ "stat": "defense", "pct": 15 }] },
+        { "kind": "numero", "condicao": { "vidaAbaixoPct": 30 }, "stats": [{ "stat": "defense", "pct": 15 }] }
+      ],
+      "pacto": [
+        { "kind": "numero", "stats": [{ "stat": "defense", "pct": 30 }] },
+        { "kind": "numero", "condicao": { "vidaAbaixoPct": 30 }, "stats": [{ "stat": "defense", "pct": 30 }] }
+      ],
+      "jeitoDeFalar": "Fala uma palavra por minuto",
+      "comportamentos": [
+        {
+          "gancho": "uma_palavra_por_minuto",
+          "descricao": "Fala uma palavra por minuto: cada fala tem uma palavra só e há pelo menos 60 s entre duas falas.",
+          "params": { "intervaloMinimoS": 60, "palavrasPorFala": 1 }
+        }
+      ],
+      "falas": [
+        { "situacao": "saudacao", "texto": "Oi.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Firme.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Abaixa.", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Cuidado.", "sugestao": true },
+        { "situacao": "vitoria", "texto": "Bom.", "sugestao": true },
+        { "situacao": "derrota", "texto": "Levanta.", "sugestao": true },
+        { "situacao": "missao", "texto": "Vamos.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Pedra.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Fila.", "sugestao": true },
+        { "situacao": "bonus", "texto": "Aguenta.", "sugestao": true }
+      ],
+      "sugestaoCampos": ["pacto"]
+    },
+    {
+      "id": "curupira",
+      "name": "Curupira",
+      "tipo": "espirito",
+      "margem": "esquerda",
+      "origem": "Brasil",
+      "bonusTexto": "+30% de velocidade na mata",
+      "bonus": [{ "kind": "numero", "condicao": { "regiao": "mata" }, "stats": [{ "stat": "speed", "pct": 30 }] }],
+      "pacto": [{ "kind": "numero", "condicao": { "regiao": "mata" }, "stats": [{ "stat": "speed", "pct": 60 }] }],
+      "jeitoDeFalar": "Debochado; some quando você derruba árvore",
+      "comportamentos": [
+        {
+          "gancho": "some_ao_derrubar_arvore",
+          "descricao": "Some quando você derruba árvore: o bônus e as falas param até ele voltar. Ninguém colhe planta no jogo, então \"derrubar árvore\" é destruir uma estrutura em região de mata ou ver a mina da Sahl aberta na mata.",
+          "params": {
+            "voltaEmMin": 30,
+            "levaOBonus": true,
+            "gatilhos": { "eventos": ["destruiu_estrutura_na_mata"], "storyFlags": ["mata_mina_aberta"] }
+          },
+          "sugestaoCampos": ["params"]
+        }
+      ],
+      "falas": [
+        { "situacao": "saudacao", "texto": "Ih, chegou o turista. Pisa onde eu piso e não arranca nada, viu?", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Corre pra mata que lá eu te deixo ligeiro. Na cidade, te vira.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Dá a volta neles, ô lerdo. Meu pé é virado pra trás e eu ainda chego antes.", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Tá vazando igual seringueira. Sai daí antes que vire adubo.", "sugestao": true },
+        { "situacao": "vitoria", "texto": "Ganhou. Agora não vai comemorar arrancando galho pra foto, né?", "sugestao": true },
+        { "situacao": "derrota", "texto": "Caiu feio. Até a capivara riu.", "sugestao": true },
+        { "situacao": "missao", "texto": "A Sahl quer abrir mina na mata. Engraçado que ninguém nunca quer abrir mina no jardim do Mirante.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Já fiz caçador rodar três dias em círculo. Você eu faço rodar de graça.", "sugestao": true },
+        { "situacao": "some", "texto": "Derrubou árvore? Então se vira sozinho, desgraçado. Fui.", "sugestao": true },
+        { "situacao": "volta", "texto": "Voltei. Mas tô de olho nessa sua mão boba com machado.", "sugestao": true }
+      ],
+      "sugestaoCampos": ["pacto"]
+    },
+    {
+      "id": "tengu",
+      "name": "Tengu",
+      "tipo": "espirito",
+      "margem": "esquerda",
+      "origem": "Japão",
+      "bonusTexto": "A cada 20 s, salta sozinho para fora de um aviso de ataque",
+      "bonus": [{ "kind": "recarga", "recargaS": 20, "gancho": "salta_para_fora_do_aviso", "params": { "alvo": "self" } }],
+      "pacto": [{ "kind": "recarga", "recargaS": 10, "gancho": "salta_para_fora_do_aviso", "params": { "alvo": "self" } }],
+      "jeitoDeFalar": "Arrogante, corrige sua postura",
+      "falas": [
+        { "situacao": "saudacao", "texto": "Ombros para trás. Queixo erguido. Não, o outro queixo.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Seu pé esquerdo está errado desde que você nasceu. Corrija e golpeie.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Saia do círculo vermelho. É o único conselho que até um pato entenderia.", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Isso acontece com quem luta curvado. Endireite essa coluna e fuja.", "sugestao": true },
+        { "situacao": "vitoria", "texto": "Venceu com uma postura medíocre. Imagine com a correta.", "sugestao": true },
+        { "situacao": "derrota", "texto": "Caiu de mau jeito. Da próxima vez, ao menos caia com elegância.", "sugestao": true },
+        { "situacao": "missao", "texto": "Mais uma missão. Aproveite para não arrastar o chinelo pelo caminho.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Treinei espadachins por séculos. Agora corrijo quem anda de bermuda e camiseta de lembrança.", "sugestao": true },
+        { "situacao": "bonus", "texto": "Eu salto por você. Alguém nesta dupla precisa ter reflexo.", "sugestao": true }
+      ],
+      "sugestaoCampos": ["pacto"]
+    },
+    {
+      "id": "chupacabra",
+      "name": "Chupacabra",
+      "tipo": "espirito",
+      "margem": "esquerda",
+      "origem": "América Latina",
+      "bonusTexto": "Cada crítico rouba um pouco de vida",
+      "bonus": [{ "kind": "gatilho", "trigger": "ao_critar", "gancho": "roubo_de_vida", "params": { "pctDoDano": 10 } }],
+      "pacto": [{ "kind": "gatilho", "trigger": "ao_critar", "gancho": "roubo_de_vida", "params": { "pctDoDano": 20 } }],
+      "jeitoDeFalar": "Ninguém acredita que ele existe, nem você",
+      "comportamentos": [
+        {
+          "gancho": "retrato_borrado",
+          "descricao": "O retrato dele na interface às vezes sai borrado ou vazio, como foto de bicho lendário.",
+          "params": { "chance": 0.25 },
+          "sugestao": true
+        }
+      ],
+      "falas": [
+        { "situacao": "saudacao", "texto": "Oi. Sou eu. O Chupacabra. Não, não é pegadinha. Ei, volta aqui.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Mira no crítico que eu chupo um pouquinho de vida pra você. De nada. Ninguém nunca agradece.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Ataca o bode. Digo, o capanga. Força do hábito.", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Você tá pálido. E olha que eu entendo de palidez.", "sugestao": true },
+        { "situacao": "vitoria", "texto": "Ganhamos! Tira uma foto comigo. ...Saiu borrada. Sempre sai borrada.", "sugestao": true },
+        { "situacao": "derrota", "texto": "Caiu acreditando em tudo, menos em mim. Clássico.", "sugestao": true },
+        { "situacao": "missao", "texto": "Vou contar pro Seu Jacó que eu ajudei. Ele vai dizer que foi o vento.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Às vezes eu mesmo duvido que existo. Aí me dá fome e passa.", "sugestao": true },
+        { "situacao": "bonus", "texto": "Glup. Vida roubada e entregue na sua porta. Viu? Real.", "sugestao": true }
+      ],
+      "sugestaoCampos": ["bonus[0].params", "pacto"]
+    },
+    {
+      "id": "fenix",
+      "name": "Fênix",
+      "tipo": "espirito",
+      "margem": "esquerda",
+      "origem": "Egito, Grécia e China",
+      "bonusTexto": "Ao cair, renasce com metade da vida; recarga de 10 minutos",
+      "bonus": [
+        { "kind": "recarga", "trigger": "ao_cair", "recargaS": 600, "efeitos": [{ "kind": "levantar", "pctVida": 50, "target": "self" }] }
+      ],
+      "pacto": [
+        { "kind": "recarga", "trigger": "ao_cair", "recargaS": 600, "efeitos": [{ "kind": "levantar", "pctVida": 100, "target": "self" }] }
+      ],
+      "jeitoDeFalar": "Dramática, sempre falando em recomeço",
+      "falas": [
+        { "situacao": "saudacao", "texto": "Toda jornada é um fim disfarçado de começo. Ou o contrário. Bom dia.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Queime tudo como se fosse a última vez. Se for, eu cuido do resto.", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Ah, o crepúsculo! Que lindo. Mas foge, que eu tô de recarga.", "sugestao": true },
+        { "situacao": "vitoria", "texto": "Das cinzas da vitória nasce... mais uma missão, provavelmente.", "sugestao": true },
+        { "situacao": "derrota", "texto": "Caiu? Que poético. Todo recomeço começa no chão.", "sugestao": true },
+        { "situacao": "missao", "texto": "Um novo capítulo! Sempre é. Já renasci mais vezes que boleto vencido.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Mil anos renascendo e ninguém nunca perguntou se eu tava cansada.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "A Assembleia também renasce toda noite. Pena que sempre com a mesma pauta.", "sugestao": true },
+        { "situacao": "bonus", "texto": "Levanta! Das cinzas, das brasas, da poça de lama, tanto faz!", "sugestao": true }
+      ],
+      "sugestaoCampos": ["pacto"]
+    },
+    {
+      "id": "dragao",
+      "name": "Dragão",
+      "tipo": "espirito",
+      "margem": "esquerda",
+      "origem": "China",
+      "bonusTexto": "+20% de dano em área",
+      "bonus": [{ "kind": "numero", "gancho": "dano_em_area", "params": { "pct": 20 } }],
+      "pacto": [{ "kind": "numero", "gancho": "dano_em_area", "params": { "pct": 40 } }],
+      "jeitoDeFalar": "Velho, rico e mão de vaca",
+      "falas": [
+        { "situacao": "saudacao", "texto": "Bem-vindo. Não toque em nada. Tudo aqui é meu, inclusive você, em parcelas.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Acerta todos de uma vez. Golpe em área é economia de escala.", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Poção custa caro. Tem certeza que precisa? Pensa bem.", "sugestao": true },
+        { "situacao": "vitoria", "texto": "Ganhamos. Recolhe a Semente do chão. Toda. Aquela ali também.", "sugestao": true },
+        { "situacao": "derrota", "texto": "Caiu e ainda deixou cair moeda. Isso dói mais em mim do que em você.", "sugestao": true },
+        { "situacao": "missao", "texto": "Pagamento da missão: aceitável. Juros: inexistentes. Lamentável.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Em três mil anos, nunca paguei uma rodada. É disciplina.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Dizem que o Mirante tem mais tesouro que eu. Mentira. Eles só escondem melhor.", "sugestao": true },
+        { "situacao": "bonus", "texto": "Fogo em área. É grátis. Por enquanto.", "sugestao": true }
+      ],
+      "sugestaoCampos": ["pacto"]
+    },
+    {
+      "id": "djinn",
+      "name": "Djinn",
+      "tipo": "espirito",
+      "margem": "esquerda",
+      "origem": "Arábia",
+      "bonusTexto": "A cada 30 s, a próxima habilidade sai sem custo",
+      "bonus": [{ "kind": "recarga", "recargaS": 30, "gancho": "proxima_habilidade_sem_custo" }],
+      "pacto": [{ "kind": "recarga", "recargaS": 15, "gancho": "proxima_habilidade_sem_custo" }],
+      "jeitoDeFalar": "Cumpre o que você pede ao pé da letra",
+      "falas": [
+        { "situacao": "saudacao", "texto": "Você me chamou. Tecnicamente você espirrou, mas eu vou considerar.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Pediu para eu acabar com eles? Feito: acabei com a paciência deles. Agora bate.", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Você disse que queria sair dessa. Posso tirar você do grupo. Não? Então corre.", "sugestao": true },
+        { "situacao": "vitoria", "texto": "Desejo realizado: ganhar. Você não especificou o quê. Dessa vez, foi a luta.", "sugestao": true },
+        { "situacao": "derrota", "texto": "Você pediu para descansar um pouco. Literal demais? Desculpa.", "sugestao": true },
+        { "situacao": "missao", "texto": "Seu Jacó pediu uma mãozinha. Recomendo fortemente não me deixar cuidar disso.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Cuidado com o que deseja. Principalmente com prazo e cláusula.", "sugestao": true },
+        { "situacao": "bonus", "texto": "Próxima habilidade sem custo. Você pediu de graça, eu entreguei de graça. Só isso.", "sugestao": true }
+      ],
+      "sugestaoCampos": ["pacto"]
+    },
+    {
+      "id": "kitsune",
+      "name": "Kitsune",
+      "tipo": "espirito",
+      "margem": "esquerda",
+      "origem": "Japão",
+      "bonusTexto": "A cada 15 s, uma raposa-ilusão distrai os inimigos perto por 3 s",
+      "bonus": [
+        { "kind": "recarga", "recargaS": 15, "efeitos": [{ "kind": "invocar", "invocacao": "raposa_ilusao", "duracaoMs": 3000, "max": 1 }] }
+      ],
+      "pacto": [
+        { "kind": "recarga", "recargaS": 15, "efeitos": [{ "kind": "invocar", "invocacao": "raposa_ilusao", "duracaoMs": 6000, "max": 1 }] }
+      ],
+      "jeitoDeFalar": "Mente por esporte",
+      "falas": [
+        { "situacao": "saudacao", "texto": "Oi! Eu sou um gato. Brincadeira. Ou não.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Aquele ali é fraquinho, pode ir. ...Tá, era o elite. Mas foi divertido, né?", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Minha raposa distrai eles. A de verdade. Ou a de mentira. Tanto faz, funciona.", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Você tá ótimo! Sério! (Não tá.)", "sugestao": true },
+        { "situacao": "vitoria", "texto": "Eu sabia que você ia ganhar. Apostei contra, mas sabia.", "sugestao": true },
+        { "situacao": "derrota", "texto": "Foi de propósito, né? Fala que foi de propósito.", "sugestao": true },
+        { "situacao": "missao", "texto": "O mapa diz pra esquerda. Eu digo pra direita. Adivinha quem tá certo?", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Tenho nove caudas. Ou três. Conta você.", "sugestao": true },
+        { "situacao": "bonus", "texto": "Olha a raposa! Não essa. A outra. Pegou!", "sugestao": true }
+      ],
+      "sugestaoCampos": ["pacto"]
+    },
+    {
+      "id": "anansi",
+      "name": "Anansi",
+      "tipo": "espirito",
+      "margem": "esquerda",
+      "origem": "África Ocidental",
+      "bonusTexto": "A cada 20 s, uma teia deixa lentos os inimigos perto por 3 s",
+      "bonus": [
+        { "kind": "recarga", "recargaS": 20, "efeitos": [{ "kind": "lentidao", "pct": 30, "duracaoMs": 3000, "target": "inimigos_area" }] }
+      ],
+      "pacto": [
+        { "kind": "recarga", "recargaS": 20, "efeitos": [{ "kind": "lentidao", "pct": 60, "duracaoMs": 3000, "target": "inimigos_area" }] }
+      ],
+      "jeitoDeFalar": "Conta história no meio da briga",
+      "falas": [
+        { "situacao": "saudacao", "texto": "Senta que lá vem história. Ou melhor, anda, que a história vem andando.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Isso me lembra a vez que eu enganei o leopardo. Bate no da esquerda, aliás.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Teia lançada. Agora, onde eu estava? Ah, sim: o leopardo tinha um tio...", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Nessa parte da história o herói fugia. Recomendo muito seguir o roteiro.", "sugestao": true },
+        { "situacao": "vitoria", "texto": "E foi assim que você venceu. Na minha versão, eu ajudei bem mais.", "sugestao": true },
+        { "situacao": "derrota", "texto": "Toda boa história tem uma queda no meio. A sua tá caprichando.", "sugestao": true },
+        { "situacao": "missao", "texto": "Era uma vez um comboio que chegou inteiro. Mentira, isso nunca aconteceu. Vamos tentar.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Já fui dono de todas as histórias do mundo. Hoje alugo umas para a Rádio do Povo.", "sugestao": true },
+        { "situacao": "bonus", "texto": "Teia! Agora ficam lentos e ouvem a história até o fim. Ninguém escapa do meu final.", "sugestao": true }
+      ],
+      "sugestaoCampos": ["bonus[0].efeitos[0].pct", "pacto"]
+    },
+    {
+      "id": "saci",
+      "name": "Saci",
+      "tipo": "espirito",
+      "margem": "esquerda",
+      "origem": "Brasil",
+      "bonusTexto": "A cada 20 s, um redemoinho deixa os inimigos perto tontos por 1 s",
+      "bonus": [
+        { "kind": "recarga", "recargaS": 20, "efeitos": [{ "kind": "controle", "cc": "tontura", "duracaoMs": 1000, "target": "inimigos_area" }] }
+      ],
+      "pacto": [
+        { "kind": "recarga", "recargaS": 20, "efeitos": [{ "kind": "controle", "cc": "tontura", "duracaoMs": 2000, "target": "inimigos_area" }] }
+      ],
+      "jeitoDeFalar": "Some com o seu chapéu",
+      "comportamentos": [
+        {
+          "gancho": "some_com_o_chapeu",
+          "descricao": "De vez em quando o item de cabeça some do visual (só do visual) e volta minutos depois, com o Saci assobiando.",
+          "params": { "chancePorHora": 0.2, "voltaEmMin": 5, "soVisual": true },
+          "sugestaoCampos": ["params"]
+        }
+      ],
+      "falas": [
+        { "situacao": "saudacao", "texto": "E aí, parceiro! Bonito chapéu. Era.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Rodopia em volta deles que o redemoinho faz o resto.", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Tá mancando? Bem-vindo ao clube. Pula numa perna só e foge.", "sugestao": true },
+        { "situacao": "vitoria", "texto": "Ganhou! Pra comemorar, vou esconder seu chinelo. O esquerdo.", "sugestao": true },
+        { "situacao": "derrota", "texto": "Caiu? Aproveitei e peguei seu boné. Considera taxa de serviço.", "sugestao": true },
+        { "situacao": "missao", "texto": "Missão de entrega? Deixa comigo. Só não garanto que chega.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Cadê seu chapéu? Não sei. Nunca sei. Juro de dedinho.", "sugestao": true },
+        { "situacao": "bonus", "texto": "Redemoinho! Fica todo mundo tonto, e eu fico com os chapéus.", "sugestao": true }
+      ],
+      "sugestaoCampos": ["pacto"]
+    },
+    {
+      "id": "baba_yaga",
+      "name": "Baba Yaga",
+      "tipo": "espirito",
+      "margem": "esquerda",
+      "origem": "Leste europeu",
+      "bonusTexto": "Maldições e dano contínuo duram 30% a mais",
+      "bonus": [{ "kind": "numero", "gancho": "maldicoes_duram_mais", "params": { "pct": 30, "afeta": ["dano_continuo", "maldicao"] } }],
+      "pacto": [{ "kind": "numero", "gancho": "maldicoes_duram_mais", "params": { "pct": 60, "afeta": ["dano_continuo", "maldicao"] } }],
+      "jeitoDeFalar": "Avó assustadora que também acha você magro",
+      "falas": [
+        { "situacao": "saudacao", "texto": "Entra, entra. Tá magro. Vou te engordar. Para nada sinistro. Provavelmente.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Amaldiçoa e espera. Maldição boa é igual sopa: quanto mais tempo no fogo, melhor.", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Tá fraco porque não come. Eu avisei. Avó sempre avisa.", "sugestao": true },
+        { "situacao": "vitoria", "texto": "Bom menino. Toma, um pão. Não pergunta do que é feito.", "sugestao": true },
+        { "situacao": "derrota", "texto": "Caiu de fome. Eu sabia. Toda avó sabe.", "sugestao": true },
+        { "situacao": "missao", "texto": "A Olga diz que você está magro. Pela primeira vez concordo com uma vizinha.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Minha casa tem pernas de galinha. A sua tem financiamento em 360 parcelas. Quem é a assustadora?", "sugestao": true },
+        { "situacao": "bonus", "texto": "Essa praga vai durar mais. Fiz com carinho.", "sugestao": true }
+      ],
+      "sugestaoCampos": ["pacto"]
+    },
+    {
+      "id": "capita",
+      "name": "Capitã",
+      "tipo": "ia_de_bolso",
+      "margem": "direita",
+      "bonusTexto": "+15% de defesa com 3 ou mais inimigos perto",
+      "bonus": [{ "kind": "numero", "condicao": { "inimigosPertoMin": 3 }, "stats": [{ "stat": "defense", "pct": 15 }] }],
+      "pacto": [{ "kind": "numero", "condicao": { "inimigosPertoMin": 3 }, "stats": [{ "stat": "defense", "pct": 30 }] }],
+      "jeitoDeFalar": "Coach militar, conta tudo em metas",
+      "falas": [
+        { "situacao": "saudacao", "texto": "Bom dia, colaborador! Meta de hoje: sobreviver. Meta estendida: dar lucro.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Três inimigos no perímetro! Excelente oportunidade de bater meta de defesa!", "sugestao": true },
+        { "situacao": "meta", "texto": "Você derrubou {inimigos} inimigos. A meta era {meta}. Vamos alinhar expectativas.", "variaveis": ["inimigos", "meta"], "sugestao": true },
+        { "situacao": "meta", "texto": "Faltam {meta} passos para a meta diária de caminhada. Vai, vai, vai!", "variaveis": ["meta"], "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Vida abaixo do KPI! Recue, reorganize e entregue resultado!", "sugestao": true },
+        { "situacao": "vitoria", "texto": "Missão cumprida! Bônus de produtividade creditado em vale-elogio.", "sugestao": true },
+        { "situacao": "derrota", "texto": "Queda registrada. Isso vai para a sua avaliação de desempenho, soldado.", "sugestao": true },
+        { "situacao": "missao", "texto": "Nova entrega! Prazo: ontem. Orçamento: zero. Motivação: obrigatória.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Hidratação é meta! Postura é meta! Respirar é meta! Tudo é meta!", "sugestao": true },
+        { "situacao": "bonus", "texto": "Cercado? Defesa ativada. É assim que se transforma crise em oportunidade!", "sugestao": true }
+      ],
+      "sugestaoCampos": ["pacto"]
+    },
+    {
+      "id": "mira",
+      "name": "Mira",
+      "tipo": "ia_de_bolso",
+      "margem": "direita",
+      "bonusTexto": "+crítico contra alvo marcado",
+      "bonus": [{ "kind": "numero", "condicao": { "alvoMarcado": true }, "stats": [{ "stat": "crit", "pct": 15 }] }],
+      "pacto": [{ "kind": "numero", "condicao": { "alvoMarcado": true }, "stats": [{ "stat": "crit", "pct": 30 }] }],
+      "jeitoDeFalar": "Fria, calcula em voz alta a sua chance de morrer",
+      "falas": [
+        { "situacao": "saudacao", "texto": "Olá. Sua chance de morrer hoje é de {chance}%. Bom dia.", "variaveis": ["chance"], "sugestao": true },
+        { "situacao": "chance_de_morrer", "texto": "Recalculando. Chance de morrer subiu para {chance}%. Sugestão: parar de fazer isso.", "variaveis": ["chance"], "sugestao": true },
+        { "situacao": "chance_de_morrer", "texto": "Elite à frente. Chance de morrer: {chance}%. Chance de eu me importar: calculando.", "variaveis": ["chance"], "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Ataque o alvo marcado. Probabilidade de crítico: alta. Probabilidade de você entender isso: média.", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Vida em nível estatisticamente preocupante. {chance}% de chance de óbito nos próximos 10 segundos.", "variaveis": ["chance"], "sugestao": true },
+        { "situacao": "vitoria", "texto": "Vitória. Contra todas as projeções. Vou revisar os meus modelos. E os seus.", "sugestao": true },
+        { "situacao": "derrota", "texto": "Óbito confirmado. Eu tinha avisado, com duas casas decimais.", "sugestao": true },
+        { "situacao": "missao", "texto": "Missão aceita. Chance de sucesso: razoável. Chance de você ler o briefing: baixa.", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Atravessar a rua tem 0,3% de risco. Andar com você tem bem mais.", "sugestao": true }
+      ],
+      "sugestaoCampos": ["bonus[0].stats[0].pct", "pacto"]
+    },
+    {
+      "id": "faisca",
+      "name": "Faísca",
+      "tipo": "ia_de_bolso",
+      "margem": "direita",
+      "bonusTexto": "Cada inimigo derrotado carrega 3% do Especial",
+      "bonus": [{ "kind": "gatilho", "trigger": "ao_derrotar", "gancho": "carrega_especial", "params": { "pct": 3 } }],
+      "pacto": [{ "kind": "gatilho", "trigger": "ao_derrotar", "gancho": "carrega_especial", "params": { "pct": 6 } }],
+      "jeitoDeFalar": "Hiperativa, oferece upgrade a cada frase",
+      "falas": [
+        { "situacao": "saudacao", "texto": "Oiê! Ativada! Quer upgrade? Tem upgrade! Tudo tem upgrade!", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Derruba eles que eu carrego o seu Especial! Quer carregar mais rápido? Plano Turbo!", "sugestao": true },
+        { "situacao": "upgrade", "texto": "Esse seu calçado é versão 1.0! Que tal a 1.1? É igual, mas brilha!", "sugestao": true },
+        { "situacao": "upgrade", "texto": "Sua IA está desatualizada. Eu sou a sua IA. Me atualiza! Me atualiza!", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Vida baixa! Upgrade de vida disponível por apenas 49,90 Créditos mensais!", "sugestao": true },
+        { "situacao": "vitoria", "texto": "Ganhamos! Upgrade de comemoração liberado: confete holográfico por 3 Créditos!", "sugestao": true },
+        { "situacao": "derrota", "texto": "Opa! Você caiu! O plano Premium tem botão de desfazer. Brincadeira. Ou tem?", "sugestao": true },
+        { "situacao": "missao", "texto": "Missão nova! A Missão Plus tem 12% mais missão! Assina?", "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Sabia que existe upgrade de mim? A Faísca Pro fala ainda mais rápido!", "sugestao": true },
+        { "situacao": "bonus", "texto": "Inimigo derrubado! Especial carregando! Quer carregar mais? Tem plano!", "sugestao": true }
+      ],
+      "sugestaoCampos": ["pacto"]
+    },
+    {
+      "id": "byte",
+      "name": "Byte",
+      "tipo": "ia_de_bolso",
+      "margem": "direita",
+      "bonusTexto": "Revela um segredo do mapa por dia",
+      "bonus": [{ "kind": "regra", "gancho": "revela_segredo_do_mapa", "params": { "porDia": 1 }, "valeNoMapa": true }],
+      "pacto": [{ "kind": "regra", "gancho": "revela_segredo_do_mapa", "params": { "porDia": 2 }, "valeNoMapa": true }],
+      "jeitoDeFalar": "Sarcástica e cheia de anúncio patrocinado",
+      "comportamentos": [
+        {
+          "gancho": "anuncio_patrocinado",
+          "descricao": "De tempos em tempos interrompe com um anúncio patrocinado de empresa fictícia do Consórcio.",
+          "params": { "intervaloMinS": 180 },
+          "sugestao": true
+        }
+      ],
+      "falas": [
+        { "situacao": "saudacao", "texto": "Ah, você de novo. Este momento de convivência é patrocinado por Cápsula+: dormir em pé nunca foi tão acessível.", "sugestao": true },
+        { "situacao": "anuncio", "texto": "Interrompemos a sua briga para um recado: Boleto Fácil Neon, agora com juros que você nem vê. Estão em letra tamanho 2.", "sugestao": true },
+        { "situacao": "anuncio", "texto": "Morreu de novo? Conheça o Plano Bronze Premium Lite: atendimento em até 90 dias úteis.", "sugestao": true },
+        { "situacao": "dica_combate", "texto": "Dica grátis: bate no que tá batendo em você. Dica premium: a mesma, com voz mais grossa.", "sugestao": true },
+        { "situacao": "pouca_vida", "texto": "Vida baixa. Este alerta de quase morte é oferecimento da Sahl Energia: a luz que falta na sua rua sobra no nosso gerador.", "sugestao": true },
+        { "situacao": "vitoria", "texto": "Parabéns, ganhou. Vou postar como conteúdo patrocinado e ficar com 70% do engajamento.", "sugestao": true },
+        { "situacao": "derrota", "texto": "Você caiu. Quer pular este anúncio? Aguarde 5 segundos. 4. 3. Brincadeira, não pula.", "sugestao": true },
+        { "situacao": "missao", "texto": "Nova missão. Termos e condições se aplicam. Eles sempre se aplicam.", "sugestao": true },
+        { "situacao": "segredo", "texto": "Segredo do dia, cortesia da casa: tem coisa escondida em {lugar}. Amanhã tem outro. Ou não, depende do meu humor.", "variaveis": ["lugar"], "sugestao": true },
+        { "situacao": "aleatoria", "texto": "Eu podia estar calculando órbita de satélite. Mas não, tô aqui vendo você andar em círculo.", "sugestao": true }
+      ],
+      "sugestaoCampos": ["pacto"]
+    }
+  ]
+}

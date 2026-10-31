@@ -1,0 +1,247 @@
+{
+  "ciclo": {
+    "descricao": "Aluguel, parcelas, cotas e despejo contam pelo ciclo da cidade, que é semanal.",
+    "dias": 7,
+    "notaPiloto": "O ciclo semanal está fora do piloto; no piloto, a duração do ciclo vem da configuração do servidor (padrão 7 dias, encurtável para teste).",
+    "sugestaoCampos": ["notaPiloto"]
+  },
+  "tipos": [
+    {
+      "id": "rede_no_galpao",
+      "name": "Rede no galpão do mutirão",
+      "side": "esquerda",
+      "acesso": "provisoria",
+      "tamanho": { "w": 3, "h": 3 },
+      "vendavel": false,
+      "patenteMin": "membro",
+      "bauSlots": 10,
+      "descansoPct": 5,
+      "visitasMax": 2,
+      "moveisMax": 3,
+      "artKey": "moradia/esquerda/rede_no_galpao",
+      "piada": "A rede é sua. O galpão é de todos. O mosquito também.",
+      "sugestao": true
+    },
+    {
+      "id": "casa_da_lista",
+      "name": "Casa da lista da Assembleia",
+      "side": "esquerda",
+      "acesso": "lista_de_espera",
+      "tamanho": { "w": 7, "h": 7 },
+      "vendavel": false,
+      "patenteMin": "membro",
+      "bauSlots": 30,
+      "descansoPct": 10,
+      "visitasMax": 6,
+      "moveisMax": 25,
+      "artKey": "moradia/esquerda/casa_da_lista",
+      "piada": "Saiu a sua casa! Foi aprovada em 14 reuniões e uma ata.",
+      "sugestaoCampos": ["name", "tamanho", "patenteMin", "bauSlots", "descansoPct", "visitasMax", "moveisMax", "artKey", "piada"]
+    },
+    {
+      "id": "casa_de_mutirao",
+      "name": "Casa de mutirão",
+      "side": "esquerda",
+      "acesso": "mutirao",
+      "tamanho": { "w": 9, "h": 8 },
+      "materiais": [
+        { "recurso": "pecas", "quantidade": 30 },
+        { "recurso": "comida", "quantidade": 20 }
+      ],
+      "estrutura": "casa_de_mutirao",
+      "vendavel": false,
+      "patenteMin": "membro",
+      "bauSlots": 40,
+      "descansoPct": 12,
+      "visitasMax": 8,
+      "moveisMax": 35,
+      "artKey": "moradia/esquerda/casa_de_mutirao",
+      "piada": "Cada parede tem a assinatura de um vizinho. Um deles assinou errado.",
+      "sugestaoCampos": ["tamanho", "materiais", "estrutura", "patenteMin", "bauSlots", "descansoPct", "visitasMax", "moveisMax", "artKey", "piada"]
+    },
+    {
+      "id": "casa_de_mutirao_grande",
+      "name": "Casa de mutirão com varanda",
+      "side": "esquerda",
+      "acesso": "mutirao",
+      "tamanho": { "w": 12, "h": 10 },
+      "materiais": [
+        { "recurso": "pecas", "quantidade": 60 },
+        { "recurso": "comida", "quantidade": 40 }
+      ],
+      "vendavel": false,
+      "patenteMin": "conselheiro",
+      "bauSlots": 60,
+      "descansoPct": 15,
+      "visitasMax": 12,
+      "moveisMax": 50,
+      "artKey": "moradia/esquerda/casa_de_mutirao_grande",
+      "piada": "A varanda é para as reuniões que não couberam na Assembleia.",
+      "foraDoPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "capsula",
+      "name": "Cápsula",
+      "side": "direita",
+      "acesso": "aluguel",
+      "tamanho": { "w": 3, "h": 5 },
+      "aluguel": { "moeda": "credito", "porCiclo": 80 },
+      "vendavel": false,
+      "patenteMin": "colaborador",
+      "bauSlots": 20,
+      "descansoPct": 8,
+      "visitasMax": 2,
+      "moveisMax": 10,
+      "artKey": "moradia/direita/capsula",
+      "piada": "Pé-direito de 1,90 m. Sonhos acima disso são cobrados à parte.",
+      "sugestaoCampos": ["tamanho", "aluguel", "patenteMin", "bauSlots", "descansoPct", "visitasMax", "moveisMax", "artKey", "piada"]
+    },
+    {
+      "id": "capsula_plus",
+      "name": "Cápsula Plus",
+      "side": "direita",
+      "acesso": "aluguel",
+      "tamanho": { "w": 5, "h": 6 },
+      "aluguel": { "moeda": "credito", "porCiclo": 150 },
+      "vendavel": false,
+      "patenteMin": "parceiro",
+      "bauSlots": 30,
+      "descansoPct": 10,
+      "visitasMax": 4,
+      "moveisMax": 18,
+      "artKey": "moradia/direita/capsula_plus",
+      "piada": "Agora com janela. A vista é outra cápsula.",
+      "sugestao": true
+    },
+    {
+      "id": "apartamento_financiado",
+      "name": "Apartamento financiado",
+      "side": "direita",
+      "acesso": "financiamento",
+      "tamanho": { "w": 8, "h": 8 },
+      "financiamento": { "moeda": "credito", "valorTotal": 36000, "entradaPct": 10, "parcelas": 360, "valorParcela": 110 },
+      "vendavel": true,
+      "patenteMin": "parceiro",
+      "bauSlots": 45,
+      "descansoPct": 12,
+      "visitasMax": 8,
+      "moveisMax": 35,
+      "artKey": "moradia/direita/apartamento_financiado",
+      "piada": "Parcela 1 de 360. Parabéns, você é quase dono de um quarto.",
+      "sugestaoCampos": ["tamanho", "financiamento.valorTotal", "financiamento.entradaPct", "financiamento.valorParcela", "patenteMin", "bauSlots", "descansoPct", "visitasMax", "moveisMax", "artKey", "piada"]
+    },
+    {
+      "id": "apartamento_vista_rio",
+      "name": "Apartamento com vista para o rio",
+      "side": "direita",
+      "acesso": "financiamento",
+      "tamanho": { "w": 11, "h": 10 },
+      "financiamento": { "moeda": "credito", "valorTotal": 63000, "entradaPct": 10, "parcelas": 360, "valorParcela": 210 },
+      "vendavel": true,
+      "patenteMin": "gerente",
+      "bauSlots": 60,
+      "descansoPct": 15,
+      "visitasMax": 12,
+      "moveisMax": 50,
+      "artKey": "moradia/direita/apartamento_vista_rio",
+      "piada": "Vista para o rio. O cheiro é cortesia.",
+      "foraDoPiloto": true,
+      "sugestao": true
+    }
+  ],
+  "listaDeEspera": {
+    "descricao": "Ao entrar nas Raízes, o jogador vai para a lista da Assembleia e dorme numa rede no galpão até a casa sair. A fila anda a cada ciclo, conforme a Assembleia aprova casas novas.",
+    "ciclosBase": 3,
+    "mutiraoReduzCiclos": 1,
+    "moradiaProvisoria": "rede_no_galpao",
+    "moradiaFinal": "casa_da_lista",
+    "sugestaoCampos": ["descricao", "ciclosBase", "mutiraoReduzCiclos", "moradiaProvisoria"]
+  },
+  "mutirao": {
+    "descricao": "Erguer a casa em mutirão com outros jogadores: a missão Mutirão (grupo, Esquerda), em poucos minutos enquanto bandidos atacam. Não precisa esperar a lista. A casa é a estrutura casa_de_mutirao do mapa (structures.json), com o mesmo custo.",
+    "missao": "mutirao_casa_propria",
+    "jogadoresMin": 3,
+    "jogadoresMax": 4,
+    "plantonistaConta": true,
+    "duracaoMin": 5,
+    "casaVaiPara": "Quem puxou o mutirão e entregou os materiais.",
+    "ajudantes": { "reputacao": 80, "descricao": "Cada ajudante ganha reputação e tira 1 ciclo da própria espera na lista." },
+    "sugestaoCampos": ["jogadoresMin", "plantonistaConta", "duracaoMin", "casaVaiPara", "ajudantes"]
+  },
+  "aluguel": {
+    "descricao": "Na Direita, o jogador aluga uma cápsula por ciclo.",
+    "cobranca": "Débito automático no começo de cada ciclo. Sem saldo, o ciclo conta como atraso e a IA de bolso avisa com toda a delicadeza de um telão.",
+    "formula": "aluguel do ciclo = porCiclo × (precoDeVida da região da moradia ÷ precoDeVidaReferencia), limitado a [porCiclo × multMin, porCiclo × multMax] e arredondado para cima. Calculado no começo do ciclo, junto com o débito.",
+    "precoDeVidaReferencia": 130,
+    "multMin": 1,
+    "multMax": 1.9,
+    "sugestaoCampos": ["cobranca", "formula", "precoDeVidaReferencia", "multMin", "multMax"]
+  },
+  "financiamento": {
+    "descricao": "Apartamento financiado em 360 parcelas, uma por ciclo. O apartamento é do jogador e pode ser vendido.",
+    "parcelas": 360,
+    "exigeScore": true,
+    "venda": {
+      "descricao": "O apartamento vai para o app: o comprador paga, o saldo devedor é quitado com o dinheiro da venda e o resto fica com o vendedor. Os móveis voltam para o inventário.",
+      "taxaPct": 12,
+      "sugestao": true
+    },
+    "sugestaoCampos": ["exigeScore"]
+  },
+  "despejo": {
+    "descricao": "Com três ciclos de atraso vem o despejo, e os móveis vão para um depósito.",
+    "ciclosDeAtraso": 3,
+    "moveisVaoPara": "deposito",
+    "deposito": {
+      "local": "torre_do_consorcio",
+      "taxaPorMovelPorCiclo": 2,
+      "prazoCiclos": 12,
+      "depoisDoPrazo": "Os móveis não retirados vão a leilão no app, e a taxa do Consórcio sai do valor.",
+      "sugestao": true
+    },
+    "avisos": [
+      "Ciclo 1 de atraso: \"Notamos uma pequena pendência. Somos uma família!\"",
+      "Ciclo 2 de atraso: \"Sua família está preocupada. E o jurídico também.\"",
+      "Ciclo 3 de atraso: \"Obrigado por fazer parte da nossa história. Seus móveis estão no depósito.\""
+    ],
+    "apartamento": "No apartamento, o despejo retoma o imóvel: a entrada e as parcelas pagas não voltam.",
+    "sugestaoCampos": ["avisos", "apartamento"]
+  },
+  "comum": {
+    "guardaItens": {
+      "descricao": "A casa guarda itens num baú, acessível só de dentro dela. O tamanho do baú depende da moradia e de móveis de guardar.",
+      "sugestaoCampos": ["descricao"]
+    },
+    "descanso": {
+      "descricao": "Ficar um tempo dentro de casa enche o bônus de descanso: mais XP de grupo por um tempo depois de sair. Móveis de descanso somam, até um teto.",
+      "tempoDentroS": 120,
+      "duracaoBonusMin": 30,
+      "stat": "xp",
+      "capPct": 25,
+      "sugestao": true
+    },
+    "visitas": {
+      "descricao": "A casa recebe visitas. O dono escolhe quem pode entrar.",
+      "permissoes": ["so_eu", "grupo", "margem", "todos"],
+      "padrao": "margem",
+      "outraMargem": "Visitante da outra margem só entra a convite e não precisa de disfarce dentro de casa.",
+      "livroDeVisitas": true,
+      "sugestaoCampos": ["permissoes", "padrao", "outraMargem", "livroDeVisitas"]
+    },
+    "decoracao": {
+      "descricao": "Móveis em pixel, no estilo Habbo: cada móvel ocupa tiles inteiros da grade da casa e gira em 4 direções.",
+      "gradeTiles": true,
+      "rotacoes": 4,
+      "empilhar": false,
+      "itensDeParede": true,
+      "sugestaoCampos": ["rotacoes", "empilhar", "itensDeParede"]
+    }
+  },
+  "trocaDeLado": {
+    "descricao": "Quem troca mantém o nível, perde a patente e a moradia.",
+    "moveisVaoPara": "inventario",
+    "foraDoPiloto": true,
+    "sugestaoCampos": ["moveisVaoPara"]
+  }
+}

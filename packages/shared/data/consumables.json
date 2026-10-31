@@ -1,0 +1,121 @@
+{
+  "botaoItem": {
+    "descricao": "O botão de item usa poção, sopa, energético ou granada, do inventário. A poção tem uso automático opcional pela Doutrina abaixo de 30% de vida.",
+    "cabeNoBotao": 1,
+    "sugestaoCampos": ["cabeNoBotao"]
+  },
+  "habilidades": [
+    {
+      "id": "usar_pocao",
+      "name": "Poção",
+      "ownerKey": "pocao",
+      "slot": "item",
+      "type": "aliado",
+      "range": 0,
+      "cooldownS": 10,
+      "effects": [{ "kind": "cura", "pctVidaMax": 35, "target": "self" }],
+      "description": "Cura 35% da vida na hora.",
+      "visual": { "esquerda": "Garrafada de erva da Curandeira, com bolhas verdes.", "direita": "Injetor de nanobots com selo do plano Bronze." },
+      "sugestaoCampos": ["type", "range", "cooldownS", "effects", "description", "visual"]
+    },
+    {
+      "id": "usar_sopa",
+      "name": "Sopa",
+      "ownerKey": "sopa",
+      "slot": "item",
+      "type": "em_volta",
+      "range": 0,
+      "radius": 2.5,
+      "cooldownS": 15,
+      "effects": [{ "kind": "cura_continua", "pctVidaMaxPorTick": 3, "tickMs": 1000, "duracaoMs": 8000, "target": "aliados_area" }],
+      "description": "Divide uma sopa quente com quem está perto: cura 3% da vida por segundo, por 8 s.",
+      "visual": { "esquerda": "Panela de barro fumegando, receita de vó.", "direita": "Sopa liofilizada por assinatura, que aquece sozinha e pede avaliação." },
+      "sugestaoCampos": ["type", "range", "radius", "cooldownS", "effects", "description", "visual"]
+    },
+    {
+      "id": "usar_energetico",
+      "name": "Energético",
+      "ownerKey": "energetico",
+      "slot": "item",
+      "type": "aliado",
+      "range": 0,
+      "cooldownS": 20,
+      "effects": [
+        { "kind": "reforco", "stat": "speed", "pct": 20, "duracaoMs": 8000, "target": "self" },
+        { "kind": "recurso", "pct": 25, "target": "self" }
+      ],
+      "description": "+20% de velocidade por 8 s e recupera 25% do recurso da classe.",
+      "visual": { "esquerda": "Garrafa de mate fermentado com raiz, que borbulha sozinha.", "direita": "Lata cromada de energético que pisca e vibra na mão." },
+      "sugestaoCampos": ["type", "range", "cooldownS", "effects", "description", "visual"]
+    },
+    {
+      "id": "usar_granada",
+      "name": "Granada",
+      "ownerKey": "granada",
+      "slot": "item",
+      "type": "area_alvo",
+      "range": 5,
+      "radius": 2.5,
+      "cooldownS": 12,
+      "telegraphMs": 400,
+      "effects": [
+        { "kind": "dano", "mult": 2, "target": "inimigos_area" },
+        { "kind": "empurrar", "tiles": 1, "target": "inimigos_area" }
+      ],
+      "description": "Cai em cima do alvo travado (ou onde você arrastar), marca o chão por 0,4 s e explode numa área de 2,5 tiles, empurrando os inimigos. O círculo fica no chão até estourar, para 200 ms de atraso não mudarem quem é atingido.",
+      "visual": { "esquerda": "Cabaça de pimenta benzida que estoura em folhas e fumaça verde.", "direita": "Granada de pulso com contagem regressiva em holograma." },
+      "sugestaoCampos": ["type", "range", "radius", "cooldownS", "telegraphMs", "effects", "description", "visual"]
+    }
+  ],
+  "consumiveis": [
+    {
+      "id": "pocao",
+      "name": "Poção",
+      "habilidade": "usar_pocao",
+      "preco": { "semente": 15, "credito": 30 },
+      "precoBase": 15,
+      "empilhaMax": 20,
+      "nivelMin": 1,
+      "usoAutomatico": { "doutrina": true, "vidaAbaixoPct": 30, "opcional": true, "padraoLigado": false, "sugestaoCampos": ["padraoLigado"] },
+      "visual": { "esquerda": "Garrafada de erva com rolha de palha.", "direita": "Injetor de nanobots em blister.", "delta": "Garrafa de vidro reaproveitada com um líquido de cor duvidosa." },
+      "descricao": "Fica no botão de item. A Doutrina pode tomar sozinha abaixo de 30% de vida, se você ligar.",
+      "sugestaoCampos": ["preco", "precoBase", "empilhaMax", "nivelMin", "visual"]
+    },
+    {
+      "id": "sopa",
+      "name": "Sopa",
+      "habilidade": "usar_sopa",
+      "preco": { "semente": 20, "credito": 40 },
+      "precoBase": 20,
+      "empilhaMax": 10,
+      "nivelMin": 1,
+      "visual": { "esquerda": "Panela de barro com tampa amarrada.", "direita": "Pote de sopa por assinatura, com QR code na tampa.", "delta": "Marmita de alumínio amassada." },
+      "descricao": "Cura aos poucos você e quem estiver perto. Na Esquerda, a receita é da vó; na Direita, é por assinatura.",
+      "sugestaoCampos": ["preco", "precoBase", "empilhaMax", "nivelMin", "visual", "descricao"]
+    },
+    {
+      "id": "energetico",
+      "name": "Energético",
+      "habilidade": "usar_energetico",
+      "preco": { "semente": 25, "credito": 50 },
+      "precoBase": 25,
+      "empilhaMax": 10,
+      "nivelMin": 1,
+      "visual": { "esquerda": "Garrafa de mate fermentado.", "direita": "Lata cromada que pisca.", "delta": "Garrafinha sem rótulo que o Seu Jacó jura que é café." },
+      "descricao": "Mais velocidade e um pouco do recurso da classe de volta.",
+      "sugestaoCampos": ["preco", "precoBase", "empilhaMax", "nivelMin", "visual", "descricao"]
+    },
+    {
+      "id": "granada",
+      "name": "Granada",
+      "habilidade": "usar_granada",
+      "preco": { "semente": 30, "credito": 60 },
+      "precoBase": 30,
+      "empilhaMax": 10,
+      "nivelMin": 3,
+      "visual": { "esquerda": "Cabaça de pimenta benzida.", "direita": "Granada de pulso.", "delta": "Lata de conserva cheia de pólvora de fogos." },
+      "descricao": "Dano em área no alvo, sem mira: cai no alvo travado.",
+      "sugestaoCampos": ["preco", "precoBase", "empilhaMax", "nivelMin", "visual", "descricao"]
+    }
+  ]
+}

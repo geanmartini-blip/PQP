@@ -1,0 +1,348 @@
+[
+  {
+    "id": "arrancada",
+    "name": "Arrancada",
+    "ownerKey": "combatente",
+    "slot": "classe",
+    "type": "travada",
+    "range": 5,
+    "radius": 0,
+    "cooldownS": 10,
+    "cost": 20,
+    "effects": [
+      { "kind": "avanco", "ate": "alvo" },
+      { "kind": "dano", "mult": 1.2, "target": "alvo" },
+      { "kind": "controle", "cc": "derrubar", "duracaoMs": 1000, "target": "alvo" }
+    ],
+    "description": "Avança até o alvo e derruba por 1 s.",
+    "visual": {
+      "esquerda": "Corre como bicho.",
+      "direita": "Liga o propulsor."
+    },
+    "sugestaoCampos": ["range", "cooldownS", "cost", "effects.dano"]
+  },
+  {
+    "id": "pancadao",
+    "name": "Pancadão",
+    "ownerKey": "combatente",
+    "slot": "classe",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2.5,
+    "cooldownS": 8,
+    "cost": 20,
+    "effects": [
+      { "kind": "dano", "mult": 1.6, "target": "inimigos_area" }
+    ],
+    "description": "Golpe no chão que acerta todos em volta.",
+    "visual": {
+      "esquerda": "Punho de espírito racha o chão e solta raízes em volta.",
+      "direita": "Martelo hidráulico bate no chão e solta uma onda de vapor."
+    },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "effects.dano.mult", "visual"]
+  },
+  {
+    "id": "casca_grossa",
+    "name": "Casca Grossa",
+    "ownerKey": "combatente",
+    "slot": "classe",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 14,
+    "cost": 25,
+    "effects": [
+      { "kind": "escudo", "pctVidaMax": 20, "duracaoMs": 5000, "target": "self" }
+    ],
+    "description": "Escudo de 20% da vida por 5 s.",
+    "visual": {
+      "esquerda": "Uma casca de árvore cobre a pele por alguns segundos.",
+      "direita": "Placas de armadura se encaixam no corpo, peça por peça."
+    },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "visual"]
+  },
+  {
+    "id": "grito_de_guerra",
+    "name": "Grito de Guerra",
+    "ownerKey": "combatente",
+    "slot": "classe",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 12,
+    "cost": 15,
+    "effects": [
+      { "kind": "controle", "cc": "provocar", "duracaoMs": 3000, "target": "inimigos_area" }
+    ],
+    "description": "Provoca os inimigos perto por 3 s.",
+    "visual": {
+      "esquerda": "Rugido com o vulto de uma fera-espírito atrás.",
+      "direita": "Grito saído de um alto-falante no peito, com sirene."
+    },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "visual"]
+  },
+  {
+    "id": "rajada",
+    "name": "Rajada",
+    "ownerKey": "atirador",
+    "slot": "classe",
+    "type": "travada",
+    "range": 4,
+    "rangeDoAlcance": true,
+    "radius": 0,
+    "cooldownS": 6,
+    "cost": 15,
+    "effects": [
+      { "kind": "dano", "mult": 0.6, "hits": 3, "target": "alvo" }
+    ],
+    "description": "3 tiros teleguiados no alvo.",
+    "visual": {
+      "esquerda": "Três flechas ou chumbos benzidos, com rastro verde.",
+      "direita": "Três balas inteligentes que fazem curva até o alvo."
+    },
+    "sugestaoCampos": ["range", "rangeDoAlcance", "cooldownS", "cost", "effects.dano.mult", "visual"]
+  },
+  {
+    "id": "chuva_de_chumbo",
+    "name": "Chuva de Chumbo",
+    "ownerKey": "atirador",
+    "slot": "classe",
+    "type": "area_alvo",
+    "range": 4,
+    "rangeDoAlcance": true,
+    "radius": 2.5,
+    "cooldownS": 12,
+    "cost": 25,
+    "effects": [
+      {
+        "kind": "campo",
+        "duracaoMs": 3000,
+        "tickMs": 500,
+        "efeitos": [
+          { "kind": "dano", "mult": 0.3, "target": "inimigos_area" }
+        ]
+      }
+    ],
+    "description": "Tiros caem numa área por 3 s.",
+    "visual": {
+      "esquerda": "Chuva de flechas e chumbo benzido caindo do céu.",
+      "direita": "Drones passam por cima despejando tiros na área."
+    },
+    "sugestaoCampos": ["range", "rangeDoAlcance", "radius", "cooldownS", "cost", "effects.campo.tickMs", "effects.campo.efeitos.dano.mult", "visual"]
+  },
+  {
+    "id": "recuo",
+    "name": "Recuo",
+    "ownerKey": "atirador",
+    "slot": "classe",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 12,
+    "cost": 15,
+    "effects": [
+      {
+        "kind": "campo",
+        "duracaoMs": 4000,
+        "tickMs": 500,
+        "efeitos": [
+          { "kind": "lentidao", "pct": 40, "duracaoMs": 1000, "target": "inimigos_area" }
+        ]
+      },
+      { "kind": "recuo", "tiles": 4, "de": "inimigo_mais_perto" }
+    ],
+    "description": "Salta para longe do inimigo mais perto e deixa uma armadilha de lentidão.",
+    "visual": {
+      "esquerda": "Cambalhota para trás, deixando um laço de cipó no chão.",
+      "direita": "Salto com propulsor, deixando uma mina de cola no chão."
+    },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "effects.campo.duracaoMs", "effects.campo.efeitos.lentidao.pct", "effects.recuo.tiles", "visual"]
+  },
+  {
+    "id": "mira_marcada",
+    "name": "Mira Marcada",
+    "ownerKey": "atirador",
+    "slot": "classe",
+    "type": "travada",
+    "range": 4,
+    "rangeDoAlcance": true,
+    "radius": 0,
+    "cooldownS": 10,
+    "cost": 15,
+    "effects": [
+      { "kind": "marca", "danoRecebidoPct": 15, "duracaoMs": 6000, "target": "alvo" }
+    ],
+    "description": "Marca o alvo; o grupo causa +15% de dano nele por 6 s.",
+    "visual": {
+      "esquerda": "Um olho pintado de espírito flutua em cima do alvo.",
+      "direita": "Uma mira laser vermelha fica presa no alvo."
+    },
+    "sugestaoCampos": ["range", "rangeDoAlcance", "cooldownS", "cost", "visual"]
+  },
+  {
+    "id": "totem_ou_robo",
+    "name": "Totem ou Robô",
+    "nomePorMargem": { "esquerda": "Totem", "direita": "Robô" },
+    "ownerKey": "elemental",
+    "slot": "classe",
+    "type": "campo",
+    "range": 4,
+    "radius": 2,
+    "cooldownS": 16,
+    "cost": 30,
+    "effects": [
+      { "kind": "invocar", "invocacao": "totem_ou_robo", "duracaoMs": 15000, "max": 2 }
+    ],
+    "description": "Finca um totem ou solta um robô que ataca sozinho por 15 s; até 2.",
+    "visual": {
+      "esquerda": "Totem de madeira entalhada que brota do chão.",
+      "direita": "Robô de sucata que cai de paraquedas e liga sozinho."
+    },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost", "visual"]
+  },
+  {
+    "id": "explosao_elemental",
+    "name": "Explosão Elemental",
+    "ownerKey": "elemental",
+    "slot": "classe",
+    "type": "area_alvo",
+    "range": 4,
+    "radius": 2.5,
+    "cooldownS": 8,
+    "cost": 25,
+    "effects": [
+      { "kind": "dano", "mult": 1.8, "target": "inimigos_area" }
+    ],
+    "description": "Dano em área.",
+    "visual": {
+      "esquerda": "Bola de fogo, pedra e folha que estoura no chão.",
+      "direita": "Granada de laboratório que explode em faíscas azuis."
+    },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost", "effects.dano.mult", "visual"]
+  },
+  {
+    "id": "onda",
+    "name": "Onda",
+    "ownerKey": "elemental",
+    "slot": "classe",
+    "type": "cone",
+    "range": 4,
+    "radius": 0,
+    "angleDeg": 90,
+    "cooldownS": 10,
+    "cost": 20,
+    "effects": [
+      { "kind": "empurrar", "tiles": 2, "target": "inimigos_area" },
+      { "kind": "lentidao", "pct": 30, "duracaoMs": 3000, "target": "inimigos_area" }
+    ],
+    "description": "Empurra e deixa lentos os inimigos à frente.",
+    "visual": {
+      "esquerda": "Onda de água do rio com folhas rodando.",
+      "direita": "Rajada de um ventilador industrial com faíscas."
+    },
+    "sugestaoCampos": ["range", "angleDeg", "cooldownS", "cost", "effects.empurrar.tiles", "effects.lentidao", "visual"]
+  },
+  {
+    "id": "recarga",
+    "name": "Recarga",
+    "ownerKey": "elemental",
+    "slot": "classe",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 18,
+    "cost": 0,
+    "effects": [
+      { "kind": "recurso", "pct": 30, "target": "self" },
+      { "kind": "cura", "pctVidaMax": 10, "target": "aliados_area" }
+    ],
+    "description": "Recupera 30% do recurso e cura 10% da vida dos aliados perto.",
+    "visual": {
+      "esquerda": "Círculo de luz verde sobe do chão, como seiva.",
+      "direita": "Anel de carregamento azul, com barra de bateria enchendo."
+    },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "visual"]
+  },
+  {
+    "id": "sumico",
+    "name": "Sumiço",
+    "ownerKey": "mascarado",
+    "slot": "classe",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 14,
+    "cost": 20,
+    "effects": [
+      { "kind": "invisivel", "duracaoMs": 2000, "copia": "copia_do_sumico", "target": "self" }
+    ],
+    "description": "Fica invisível por 2 s e deixa uma cópia que provoca os inimigos.",
+    "visual": {
+      "esquerda": "Troca de máscara e some numa nuvem de fumaça; a máscara fica no lugar, de corpo e tudo.",
+      "direita": "Liga o modo fantasma e deixa um holograma no lugar."
+    },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "visual"]
+  },
+  {
+    "id": "maldicao_ou_virus",
+    "name": "Maldição ou Vírus",
+    "nomePorMargem": { "esquerda": "Maldição", "direita": "Vírus" },
+    "ownerKey": "mascarado",
+    "slot": "classe",
+    "type": "travada",
+    "range": 4,
+    "radius": 0,
+    "cooldownS": 8,
+    "cost": 20,
+    "effects": [
+      { "kind": "dano_continuo", "multPorTick": 0.25, "tickMs": 1000, "duracaoMs": 6000, "pulaAoMorrer": true, "pulaAlcance": 4, "target": "alvo" }
+    ],
+    "description": "Dano contínuo que pula para o inimigo mais perto quando o alvo cai.",
+    "visual": {
+      "esquerda": "Fumaça roxa de mau-olhado gruda no alvo.",
+      "direita": "Insetos de pixel e tela azul piscando em cima do alvo."
+    },
+    "sugestaoCampos": ["range", "cooldownS", "cost", "effects.dano_continuo.multPorTick", "effects.dano_continuo.tickMs", "effects.dano_continuo.duracaoMs", "effects.dano_continuo.pulaAlcance", "visual"]
+  },
+  {
+    "id": "confusao",
+    "name": "Confusão",
+    "ownerKey": "mascarado",
+    "slot": "classe",
+    "type": "area_alvo",
+    "range": 4,
+    "radius": 2.5,
+    "cooldownS": 14,
+    "cost": 25,
+    "effects": [
+      { "kind": "controle", "cc": "confundir", "duracaoMs": 2000, "target": "inimigos_area" }
+    ],
+    "description": "Inimigos na área atacam a esmo por 2 s; chefes só ficam lentos.",
+    "visual": {
+      "esquerda": "Máscaras rodando em cima das cabeças, com risada de plateia.",
+      "direita": "Hologramas de notificação piscando na cara dos inimigos."
+    },
+    "sugestaoCampos": ["range", "radius", "cooldownS", "cost", "visual"]
+  },
+  {
+    "id": "animacao",
+    "name": "Animação",
+    "ownerKey": "mascarado",
+    "slot": "classe",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 16,
+    "cost": 25,
+    "effects": [
+      { "kind": "reforco", "stat": "speed", "pct": 15, "duracaoMs": 6000, "target": "aliados_area" },
+      { "kind": "reforco", "stat": "damage", "pct": 15, "duracaoMs": 6000, "target": "aliados_area" }
+    ],
+    "description": "Aliados perto ganham +15% de velocidade e de dano por 6 s.",
+    "visual": {
+      "esquerda": "Batuque e notas musicais douradas em volta.",
+      "direita": "Luzes de palco neon e confete holográfico em volta."
+    },
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "visual"]
+  }
+]
