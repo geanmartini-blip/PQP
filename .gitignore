@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vite/
+coverage/
+*.log
+.env
+.env.local
+# persistência local (mock do Supabase)
+.data/
+# pasta vazia que sobrou da cópia e o OneDrive não deixou apagar
+Ponte que Partiu/

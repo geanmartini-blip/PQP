@@ -1,0 +1,19 @@
+{
+  "name": "@pqp/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@pqp/shared": "*",
+    "colyseus": "^0.18.10",
+    "express": "^5.1.0",
+    "@supabase/supabase-js": "^2.118.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0"
+  }
+}

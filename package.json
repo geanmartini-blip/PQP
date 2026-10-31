@@ -1,0 +1,34 @@
+{
+  "name": "ponte-que-partiu",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Ponte que Partiu: action RPG online para celular, 2D pixel, piloto",
+  "type": "module",
+  "workspaces": [
+    "packages/shared",
+    "packages/server",
+    "packages/client",
+    "packages/sim"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:server": "npm run dev -w @pqp/server",
+    "dev:client": "npm run dev -w @pqp/client",
+    "build": "npm run build -w @pqp/client",
+    "start": "npm run build && npm run start -w @pqp/server",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p packages/shared && tsc -p packages/server && tsc -p packages/client && tsc -p packages/sim",
+    "sim": "npm run sim -w @pqp/sim",
+    "validate-data": "vitest run packages/shared/test/data.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
