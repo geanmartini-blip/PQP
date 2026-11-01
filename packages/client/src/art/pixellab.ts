@@ -79,6 +79,8 @@ export const PL_NPCS: Record<string, string> = {
       'amara_okafor', 'yusuf_adeyemi', 'rolf_halvorsen', 'viktor_sahl', 'mateo_silva_park', 'klara_lindqvist',
       'nayra_sundaram', 'kenji_albrecht', 'benzedeira_do_espelho', 'vizinha_da_bracadeira',
       'funcionario_da_cabine_neon', 'entregador_de_app',
+      // Usina e Juncal
+      'cambista_da_ponte', 'dalva_rocha', 'o_sombra', 'curupira',
     ].map((id) => [id, id]),
   ),
 };
@@ -91,8 +93,14 @@ export const PL_INIMIGOS: Record<string, string> = {
   fiscal_da_comissao: 'fiscal',
   contrabandista: 'contrabandista',
   drone_de_cobranca: 'drone',
+  mercenario_do_sombra: 'mercenario',
+  turbina_desgovernada: 'turbina',
+  enguia_eletrica: 'enguia',
+  cobra_do_juncal: 'cobra',
+  cao_de_guarda_do_capataz: 'cao',
+  bomba_descontrolada: 'bomba',
 };
-const PL_BICHOS: ReadonlySet<string> = new Set(['siri', 'mosquito', 'drone']);
+const PL_BICHOS: ReadonlySet<string> = new Set(['siri', 'mosquito', 'drone', 'turbina', 'enguia', 'cobra', 'cao', 'bomba']);
 /** NPCs que não lutam: só o andar */
 const PL_SEM_GOLPE: ReadonlySet<string> = new Set(['jaco', 'toninho', 'vendedor', 'chopindita']);
 /** NPCs das margens: só as 4 direções, sem andar nem golpe (ficam no lugar) */

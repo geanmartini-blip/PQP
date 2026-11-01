@@ -8,7 +8,7 @@ O jogo mostra a seção da versão atual uma vez, na primeira abertura depois de
 - Do 11 ao 19, as missões vão chegando perto da Ponte; a da cabeceira libera a troca de lado.
 - Conjunto da classe: as missões dão as 5 peças, e a calça entrou na armadura.
 - Luta com menos correria no começo: golpes mais lentos e mais fortes, com animação própria.
-- Arte nova no Delta e nas margens: chão, fachadas, inimigos e todos os treinadores e NPCs.
+- Arte nova no mapa todo, do Delta ao Juncal: chão, fachadas, inimigos, treinadores e NPCs.
 
 ## v0.2
 - Arte nova em teste: o Peão Brabo e a Idol ganharam bonecos novos, bem mais caprichados.

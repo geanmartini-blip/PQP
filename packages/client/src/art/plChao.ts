@@ -11,7 +11,7 @@ import * as Phaser from 'phaser';
 import { Tile, type TileMap } from '@pqp/shared/map';
 import man from './plChao.json';
 
-export const PL_CHAO_MAPS: ReadonlySet<string> = new Set(['delta', 'barco_travessia', 'margem_esquerda', 'margem_direita']);
+export const PL_CHAO_MAPS: ReadonlySet<string> = new Set(['delta', 'barco_travessia', 'margem_esquerda', 'margem_direita', 'usina_da_ponte', 'juncal']);
 
 /**
  * terrenos do PixelLab, do mais baixo ao mais alto (a ordem decide quem é "upper" num vértice; em
@@ -51,6 +51,14 @@ const CHAO_DO_MAPA: Record<string, Partial<Record<number, Terreno>>> = {
     [Tile.Porta]: 'concreto',
     [Tile.Mato]: 'concreto',
     [Tile.Grama]: 'concreto',
+  },
+  // a Usina é de concreto, com a parede da Direita; o Juncal usa o chão e a parede de palafita do Delta
+  usina_da_ponte: {
+    [Tile.Parede]: 'parede_dir',
+    [Tile.Concreto]: 'concreto',
+    [Tile.Asfalto]: 'asfalto',
+    [Tile.Grade]: 'concreto',
+    [Tile.Maquina]: 'concreto',
   },
 };
 
@@ -220,7 +228,22 @@ export function desenhaPlChao(
   const tile = (x: number, y: number) => map.tiles[Math.min(H - 1, Math.max(0, y)) * W + Math.min(W - 1, Math.max(0, x))]!;
   const doMapa = CHAO_DO_MAPA[map.id] ?? {};
   const chaoDe = (t: number) => doMapa[t] ?? CHAO_DE[t];
-  const chao = (x: number, y: number) => chaoDe(tile(x, y));
+  // a pedra fica em cima do chão que estiver em volta (grama no barranco, concreto na ponte)
+  const emVolta = (x: number, y: number): Terreno | undefined => {
+    const conta = new Map<Terreno, number>();
+    for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]] as const) {
+      const t = tile(x + dx, y + dy);
+      const c = t === Tile.Pedra ? undefined : chaoDe(t);
+      if (c) conta.set(c, (conta.get(c) ?? 0) + 1);
+    }
+    let melhor: Terreno | undefined;
+    for (const [c, n] of conta) if (!melhor || n > conta.get(melhor)!) melhor = c;
+    return melhor;
+  };
+  const chao = (x: number, y: number) => {
+    const t = tile(x, y);
+    return t === Tile.Pedra && doMapa[t] === undefined ? (emVolta(x, y) ?? chaoDe(t)) : chaoDe(t);
+  };
   ctx.imageSmoothingEnabled = false;
   for (let vy = ty0; vy <= ty0 + th; vy++)
     for (let vx = tx0; vx <= tx0 + tw; vx++) {
