@@ -196,5 +196,35 @@
  "fundo": [
   449,
   799
- ]
+ ],
+ "pl": {
+  "w": 77,
+  "h": 119,
+  "quadros": [
+   "pl_east_0",
+   "pl_east_1",
+   "pl_east_2",
+   "pl_east_3",
+   "pl_east_4",
+   "pl_east_5",
+   "pl_north_0",
+   "pl_north_1",
+   "pl_north_2",
+   "pl_north_3",
+   "pl_north_4",
+   "pl_north_5",
+   "pl_south_0",
+   "pl_south_1",
+   "pl_south_2",
+   "pl_south_3",
+   "pl_south_4",
+   "pl_south_5",
+   "pl_west_0",
+   "pl_west_1",
+   "pl_west_2",
+   "pl_west_3",
+   "pl_west_4",
+   "pl_west_5"
+  ]
+ }
 }

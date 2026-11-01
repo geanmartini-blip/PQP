@@ -4,6 +4,9 @@
  * pintado) e os quadros de docs/alvo-personagens.png, recortados por tools/art/mock-pixellab.mjs.
  * O Peão anda pelo joystick (ou WASD) nas 4 direções; a Idol, o PM e a Benzedeira do fundo ficam
  * parados; o drone tem o aviso de área no chão. Não é saída do PixelLab: é o alvo, rodando no motor.
+ * Exceção: o Peão controlável agora é o gerado pelo PixelLab (pl_<dir>_<i>, de
+ * tools/art/mock-pixellab-pl.mjs), com andar nas 4 direções. `?peao=ref` volta ao recortado e
+ * `?comparar=1` põe o Peão da referência parado ao lado, para comparar.
  */
 import * as Phaser from 'phaser4';
 import { montarHud, type Hud } from '../testeVisual/hud';
@@ -11,7 +14,9 @@ import { montarHud, type Hud } from '../testeVisual/hud';
 const BASE = import.meta.env.BASE_URL;
 const q = new URLSearchParams(location.search);
 const DPR = Math.min(3, Number(q.get('dpr')) || window.devicePixelRatio || 1);
-interface Man { quadros: Record<string, { w: number; h: number }>; fundo: [number, number] }
+interface Man { quadros: Record<string, { w: number; h: number }>; fundo: [number, number]; pl?: { w: number; h: number; quadros: string[] } }
+// direção do jogo → direção do PixelLab (que desenha leste e oeste, sem espelhar)
+const PL_DIR: Record<string, string> = { baixo: 'south', cima: 'north', direita: 'east', esquerda: 'west' };
 
 class Mock extends Phaser.Scene {
   man!: Man;
@@ -19,6 +24,7 @@ class Mock extends Phaser.Scene {
   peao!: Phaser.GameObjects.Sprite;
   sombra!: Phaser.GameObjects.Ellipse;
   dir = 'baixo';
+  pl = false;
   keys!: Record<string, Phaser.Input.Keyboard.Key>;
   constructor() {
     super('mock');
@@ -29,6 +35,8 @@ class Mock extends Phaser.Scene {
   preload() {
     this.load.image('fundo', BASE + 'mock-pixellab/fundo.png');
     for (const k of Object.keys(this.man.quadros)) this.load.image(k, BASE + 'mock-pixellab/' + k + '.png');
+    this.pl = !!this.man.pl && q.get('peao') !== 'ref';
+    for (const k of this.man.pl?.quadros ?? []) this.load.image(k, BASE + 'mock-pixellab/' + k + '.png');
     for (const k of ['icone_laco', 'icone_chifre', 'icone_chapeu', 'icone_especial', 'icone_garrafada']) this.load.image(k, BASE + 'teste-visual/' + k + '.png');
   }
   create() {
@@ -38,13 +46,26 @@ class Mock extends Phaser.Scene {
       const fr = [0, 1, 2, 3].map((i) => `peao_${dir}_${i}`).filter((k) => this.textures.exists(k));
       this.anims.create({ key: `andar_${dir}`, frames: fr.map((key) => ({ key })), frameRate: 7, repeat: -1 });
     }
+    for (const [dir, pd] of Object.entries(PL_DIR)) {
+      const fr = (this.man.pl?.quadros ?? []).filter((k) => k.startsWith(`pl_${pd}_`));
+      if (fr.length) this.anims.create({ key: `pl_andar_${dir}`, frames: fr.map((key) => ({ key })), frameRate: 9, repeat: -1 });
+    }
     // aviso de área do drone (pulsando) e sombra do Peão
     const av = this.add.ellipse(255, 410, 92, 34, 0xff3020, 0.18).setStrokeStyle(2, 0xff5040, 0.9);
     this.tweens.add({ targets: av, alpha: 0.45, duration: 280, yoyo: true, repeat: -1 });
     this.sombra = this.add.ellipse(0, 0, 40, 12, 0x000000, 0.35);
     const alt = 127; // altura do caubói na tela-alvo
     const f0 = this.man.quadros['peao_baixo_0']!;
-    this.peao = this.add.sprite(238, 432, 'peao_baixo_0').setOrigin(0.5, 0.97).setScale(alt / f0.h);
+    if (q.get('comparar') === '1') {
+      // Peão da referência parado ao lado, na mesma escala, para comparar
+      this.add.ellipse(196, 430, 40, 12, 0x000000, 0.35);
+      this.add.sprite(196, 432, 'peao_baixo_0').setOrigin(0.5, 0.97).setScale(alt / f0.h);
+    }
+    if (this.pl) {
+      // mesma altura de boneco da referência (o quadro dela tem 2 px de folga em cima e embaixo)
+      const h = this.man.pl!.h - 2, hRef = (f0.h - 4) * (alt / f0.h);
+      this.peao = this.add.sprite(q.get('comparar') === '1' ? 268 : 238, 432, 'pl_south_0').setOrigin(0.5, 1).setScale(hRef / h);
+    } else this.peao = this.add.sprite(238, 432, 'peao_baixo_0').setOrigin(0.5, 0.97).setScale(alt / f0.h);
 
     const cam = this.cameras.main;
     const s = Math.max(innerWidth / W, innerHeight / H);
@@ -53,7 +74,7 @@ class Mock extends Phaser.Scene {
     cam.startFollow(this.peao, true, 0.1, 0.1);
     this.keys = this.input.keyboard!.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT') as Record<string, Phaser.Input.Keyboard.Key>;
     this.hud = montarHud(document.getElementById('hud')!);
-    const f = this.textures.get('peao_baixo_0').getSourceImage() as HTMLImageElement;
+    const f = this.textures.get(this.peao.texture.key).getSourceImage() as HTMLImageElement;
     this.hud.setRetrato(f, f.width * 0.18, 0, f.width * 0.64, f.width * 0.64);
     for (const k of ['icone_laco', 'icone_chifre', 'icone_chapeu', 'icone_especial', 'icone_garrafada'])
       if (this.textures.exists(k)) this.hud.setIcone(k, this.textures.get(k).getSourceImage() as CanvasImageSource);
@@ -88,12 +109,22 @@ class Mock extends Phaser.Scene {
       const nx = p.x + vx * v * dt, ny = p.y + vy * v * dt;
       if (this.livre(nx, p.y)) p.x = nx;
       if (this.livre(p.x, ny)) p.y = ny;
-      // a folha desenha o lado virado para a esquerda; a direita sai espelhada
-      if (Math.abs(vx) > Math.abs(vy) * 1.1) { this.dir = 'lado'; p.setFlipX(vx > 0); } else { this.dir = vy < 0 ? 'cima' : 'baixo'; p.setFlipX(false); }
-      p.play(`andar_${this.dir}`, true);
+      const lado = Math.abs(vx) > Math.abs(vy) * 1.1;
+      if (this.pl) {
+        this.dir = lado ? (vx > 0 ? 'direita' : 'esquerda') : vy < 0 ? 'cima' : 'baixo';
+        if (this.anims.exists(`pl_andar_${this.dir}`)) p.play(`pl_andar_${this.dir}`, true);
+        else p.setTexture(`pl_south_0`);
+      } else {
+        // a folha desenha o lado virado para a esquerda; a direita sai espelhada
+        if (lado) { this.dir = 'lado'; p.setFlipX(vx > 0); } else { this.dir = vy < 0 ? 'cima' : 'baixo'; p.setFlipX(false); }
+        p.play(`andar_${this.dir}`, true);
+      }
     } else {
       p.stop();
-      p.setTexture(`peao_${this.dir}_0`);
+      if (this.pl) {
+        const k = `pl_${PL_DIR[this.dir]}_0`;
+        p.setTexture(this.textures.exists(k) ? k : 'pl_south_0');
+      } else p.setTexture(`peao_${this.dir}_0`);
     }
     this.sombra.setPosition(p.x, p.y - 2);
   }

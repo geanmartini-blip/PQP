@@ -202,6 +202,43 @@ O registro completo está em `decisoes/fase5-masmorra.md`. Os pontos principais:
   "PREÇO DINÂMICO +37%", "TAXA 30%", "SCORE 742", "SOMOS UMA FAMÍLIA *sujeito a meta",
   "ASSEMBLEIA HOJE!!" e "100% MACHO".
 
+## Revisão visual, v3: teste do PixelLab (2026-11-01)
+- **Contexto:** a arte por script (pixel e cartoon) não chegou ao nível da referência. O mock
+  `/mock-pixellab.html` roda a própria referência no motor. Agora testamos o PixelLab de verdade, pelo
+  servidor MCP `pixellab` (`.mcp.json`, fora do git).
+- **Como foi gerado o Peão Brabo:**
+  - `create_character_pro_flash` em 128x128, com 8 direções e câmera `low top-down`;
+  - como âncora de estilo, um recorte 128x128 de `pixellab/referencia-peao-frente.png` (o recorte
+    está em `pixellab/resultados/estilo-recorte-128.png`);
+  - andar com o modelo `walking` (6 quadros) nas 4 direções, uma por vez, porque o trial só roda uma
+    geração por vez.
+- **Custo:** 12 gerações no total, 8 do boneco e 4 do andar. Das 40 do trial, sobram 28. Cada etapa
+  leva de 2 a 4 minutos.
+- **Arquivos:**
+  - `pixellab/resultados/rotacoes/` (8 direções) e `pixellab/resultados/andar/` (24 quadros);
+  - `tools/art/mock-pixellab-pl.mjs` recorta os quadros num retângulo comum e grava `pl_*` no mock;
+  - `tools/art/print-mock-pl.mjs` tira os prints em 390x844 (`tools/art/saida/pl-*.png`).
+- **No mock:** o Peão controlável agora é o do PixelLab, andando nas 4 direções, com leste e oeste
+  desenhados, sem espelhar. `?peao=ref` volta ao recortado. `?comparar=1` põe os dois lado a lado.
+- **Avaliação:**
+  - **O que deu certo:** o PixelLab pegou o estilo (contorno, sombreado e paleta) e todos os elementos
+    pedidos (chapéu, xadrez aberto, fivela, bigode, laço, botina). As 4 direções são consistentes e o
+    andar de lado ficou bom.
+  - **O que ficou abaixo da referência:**
+    - o cabelo saiu branco, quando na referência é castanho;
+    - a cabeça ficou menor que a da referência, e o boneco ficou menos "cabeçudo";
+    - de lado, o corpo afina;
+    - no andar de frente e de costas, as pernas mexem pouco.
+  - Tudo isso dá para corrigir com texto (cabelo castanho, proporção) ou refazendo uma direção, sem
+    redesenhar.
+- **Decisão:** pendente com o usuário. Ele decide pelos prints se o PixelLab segue para todos os
+  bonecos e o cenário.
+  - **Se seguir, a sugestão é:**
+    - usar o Peão aprovado como `style_image` de todos os bonecos, para o elenco ficar coerente;
+    - usar 128 px como padrão;
+    - assinar um plano com mais de uma geração por vez. Com 24 arquétipos, 24 treinadores e NPCs,
+      são cerca de 12 gerações por boneco só para andar.
+
 ## Sugestões (o que não está nos docs)
 Lista mantida por fase. Tudo aqui pode ser trocado pelos autores.
 

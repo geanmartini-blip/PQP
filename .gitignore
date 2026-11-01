@@ -5,6 +5,8 @@ coverage/
 *.log
 .env
 .env.local
+# chave do PixelLab (servidor MCP do projeto): nunca vai para o GitHub
+.mcp.json
 # persistência local (mock do Supabase)
 .data/
 # pasta vazia que sobrou da cópia e o OneDrive não deixou apagar
