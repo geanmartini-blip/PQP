@@ -1,6 +1,7 @@
 /**
  * Monta e sobe o servidor: HTTP (express) + WebSocket (Colyseus 0.18) na mesma porta.
- * - sala 'mundo' (WorldRoom);
+ * - salas 'mundo' (WorldRoom), uma por mapa (opção mapId: delta, qg_esquerda, qg_direita e a
+ *   sandbox prototipo_delta);
  * - GET /health;
  * - packages/client/dist como estático, com volta para index.html, quando a pasta existir.
  * Usado pelo index.ts e pelo teste do WorldRoom (porta aleatória).
@@ -12,6 +13,8 @@ import os from 'node:os';
 import path from 'node:path';
 import express from 'express';
 import { matchMaker, Server, WebSocketTransport } from 'colyseus';
+import { listMaps, START_MAP } from '@pqp/shared/map';
+import { SALA_MUNDO } from '@pqp/shared/net';
 import { DEFAULT_PORT } from './config';
 import { createStore, projectRoot, type Store } from './persistence/store';
 import { liveRooms, setWorldRoomDeps, WorldRoom, type WorldRoomOptions } from './rooms/WorldRoom';
@@ -21,6 +24,8 @@ export interface StartOptions {
   host?: string;
   store?: Store;
   room?: WorldRoomOptions;
+  /** salas criadas ao subir, uma por mapa (padrão: todos os mapas, o Delta primeiro) */
+  maps?: string[];
   /** serve o build do cliente (padrão: sim, se packages/client/dist existir) */
   serveClient?: boolean;
   clientDist?: string;
@@ -101,10 +106,13 @@ export async function startServer(opts: StartOptions = {}): Promise<Running> {
       }
     },
   });
-  gameServer.define('mundo', WorldRoom, opts.room ?? {});
+  // uma sala por mapa, todas 'mundo', separadas pela opção mapId (o cliente entra com { mapId })
+  gameServer.define(SALA_MUNDO, WorldRoom, opts.room ?? {}).filterBy(['mapId']);
   await gameServer.listen(port, host);
-  // o mapa é persistente: a sala existe desde o início (inimigos e plantonistas rodam sem ninguém)
-  await matchMaker.createRoom('mundo', {});
+  // o mundo é persistente: as salas existem desde o início (inimigos e plantonistas rodam sem
+  // ninguém). A do Delta primeiro: quem entra sem mapId cai nela.
+  const maps = opts.maps ?? [START_MAP, ...listMaps().filter((m) => m !== START_MAP)];
+  for (const mapId of maps) await matchMaker.createRoom(SALA_MUNDO, { mapId });
   const addr = httpServer.address() as AddressInfo | null;
   const realPort = addr?.port ?? port;
 

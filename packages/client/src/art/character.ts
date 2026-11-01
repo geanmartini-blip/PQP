@@ -23,14 +23,15 @@ import {
   faceWithExpression,
   HAIRS,
   type HairSpec,
+  shadeHair,
   type Tone,
   tone,
 } from './body';
 import type { AnimName, CharacterLook } from './contract';
 import { SPRITE_H, SPRITE_W } from './contract';
 import { ART, type Drawer, drawHoloStage, drawSpiritBull, fallbackDrawer, type LayerCtx, PART_SLICES, type Slice } from './layers';
-import { C, type Color, hashString, hex, light, Pix, shade, stableStringify, withAlpha } from './pixel';
-import { type ArmPose, BODY_MEDIO, type BodySpec, makeRig, type Pose, REST_POSE, type Rig, type View } from './rig';
+import { C, type Color, hashString, hex, light, mix, Pix, shade, shadeDiff, SHADOW_COOL, stableStringify, withAlpha } from './pixel';
+import { along, type ArmPose, BODY_MEDIO, type BodySpec, makeRig, type Pose, REST_POSE, type Rig, type View } from './rig';
 import { buildAnimSheet, type Dir, type SheetData } from './sheet';
 import { EXTRA_ART } from './props';
 
@@ -283,6 +284,18 @@ export function resolveLook(look: ArtLook): ResolvedLook {
   };
 }
 
+/**
+ * Versão grande do boneco (chefe humano, como Bruno Ferro): mais alto, mais largo e fortão,
+ * desenhado em resolução nativa (sem esticar pixel). SUGESTÃO: +8 px de altura e +3 de largura.
+ */
+export function giantLook(rl: ResolvedLook, extraH = 8): ResolvedLook {
+  return {
+    ...rl,
+    body: { ...rl.body, headOffset: rl.body.headOffset - extraH, widthExtra: rl.body.widthExtra + 3, buff: true },
+    H: rl.H + extraH,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // poses por animação
 
@@ -438,6 +451,20 @@ export function drawCharacterFrame(rl: ResolvedLook, anim: AnimName, dir: Dir, i
   const serviceSmile = rl.layers.some((l) => l.arte === 'sorriso_atendimento');
   const finalFace: FaceSpec = serviceSmile ? { ...face, mouth: 'service' } : face;
 
+  // cada parte desenhada ganha sombreamento de 3 tons pela própria forma (shadeDiff)
+  const step = (fn: () => void) => {
+    const before = B.clone();
+    fn();
+    shadeDiff(B, before);
+  };
+  // cabelo e detalhes num buffer só deles, com volume e mechas
+  const hairOn = (fn: (p: Pix) => void) => {
+    const Hb = new Pix(rl.W, rl.H);
+    fn(Hb);
+    shadeHair(Hb, rl.hairTone, rl.hair.style);
+    B.blit(Hb, 0, 0);
+  };
+
   for (const slice of SLICES[view]) {
     // corpo do kit na fatia
     switch (slice) {
@@ -447,39 +474,45 @@ export function drawCharacterFrame(rl: ResolvedLook, anim: AnimName, dir: Dir, i
         drawAuraRing(TB, rig, rl.side, pose.aura, rl.accent);
         break;
       case 'back':
-        if (view !== 'back' && !hairHidden) drawHairBack(B, rig, rl.hair, rl.hairTone);
+        if (view !== 'back' && !hairHidden) hairOn((p) => drawHairBack(p, rig, rl.hair, rl.hairTone));
         break;
       case 'farArm':
-        drawLimb(B, rig.armOff, rl.skin, true);
-        drawHand(B, rig.armOff, rl.skin, true);
+        step(() => {
+          drawLimb(B, rig.armOff, rl.skin, true);
+          drawHand(B, rig.armOff, rl.skin, true);
+        });
         break;
       case 'legs':
-        drawLegSkin(B, rig, rl.skin);
-        if (!hasPart('pernas')) drawKitShorts(B, rig);
-        if (!hasPart('pes')) drawBareFeet(B, rig, rl.skin);
+        step(() => drawLegSkin(B, rig, rl.skin));
+        if (!hasPart('pernas')) step(() => drawKitShorts(B, rig));
+        if (!hasPart('pes')) step(() => drawBareFeet(B, rig, rl.skin));
         break;
       case 'torso':
-        drawTorsoSkin(B, rig, rl.skin);
-        if (!hasPart('torso')) drawKitTop(B, rig);
+        step(() => drawTorsoSkin(B, rig, rl.skin));
+        if (!hasPart('torso')) step(() => drawKitTop(B, rig));
         break;
       case 'arms':
-        if (view === 'side') {
-          drawLimb(B, rig.armMain, rl.skin);
-          drawHand(B, rig.armMain, rl.skin);
-        } else {
-          drawLimb(B, rig.armMain, rl.skin);
-          drawLimb(B, rig.armOff, rl.skin);
-          drawHand(B, rig.armMain, rl.skin);
-          drawHand(B, rig.armOff, rl.skin);
-        }
+        step(() => {
+          if (view === 'side') {
+            drawLimb(B, rig.armMain, rl.skin);
+            drawHand(B, rig.armMain, rl.skin);
+          } else {
+            drawLimb(B, rig.armMain, rl.skin);
+            drawLimb(B, rig.armOff, rl.skin);
+            drawHand(B, rig.armMain, rl.skin);
+            drawHand(B, rig.armOff, rl.skin);
+          }
+        });
         drawTanLines(B, rig, rl.skin);
         if (rl.tattoo) drawTattoo(B, rig, rl.tattoo);
         break;
       case 'head': {
         drawHeadSkin(B, rig, rl.skin);
         drawFace(B, rig, finalFace, rl.skin, { browColor: rl.hair.none ? rl.skin.shade : rl.hairTone.shade, goldTooth: rl.goldTooth, darkCircles: rl.darkCircles });
-        if (!hairHidden) drawHairFront(B, rig, rl.hair, rl.hairTone, rl.skin);
-        for (const g of rl.details) drawDetail(B, rig, g, rl.hairTone, rl.skin);
+        if (!hairHidden) hairOn((p) => drawHairFront(p, rig, rl.hair, rl.hairTone, rl.skin));
+        if (rl.details.length > 0) hairOn((p) => {
+          for (const g of rl.details) drawDetail(p, rig, g, rl.hairTone, rl.skin);
+        });
         break;
       }
       case 'front':
@@ -503,14 +536,19 @@ export function drawCharacterFrame(rl: ResolvedLook, anim: AnimName, dir: Dir, i
         side: rl.side,
         wide: l.wide,
       };
-      l.drawer(ctx);
+      if (target === B) {
+        const before = B.clone();
+        l.drawer(ctx);
+        shadeDiff(B, before);
+        drawFolds(B, before, rig, l.part, slice);
+      } else l.drawer(ctx);
     }
-    if (slice === 'back' && view === 'back' && rl.hair.coversBack && !hairHidden) drawHairFront(B, rig, rl.hair, rl.hairTone, rl.skin);
+    if (slice === 'back' && view === 'back' && rl.hair.coversBack && !hairHidden) hairOn((p) => drawHairFront(p, rig, rl.hair, rl.hairTone, rl.skin));
     for (const g of rl.gems) drawGem(B, rig, g.part, g.color, slice);
     if (slice === 'front') drawHandFx(TF, rig, rl.side, pose.glow, i, rl.accent);
   }
 
-  B.outline();
+  B.outlineSelective();
   const out = new Pix(rl.W, rl.H);
   out.blit(TB, 0, 0);
   if (rl.hologram !== undefined) {
@@ -520,6 +558,30 @@ export function drawCharacterFrame(rl: ResolvedLook, anim: AnimName, dir: Dir, i
   } else out.blit(B, 0, 0);
   out.blit(TF, 0, 0);
   return viewDir === 3 ? out.flipX() : out;
+}
+
+/**
+ * Dobras da roupa: vincos diagonais na cintura da camisa e atrás do joelho da calça, só nos pixels
+ * que a camada acabou de pintar.
+ */
+function drawFolds(B: Pix, before: Pix, rig: Rig, part: string, slice: Slice): void {
+  const pts: [number, number][] = [];
+  if (part === 'torso' && slice === 'torso' && rig.view !== 'side') {
+    const y = rig.waistY - 1;
+    pts.push([rig.torsoL + 2, y], [rig.torsoL + 3, y - 1], [rig.torsoR - 2, y], [rig.torsoR - 3, y - 1], [rig.cx - 1, rig.torsoTop + 4]);
+  } else if (part === 'torso' && slice === 'torso') {
+    pts.push([rig.cx - 1, rig.waistY - 1], [rig.cx, rig.waistY - 2]);
+  } else if (part === 'pernas' && slice === 'legs') {
+    for (const l of [rig.legA, rig.legB]) {
+      const k = along(l, 0.55);
+      pts.push([Math.floor(k.x), Math.floor(k.y)], [Math.floor(k.x) - 1, Math.floor(k.y) + 1]);
+    }
+    pts.push([rig.cx, rig.torsoBot]);
+  }
+  for (const [x, y] of pts) {
+    if (B.alphaAt(x, y) !== 255 || B.get(x, y) === before.get(x, y)) continue;
+    B.set(x, y, withAlpha(mix(B.get(x, y), SHADOW_COOL, 0.2), 255));
+  }
 }
 
 function drawKitTop(pix: Pix, rig: Rig): void {

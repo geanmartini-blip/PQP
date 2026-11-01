@@ -6,7 +6,7 @@
  * Depois abre o mundo e o HUD.
  */
 import * as Phaser from 'phaser';
-import { getMap, hasMap } from '@pqp/shared/map';
+import { getMap, hasMap, START_MAP } from '@pqp/shared/map';
 import { getData } from '@pqp/shared';
 import { archetypeLook, createArt, defaultLook } from '../art/index';
 import type { ArtApi } from '../art/contract';
@@ -39,7 +39,8 @@ export class BootScene extends Phaser.Scene {
     this.label = this.add
       .text(this.scale.width / 2, this.scale.height * 0.45, 'Preparando...', { fontFamily: '"Trebuchet MS", Verdana, sans-serif', fontSize: `${Math.round(16 * px)}px`, color: '#ffe8a0', align: 'center' })
       .setOrigin(0.5);
-    this.tasks = pregenTasks(this, art);
+    // Fase 2: o jogo começa no Delta; o ?ala= de teste vai direto ao mapa do protótipo
+    this.tasks = pregenTasks(this, art, this.cfg.archetypeId ? PREGEN_MAP : START_MAP);
     const ref: { gc?: GameClient } = {};
     void makeBaseTransport(this.cfg, () => ref.gc?.joinOptions() ?? {}).then(
       (base) => {
@@ -82,10 +83,10 @@ export class BootScene extends Phaser.Scene {
 }
 
 /** Folhas que o mapa do protótipo vai pedir logo (cada uma é uma tarefa de um quadro). */
-function pregenTasks(scene: Phaser.Scene, art: ArtApi): (() => void)[] {
+function pregenTasks(scene: Phaser.Scene, art: ArtApi, mapId: string): (() => void)[] {
   const tasks: (() => void)[] = [() => void art.characterSheet(scene, defaultLook())];
-  for (const a of PREGEN_ALAS) for (const tier of ['aprendiz', 'veterano'] as const) tasks.push(() => void art.characterSheet(scene, archetypeLook(a, tier)));
-  if (!hasMap(PREGEN_MAP)) return tasks;
+  if (mapId === PREGEN_MAP) for (const a of PREGEN_ALAS) for (const tier of ['aprendiz', 'veterano'] as const) tasks.push(() => void art.characterSheet(scene, archetypeLook(a, tier)));
+  if (!hasMap(mapId)) return tasks;
   const D = getData();
   const enemies = new Map<string, Set<'normal' | 'elite' | 'chefe'>>();
   const npcs = new Set<string>();
@@ -95,7 +96,7 @@ function pregenTasks(scene: Phaser.Scene, art: ArtApi): (() => void)[] {
     if (!s) enemies.set(id, (s = new Set()));
     s.add(tier);
   };
-  for (const m of getMap(PREGEN_MAP).markers) {
+  for (const m of getMap(mapId).markers) {
     if (m.kind === 'npc' && m.ref) npcs.add(m.ref);
     if (m.kind !== 'bando' && m.kind !== 'inimigo' && m.kind !== 'chefe') continue;
     const params = (m.params ?? {}) as Record<string, unknown>;

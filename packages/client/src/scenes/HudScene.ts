@@ -51,6 +51,7 @@ import {
   type Rect,
 } from '../ui/layout';
 import { TIP_TEXT, type TipId } from '../ui/tips';
+import { getUi, type UiController } from '../ui/dom/uiController';
 import type { WorldScene } from './WorldScene';
 
 type Slot = 1 | 2 | 3 | 'especial';
@@ -146,6 +147,11 @@ export class HudScene extends Phaser.Scene {
   private editTitle!: Phaser.GameObjects.Text;
   private editOk!: Phaser.GameObjects.Text;
   private editReset!: Phaser.GameObjects.Text;
+  // Fase 2: interface em DOM (criação, máquina, diálogo, travessia, rastreador)
+  private ui!: UiController;
+  private wasModal = false;
+  /** a seta aponta para o alvo da missão (tocar liga o auto-caminho) */
+  private compassMission = false;
 
   constructor() {
     super('HudScene');
@@ -154,6 +160,8 @@ export class HudScene extends Phaser.Scene {
   create(): void {
     this.rt = getRuntime();
     this.world = this.scene.get('WorldScene') as WorldScene;
+    this.ui = getUi(this.rt.gc, this.rt.art, () => this.world);
+    this.wasModal = false;
     this.touch = this.sys.game.device.input.touch;
     this.W = this.scale.width;
     this.H = this.scale.height;
@@ -423,6 +431,10 @@ export class HudScene extends Phaser.Scene {
   }
 
   private onDown(p: Phaser.Input.Pointer): void {
+    // toque na interface em DOM (o Phaser também recebe os toques fora do canvas): não é do jogo
+    const tgt = (p.event as Event | undefined)?.target;
+    if (tgt && tgt !== this.game.canvas) return;
+    if (this.ui.modalOpen) return;
     requestFullscreenOnce();
     const gc = this.rt.gc;
     if (!gc.welcomed) {
@@ -482,7 +494,10 @@ export class HudScene extends Phaser.Scene {
       updateJoystick(this.joy, p.x, p.y, JOY_RADIUS_PX * px, 8 * px);
       this.rt.gc.intent.x = this.joy.x;
       this.rt.gc.intent.y = this.joy.y;
-      if (Math.hypot(this.joy.x, this.joy.y) > 0.3) this.rt.tips.mark('andar', performance.now());
+      if (Math.hypot(this.joy.x, this.joy.y) > 0.3) {
+        this.rt.tips.mark('andar', performance.now());
+        this.rt.gc.tutorialControl('andar_joystick', 'andar');
+      }
     } else if (tr.mode === 'btn' && tr.ability && isDraggable(tr.ability)) this.showGuide(tr, p.x, p.y);
   }
 
@@ -509,7 +524,10 @@ export class HudScene extends Phaser.Scene {
       return;
     }
     if (tr.mode === 'seta') {
-      if (this.compassTo && tr.moved <= tapMove * 2) this.rt.gc.goTo(this.compassTo.x, this.compassTo.y);
+      if (this.compassTo && tr.moved <= tapMove * 2) {
+        if (this.compassMission) this.rt.gc.autoPath();
+        else this.rt.gc.goTo(this.compassTo.x, this.compassTo.y);
+      }
       return;
     }
     if (tr.mode === 'btn' && tr.slot !== undefined && tr.ability && isDraggable(tr.ability) && tr.btn) {
@@ -586,9 +604,12 @@ export class HudScene extends Phaser.Scene {
       case 'item':
         gc.useItem();
         break;
-      case 'auto':
-        gc.setAuto(!(gc.world.hud?.auto ?? false));
+      case 'auto': {
+        const on = !(gc.world.hud?.auto ?? false);
+        gc.setAuto(on);
+        if (on) gc.tutorialControl('modo_automatico');
         break;
+      }
       case 'ala': {
         const cur = gc.world.hud?.arch;
         const next = cur === TEMPLATE_ALAS[0] ? TEMPLATE_ALAS[1] : TEMPLATE_ALAS[0];
@@ -688,8 +709,23 @@ export class HudScene extends Phaser.Scene {
   override update(): void {
     const gc = this.rt.gc;
     const now = performance.now();
+    // interface em DOM da Fase 2 (telas, rastreador, avisos)
+    this.ui.update(now, { topCss: this.L.bannerY / this.px, selfTile: this.world.selfTile });
+    const modal = this.ui.modalOpen;
+    if (modal !== this.wasModal) {
+      this.wasModal = modal;
+      const kb = this.input.keyboard;
+      if (modal) this.releaseAll();
+      if (kb) {
+        kb.enabled = !modal;
+        if (modal) {
+          kb.resetKeys();
+          kb.disableGlobalCapture();
+        } else kb.enableGlobalCapture();
+      }
+    }
     // teclado (o joystick tem prioridade)
-    if (this.keys && this.joy === null && !this.editing) {
+    if (this.keys && this.joy === null && !this.editing && !modal) {
       const k = this.keys;
       const v = keysVector(k['a']!.isDown || k['left']!.isDown, k['d']!.isDown || k['right']!.isDown, k['w']!.isDown || k['up']!.isDown, k['s']!.isDown || k['down']!.isDown);
       gc.intent.x = v.x;
@@ -790,17 +826,20 @@ export class HudScene extends Phaser.Scene {
         b.update({ cd: hud.cd[3], gcd, disabled: cantAct || hud.special < 1000, charge: hud.special / 1000, pressed: pressed.has(id) }, now);
       } else b.update({ cd: hud.cd[HUD_INDEX[id]], gcd, disabled: cantAct || noRes, pressed: pressed.has(id) }, now);
     }
+    const game = gc.game;
     const item = this.buttons.get('item')!;
     const itemAb = hud.ab[4];
-    item.setVisible(itemAb !== undefined || hud.itemCount > 0);
+    // Fase 2: o tutorial libera o item e o automático aos poucos (desbloqueioTutorial)
+    item.setVisible((itemAb !== undefined || hud.itemCount > 0) && game.unlocked('item'));
     if (itemAb) item.setIcon(this.iconOf(itemAb));
     item.update({ cd: hud.cd[4], gcd: 0, disabled: cantAct || hud.itemCount <= 0, count: hud.itemCount, pressed: pressed.has('item') }, now);
     const auto = this.buttons.get('auto')!;
-    auto.setVisible(true);
+    auto.setVisible(hud.auto || game.unlocked('modo_automatico'));
     auto.setColor(hud.auto ? 0x2a7a3a : 0x22303a);
     auto.update({ cd: 0, gcd: 0, disabled: false, pressed: pressed.has('auto') }, now);
     const ala = this.buttons.get('ala')!;
-    ala.setVisible(hud.arch !== undefined);
+    // troca de ala do protótipo (Wesley e Li Wei): só no modo de teste
+    ala.setVisible(hud.arch !== undefined && !gc.dialogMode);
     ala.update({ cd: 0, gcd: 0, disabled: false, pressed: pressed.has('ala') }, now);
     const aj = this.buttons.get('ajuste')!;
     aj.setVisible(true);
@@ -835,7 +874,8 @@ export class HudScene extends Phaser.Scene {
     const rb = this.bars['recurso']!;
     if (rb.fill.fillColor !== resColor) rb.fill.setFillStyle(resColor);
     this.setBar('xp', hud.xpNext > 0 ? hud.xp / hud.xpNext : 0);
-    const name = gc.world.self()?.name ?? '';
+    // Fase 2: o nome do cadastro (o snapshot só manda o nome quando a entidade aparece)
+    const name = gc.game.profile?.name ?? gc.world.self()?.name ?? '';
     // nome e ala se couberem; senão só o nome (a ala aparece no traje e no botão ALA)
     const full = fontText(`${name}${arch ? ' - ' + arch.name : ''}`);
     this.text('nome', full.length <= L.player.chars ? full : fitChars(name, L.player.chars));
@@ -944,7 +984,8 @@ export class HudScene extends Phaser.Scene {
       this.updateCompassTarget();
     }
     const hasTarget = this.rt.gc.currentTarget() !== undefined;
-    const active = this.rt.tips.active({ now, hasTarget, enemiesVisible: this.enemiesSeen, enemyFar: this.compassTo !== null });
+    // Fase 2: as dicas do primeiro minuto vêm do tutorial de shared (DOM); as do protótipo somem
+    const active = this.rt.gc.game.active ? [] : this.rt.tips.active({ now, hasTarget, enemiesVisible: this.enemiesSeen, enemyFar: this.compassTo !== null });
     for (const [id, t] of this.tipTexts) {
       const on = active.includes(id);
       if (t.visible !== on) t.setVisible(on);
@@ -958,6 +999,17 @@ export class HudScene extends Phaser.Scene {
     const gc = this.rt.gc;
     const me = this.world.selfTile;
     this.compassTo = null;
+    this.compassMission = false;
+    // Fase 2: a seta aponta para o alvo da missão (e tocar nela liga o auto-caminho)
+    if (gc.game.active) {
+      const a = gc.game.missions?.alvo;
+      if (!me || this.ui.modalOpen || !a || a.mapa !== gc.world.mapId || a.x === undefined || a.y === undefined) return;
+      if (Math.hypot(a.x - me.x, a.y - me.y) > COMPASS_MIN_TILES) {
+        this.compassTo = { x: a.x, y: a.y };
+        this.compassMission = true;
+      }
+      return;
+    }
     if (!this.rt.tips.wantsCompass || !me || !gc.map || this.enemiesSeen > 0) return;
     const m = nearestEnemyMarker(gc.map.markers, me.x, me.y);
     if (m && m.d > COMPASS_MIN_TILES) this.compassTo = { x: m.x, y: m.y };

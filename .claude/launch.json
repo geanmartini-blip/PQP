@@ -6,6 +6,12 @@
       "runtimeExecutable": "C:\\Users\\gnmar\\tools\\node\\node.exe",
       "runtimeArgs": ["node_modules/vite/bin/vite.js", "packages/client", "--port", "5180"],
       "port": 5180
+    },
+    {
+      "name": "cliente-dist",
+      "runtimeExecutable": "C:\\Users\\gnmar\\tools\\node\\node.exe",
+      "runtimeArgs": ["node_modules/vite/bin/vite.js", "preview", "packages/client", "--port", "4190", "--strictPort"],
+      "port": 4190
     }
   ]
 }

@@ -16,7 +16,41 @@ Comandos rodam com `. .\scripts\env.ps1` antes (Node e Git portáteis).
 - Contratos da Fase 1: `shared/src/map/types.ts`, `shared/src/sim/types.ts`,
   `shared/src/net/protocol.ts` e `client/src/art/contract.ts`.
 
-## Fase 2: criação, Máquina de Visual, Delta, tutorial e travessia — PLANO
+## Fase 3: margens, instituições, arquétipos e treinadores — EM ANDAMENTO
+Plano:
+1. Mapas das duas margens com os 2 QGs e as 8 instituições, cada uma com quem treina a base, loja,
+   treino, quadro de missões e patentes. Também a Usina da Ponte e o Juncal.
+2. Os 24 arquétipos jogáveis:
+   - escolha da ala no nível 12, que libera o treinador;
+   - trajes de aprendiz e veterano;
+   - talentos dos níveis 10, 15 e 20;
+   - guia com bônus e falas.
+3. Os 24 treinadores como NPCs com falas e bordões; o bordão vira emote.
+4. Missões de entrada das 8 instituições.
+5. Balanceamento no simulador até nenhum arquétipo passar de 55%.
+6. Testes, build, commit.
+
+## Fase 2: criação, Máquina de Visual, Delta, tutorial e travessia — CONCLUÍDA
+- `shared/src/game`:
+  - registro do jogador;
+  - criação e Máquina de Visual;
+  - XP só em grupo, com +15%;
+  - missões do Delta até o Bruno Ferro;
+  - tutorial, diálogo e travessia.
+- Mapas `delta`, `qg_esquerda` e `qg_direita`. Uma sala por mapa.
+- Cliente:
+  - tela de criação;
+  - Máquina de Visual;
+  - diálogo;
+  - rastreador com seta e auto-caminho;
+  - tela da travessia.
+- Arte refeita com sombreamento, autotile, água com espuma, árvores e deco.
+- Verificação: 501 testes passando e build ok. O e2e passou com 200 ms e 2% de perda. O fluxo
+  completo, da criação até a chegada ao QG, está em `server/test/fase2.test.ts`.
+- Detalhe em `decisoes/fase2-delta.md`. Em aberto:
+  - a travessia de barco não é jogável: a escolha leva direto ao QG;
+  - o carregamento das folhas de sprite é lento;
+  - o HUD no QG da Direita teve uma captura sem botões.
 
 1. Regras em `shared`:
    - registro do jogador, com aparência, estágio, nível, XP, missões e story_flags;

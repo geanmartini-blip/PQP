@@ -21,8 +21,8 @@ import { buildTileset, TILE_KEY } from './tiles';
 
 export type { ArtApi, CharacterLook } from './contract';
 export { ANIMS, SPRITE_H, SPRITE_W, TILE_PX } from './contract';
-export { ANIMATED_TILES, TILE_ANIM_MS, TILE_KEY, TILE_VARIANTS, tileFrame } from './tiles';
-export { coneKeyFor, CONE_ANGLES, FONT_KEY, FX_KEYS } from './fx';
+export { ANIMATED_TILES, TILE_ANIM_MS, TILE_KEY, TILE_VARIANTS, tileFrame, treeFrame } from './tiles';
+export { coneKeyFor, CONE_ANGLES, FONT_KEY, FX_KEYS, shadowFrameFor } from './fx';
 export type { FxInfo } from './fx';
 export { defaultLook, archetypeLook } from './character';
 export type { ArtLook } from './character';
@@ -56,7 +56,7 @@ export function sheetMeta(key: string): SheetMeta | undefined {
   return metas.get(key);
 }
 
-function upload(scene: Phaser.Scene, key: string, pix: Pix, frames: SheetData['frames'] = []): void {
+function upload(scene: Phaser.Scene, key: string, pix: Pix, frames: SheetData['frames'] = [], smooth = false): void {
   if (scene.textures.exists(key)) return;
   const tex = scene.textures.createCanvas(key, pix.w, pix.h);
   if (!tex) return;
@@ -66,7 +66,12 @@ function upload(scene: Phaser.Scene, key: string, pix: Pix, frames: SheetData['f
   ctx.putImageData(new ImageData(data, pix.w, pix.h), 0, 0);
   for (const f of frames) tex.add(f.name, 0, f.x, f.y, f.w, f.h);
   tex.refresh();
-  tex.setFilter(Phaser.Textures.FilterMode.NEAREST);
+  tex.setFilter(smooth ? Phaser.Textures.FilterMode.LINEAR : Phaser.Textures.FilterMode.NEAREST);
+}
+
+/** Sobe um buffer puro como textura de canvas (blocos de terreno, vinheta). `smooth` = filtro linear. */
+export function uploadPix(scene: Phaser.Scene, key: string, pix: Pix, smooth = false): void {
+  upload(scene, key, pix, [], smooth);
 }
 
 function uploadSheet(scene: Phaser.Scene, sheet: SheetData, extra: Partial<SheetMeta> = {}): string {

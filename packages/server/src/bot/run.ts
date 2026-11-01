@@ -25,7 +25,8 @@ interface BotStats {
 
 async function runBot(i: number, stats: BotStats): Promise<() => Promise<void>> {
   const client = new Client(url);
-  const room: Room = await client.joinOrCreate('mundo');
+  // robôs de carga lutam na sala do protótipo (sandbox: template com os botões, sem cadastro)
+  const room: Room = await client.joinOrCreate('mundo', { mapId: 'prototipo_delta' });
   const r = new RobotClient(`robo-carga-${String(i).padStart(4, '0')}`, `Robô ${i + 1}`, i % 2 === 0 ? 'peao_brabo' : 'idol');
   const rng = createRng(1000 + i);
   const fight = fightBrain();

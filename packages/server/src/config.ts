@@ -6,8 +6,32 @@
 /** Porta padrão do servidor (express + Colyseus). */
 export const DEFAULT_PORT = 2567;
 
-/** Mapa do protótipo. */
+/**
+ * Mapa padrão do GameServerCore sem opção: o do protótipo (os testes de combate e de rede usam).
+ * A sala do protótipo é a sandbox (SANDBOX_MAPS): personagem template, sem registro nem missões.
+ */
 export const DEFAULT_MAP_ID = 'prototipo_delta';
+
+/** Mapas em modo sandbox (o template da Fase 1, que troca de ala com Wesley e Li Wei). */
+export const SANDBOX_MAPS: readonly string[] = ['prototipo_delta'];
+
+// ---- Fase 2 (regras de jogo no servidor). Tudo SUGESTÃO: os docs não dão esses números. ----
+
+// SUGESTÃO: o jogador "chegou" num lugar a até 4 tiles do marcador e "saiu" depois de 5,5 tiles.
+export const PLACE_RADIUS_TILES = 4;
+export const PLACE_LEAVE_RADIUS_TILES = 5.5;
+
+// SUGESTÃO: marcador com params.interagir (a fila do posto) conta a até 1,8 tile.
+export const INTERACT_MARKER_RADIUS_TILES = 1.8;
+
+// SUGESTÃO: a travessia sai com o Seu Jacó por perto ou a até 4 tiles da saída do cais.
+export const TRAVESSIA_REACH_TILES = 4;
+
+// SUGESTÃO: lugares, regiões e marcadores conferidos a cada 5 ticks (250 ms).
+export const AREA_CHECK_TICKS = 5;
+
+// SUGESTÃO: no objetivo "Seu Jacó caiu!", o Seu Jacó que acompanha cai de novo 15 s depois de levantar sozinho.
+export const JACO_DOWN_COOLDOWN_MS = 15_000;
 
 // SUGESTÃO: semente padrão do mundo (RNG da simulação).
 export const DEFAULT_WORLD_SEED = 2077;

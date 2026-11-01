@@ -79,9 +79,41 @@ export class Harness {
       down: new MemoryChannel<Down>({ ...chan, seed: seed + 1 }),
       online: true,
     };
-    robot.onWelcome(this.core.addClient(sid, robot.hello()));
+    const wel = this.core.addClient(sid, robot.hello());
+    if (wel) robot.onWelcome(wel);
     this.bots.push(bot);
+    this.drain();
     return bot;
+  }
+
+  /** Como connect, mas pelo caminho do WorldRoom (core.join, que lê o Store). */
+  async connectAsync(o: BotOptions = {}): Promise<Bot> {
+    const sid = `s${++sidCounter}`;
+    const seed = o.seed ?? sidCounter * 101;
+    const half = (o.rttMs ?? 200) / 2;
+    const chan = { delayMs: half, loss: o.loss ?? 0.02, jitterMs: 0, duplicate: 0 };
+    const robot = new RobotClient(o.token ?? `tok-${sid}-abcdef`, o.name ?? `Robô ${sid}`, o.archetypeId);
+    robot.rtt = o.rttMs ?? 200;
+    const bot: Bot = { sid, robot, up: new MemoryChannel<Up>({ ...chan, seed }), down: new MemoryChannel<Down>({ ...chan, seed: seed + 1 }), online: true };
+    this.bots.push(bot);
+    const wel = await this.core.join(sid, robot.hello());
+    if (wel) robot.onWelcome(wel);
+    this.drain();
+    return bot;
+  }
+
+  /** Mensagem de jogo do robô (GAME_MSG), entregue na hora; as respostas também. */
+  game(bot: Bot, type: string, msg: unknown): void {
+    this.core.onGameMessage(bot.sid, type, msg);
+    this.drain();
+  }
+
+  /** Entrega a caixa de saída do núcleo aos robôs (sem atraso: as mensagens de jogo não são o teste de rede). */
+  drain(): void {
+    for (const o of this.core.takeOutbox()) {
+      const b = this.bots.find((x) => x.sid === o.sid && x.online);
+      b?.robot.onGame(o.type, o.msg);
+    }
   }
 
   /** Reconecta com o mesmo token numa sessão nova (o robô recomeça como um cliente novo). */
@@ -129,6 +161,7 @@ export class Harness {
     }
     const snaps = this.core.tick();
     for (const ev of this.core.lastEvents) this.serverEvents.push({ t: this.world.tick, ev });
+    this.drain();
     for (const b of this.bots) {
       if (!b.online) continue;
       const s = snaps.get(b.sid);

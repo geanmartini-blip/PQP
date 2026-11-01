@@ -23,6 +23,9 @@ export interface Runtime {
 
 let current: Runtime | undefined;
 
+/** Chave do registro do jogador no modo offline (mais o token). */
+export const OFFLINE_RECORD_KEY = 'pqp_offline_';
+
 export function getRuntime(): Runtime {
   if (!current) throw new Error('runtime ainda não criado (BootScene)');
   return current;
@@ -58,7 +61,17 @@ export function browserStorage(): StorageLike | undefined {
 export async function makeBaseTransport(cfg: ClientConfig, joinOptions: () => Record<string, unknown>): Promise<Transport> {
   if (cfg.offline) {
     const m = await import('../net/localTransport');
-    return new m.LocalTransport();
+    // o registro do jogador do modo offline fica no aparelho (o mesmo token do online)
+    const st = browserStorage();
+    return new m.LocalTransport({
+      store: {
+        load: (id) => {
+          const raw = st?.getItem(OFFLINE_RECORD_KEY + id);
+          return raw ? (JSON.parse(raw) as unknown) : null;
+        },
+        save: (id, rec) => st?.setItem(OFFLINE_RECORD_KEY + id, JSON.stringify(rec)),
+      },
+    });
   }
   return new ColyseusTransport(cfg.endpoint, joinOptions);
 }

@@ -528,7 +528,8 @@ export class WorldScene extends Phaser.Scene {
         case 'level':
           if (ev.dst === you) {
             if (this.selfTile) this.floats.spawn(this.selfTile.x * T, this.selfTile.y * T - 60, `nivel ${ev.level}!`, NUM.gold, now, true);
-            gc.pushNotice(`Nível ${ev.level}!`);
+            // Fase 2: o banner de nível vem do perfil (com os desbloqueios)
+            if (!gc.game.active) gc.pushNotice(`Nível ${ev.level}!`);
           }
           break;
         case 'currency':
@@ -583,6 +584,7 @@ export class WorldScene extends Phaser.Scene {
     if (best) {
       gc.tapTarget(best.px / T, best.py / T, best.id);
       this.rt.tips.mark('alvo', performance.now());
+      gc.tutorialControl('trocar_alvo', 'alvo');
       return 'alvo';
     }
     if (bestNpc) {
@@ -590,7 +592,10 @@ export class WorldScene extends Phaser.Scene {
       return 'falar';
     }
     const dest = gc.goTo(tx, ty);
-    if (dest) this.rt.tips.mark('andar', performance.now());
+    if (dest) {
+      this.rt.tips.mark('andar', performance.now());
+      gc.tutorialControl('tocar_no_chao', 'andar');
+    }
     return dest ? 'andar' : null;
   }
 

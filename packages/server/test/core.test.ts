@@ -14,6 +14,9 @@ import { GameServerCore } from '../src/core';
 import { MemoryStore } from '../src/persistence/store';
 import { Harness } from './harness';
 
+// O progresso que volta depois de reiniciar o servidor (Store) está em fase2.test.ts: a sala do
+// protótipo (sandbox) não grava no Store.
+
 const SPAWN = { x: 27.5, y: 72.5 };
 const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y);
 
@@ -281,8 +284,8 @@ describe('queda de conexão e volta', () => {
 
   it('o mesmo token em outra sessão derruba a antiga', () => {
     const core = new GameServerCore({ content: false, log: () => undefined });
-    const w1 = core.addClient('x1', { token: 'tok-dois-aparelhos' });
-    const w2 = core.addClient('x2', { token: 'tok-dois-aparelhos' });
+    const w1 = core.addClient('x1', { token: 'tok-dois-aparelhos' })!;
+    const w2 = core.addClient('x2', { token: 'tok-dois-aparelhos' })!;
     expect(w2.you).toBe(w1.you);
     expect(core.takeKicked()).toEqual(['x1']);
     expect(core.hasSession('x1')).toBe(false);
@@ -290,28 +293,11 @@ describe('queda de conexão e volta', () => {
 
   it('hello sem token: o servidor gera um e devolve no welcome', async () => {
     const core = new GameServerCore({ content: false, log: () => undefined, store: new MemoryStore() });
-    const w = await core.join('s', { token: '' });
+    const w = (await core.join('s', { token: '' }))!;
     expect(typeof w.token).toBe('string');
     expect(w.token!.length).toBeGreaterThanOrEqual(8);
-    const w2 = await core.join('t', { token: 'tok-valido-123' });
+    const w2 = (await core.join('t', { token: 'tok-valido-123' }))!;
     expect(w2.token).toBeUndefined();
-  });
-
-  it('o progresso volta depois de reiniciar o servidor (Store)', async () => {
-    const store = new MemoryStore();
-    const c1 = new GameServerCore({ content: false, log: () => undefined, store });
-    await c1.join('s', { token: 'tok-reinicio-01', name: 'Dona Cida' });
-    const e = c1.entityOf('s')!;
-    grantXp(c1.world, e, xpToNext(e.level) * 1 + 3);
-    e.semente = 42;
-    c1.removeClient('s');
-    await c1.saveAll();
-    const c2 = new GameServerCore({ content: false, log: () => undefined, store });
-    await c2.join('s2', { token: 'tok-reinicio-01' });
-    const e2 = c2.entityOf('s2')!;
-    expect(e2.name).toBe('Dona Cida');
-    expect(e2.level).toBe(13);
-    expect(e2.semente).toBe(42);
   });
 });
 

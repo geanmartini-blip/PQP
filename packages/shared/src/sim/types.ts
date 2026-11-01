@@ -4,6 +4,7 @@
  * Nada aqui usa Math.random ou Date: use world.rng e world.tick.
  */
 import type { TileMap } from '../map/types';
+import type { CharacterLook } from '../game/types';
 
 export const TICK_RATE = 20;
 export const TICK_MS = 50;
@@ -197,6 +198,13 @@ export interface Entity {
   lootFilter?: 'comum' | 'raro' | 'unico' | 'set';
   /** venda automática ligada (loot.json vendaAutomatica): item abaixo do filtro e da raridade da venda vira moeda */
   autoSell?: boolean;
+  // ---- Adições da Fase 2 (regras de jogo em shared/game). Todas opcionais. ----
+  /** visual em camadas do jogador (game/visual.ts lookOf), para o snapshot e o desenho */
+  look?: CharacterLook;
+  /** teto de nível agora (Delta 7 até o Bruno Ferro; travessia 8): o XP passa, o nível não */
+  levelCap?: number;
+  /** ainda no Delta: o Seu Jacó acompanha, então a luta conta como grupo para o XP */
+  deltaRookie?: boolean;
 }
 
 /** Carga curta de uma habilidade (castMs). */

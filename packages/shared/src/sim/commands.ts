@@ -82,6 +82,31 @@ export function applyCommand(w: World, e: Entity, cmd: PlayerCommand, ctx: Comma
   }
 }
 
+/**
+ * Fase 2: NPC que `e` alcança para conversar (mesmo raio do 'interagir'), por id de entidade ou,
+ * sem id, o mais perto com esse id de dados (npcs.json/trainers.json). O servidor usa antes de
+ * chamar game/dialog.ts talkTo.
+ */
+export function npcInReach(w: World, e: Entity, q: { entity?: number; npcId?: string }): Entity | undefined {
+  if (!isUp(e)) return undefined;
+  const ok = (n: Entity) => n.kind === 'npc' && !n.dead && n.id !== e.id && dist(e.x, e.y, n.x, n.y) <= INTERACT_RADIUS + n.radius + e.radius;
+  if (q.entity !== undefined) {
+    const n = getEnt(w, q.entity);
+    return n && ok(n) && (q.npcId === undefined || n.defId === q.npcId) ? n : undefined;
+  }
+  let best: Entity | undefined;
+  let bd = Infinity;
+  for (const n of w.entities.values()) {
+    if (n.defId !== q.npcId || !ok(n)) continue;
+    const d = dist(e.x, e.y, n.x, n.y);
+    if (d < bd) {
+      bd = d;
+      best = n;
+    }
+  }
+  return best;
+}
+
 /** Em combate: bateu ou apanhou há menos de regenForaDeCombate.aposMs (5 s). */
 export function inCombat(w: World, e: Entity): boolean {
   return e.lastCombatTick !== undefined && w.tick - e.lastCombatTick < msToTicks(bal().combate.regenForaDeCombate.aposMs);
@@ -134,8 +159,9 @@ function interact(w: World, e: Entity, entityId: number): boolean {
   const arch = TRAINER_ARCHETYPE(npc.defId);
   let lines: string[] = [];
   if (tr) {
-    // troca de ala só fora de combate; em combate o treinador só fala
-    if (arch && e.kind === 'player' && e.archetypeId !== arch && !inCombat(w, e)) setArchetype(w, e, arch);
+    // troca de ala só fora de combate; em combate o treinador só fala. Fase 2: só quem já tem ala
+    // troca (o protótipo de Wesley e Li Wei); no Delta e antes do 12 o treinador só conversa.
+    if (arch && e.kind === 'player' && e.archetypeId && e.archetypeId !== arch && !inCombat(w, e)) setArchetype(w, e, arch);
     lines = tr.falas.treino.length > 0 ? tr.falas.treino : tr.falas.saudacao;
   } else {
     const n = D.npcsById.get(npc.defId);

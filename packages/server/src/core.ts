@@ -1,6 +1,6 @@
 /**
- * GameServerCore: o servidor autoritativo sem transporte. O WorldRoom (Colyseus) e os testes
- * (canal em memória) falam com ele do mesmo jeito.
+ * GameServerCore: o servidor autoritativo de UM mapa, sem transporte. O WorldRoom (Colyseus, uma
+ * sala por mapa) e os testes (canal em memória) falam com ele do mesmo jeito.
  *
  * Fluxo por tick (20 por segundo):
  *  1. cada sessão consome UMA entrada da fila (o cliente prevê um tick por entrada) e os comandos
@@ -9,43 +9,66 @@
  *     comando leva mais uma ida e espera o tick);
  *     - posição e ack andam juntos: cada entrada é um passo, nunca dois. Fila vazia (a rede travou,
  *       que no TCP é como a perda aparece): o personagem não anda neste tick, nem pelo joystick
- *       velho nem pelo caminho do toque no chão (antes ele andava de novo com a entrada velha e
- *       depois aplicava as atrasadas, contando o movimento duas vezes);
+ *       velho nem pelo caminho do toque no chão;
  *     - fila com mais de INPUT_TARGET_BACKLOG + 1: até INPUT_CATCHUP_PER_TICK entradas extras andam
- *       na hora, as mais velhas primeiro (drena a rajada depois da travada em poucos ticks), pelo
- *       crédito de entradas, para ninguém andar mais rápido mandando mais de 20 por segundo;
- *     - comando com afterSeq (campo opcional, ver sanitizeCmd) espera o servidor ter andado essa
- *       entrada, para a posição e o A* saírem iguais aos do cliente;
+ *       na hora, as mais velhas primeiro, pelo crédito de entradas;
+ *     - comando com afterSeq espera o servidor ter andado essa entrada;
  *  2. step() da simulação;
- *  3. renascimento dos inimigos, saída de quem caiu da conexão há muito tempo, gravação;
- *  4. um snapshot por cliente: entidades no raio de interesse, 'gone', avisos, zonas, eventos e HUD.
+ *  3. Fase 2: os eventos do tick (xp, level, death, cast, loot_pick, revive) e os lugares, regiões
+ *     e marcadores por perto alimentam as regras de shared/game (missões, tutorial, story_flags);
+ *  4. renascimento dos inimigos, saída de quem caiu da conexão há muito tempo, gravação;
+ *  5. um snapshot por cliente: entidades no raio de interesse, 'gone', avisos, zonas, eventos e HUD.
+ *
+ * Fase 2 (registro e regras):
+ * - o registro é o PlayerRecord de shared/game (version 2), carregado do Store e migrado;
+ * - sem personagem (criado=false): a sessão recebe 'perfil' e espera 'criar_personagem'; só então
+ *   o personagem nasce e o 'welcome' sai (com o token gerado, se foi o caso);
+ * - personagem de outro mapa (o mapa vem do estágio: Delta até a travessia, depois o QG da
+ *   margem): 'trocar_sala' com o mapId certo, sem nascer aqui;
+ * - mensagens de jogo (GAME_MSG) entram por onGameMessage e as respostas saem pela caixa de saída
+ *   (takeOutbox), que o adaptador manda na ordem;
+ * - o registro é a fonte de nível, XP, estágio, missões e visual; a entidade é a fonte de moedas,
+ *   inventário, poções, Doutrina e automático (pull antes de cada regra, push depois);
+ * - grava a cada mudança (o Store faz o debounce) e a cada SAVE_EVERY_MS.
+ * - sala do protótipo (SANDBOX_MAPS): o personagem template da Fase 1 (hello.archetypeId), sem
+ *   registro no Store nem regras de jogo, para os testes de combate e de rede.
  *
  * Entradas: aceita as PlayerInput com seq maior que a última consumida (o cliente repete as 3
  * últimas). Comandos: dedupe por id (maior id processado = cack, mais um conjunto dos recentes).
  * Campos d/n/lk/lv: vão quando a entidade é nova para o cliente ou mudou, e se repetem a cada
  * INFO_REPEAT_TICKS até o cliente confirmar o tick (C2S_Input.ackTick); 'need' responde com 'info'
  * se mesmo assim faltar.
- * Eventos do tick (say, hit, xp...) vão só no snapshot daquele tick: o transporte de verdade é
- * WebSocket/TCP, que não perde mensagem (a perda vira atraso, ver netsim.ts).
  * Queda de conexão: o personagem fica no modo automático (Doutrina) por OFFLINE_AUTO_MS e depois sai;
  * o mesmo token retoma o mesmo personagem.
  */
 import { randomUUID } from 'node:crypto';
 import { getData } from '@pqp/shared/data';
-import { findPath, getMap } from '@pqp/shared/map';
+import { findPath, getMap, START_MAP } from '@pqp/shared/map';
 import {
   dequantizeAxis,
+  GAME_MSG,
   INTEREST_RADIUS,
   INTERP_DELAY_MS,
   MAX_REWIND_MS,
+  MSG,
   PROTOCOL_VERSION,
+  type C2S_CriarPersonagem,
+  type C2S_DialogoOpcao,
+  type C2S_Falar,
   type C2S_Hello,
   type C2S_Input,
+  type C2S_MaquinaVisual,
+  type C2S_MissaoAceitar,
   type C2S_Need,
+  type C2S_Travessia,
+  type C2S_TutorialPasso,
   type EntSnap,
+  type S2C_Dialogo,
   type S2C_Info,
+  type S2C_MissaoEstado,
   type S2C_Pong,
   type S2C_Snapshot,
+  type S2C_TrocarSala,
   type S2C_Welcome,
 } from '@pqp/shared/net';
 import {
@@ -53,12 +76,15 @@ import {
   applyInput,
   canMove,
   createWorld,
+  downEntity,
   hasStatus,
   hudSnapshot,
   isHostile,
   moveSpeedOf,
   moveVelocity,
   msToTicks,
+  npcInReach,
+  setArchetype,
   spawnAlly,
   spawnPlayer,
   step,
@@ -73,7 +99,18 @@ import {
   type Vec,
   type World,
 } from '@pqp/shared/sim';
+import { relevel } from '@pqp/shared/sim/spawn';
+import { lookOf as recordLook, nearVisualMachine, applyVisualMachine } from '@pqp/shared/game/visual';
+import { newPlayerRecord, profileOf, simKitOf } from '@pqp/shared/game/record';
+import { gainXp, isDeltaRookie, simLevelCap } from '@pqp/shared/game/progression';
+import { acceptMission, currentObjectives, missionStatus, onGameEvent } from '@pqp/shared/game/missions';
+import { controlesLiberados, TUTORIAL_STEPS } from '@pqp/shared/game/tutorial';
+import { dialogOption, dialogOptions, talkTo, type Dialog } from '@pqp/shared/game/dialog';
+import { applyTravessia, createCharacter } from '@pqp/shared/game/travessia';
+import type { GameEvent, GameResult, PlayerRecord } from '@pqp/shared/game/types';
+import { TutorialControl } from '@pqp/shared/schema/mission';
 import {
+  AREA_CHECK_TICKS,
   CMD_HOLD_MAX_TICKS,
   DEFAULT_ARCHETYPE,
   DEFAULT_MAP_ID,
@@ -87,15 +124,22 @@ import {
   INPUT_CREDIT_PER_TICK,
   INPUT_QUEUE_MAX,
   INPUT_TARGET_BACKLOG,
+  INTERACT_MARKER_RADIUS_TILES,
+  JACO_DOWN_COOLDOWN_MS,
   MAX_CLIENT_RTT_MS,
   MAX_CMDS_PER_MSG,
   MAX_NAME_LENGTH,
   OFFLINE_AUTO_MS,
+  PLACE_LEAVE_RADIUS_TILES,
+  PLACE_RADIUS_TILES,
   RECENT_CMD_IDS,
+  SANDBOX_MAPS,
   SAVE_EVERY_MS,
+  TRAVESSIA_REACH_TILES,
 } from './config';
-import type { PlayerRecord, Store } from './persistence/store';
+import type { Store, StoredPlayer } from './persistence/store';
 import { sanitizeDoctrine } from './doctrine_guard';
+import { areaMarkers, avisosOf, botaoOf, controlOfBotao, interactAction, isResource, killParticipants, mapForRecord, rollRewardItems, wantsControl, type AreaMarkers } from './game_bridge';
 import { baseEntSnap, eventOut, eventRefs, lookOf, telegraphOut, zoneOut } from './snapshot';
 import { Spawner, type SpawnerOptions } from './spawner';
 
@@ -106,15 +150,29 @@ export interface CoreOptions {
   store?: Store;
   /** põe bandos, elite, chefe e NPCs dos marcadores (padrão true) */
   content?: boolean;
-  /** companheiro de IA para cada jogador (padrão false; PQP_COMPANHEIRO=1 no servidor) */
+  /** companheiro de IA (treinador) para cada jogador (padrão false; PQP_COMPANHEIRO=1 no servidor) */
   companions?: boolean;
-  /** arquétipo de quem entra pela primeira vez (padrão peao_brabo) */
+  /**
+   * o Seu Jacó acompanha quem ainda está no Delta (padrão: só no mapa do Delta, fora da sandbox).
+   * Ele conta no grupo e cai no objetivo "Seu Jacó caiu!" para o jogador levantar.
+   */
+  jaco?: boolean;
+  /** sala do protótipo: personagem template, sem registro nem regras (padrão: mapId em SANDBOX_MAPS) */
+  sandbox?: boolean;
+  /** arquétipo do template da sandbox (padrão peao_brabo) */
   defaultArchetype?: string;
   /** tempo no automático depois da queda de conexão antes de sair do mapa */
   offlineAutoMs?: number;
   interestRadius?: number;
   spawner?: SpawnerOptions;
   log?: (msg: string) => void;
+}
+
+/** Mensagem que o adaptador manda para uma sessão (na ordem da caixa). */
+export interface OutMsg {
+  sid: string;
+  type: string;
+  msg: unknown;
 }
 
 interface SentInfo {
@@ -147,6 +205,12 @@ interface Session {
   ackTick: number;
   sent: Map<number, SentInfo>;
   gone: Map<number, number>;
+  /** registro sem personagem criado: espera 'criar_personagem' */
+  pending?: PlayerRecord;
+  /** o token foi gerado pelo servidor e ainda não foi entregue no welcome */
+  tokenToSend?: boolean;
+  /** mandada para outra sala (trocar_sala): não tem personagem aqui */
+  movedTo?: string;
 }
 
 /** Comando na fila do servidor. */
@@ -161,6 +225,8 @@ interface HeldCmd {
 interface Slot {
   token: string;
   rec: PlayerRecord;
+  /** personagem template da sala do protótipo (sem regras nem Store) */
+  sandbox: boolean;
   entityId: number;
   companionId?: number;
   sid?: string;
@@ -168,6 +234,21 @@ interface Slot {
   offlineSince?: number;
   autoBefore: boolean;
   lastLevel: number;
+  /** mudou desde a última gravação */
+  dirty: boolean;
+  /** perfil e estado das missões a mandar no fim do tick ou da mensagem */
+  notify: boolean;
+  /** eventos de jogo detectados nas entradas e comandos, aplicados depois do step */
+  queued: GameEvent[];
+  /** lugar atual (undefined = ainda não conferido) */
+  place?: string | null;
+  region?: string;
+  /** marcadores de interação em que o jogador está dentro */
+  inside: Set<string>;
+  stickDown: boolean;
+  hadTarget: boolean;
+  jacoDownAt?: number;
+  lastDialog?: Dialog;
 }
 
 // SUGESTÃO: 'need' responde no máximo 64 ids por pedido.
@@ -176,7 +257,10 @@ const MAX_NEED_IDS = 64;
 const TOKEN_RE = /^[A-Za-z0-9_-]{8,128}$/;
 const isInt = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v);
 const isNum = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
+const CONTROLS = new Set<string>(TutorialControl.options);
+const STEPS = new Set<string>(TUTORIAL_STEPS.map((s) => s.id));
 
 /** Nome limpo (sem controle, até MAX_NAME_LENGTH) ou undefined. */
 export function cleanName(v: unknown): string | undefined {
@@ -245,19 +329,24 @@ export class GameServerCore {
   readonly mapId: string;
   readonly spawn: Vec;
   readonly spawner?: Spawner;
+  /** sala do protótipo: template da Fase 1, sem registro nem regras */
+  readonly sandbox: boolean;
   /** eventos do último tick (testes e métricas) */
   lastEvents: CombatEvent[] = [];
 
   private readonly store?: Store;
   private readonly companions: boolean;
+  private readonly jaco: boolean;
   private readonly defaultArchetype: string;
   private readonly offlineTicks: number;
   private readonly interestRadius: number;
   private readonly log: (msg: string) => void;
+  private readonly areas: AreaMarkers;
   private readonly sessions = new Map<string, Session>();
   private readonly slots = new Map<string, Slot>(); // token -> personagem no mundo
-  private readonly records = new Map<string, PlayerRecord>(); // token -> último registro conhecido
+  private readonly records = new Map<string, PlayerRecord>(); // token -> último registro conhecido (sem Store e sandbox)
   private kicked: string[] = [];
+  private outbox: OutMsg[] = [];
   private prevPos = new Map<number, [number, number]>();
   private baseCache = new Map<number, EntSnap>();
   private infoCache = new Map<number, { d: string; n: string; lv: number; lk: unknown; lkJson: string | undefined }>();
@@ -268,11 +357,14 @@ export class GameServerCore {
     this.world = createWorld(getMap(this.mapId), opts.seed ?? DEFAULT_WORLD_SEED);
     this.world.pathfinder = findPath;
     if (opts.store) this.store = opts.store;
+    this.sandbox = opts.sandbox ?? SANDBOX_MAPS.includes(this.mapId);
     this.companions = opts.companions ?? false;
+    this.jaco = opts.jaco ?? (!this.sandbox && this.mapId === START_MAP);
     this.defaultArchetype = opts.defaultArchetype ?? DEFAULT_ARCHETYPE;
     this.offlineTicks = msToTicks(opts.offlineAutoMs ?? OFFLINE_AUTO_MS);
     this.interestRadius = opts.interestRadius ?? INTEREST_RADIUS;
     this.log = opts.log ?? ((m) => console.log(m));
+    this.areas = areaMarkers(this.world.map);
     const sp = this.world.map.markers.find((m) => m.kind === 'spawn_jogador');
     this.spawn = sp ? { x: sp.x, y: sp.y } : { x: this.world.map.width / 2, y: this.world.map.height / 2 };
     if (opts.content !== false) {
@@ -282,34 +374,62 @@ export class GameServerCore {
   }
 
   // -------------------------------------------------------------------------
+  // Caixa de saída (mensagens de jogo, welcome tardio, trocar_sala)
+
+  /** Mensagens prontas para mandar, na ordem (o adaptador chama depois de cada mensagem e de cada tick). */
+  takeOutbox(): OutMsg[] {
+    const o = this.outbox;
+    this.outbox = [];
+    return o;
+  }
+
+  private send(sid: string | undefined, type: string, msg: unknown): void {
+    if (sid !== undefined) this.outbox.push({ sid, type, msg });
+  }
+
+  // -------------------------------------------------------------------------
   // Clientes
 
   /**
    * Carrega (ou cria) o registro no Store e entra. É o caminho do WorldRoom. Sem token válido, o
-   * servidor gera um e devolve em welcome.token.
+   * servidor gera um e devolve em welcome.token (ou em trocar_sala.token). Devolve null quando o
+   * personagem ainda não existe (espera 'criar_personagem') ou é de outro mapa (trocar_sala).
+   * `explicit`: o cliente pediu esta sala pelo mapId (a sandbox só aceita assim).
    */
-  async join(sessionId: string, hello: C2S_Hello): Promise<S2C_Welcome> {
+  async join(sessionId: string, hello: C2S_Hello, opts: { explicit?: boolean } = {}): Promise<S2C_Welcome | null> {
     const { token, generated } = normalizeToken(hello?.token);
-    let rec: PlayerRecord | undefined;
-    if (this.store && !this.slots.has(token) && !this.records.has(token)) {
+    const h: C2S_Hello = { ...(hello ?? {}), token };
+    if (this.sandbox && opts.explicit !== false) {
+      const w = this.addClient(sessionId, h);
+      if (w && generated) w.token = token;
+      return w;
+    }
+    let row: StoredPlayer | undefined;
+    if (this.store && !this.slots.has(token)) {
       try {
-        rec = await this.store.getOrCreatePlayer(token, cleanName(hello?.name) ?? DEFAULT_PLAYER_NAME);
+        row = await this.store.getOrCreatePlayer(token, cleanName(hello?.name) ?? DEFAULT_PLAYER_NAME);
       } catch (err) {
         this.log(`[core] store falhou para um token; seguindo sem persistência: ${String(err)}`);
       }
     }
-    const wel = this.addClient(sessionId, { ...(hello ?? {}), token }, rec);
-    if (generated) wel.token = token;
-    return wel;
+    if (this.sandbox) {
+      // sala do protótipo sem pedido explícito: manda para o mapa do registro
+      const rec = row?.data ?? this.records.get(token) ?? newPlayerRecord(randomUUID(), DEFAULT_PLAYER_NAME);
+      this.redirect(this.ensureSession(sessionId, token), mapForRecord(rec), 'registro', generated);
+      return null;
+    }
+    return this.addClient(sessionId, h, row?.data, { generated });
   }
 
   /**
    * Entra (ou volta) com um hello. Mesmo token = mesmo personagem: se ele ainda está no mundo (no
    * automático depois da queda), volta a ser controlado; senão nasce no spawn com o progresso do
-   * registro. Uma sessão antiga do mesmo token é derrubada (takeKicked).
+   * registro. Uma sessão antiga do mesmo token é derrubada (takeKicked). Fora da sandbox, devolve
+   * null quando falta criar o personagem ou ele é de outro mapa (as mensagens vão pela caixa).
    */
-  addClient(sessionId: string, hello: C2S_Hello, rec?: PlayerRecord): S2C_Welcome {
-    const { token, generated } = normalizeToken(hello?.token);
+  addClient(sessionId: string, hello: C2S_Hello, rec?: PlayerRecord, opts: { generated?: boolean } = {}): S2C_Welcome | null {
+    const { token, generated: gen0 } = normalizeToken(hello?.token);
+    const generated = gen0 || opts.generated === true;
     const name = cleanName(hello?.name);
     // a sessão já existia com outro token: solta o personagem anterior
     const prevSess = this.sessions.get(sessionId);
@@ -326,19 +446,51 @@ export class GameServerCore {
         this.kicked.push(slot.sid);
       }
       const e = this.world.entities.get(slot.entityId)!;
-      if (name && name !== e.name) {
+      if (slot.sandbox && name && name !== e.name) {
         e.name = name;
         slot.rec.name = name;
       }
-    } else {
-      const r = rec ? clone(rec) : this.records.get(token) ? clone(this.records.get(token)!) : { id: randomUUID(), token, name: name ?? DEFAULT_PLAYER_NAME, data: {} };
-      r.token = token;
+    } else if (this.sandbox) {
+      const r = rec ? clone(rec) : this.records.get(token) ? clone(this.records.get(token)!) : newPlayerRecord(randomUUID(), name ?? DEFAULT_PLAYER_NAME);
       if (name) r.name = name;
-      slot = this.spawnSlot(r, hello?.archetypeId);
+      r.criado = true;
+      slot = this.spawnSlot(token, r, true, hello?.archetypeId);
+    } else {
+      const r = rec ? clone(rec) : this.records.get(token) ? clone(this.records.get(token)!) : newPlayerRecord(randomUUID(), name ?? DEFAULT_PLAYER_NAME);
+      const sess = this.ensureSession(sessionId, token);
+      const target = mapForRecord(r);
+      if (target !== this.mapId) {
+        this.redirect(sess, target, 'registro', generated);
+        return null;
+      }
+      if (!r.criado) {
+        sess.pending = r;
+        if (generated) sess.tokenToSend = true;
+        this.records.set(token, clone(r));
+        this.send(sessionId, GAME_MSG.perfil, profileOf(r, controlesLiberados(r)));
+        return null;
+      }
+      slot = this.spawnSlot(token, r, false);
     }
     this.comeBack(slot);
     slot.sid = sessionId;
+    const sess = this.ensureSession(sessionId, token);
+    sess.pending = undefined;
+    sess.movedTo = undefined;
+    this.persist(slot);
+    const wel = this.welcomeOf(slot);
+    if (generated || sess.tokenToSend) wel.token = token;
+    sess.tokenToSend = undefined;
+    if (!slot.sandbox) slot.notify = true;
+    this.flushNotify();
+    return wel;
+  }
 
+  private welcomeOf(slot: Slot): S2C_Welcome {
+    return { you: slot.entityId, mapId: this.mapId, tick: this.world.tick, tickRate: TICK_RATE, protocol: PROTOCOL_VERSION };
+  }
+
+  private ensureSession(sessionId: string, token: string): Session {
     let sess = this.sessions.get(sessionId);
     if (!sess) {
       sess = {
@@ -363,20 +515,21 @@ export class GameServerCore {
       this.sessions.set(sessionId, sess);
     } else {
       // hello repetido na mesma sessão: o cliente pode ter perdido o estado, manda tudo de novo
+      sess.token = token;
       sess.connected = true;
       sess.sent.clear();
       sess.gone.clear();
     }
-    this.persist(slot);
-    const wel: S2C_Welcome = {
-      you: slot.entityId,
-      mapId: this.mapId,
-      tick: this.world.tick,
-      tickRate: TICK_RATE,
-      protocol: PROTOCOL_VERSION,
-    };
-    if (generated) wel.token = token;
-    return wel;
+    return sess;
+  }
+
+  /** Manda a sessão para a sala de outro mapa. */
+  private redirect(sess: Session, mapId: string, motivo: S2C_TrocarSala['motivo'], generated: boolean): void {
+    sess.movedTo = mapId;
+    sess.pending = undefined;
+    const msg: S2C_TrocarSala = { mapId, motivo };
+    if (generated || sess.tokenToSend) msg.token = sess.token;
+    this.send(sess.sid, GAME_MSG.trocarSala, msg);
   }
 
   /** A conexão acabou de vez: o personagem fica no automático e sai depois de OFFLINE_AUTO_MS. */
@@ -424,7 +577,7 @@ export class GameServerCore {
     return this.sessions.has(sessionId);
   }
 
-  /** id da entidade de uma sessão (testes e ferramentas). */
+  /** Personagem de uma sessão (testes e ferramentas). */
   entityOf(sessionId: string): Entity | undefined {
     const s = this.sessions.get(sessionId);
     const slot = s && this.slots.get(s.token);
@@ -441,6 +594,18 @@ export class GameServerCore {
     const s = this.sessions.get(sessionId);
     const slot = s && this.slots.get(s.token);
     return slot?.companionId !== undefined ? this.world.entities.get(slot.companionId) : undefined;
+  }
+
+  /** Registro do jogador de uma sessão (o do personagem no mundo, ou o que espera a criação). */
+  recordOf(sessionId: string): PlayerRecord | undefined {
+    const s = this.sessions.get(sessionId);
+    if (!s) return undefined;
+    const slot = this.slots.get(s.token);
+    if (slot) {
+      this.pull(slot);
+      return slot.rec;
+    }
+    return s.pending;
   }
 
   private goOffline(slot: Slot): void {
@@ -479,36 +644,66 @@ export class GameServerCore {
   }
 
   /** Nasce o personagem do registro no spawn. */
-  private spawnSlot(rec: PlayerRecord, archetypeReq?: string): Slot {
-    const d = rec.data ?? {};
-    rec.data = d;
+  private spawnSlot(token: string, rec: PlayerRecord, sandbox: boolean, archetypeReq?: string): Slot {
     const D = getData();
-    const archetypeId =
-      typeof archetypeReq === 'string' && D.archetypesById.has(archetypeReq) ? archetypeReq : this.validKit(d.archetypeId) ? d.archetypeId : this.defaultArchetype;
-    const savedLevel = isInt(d.level) && d.level >= 1 && d.level <= 99 ? d.level : undefined;
-    const level = savedLevel !== undefined ? Math.max(savedLevel, this.kitLevelMin(archetypeId)) : undefined;
-    const side = d['side'] === 'esquerda' || d['side'] === 'direita' ? d['side'] : undefined;
-    const e = spawnPlayer(this.world, {
-      name: rec.name,
-      archetypeId,
-      ...(level !== undefined ? { level } : {}),
-      x: this.spawn.x,
-      y: this.spawn.y,
-      playerId: rec.id,
-      ...(side ? { side } : {}),
-      ...(typeof d.slot3 === 'string' ? { slot3: d.slot3 } : {}),
-    });
-    if (isNum(d.xp)) e.xp = Math.max(0, d.xp);
-    if (isNum(d.semente)) e.semente = d.semente;
-    if (isNum(d.credito)) e.credito = d.credito;
-    if (Array.isArray(d.inventory)) e.inventory = d.inventory.filter((x): x is string => typeof x === 'string');
-    if (isInt(d.itemCount) && e.loadout) e.loadout.itemCount = Math.max(0, d.itemCount);
+    let e: Entity;
+    const side = rec.side ?? undefined;
+    if (sandbox) {
+      const saved = rec.archetype ?? rec.class ?? undefined;
+      const kit = typeof archetypeReq === 'string' && D.archetypesById.has(archetypeReq) ? archetypeReq : this.validKit(saved) ? saved : this.defaultArchetype;
+      const level = Math.max(Math.max(1, Math.min(99, Math.floor(rec.level))), this.kitLevelMin(kit));
+      e = spawnPlayer(this.world, {
+        name: rec.name,
+        archetypeId: kit,
+        level,
+        x: this.spawn.x,
+        y: this.spawn.y,
+        playerId: rec.id,
+        xp: Math.max(0, rec.xp),
+        ...(side ? { side } : {}),
+        ...(rec.loadout.slot3_ability ? { slot3: rec.loadout.slot3_ability } : {}),
+      });
+    } else {
+      const cap = simLevelCap(rec);
+      e = spawnPlayer(this.world, {
+        name: rec.name,
+        archetypeId: simKitOf(rec),
+        level: Math.max(1, Math.floor(rec.level)),
+        xp: Math.max(0, rec.xp),
+        x: this.spawn.x,
+        y: this.spawn.y,
+        playerId: rec.id,
+        look: recordLook(rec),
+        ...(cap !== undefined ? { levelCap: cap } : {}),
+        ...(isDeltaRookie(rec) ? { deltaRookie: true } : {}),
+        ...(side ? { side } : {}),
+        ...(rec.archetype && rec.loadout.slot3_ability ? { slot3: rec.loadout.slot3_ability } : {}),
+      });
+    }
+    e.semente = Math.max(0, rec.semente);
+    e.credito = Math.max(0, rec.credito);
+    e.inventory = rec.inventory.filter((x): x is string => typeof x === 'string');
+    if (e.loadout) e.loadout.itemCount = Math.max(0, Math.floor(rec.item_count));
     // o registro pode ter cartas gravadas antes da validação: passam pelo mesmo filtro
-    if (Array.isArray(d.doctrine)) e.doctrine = sanitizeDoctrine(d.doctrine, 5);
-    e.auto = d.auto === true;
-    const slot: Slot = { token: rec.token, rec, entityId: e.id, autoBefore: e.auto, lastLevel: e.level };
-    if (this.companions) this.spawnCompanion(slot, e);
-    this.slots.set(rec.token, slot);
+    e.doctrine = sanitizeDoctrine(Array.isArray(rec.doctrine) ? rec.doctrine : [], 5);
+    e.auto = rec.auto === true;
+    const slot: Slot = {
+      token,
+      rec,
+      sandbox,
+      entityId: e.id,
+      autoBefore: e.auto,
+      lastLevel: e.level,
+      dirty: false,
+      notify: false,
+      queued: [],
+      inside: new Set(),
+      stickDown: false,
+      hadTarget: false,
+    };
+    if (!sandbox && this.jaco && rec.stage !== 'margem') this.spawnJaco(slot, e);
+    else if (this.companions) this.spawnCompanion(slot, e);
+    this.slots.set(token, slot);
     return slot;
   }
 
@@ -519,51 +714,112 @@ export class GameServerCore {
   private spawnCompanion(slot: Slot, e: Entity): void {
     const trainerId = e.archetypeId === 'idol' ? 'wesley' : 'li_wei';
     const archetypeId = getData().trainersById.get(trainerId)?.archetype ?? (trainerId === 'wesley' ? 'peao_brabo' : 'idol');
+    this.addCompanion(slot, e, trainerId, archetypeId, Math.max(12, e.level));
+  }
+
+  /**
+   * Decisão da Fase 2: o Seu Jacó acompanha quem está no Delta (Sistemas.md: "só luta em grupo dá
+   * XP"; o Seu Jacó é o companheiro de IA do novato). Luta com o kit do Delta, no nível do jogador.
+   */
+  private spawnJaco(slot: Slot, e: Entity): void {
+    const c = this.addCompanion(slot, e, 'seu_jaco', 'delta', Math.max(1, e.level));
+    if (c) c.name = getData().npcsById.get('seu_jaco')?.name ?? 'Seu Jacó';
+  }
+
+  private addCompanion(slot: Slot, e: Entity, defId: string, kit: string, level: number): Entity | undefined {
     try {
-      const c = spawnAlly(this.world, trainerId, e.x + 0.8, e.y, { archetypeId, level: Math.max(12, e.level) });
+      const c = spawnAlly(this.world, defId, e.x + 0.8, e.y, { archetypeId: kit, level });
       const party = `grupo_${slot.rec.id}`;
       c.partyId = party;
       e.partyId = party;
       c.spawnX = this.spawn.x;
       c.spawnY = this.spawn.y;
       slot.companionId = c.id;
+      return c;
     } catch (err) {
       this.log(`[core] companheiro não nasceu: ${String(err)}`);
+      return undefined;
     }
   }
 
-  /** Copia o estado do personagem para o registro. */
-  private syncRecord(slot: Slot): void {
+  // -------------------------------------------------------------------------
+  // Registro <-> entidade
+
+  /** Entidade -> registro: moedas, inventário, poções, Doutrina e automático (e, na sandbox, kit e nível). */
+  private pull(slot: Slot): void {
     const e = this.world.entities.get(slot.entityId);
     if (!e) return;
-    const d = slot.rec.data;
-    slot.rec.name = e.name;
-    d.archetypeId = e.archetypeId ?? e.classId ?? 'delta';
-    if (e.side) d['side'] = e.side;
-    if (e.archetypeId && e.loadout?.b3) d.slot3 = e.loadout.b3;
-    d.level = e.level;
-    d.xp = Math.floor(e.xp ?? 0);
-    d.semente = e.semente ?? 0;
-    d.credito = e.credito ?? 0;
-    d.inventory = [...(e.inventory ?? [])];
-    d.itemCount = e.loadout?.itemCount ?? 0;
-    d.doctrine = clone(e.doctrine ?? []);
-    d.auto = slot.offlineSince !== undefined ? slot.autoBefore : e.auto === true;
+    const r = slot.rec;
+    r.semente = Math.max(0, Math.round(e.semente ?? 0));
+    r.credito = Math.max(0, Math.round(e.credito ?? 0));
+    r.inventory = [...(e.inventory ?? [])];
+    r.item_count = e.loadout?.itemCount ?? 0;
+    r.doctrine = clone(e.doctrine ?? []);
+    r.auto = slot.offlineSince !== undefined ? slot.autoBefore : e.auto === true;
+    if (slot.sandbox) {
+      r.name = e.name;
+      r.level = e.level;
+      r.xp = Math.floor(e.xp ?? 0);
+      r.archetype = e.archetypeId ?? null;
+      r.class = e.classId ?? null;
+      r.side = e.side ?? null;
+      if (e.archetypeId && e.loadout?.b3) r.loadout.slot3_ability = e.loadout.b3;
+    }
   }
 
-  private persist(slot: Slot): void {
-    this.syncRecord(slot);
+  /** Registro -> entidade: kit, nível, XP, teto, novato do Delta, visual, nome, moedas e poções. */
+  private push(slot: Slot): void {
+    if (slot.sandbox) return;
+    const e = this.world.entities.get(slot.entityId);
+    if (!e) return;
+    const w = this.world;
+    const r = slot.rec;
+    const kit = simKitOf(r);
+    const cur = e.archetypeId ?? e.classId ?? 'delta';
+    if (kit !== cur) {
+      if (r.side) e.side = r.side;
+      try {
+        setArchetype(w, e, kit, r.loadout.slot3_ability ?? undefined);
+      } catch (err) {
+        this.log(`[core] kit ${kit} falhou: ${String(err)}`);
+      }
+    }
+    if (e.level !== r.level) relevel(w, e, r.level);
+    e.xp = Math.max(0, r.xp);
+    const cap = simLevelCap(r);
+    if (cap === undefined) delete e.levelCap;
+    else e.levelCap = cap;
+    if (isDeltaRookie(r)) e.deltaRookie = true;
+    else delete e.deltaRookie;
+    e.look = recordLook(r);
+    e.name = r.name;
+    e.semente = r.semente;
+    e.credito = r.credito;
+    e.inventory = [...r.inventory];
+    if (e.loadout) e.loadout.itemCount = r.item_count;
+    slot.lastLevel = e.level;
+  }
+
+  private persist(slot: Slot): Promise<void> {
+    this.pull(slot);
+    slot.dirty = false;
     const rec = clone(slot.rec);
     this.records.set(slot.token, rec);
-    if (this.store) this.store.savePlayer(rec).catch((err) => this.log(`[core] falha ao salvar: ${String(err)}`));
+    if (slot.sandbox || !this.store) return Promise.resolve();
+    return this.store.savePlayer({ id: rec.id, token: slot.token, name: rec.name, data: rec }).catch((err) => this.log(`[core] falha ao salvar: ${String(err)}`));
+  }
+
+  /** Tira o personagem (e o companheiro) do mapa. */
+  private removeSlot(slot: Slot): void {
+    this.world.entities.delete(slot.entityId);
+    if (slot.companionId !== undefined) this.world.entities.delete(slot.companionId);
+    this.slots.delete(slot.token);
   }
 
   /** Tira o personagem do mapa (depois do tempo no automático), com o progresso salvo. */
   private despawn(slot: Slot): void {
     this.persist(slot);
-    this.world.entities.delete(slot.entityId);
-    if (slot.companionId !== undefined) this.world.entities.delete(slot.companionId);
-    this.slots.delete(slot.token);
+    this.removeSlot(slot);
     if (slot.sid) {
       this.sessions.delete(slot.sid);
       this.kicked.push(slot.sid);
@@ -572,8 +828,391 @@ export class GameServerCore {
 
   /** Grava todos agora (desligando o servidor). */
   async saveAll(): Promise<void> {
-    for (const slot of this.slots.values()) this.persist(slot);
+    await Promise.all(Array.from(this.slots.values()).map((s) => this.persist(s)));
     await this.store?.flush();
+  }
+
+  // -------------------------------------------------------------------------
+  // Regras de jogo (Fase 2)
+
+  /** Aplica o resultado de uma regra: saque das recompensas, entidade, avisos, gravação e perfil. */
+  private applyResult(slot: Slot, r: GameResult): void {
+    const e = this.world.entities.get(slot.entityId);
+    for (const x of r.itensParaRolar) if (e) rollRewardItems(this.world, e, x.tabela, x.quantidade);
+    if (r.mudou || r.niveis.length > 0 || r.estagio) {
+      this.push(slot);
+      slot.dirty = true;
+      slot.notify = true;
+    }
+    for (const a of avisosOf(r)) this.send(slot.sid, GAME_MSG.aviso, a);
+  }
+
+  /** Evento de jogo para o registro do slot (com pull antes). */
+  private gameEvent(slot: Slot, ev: GameEvent, grupo?: { personagens: number; aoVivo: number }): void {
+    if (slot.sandbox) return;
+    this.pull(slot);
+    this.applyResult(slot, onGameEvent(slot.rec, ev, grupo ? { grupo } : {}));
+  }
+
+  /** Perfil e estado das missões de quem mudou; grava quem mudou (o Store faz o debounce). */
+  private flushNotify(): void {
+    for (const slot of this.slots.values()) {
+      if (slot.notify) {
+        slot.notify = false;
+        if (slot.sid) {
+          this.send(slot.sid, GAME_MSG.perfil, profileOf(slot.rec, controlesLiberados(slot.rec, currentObjectives(slot.rec).map((c) => c.objetivo))));
+          this.send(slot.sid, GAME_MSG.missaoEstado, this.missionStateOf(slot));
+        }
+      }
+      if (slot.dirty) this.persist(slot);
+    }
+  }
+
+  private missionStateOf(slot: Slot): S2C_MissaoEstado {
+    const e = this.world.entities.get(slot.entityId);
+    return missionStatus(slot.rec, this.world.map, e ? { x: e.x, y: e.y } : undefined) as S2C_MissaoEstado;
+  }
+
+  private aviso(sid: string, texto: string): void {
+    this.send(sid, GAME_MSG.aviso, { texto, tipo: 'erro' });
+  }
+
+  /**
+   * Mensagem de jogo do cliente (GAME_MSG: criar_personagem, maquina_visual, falar, dialogo_opcao,
+   * missao_aceitar, travessia, tutorial_passo). As respostas vão para a caixa de saída.
+   */
+  onGameMessage(sessionId: string, type: string, raw: unknown): void {
+    const s = this.sessions.get(sessionId);
+    if (!s) return;
+    try {
+      if (type === GAME_MSG.criarPersonagem) {
+        this.onCreate(s, raw as C2S_CriarPersonagem);
+        return;
+      }
+      const slot = this.slots.get(s.token);
+      const e = slot && slot.sid === sessionId ? this.world.entities.get(slot.entityId) : undefined;
+      if (!slot || !e || slot.sandbox) return;
+      this.pull(slot);
+      const m = isObj(raw) ? raw : {};
+      switch (type) {
+        case GAME_MSG.maquinaVisual:
+          this.onVisual(slot, e, m as unknown as C2S_MaquinaVisual);
+          break;
+        case GAME_MSG.falar:
+          this.onTalk(slot, e, m as C2S_Falar);
+          break;
+        case GAME_MSG.dialogoOpcao:
+          this.onDialogOption(slot, e, m as unknown as C2S_DialogoOpcao);
+          break;
+        case GAME_MSG.missaoAceitar: {
+          const id = (m as unknown as C2S_MissaoAceitar).id;
+          const a = acceptMission(slot.rec, typeof id === 'string' ? id : '');
+          if (a.ok) this.applyResult(slot, a.resultado);
+          else this.aviso(sessionId, a.erro);
+          break;
+        }
+        case GAME_MSG.travessia:
+          this.onTravessia(slot, e, m as unknown as C2S_Travessia);
+          break;
+        case GAME_MSG.tutorialPasso: {
+          const t = m as C2S_TutorialPasso;
+          if (typeof t.passo === 'string' && STEPS.has(t.passo)) this.gameEvent(slot, { t: 'tutorial', passo: t.passo });
+          if (typeof t.controle === 'string' && CONTROLS.has(t.controle)) this.gameEvent(slot, { t: 'control', controle: t.controle });
+          break;
+        }
+        default:
+          break;
+      }
+    } catch (err) {
+      this.log(`[core] mensagem ${type} falhou: ${err instanceof Error ? err.stack : String(err)}`);
+    } finally {
+      this.flushNotify();
+    }
+  }
+
+  /** Cadastro do Delta: valida nome e aparência, nasce o personagem e manda o welcome. */
+  private onCreate(s: Session, msg: C2S_CriarPersonagem): void {
+    const rec = s.pending;
+    if (!rec) {
+      if (this.slots.has(s.token)) this.aviso(s.sid, 'Personagem já cadastrado. Para mudar o visual, use a Máquina de Visual.');
+      return;
+    }
+    const m = isObj(msg) ? msg : ({} as C2S_CriarPersonagem);
+    const r = createCharacter(rec, m.name, m.appearance);
+    if (!r.ok) {
+      this.aviso(s.sid, r.erro);
+      this.send(s.sid, GAME_MSG.perfil, profileOf(rec, controlesLiberados(rec)));
+      return;
+    }
+    s.pending = undefined;
+    const target = mapForRecord(rec);
+    if (target !== this.mapId) {
+      // não acontece com os mapas do piloto (criação é no Delta); fica por segurança
+      this.records.set(s.token, clone(rec));
+      void this.store?.savePlayer({ id: rec.id, token: s.token, name: rec.name, data: clone(rec) });
+      this.redirect(s, target, 'registro', s.tokenToSend === true);
+      return;
+    }
+    const slot = this.spawnSlot(s.token, rec, false);
+    slot.sid = s.sid;
+    s.lastSeq = -1;
+    s.inputQ.length = 0;
+    s.sent.clear();
+    s.gone.clear();
+    const wel = this.welcomeOf(slot);
+    if (s.tokenToSend) wel.token = s.token;
+    s.tokenToSend = undefined;
+    this.send(s.sid, MSG.welcome, wel);
+    slot.dirty = true;
+    slot.notify = true;
+    this.applyResult(slot, r.resultado);
+  }
+
+  private onVisual(slot: Slot, e: Entity, msg: C2S_MaquinaVisual): void {
+    const where = { map: this.world.map, x: e.x, y: e.y };
+    const change = isObj(msg.change) ? msg.change : {};
+    const id = typeof msg.maquina === 'string' ? msg.maquina : nearVisualMachine(where);
+    if (!id) {
+      this.aviso(slot.sid!, 'Chegue perto de uma Máquina de Visual.');
+      return;
+    }
+    const chk = applyVisualMachine(slot.rec, change, id, where);
+    if (!chk.ok) {
+      this.aviso(slot.sid!, chk.erro);
+      return;
+    }
+    this.push(slot);
+    slot.dirty = true;
+    slot.notify = true;
+    this.gameEvent(slot, { t: 'interact', alvo: id, acao: 'usar' });
+  }
+
+  /** NPC ao alcance (por entidade ou id de dados) e a conversa. */
+  private onTalk(slot: Slot, e: Entity, msg: C2S_Falar): void {
+    const q: { entity?: number; npcId?: string } = {};
+    if (isInt(msg.entity)) q.entity = msg.entity;
+    if (typeof msg.npcId === 'string') q.npcId = msg.npcId;
+    if (q.entity === undefined && q.npcId === undefined) return;
+    const n = npcInReach(this.world, e, q);
+    if (!n) {
+      this.aviso(slot.sid!, 'Chegue mais perto para conversar.');
+      return;
+    }
+    this.talk(slot, n.defId);
+  }
+
+  private talk(slot: Slot, npcId: string): void {
+    this.pull(slot);
+    const t = talkTo(slot.rec, npcId);
+    slot.lastDialog = t.dialogo;
+    this.send(slot.sid, GAME_MSG.dialogo, t.dialogo satisfies S2C_Dialogo);
+    this.applyResult(slot, t.resultado);
+  }
+
+  private onDialogOption(slot: Slot, e: Entity, msg: C2S_DialogoOpcao): void {
+    const npcId = typeof msg.npcId === 'string' ? msg.npcId : '';
+    const opcao = typeof msg.opcao === 'string' ? msg.opcao : '';
+    if (!npcInReach(this.world, e, { npcId })) {
+      this.aviso(slot.sid!, 'Chegue mais perto para conversar.');
+      return;
+    }
+    this.pull(slot);
+    const res = dialogOption(slot.rec, npcId, opcao);
+    if (!res.ok) {
+      this.aviso(slot.sid!, res.erro ?? 'Opção indisponível.');
+      return;
+    }
+    this.applyResult(slot, res.resultado);
+    if (opcao === 'tchau') return;
+    const base: Dialog = slot.lastDialog && slot.lastDialog.npc === npcId ? slot.lastDialog : { npc: npcId, nome: npcId, contexto: 'opcao', fala: '', opcoes: [] };
+    const d: S2C_Dialogo = { ...base, opcoes: dialogOptions(slot.rec, npcId) };
+    if (res.abrir) d.abrir = res.abrir;
+    slot.lastDialog = { ...base, opcoes: d.opcoes };
+    this.send(slot.sid, GAME_MSG.dialogo, d);
+    if (res.abrir?.tela === 'travessia') this.send(slot.sid, GAME_MSG.travessiaOpcoes, res.abrir.opcoes);
+  }
+
+  /** Perto do Seu Jacó ou da saída do cais. */
+  private atCrossing(e: Entity): boolean {
+    if (npcInReach(this.world, e, { npcId: 'seu_jaco' })) return true;
+    return this.areas.travessia.some((m) => Math.hypot(m.x - e.x, m.y - e.y) <= TRAVESSIA_REACH_TILES);
+  }
+
+  /** Travessia: aplica a escolha, grava e manda o jogador para a sala do QG da margem. */
+  private onTravessia(slot: Slot, e: Entity, msg: C2S_Travessia): void {
+    if (!this.atCrossing(e)) {
+      this.aviso(slot.sid!, 'Vá até o cais: o Seu Jacó leva no barco.');
+      return;
+    }
+    this.pull(slot);
+    const res = applyTravessia(slot.rec, { side: String(msg.side ?? ''), institution: String(msg.institution ?? ''), guide: String(msg.guide ?? '') });
+    if (!res.ok) {
+      this.aviso(slot.sid!, res.erro);
+      return;
+    }
+    const sid = slot.sid;
+    for (const a of avisosOf(res.resultado)) this.send(sid, GAME_MSG.aviso, a);
+    const rec = slot.rec;
+    const target = mapForRecord(rec);
+    if (sid) this.send(sid, GAME_MSG.perfil, profileOf(rec, controlesLiberados(rec, currentObjectives(rec).map((c) => c.objetivo))));
+    if (target === this.mapId) {
+      this.push(slot);
+      slot.dirty = true;
+      slot.notify = true;
+      return;
+    }
+    // o personagem sai deste mapa: grava antes de mandar trocar de sala (a sala da margem lê o Store)
+    slot.notify = false;
+    const saved = this.persist(slot);
+    this.removeSlot(slot);
+    const sess = sid ? this.sessions.get(sid) : undefined;
+    if (sess) sess.movedTo = target;
+    void saved.then(() => {
+      if (sid && this.sessions.get(sid)?.movedTo === target) this.send(sid, GAME_MSG.trocarSala, { mapId: target, motivo: 'travessia' } satisfies S2C_TrocarSala);
+    });
+  }
+
+  /** Eventos da simulação deste tick para as regras (só fora da sandbox). */
+  private processGameEvents(events: CombatEvent[], before: Map<number, Entity>): void {
+    const byEnt = new Map<number, Slot>();
+    for (const s of this.slots.values()) if (!s.sandbox) byEnt.set(s.entityId, s);
+    if (byEnt.size === 0) return;
+    const w = this.world;
+    for (const slot of byEnt.values()) {
+      // eventos detectados nas entradas e nos comandos
+      if (slot.queued.length > 0) {
+        const q = slot.queued;
+        slot.queued = [];
+        for (const ev of q) this.gameEvent(slot, ev);
+      }
+      // alvo automático travou num inimigo
+      const e = w.entities.get(slot.entityId);
+      const tgt = e?.targetId !== undefined ? w.entities.get(e.targetId) : undefined;
+      const has = !!tgt && tgt.kind === 'enemy';
+      if (has && !slot.hadTarget) this.gameEvent(slot, { t: 'control', controle: 'alvo_automatico' });
+      slot.hadTarget = has;
+    }
+    for (const ev of events) {
+      switch (ev.t) {
+        case 'xp': {
+          const slot = byEnt.get(ev.dst);
+          if (!slot) break;
+          this.pull(slot);
+          this.applyResult(slot, gainXp(slot.rec, ev.amount));
+          break;
+        }
+        case 'level': {
+          const slot = byEnt.get(ev.dst);
+          if (slot) this.gameEvent(slot, { t: 'level', level: ev.level });
+          break;
+        }
+        case 'cast': {
+          const slot = byEnt.get(ev.src);
+          const e = slot && w.entities.get(slot.entityId);
+          const b = e ? botaoOf(e, ev.ability) : undefined;
+          if (!slot || !b) break;
+          this.gameEvent(slot, { t: 'ability', botao: b, habilidade: ev.ability });
+          this.gameEvent(slot, { t: 'control', controle: controlOfBotao(b) });
+          break;
+        }
+        case 'death': {
+          const enemy = w.entities.get(ev.dst) ?? before.get(ev.dst);
+          if (!enemy || enemy.kind !== 'enemy') break;
+          const parts = killParticipants(w, enemy, ev.by);
+          const aoVivo = Math.max(1, parts.filter((p) => p.kind === 'player' && !p.onDuty).length);
+          for (const p of parts) {
+            const slot = byEnt.get(p.id);
+            if (!slot) continue;
+            this.gameEvent(slot, { t: 'kill', enemyId: enemy.defId, tier: enemy.tier ?? 'normal' }, { personagens: parts.length, aoVivo });
+          }
+          break;
+        }
+        case 'loot_pick': {
+          const slot = byEnt.get(ev.by);
+          if (!slot) break;
+          const l = (w.entities.get(ev.id) ?? before.get(ev.id))?.loot;
+          const e = w.entities.get(slot.entityId);
+          if (l?.currency) this.gameEvent(slot, { t: 'pickup', chave: 'moeda', quantidade: 1 });
+          if (l?.itemId) {
+            if (isResource(l.itemId) && e) {
+              // material de saque vai para os recursos do registro, não para o inventário
+              const i = (e.inventory ?? []).lastIndexOf(l.itemId);
+              if (i >= 0) e.inventory!.splice(i, 1);
+              this.pull(slot);
+              slot.rec.resources[l.itemId] = (slot.rec.resources[l.itemId] ?? 0) + 1;
+              slot.dirty = true;
+              this.gameEvent(slot, { t: 'pickup', itemId: l.itemId, recurso: l.itemId, quantidade: 1 });
+            } else this.gameEvent(slot, { t: 'pickup', itemId: l.itemId, chave: l.itemId, quantidade: 1 });
+          }
+          if (!l?.currency && !l?.itemId) this.gameEvent(slot, { t: 'pickup', quantidade: 1 });
+          this.gameEvent(slot, { t: 'control', controle: 'saque' });
+          break;
+        }
+        case 'revive': {
+          const slot = ev.by !== undefined ? byEnt.get(ev.by) : undefined;
+          if (slot) this.gameEvent(slot, { t: 'control', controle: 'reanimar' });
+          break;
+        }
+        default:
+          break;
+      }
+    }
+  }
+
+  /** Lugares, regiões e marcadores de interação por perto; o Seu Jacó que cai no objetivo de reanimar. */
+  private checkAreas(): void {
+    const w = this.world;
+    for (const slot of this.slots.values()) {
+      if (slot.sandbox) continue;
+      const e = w.entities.get(slot.entityId);
+      if (!e || e.dead) continue;
+      // lugar
+      let best: string | null = null;
+      let bd = Infinity;
+      for (const mk of this.areas.places) {
+        const d = Math.hypot(mk.x - e.x, mk.y - e.y);
+        if (d <= PLACE_RADIUS_TILES && d < bd) {
+          bd = d;
+          best = mk.ref!;
+        }
+      }
+      if (best === null && slot.place) {
+        const cur = slot.place;
+        if (this.areas.places.some((mk) => mk.ref === cur && Math.hypot(mk.x - e.x, mk.y - e.y) <= PLACE_LEAVE_RADIUS_TILES)) best = cur;
+      }
+      if (best !== slot.place) {
+        const first = slot.place === undefined;
+        slot.place = best;
+        if (!first || best !== null) this.gameEvent(slot, { t: 'arrive', placeId: best });
+      }
+      // região
+      const reg = w.map.regions.find((r) => e.x >= r.x && e.x < r.x + r.w && e.y >= r.y && e.y < r.y + r.h)?.regionId;
+      if (reg !== slot.region) {
+        slot.region = reg;
+        if (reg) this.gameEvent(slot, { t: 'arrive', regionId: reg });
+      }
+      // marcadores de interação (a fila do posto)
+      for (const mk of this.areas.interacts) {
+        const d = Math.hypot(mk.x - e.x, mk.y - e.y);
+        const alvo = mk.params!['interagir'] as string;
+        if (d <= INTERACT_MARKER_RADIUS_TILES) {
+          if (slot.inside.has(mk.id)) continue;
+          slot.inside.add(mk.id);
+          this.gameEvent(slot, { t: 'interact', alvo, acao: interactAction(slot.rec, alvo, mk) });
+        } else if (d > INTERACT_MARKER_RADIUS_TILES + 1) slot.inside.delete(mk.id);
+      }
+      // "Seu Jacó caiu! Fique 3 s do lado dele": o Seu Jacó que acompanha cai para o jogador levantar
+      if (slot.companionId !== undefined && wantsControl(slot.rec, 'reanimar')) {
+        const c = w.entities.get(slot.companionId);
+        const cd = msToTicks(JACO_DOWN_COOLDOWN_MS);
+        if (c && !c.dead && c.downedUntil === undefined && (slot.jacoDownAt === undefined || w.tick - slot.jacoDownAt >= cd)) {
+          c.x = e.x + 1;
+          c.y = e.y;
+          downEntity(w, c);
+          slot.jacoDownAt = w.tick;
+        }
+      }
+    }
   }
 
   // -------------------------------------------------------------------------
@@ -665,9 +1304,9 @@ export class GameServerCore {
   }
 
   /**
-   * Anda um passo agora com o joystick de `inp` (entrada extra da drenagem ou diferença de uma
-   * suposta). É o mesmo cálculo do movimento do step para o joystick (moveVelocity + stepMovement
-   * com a velocidade efetiva), que o cliente também usa na previsão.
+   * Anda um passo agora com o joystick de `inp` (entrada extra da drenagem). É o mesmo cálculo do
+   * movimento do step para o joystick (moveVelocity + stepMovement com a velocidade efetiva), que o
+   * cliente também usa na previsão.
    */
   private moveNow(e: Entity, inp: PlayerInput): void {
     if (!canMove(e)) return;
@@ -693,6 +1332,28 @@ export class GameServerCore {
     e.y = p.y;
   }
 
+  /**
+   * Um comando: fora da sandbox, tocar num NPC abre a conversa (talkTo, sem trocar a ala) e a troca
+   * de arquétipo direta não existe; os controles usados vão para o tutorial e as missões.
+   */
+  private runCommand(s: Session, e: Entity, c: PlayerCommand): void {
+    const slot = this.slots.get(s.token);
+    const rules = slot && !slot.sandbox ? slot : undefined;
+    if (rules) {
+      if (c.c === 'trocar_arquetipo') return;
+      if (c.c === 'interagir') {
+        const n = npcInReach(this.world, e, { entity: c.entity });
+        if (n) this.talk(rules, n.defId);
+        return;
+      }
+    }
+    applyCommand(this.world, e, c, { rewindTicks: this.rewindTicks(s) });
+    if (!rules) return;
+    if (c.c === 'ir_ate') rules.queued.push({ t: 'control', controle: 'tocar_no_chao' });
+    else if (c.c === 'alvo') rules.queued.push({ t: 'control', controle: 'trocar_alvo' });
+    else if (c.c === 'auto' && c.on) rules.queued.push({ t: 'control', controle: 'modo_automatico' });
+  }
+
   /** Aplica os comandos da fila que já podem rodar (em ordem; o primeiro que espera segura os outros). */
   private flushCmds(s: Session, e: Entity, movedSeq: number, final: boolean): void {
     const w = this.world;
@@ -705,7 +1366,7 @@ export class GameServerCore {
       if (!ready) break;
       n++;
       try {
-        applyCommand(w, e, h.c, { rewindTicks: this.rewindTicks(s) });
+        this.runCommand(s, e, h.c);
       } catch (err) {
         this.log(`[core] comando ${h.c.c} falhou: ${String(err)}`);
       }
@@ -745,12 +1406,19 @@ export class GameServerCore {
       s.paused = true;
     }
     this.flushCmds(s, e, moved, true);
+    // joystick apertado agora (tutorial: andar_joystick)
+    const slot = this.slots.get(s.token);
+    if (slot && !slot.sandbox && inp) {
+      const down = inp.mx !== 0 || inp.my !== 0;
+      if (down && !slot.stickDown) slot.queued.push({ t: 'control', controle: 'andar_joystick' });
+      slot.stickDown = down;
+    }
   }
 
   // -------------------------------------------------------------------------
   // Tick
 
-  /** Um tick do servidor: entradas, simulação, mundo e um snapshot por cliente conectado. */
+  /** Um tick do servidor: entradas, simulação, regras, mundo e um snapshot por cliente conectado. */
   tick(): Map<string, S2C_Snapshot> {
     const w = this.world;
     // eventos soltos pelos comandos (antes do step, que zera w.events) entram neste tick
@@ -762,9 +1430,14 @@ export class GameServerCore {
       if (!e || !s.connected) continue;
       this.consumeInputs(s, e);
     }
-    // 2. posições antes do passo (eventos de quem sai do mundo neste tick)
+    // 2. posições antes do passo (eventos de quem sai do mundo neste tick) e as entidades (saque e
+    // inimigo que saem do mundo no step ainda servem para as regras)
     this.prevPos.clear();
-    for (const e of w.entities.values()) this.prevPos.set(e.id, [e.x, e.y]);
+    const before = new Map<number, Entity>();
+    for (const e of w.entities.values()) {
+      this.prevPos.set(e.id, [e.x, e.y]);
+      if (e.kind === 'loot' || e.kind === 'enemy') before.set(e.id, e);
+    }
     // sem entrada neste tick, o caminho do toque no chão espera (o cliente prevê um passo por entrada)
     const parked: { e: Entity; path: Entity['path']; moveTo: Entity['moveTo'] }[] = [];
     for (const s of this.sessions.values()) {
@@ -791,7 +1464,16 @@ export class GameServerCore {
     const events = fromCommands.length > 0 ? [...fromCommands, ...stepped] : stepped;
     w.events = events;
     this.lastEvents = events;
-    // 4. mundo: renascimento, quem caiu da conexão, gravação
+    // 4. regras de jogo (Fase 2)
+    if (!this.sandbox) {
+      try {
+        this.processGameEvents(events, before);
+        if (w.tick % AREA_CHECK_TICKS === 0) this.checkAreas();
+      } catch (err) {
+        this.log(`[core] regras falharam: ${err instanceof Error ? err.stack : String(err)}`);
+      }
+    }
+    // 5. mundo: renascimento, quem caiu da conexão, gravação
     this.spawner?.tick();
     const saveTicks = msToTicks(SAVE_EVERY_MS);
     for (const slot of Array.from(this.slots.values())) {
@@ -806,10 +1488,11 @@ export class GameServerCore {
       }
       if (e.level !== slot.lastLevel) {
         slot.lastLevel = e.level;
-        this.persist(slot);
-      } else if (w.tick % saveTicks === 0) this.persist(slot);
+        slot.dirty = true;
+      } else if (w.tick % saveTicks === 0) slot.dirty = true;
     }
-    // 5. snapshots
+    this.flushNotify();
+    // 6. snapshots
     this.baseCache.clear();
     this.infoCache.clear();
     this.evCache.clear();
@@ -845,7 +1528,7 @@ export class GameServerCore {
     let i = this.infoCache.get(e.id);
     if (!i) {
       const rec = e.kind === 'player' && e.playerId ? this.recByPlayerId(e.playerId) : undefined;
-      const lk = lookOf(e, rec);
+      const lk = lookOf(e, rec?.appearance);
       i = { d: e.defId, n: e.name, lv: e.level, lk, lkJson: lk === undefined ? undefined : JSON.stringify(lk) };
       this.infoCache.set(e.id, i);
     }
@@ -860,7 +1543,7 @@ export class GameServerCore {
   private snapshotFor(s: Session, events: CombatEvent[]): S2C_Snapshot | undefined {
     const w = this.world;
     const slot = this.slots.get(s.token);
-    const me = slot ? w.entities.get(slot.entityId) : undefined;
+    const me = slot && slot.sid === s.sid ? w.entities.get(slot.entityId) : undefined;
     if (!me) return undefined;
     const now = w.tick;
     const R = this.interestRadius;
@@ -940,9 +1623,9 @@ export class GameServerCore {
 
   // -------------------------------------------------------------------------
 
-  stats(): { tick: number; players: number; online: number; entities: number } {
+  stats(): { mapId: string; sandbox: boolean; tick: number; players: number; online: number; entities: number } {
     let online = 0;
     for (const s of this.sessions.values()) if (s.connected) online++;
-    return { tick: this.world.tick, players: this.slots.size, online, entities: this.world.entities.size };
+    return { mapId: this.mapId, sandbox: this.sandbox, tick: this.world.tick, players: this.slots.size, online, entities: this.world.entities.size };
   }
 }

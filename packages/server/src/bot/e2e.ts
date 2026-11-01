@@ -7,6 +7,8 @@
  * - auto-caminho (ir_ate) como o toque no chão, e luta só com o alvo automático e os botões.
  *
  * Passos conferidos:
+ *  0. Fase 2: cadastro de um jogador novo (perfil criado=false → criar_personagem → welcome no Delta);
+ *     o combate abaixo roda na sala do protótipo (sandbox, template Peão Brabo com os botões);
  *  1. welcome e snapshots a ~20 por segundo (com a perda simulada, um pouco menos);
  *  2. anda até o bando mais perto do spawn (auto-caminho) e o servidor trava um alvo;
  *  3. mata um inimigo apertando os botões (cast de habilidade dos botões + morte do inimigo);
@@ -17,7 +19,8 @@
  */
 import { Client, type Room } from '@colyseus/sdk';
 import { getMap } from '@pqp/shared/map';
-import { MSG, type S2C_Info, type S2C_Pong, type S2C_Snapshot, type S2C_Welcome, type EntSnap } from '@pqp/shared/net';
+import { GAME_MSG, MSG, SALA_MUNDO, type S2C_Info, type S2C_Pong, type S2C_Snapshot, type S2C_Welcome, type EntSnap } from '@pqp/shared/net';
+import { defaultAppearance } from '@pqp/shared/game/appearance';
 import { TICK_MS, type Telegraph } from '@pqp/shared/sim';
 import { fightBrain, RobotClient } from './robot';
 
@@ -56,6 +59,57 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 const FL_CHEFE = 512;
 
+/** Sala do protótipo (sandbox): o template da Fase 1 com os botões, para o combate. */
+const SANDBOX_MAP = 'prototipo_delta';
+
+/**
+ * Cadastro de um jogador novo pela rede, como o cliente faz: entra sem mapId, segue 'trocar_sala'
+ * se vier, recebe 'perfil' com criado=false, manda 'criar_personagem' e espera o welcome e o
+ * próprio personagem no snapshot (com o visual em lk).
+ */
+async function createCharacterStep(client: Client, token: string, timeoutMs: number): Promise<{ ok: boolean; info: string }> {
+  const t0 = performance.now();
+  let mapId: string | undefined;
+  for (let hop = 0; hop < 3; hop++) {
+    const r = new RobotClient(token, 'Robô E2E');
+    const room: Room = mapId ? await client.joinOrCreate(SALA_MUNDO, { mapId }) : await client.joinOrCreate(SALA_MUNDO);
+    for (const t of [MSG.welcome, ...Object.values(GAME_MSG)]) room.onMessage(t, (m: unknown) => r.onGame(t, m));
+    room.onMessage(MSG.snap, (s: S2C_Snapshot) => {
+      const need = r.onSnapshot(s);
+      if (need.length > 0) room.send(MSG.need, { ids: need });
+    });
+    room.onMessage(MSG.info, (info: S2C_Info) => r.onInfo(info));
+    room.onMessage(MSG.pong, () => undefined);
+    room.send(MSG.hello, r.hello());
+    const until = async (cond: () => boolean) => {
+      while (!cond()) {
+        if (performance.now() - t0 > timeoutMs) return false;
+        await sleep(20);
+      }
+      return true;
+    };
+    try {
+      if (!(await until(() => r.perfil !== undefined || r.trocarSala !== undefined || r.you !== undefined))) return { ok: false, info: 'sem perfil, welcome ou trocar_sala' };
+      if (r.trocarSala) {
+        mapId = r.trocarSala.mapId;
+        continue;
+      }
+      if (r.perfil?.criado === false) {
+        room.send(GAME_MSG.criarPersonagem, { name: 'Robo de Teste', appearance: defaultAppearance() });
+      }
+      const ok = await until(() => r.you !== undefined && r.me()?.lk !== undefined && r.perfil?.criado === true);
+      const lk = r.me()?.lk as { outfit?: { tier?: string } } | undefined;
+      return {
+        ok: ok && r.welcome?.mapId === 'delta',
+        info: `mapa ${r.welcome?.mapId ?? '-'}, perfil ${r.perfil?.name ?? '-'} (criado ${r.perfil?.criado}), traje ${lk?.outfit?.tier ?? '-'}, missão ${r.missao?.ativas[0]?.id ?? '-'}`,
+      };
+    } finally {
+      await room.leave(true).catch(() => undefined);
+    }
+  }
+  return { ok: false, info: 'trocar_sala em laço' };
+}
+
 export async function runE2E(opts: E2EOptions): Promise<E2EReport> {
   const log = opts.log ?? (() => undefined);
   const stepTimeout = opts.stepTimeoutMs ?? 45_000;
@@ -69,9 +123,15 @@ export async function runE2E(opts: E2EOptions): Promise<E2EReport> {
 
   // token novo a cada rodada (fora da simulação, Date é permitido)
   const token = `e2e-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e6).toString(36)}`;
-  const robot = new RobotClient(token, 'Robô E2E', opts.archetypeId ?? 'peao_brabo');
   const client = new Client(opts.url);
-  const room: Room = await client.joinOrCreate('mundo');
+
+  // 0. Fase 2: cria o personagem como um jogador novo (sala sem mapId → Delta → perfil → cadastro)
+  const created = await createCharacterStep(client, token, Math.min(stepTimeout, 20_000));
+  mark('criar personagem', created.ok, created.info);
+
+  // o combate do protótipo roda na sala sandbox (template Peão Brabo, com os botões)
+  const robot = new RobotClient(token, 'Robô E2E', opts.archetypeId ?? 'peao_brabo');
+  const room: Room = await client.joinOrCreate(SALA_MUNDO, { mapId: SANDBOX_MAP });
 
   // ---- estado observado
   const kindOf = new Map<number, EntSnap['k']>();
@@ -161,10 +221,19 @@ export async function runE2E(opts: E2EOptions): Promise<E2EReport> {
   /** Vai até (x, y) pelo auto-caminho; luta com quem o alvo automático travar no caminho. */
   const travel = (x: number, y: number, fightNear = 5) => {
     let lastGo = -100;
+    // preso brigando com um alvo do outro lado da água (o joystick vai reto): depois de 3 s sem
+    // sair do lugar, ignora a briga por 3 s e volta ao auto-caminho
+    let anchor = { x: 0, y: 0, t: -1 };
+    let ignoreUntil = -1;
     return () => {
       const me = robot.pos(robot.you);
       const tgt = targetEnemy();
-      if (tgt !== undefined && dist(me, robot.pos(tgt)) <= fightNear) {
+      if (tgt !== undefined && dist(me, robot.pos(tgt)) <= fightNear && robot.lastTick >= ignoreUntil) {
+        if (me && (anchor.t < 0 || dist(me, anchor) > 0.5)) anchor = { x: me.x, y: me.y, t: robot.lastTick };
+        else if (robot.lastTick - anchor.t > 60 && (robot.hud?.hp ?? 0) >= (robot.hud?.hpMax ?? 1)) {
+          ignoreUntil = robot.lastTick + 60;
+          anchor = { x: 0, y: 0, t: -1 };
+        }
         fight(robot);
         lastGo = -100;
         return;

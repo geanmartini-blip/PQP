@@ -418,6 +418,35 @@ export class Pix {
       }
   }
 
+  /**
+   * Contorno seletivo de 1 px: escuro por fora, no tom do vizinho. O lado de cima e da esquerda
+   * (de onde vem a luz) fica um pouco mais claro que o de baixo e da direita.
+   */
+  outlineSelective(minAlpha = 200): void {
+    const w = this.w;
+    const h = this.h;
+    const src = this.clone();
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        if (src.alphaAt(x, y) >= minAlpha) continue;
+        // vizinho opaco: embaixo/direita = este pixel fica do lado da luz
+        let n: Color | undefined;
+        let lit = false;
+        if (src.alphaAt(x, y + 1) >= minAlpha) {
+          n = src.get(x, y + 1);
+          lit = true;
+        } else if (src.alphaAt(x + 1, y) >= minAlpha) {
+          n = src.get(x + 1, y);
+          lit = true;
+        } else if (src.alphaAt(x, y - 1) >= minAlpha) n = src.get(x, y - 1);
+        else if (src.alphaAt(x - 1, y) >= minAlpha) n = src.get(x - 1, y);
+        if (n === undefined) continue;
+        const oc = withAlpha(mix(n, OUTLINE_BASE, lit ? 0.7 : 0.86), 255);
+        const under = src.get(x, y);
+        this.set(x, y, (under & 255) > 0 ? mix(under, oc, 0.85) | 255 : oc);
+      }
+  }
+
   /** Quantos pixels têm alpha > 0. */
   countOpaque(minAlpha = 1): number {
     let n = 0;
@@ -441,6 +470,64 @@ export class Pix {
         }
     return x1 < 0 ? null : [x0, y0, x1, y1];
   }
+}
+
+/** Luz quente (de cima e da esquerda) e sombra fria: o sombreamento com troca de matiz da pixel art. */
+export const LIGHT_WARM: Color = hex('#fff2c8');
+export const SHADOW_COOL: Color = hex('#2a1e46');
+
+/**
+ * Sombreamento em 3 tons do que foi desenhado entre `before` e `after` (a máscara são os pixels
+ * opacos que mudaram). Luz de cima à esquerda: borda de cima e da esquerda clareia (canto com
+ * highlight), borda de baixo e da direita escurece em duas faixas. Traços de 1 px (letra miúda,
+ * costura) ficam como estão: só sombreia onde a forma tem pelo menos 2 px de espessura.
+ * Devolve quantos pixels havia na máscara.
+ */
+export function shadeDiff(after: Pix, before: Pix | null, strength = 1): number {
+  const w = after.w;
+  const h = after.h;
+  const a = after.data;
+  const b = before?.data;
+  const mask = new Uint8Array(w * h);
+  let n = 0;
+  for (let i = 0, p = 0; p < w * h; p++, i += 4) {
+    if (a[i + 3]! < 255) continue;
+    if (b && a[i] === b[i] && a[i + 1] === b[i + 1] && a[i + 2] === b[i + 2] && a[i + 3] === b[i + 3]) continue;
+    mask[p] = 1;
+    n++;
+  }
+  if (n < 6) return n;
+  const m = (x: number, y: number) => x >= 0 && y >= 0 && x < w && y < h && mask[y * w + x] === 1;
+  const out: [number, Color][] = [];
+  for (let y = 0; y < h; y++)
+    for (let x = 0; x < w; x++) {
+      if (mask[y * w + x] !== 1) continue;
+      const up = m(x, y - 1);
+      const dn = m(x, y + 1);
+      const lf = m(x - 1, y);
+      const rt = m(x + 1, y);
+      const c = after.get(x, y);
+      let t = 0;
+      let to = LIGHT_WARM;
+      if (!up && dn) t = !lf && rt ? 0.34 : 0.2;
+      else if (!lf && rt && up && dn) t = 0.12;
+      if (!dn && up) {
+        to = SHADOW_COOL;
+        t = 0.3;
+      } else if (!rt && lf) {
+        to = SHADOW_COOL;
+        t = 0.24;
+      } else if (up && dn && lf && rt) {
+        // segunda faixa de sombra (3 tons: luz, base, meia-sombra, sombra)
+        if (!m(x + 2, y) || !m(x, y + 2)) {
+          to = SHADOW_COOL;
+          t = 0.12;
+        }
+      }
+      if (t > 0) out.push([y * w + x, withAlpha(mix(c, to, t * strength), 255)]);
+    }
+  for (const [p, c] of out) after.set(p % w, Math.floor(p / w), c);
+  return n;
 }
 
 /** Cores de apoio usadas em todo o gerador. */

@@ -19,7 +19,7 @@ export {
   type SpawnPlayerOpts,
   type SpawnEnemyOpts,
 } from './spawn';
-export { applyInput, applyCommand, switchTrainer, inCombat } from './commands';
+export { applyInput, applyCommand, switchTrainer, inCombat, npcInReach } from './commands';
 export { step, stepN, pruneAttackers } from './step';
 export { autoTarget, retargetTap, nearestVisibleHostile, canSee, basicRangeOf } from './targeting';
 export { castAbility, effectiveRange, approachRange, resolveAbility, groupOf, type CastOpts } from './abilities';

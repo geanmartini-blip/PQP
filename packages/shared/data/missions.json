@@ -374,7 +374,6 @@
       "resumo": "Seu Jacó ensina a lutar, reclamando de cada golpe.",
       "objetivos": [
         { "tipo": "usar_controle", "controle": "trocar_alvo", "quantidade": 2, "descricao": "Toque num inimigo para trocar o alvo", "ensina": ["trocar_alvo"] },
-        { "tipo": "usar_habilidade", "botao": "1", "quantidade": 3, "descricao": "Toque no botão 1", "ensina": ["habilidade"] },
         { "tipo": "derrotar", "inimigos": [{ "inimigo": "siri_do_mangue", "quantidade": 6, "tier": "normal" }], "descricao": "Limpe o mangue" },
         { "tipo": "coletar", "chave": "saque", "quantidade": 3, "descricao": "Passe por cima do saque", "ensina": ["saque"] }
       ],
@@ -400,10 +399,8 @@
       "aliadosIA": ["seu_jaco"],
       "resumo": "Nuvem de mosquito no Delta. O repelente acabou em 2061.",
       "objetivos": [
-        { "tipo": "usar_habilidade", "botao": "2", "quantidade": 2, "descricao": "Toque no botão 2", "ensina": ["habilidade"] },
-        { "tipo": "usar_habilidade", "botao": "3", "quantidade": 2, "descricao": "Segure e arraste para posicionar a área", "ensina": ["habilidade"] },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "mosquito_do_delta", "quantidade": 12, "tier": "normal" }], "descricao": "Espante a nuvem" },
-        { "tipo": "usar_habilidade", "botao": "especial", "quantidade": 1, "descricao": "O Especial brilhou: toque nele", "ensina": ["especial"] }
+        { "tipo": "derrotar", "inimigos": [{ "inimigo": "mosquito_do_delta", "quantidade": 12, "tier": "normal" }], "descricao": "Espante a nuvem. Ande batendo: o ataque é sozinho" },
+        { "tipo": "usar_habilidade", "botao": "item", "quantidade": 1, "descricao": "Picada demais? Toque na poção", "ensina": ["item"], "sugestao": true }
       ],
       "recompensas": {
         "solo": [{ "kind": "item", "tabela": "loot_normal_missao_delta", "quantidade": 1 }, { "kind": "recurso", "recurso": "comida", "quantidade": 5 }],

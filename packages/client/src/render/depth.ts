@@ -9,6 +9,10 @@ export const DEPTH = {
   shadow: 6,
   canopyFar: 7,
   entity: 1000,
+  /** luz ambiente da região e vinheta: por cima dos bonecos e árvores, por baixo das barras */
+  ambient: 900_000,
+  /** vagalumes e poeira neon */
+  particles: 900_010,
   /** barras, nomes, números e falas ficam por cima de tudo */
   overlay: 1_000_000,
   text: 1_100_000,

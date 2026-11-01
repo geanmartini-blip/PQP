@@ -5,7 +5,7 @@
 import { getData } from '@pqp/shared/data';
 import { quantize, type EntSnap, type S2C_Snapshot } from '@pqp/shared/net';
 import { entityFlags, type CombatEvent, type Entity, type GroundZone, type Telegraph, type World } from '@pqp/shared/sim';
-import type { PlayerRecord } from './persistence/store';
+import type { Appearance, CharacterLook } from '@pqp/shared/game/types';
 
 const KIND: Record<Entity['kind'], EntSnap['k']> = { player: 'p', npc: 'n', enemy: 'e', summon: 's', loot: 'l' };
 
@@ -29,55 +29,53 @@ export function baseEntSnap(w: World, e: Entity): EntSnap {
   return s;
 }
 
-type Tier = 'delta' | 'base' | 'aprendiz' | 'veterano';
-
 /** Traje pelo nível (CLAUDE.md: Delta 1, uniforme 8, aprendiz 12, veterano 20). */
-function outfitTier(e: Entity): Tier {
+function outfitTier(e: Entity): CharacterLook['outfit']['tier'] {
   if (!e.classId) return 'delta';
   if (!e.archetypeId) return 'base';
   return e.level >= 20 ? 'veterano' : 'aprendiz';
 }
 
 /**
- * Visual do jogador no formato CharacterLook (client/src/art/contract.ts): aparência guardada (ou a
- * padrão de appearance.json) mais o traje do arquétipo e do nível.
+ * Visual do jogador da sala de protótipo (sandbox) no formato CharacterLook
+ * (client/src/art/contract.ts): aparência padrão de appearance.json (ou a do registro) mais o
+ * traje do arquétipo e do nível da entidade (o template troca de ala com Wesley e Li Wei).
+ * Fora do protótipo, o visual vem do registro (game/visual.ts lookOf) em Entity.look.
  */
-export function playerLook(e: Entity, rec?: PlayerRecord): Record<string, unknown> {
+export function playerLook(e: Entity, ap?: Partial<Appearance>): CharacterLook {
   const D = getData();
   const p = D.appearance.padrao;
-  const ap = (rec?.data.appearance ?? {}) as Record<string, unknown>;
   const tier = outfitTier(e);
   const arch = e.archetypeId ? D.archetypesById.get(e.archetypeId) : undefined;
-  const deltaPalette = Math.max(0, D.appearance.roupaInicial.cores.indexOf(p.palette));
-  const palette = typeof rec?.data.palette === 'number' ? rec.data.palette : tier === 'delta' ? deltaPalette : 0;
-  const outfit: Record<string, unknown> = { tier, palette };
+  const deltaPalette = Math.max(0, D.appearance.roupaInicial.cores.indexOf(ap?.palette ?? p.palette));
+  const outfit: CharacterLook['outfit'] = { tier, palette: tier === 'delta' ? deltaPalette : 0 };
   if (arch) {
-    outfit['archetypeId'] = arch.id;
-    outfit['institutionId'] = arch.instituicao;
+    outfit.archetypeId = arch.id;
+    outfit.institutionId = arch.instituicao;
   }
   return {
-    body: typeof ap['body'] === 'string' ? ap['body'] : p.body,
-    skin: typeof ap['skin'] === 'string' ? ap['skin'] : p.skin,
-    face: typeof ap['face'] === 'string' ? ap['face'] : p.face,
-    hair: typeof ap['hair'] === 'string' ? ap['hair'] : p.hair,
-    hairColor: typeof ap['hairColor'] === 'string' ? ap['hairColor'] : p.hair_color,
-    details: Array.isArray(ap['details']) ? (ap['details'] as unknown[]).map(String) : [...p.details],
+    body: ap?.body ?? p.body,
+    skin: ap?.skin ?? p.skin,
+    face: ap?.face ?? p.face,
+    hair: ap?.hair ?? p.hair,
+    hairColor: ap?.hair_color ?? p.hair_color,
+    details: [...(ap?.details ?? p.details)],
     outfit,
   };
 }
 
 /**
  * lk por tipo de entidade (o EntSnap.lk é `unknown`, documentado aqui):
- * - jogador: CharacterLook;
+ * - jogador: CharacterLook (Entity.look, que o núcleo põe a partir do registro; no protótipo, playerLook);
  * - inimigo com afixo: { affixes: string[] } (tier vem nos bits de fl);
  * - saque: { rarity?: string, currency?: 'semente' | 'credito' | 'ambas' };
  * - invocação: { side: 'esquerda' | 'direita' };
  * - NPC e companheiro: sem lk (o cliente usa npcSheet(d)).
  */
-export function lookOf(e: Entity, rec?: PlayerRecord): unknown {
+export function lookOf(e: Entity, ap?: Partial<Appearance>): unknown {
   switch (e.kind) {
     case 'player':
-      return playerLook(e, rec);
+      return e.look ?? playerLook(e, ap);
     case 'enemy':
       return e.affixes && e.affixes.length > 0 ? { affixes: [...e.affixes] } : undefined;
     case 'loot': {

@@ -6,10 +6,10 @@
 import { getData } from '@pqp/shared';
 import type { AnimName } from './contract';
 import { ANIMS } from './contract';
-import { type ArtLook, buildCharacterSheet, defaultLook, drawCharacterFrame, lookKey, resolveLook } from './character';
+import { type ArtLook, buildCharacterSheet, defaultLook, drawCharacterFrame, giantLook, lookKey, resolveLook } from './character';
 import { microText } from './font';
 import { HUMAN_ENEMY_LOOKS } from './npcs';
-import { C, type Color, hex, light, mix, Pix, shade, withAlpha } from './pixel';
+import { C, type Color, hex, light, mix, Pix, shade, shadeDiff, withAlpha } from './pixel';
 import { buildAnimSheet, type Dir, type SheetData } from './sheet';
 
 export type View = 'front' | 'side' | 'back';
@@ -85,81 +85,150 @@ function stateFor(anim: AnimName, i: number, view: View, side: CState['side'], s
 // ---------------------------------------------------------------------------
 // desenhos próprios
 
-const SIRI = hex('#4a6a8c');
-const SIRI_CLAW = hex('#6a8aa8');
+/** Elipse com volume: rampa escura -> clara pela normal, luz de cima à esquerda, com pontilhado. */
+function shadedEllipse(p: Pix, cx: number, cy: number, rx: number, ry: number, ramp: Color[]): void {
+  for (let y = Math.floor(cy - ry - 1); y <= Math.ceil(cy + ry + 1); y++)
+    for (let x = Math.floor(cx - rx - 1); x <= Math.ceil(cx + rx + 1); x++) {
+      const nx = (x + 0.5 - cx) / rx;
+      const ny = (y + 0.5 - cy) / ry;
+      const d2 = nx * nx + ny * ny;
+      if (d2 >= 1) continue;
+      const nzv = Math.sqrt(1 - d2);
+      const l = -0.5 * nx - 0.65 * ny + 0.55 * nzv;
+      const k = Math.max(0, Math.min(ramp.length - 1, Math.floor((l * 0.55 + 0.42) * ramp.length + (((x + y) & 1) - 0.5) * 0.5)));
+      p.set(x, y, ramp[k]!);
+    }
+}
+
+// SUGESTÃO: siri azul-acinzentado de mangue com olhos de palito e pinça de pedágio.
+const SIRI_R = [hex('#1e2e44'), hex('#2e4562'), hex('#43627f'), hex('#5f80a0'), hex('#86a6c2'), hex('#b8d0e0')];
+const SIRI = SIRI_R[2]!;
+const SIRI_CLAW_R = [hex('#3a2a3a'), hex('#5a4a6a'), hex('#6a8aa8'), hex('#8aaac4'), hex('#c4dae8')];
+
+/** Pinça: garra com volume e a fenda escura; `open` abre a ponta. */
+function claw(p: Pix, x: number, y: number, r: number, open: boolean, flip: boolean): void {
+  shadedEllipse(p, x, y, r, r * 0.78, SIRI_CLAW_R);
+  const tip = flip ? 1 : -1;
+  // ponta escura e fenda
+  p.set(Math.round(x + tip * r), Math.round(y - 1), SIRI_R[0]!);
+  p.line(x + tip * (r - 1), y - (open ? 1.5 : 0.5), x + tip * (r * 0.2), y, SIRI_R[0]!);
+  if (open) p.set(Math.round(x + tip * r), Math.round(y + 1), SIRI_R[1]!);
+  p.set(Math.round(x - tip * r * 0.3), Math.round(y - r * 0.5), SIRI_CLAW_R[4]!);
+}
 
 const siri: CreatureDraw = (p, s, cx, gy) => {
-  const y = gy - 6 + s.bob;
+  const y = gy - 7 + s.bob;
   const legStep = s.walk >= 0 ? s.walk % 2 : 0;
-  const body = SIRI;
+  const legC = SIRI_R[1]!;
+  const legL = SIRI_R[3]!;
   if (s.view === 'side') {
     for (let k = 0; k < 3; k++) {
       const lx = cx - 3 + k * 3;
-      p.line(lx, y + 2, lx + (k + legStep) % 2 - 1, gy, dk(body));
+      const kx = lx + ((k + legStep) % 2) - 1;
+      p.line(lx, y + 2, kx - 1, y + 4, legL);
+      p.line(kx - 1, y + 4, kx, gy, legC);
     }
-    p.ellipse(cx + 1, y, 6, 4, body);
-    p.hline(cx - 3, cx + 4, y - 3, light(body, 0.2));
-    // pinça grande na frente
+    shadedEllipse(p, cx + 1, y, 6.5, 4.5, SIRI_R);
+    p.hline(cx - 3, cx + 4, y + 3, SIRI_R[1]!);
     const reach = s.atk === 2 ? -4 : s.atk === 1 ? 1 : 0;
-    p.ellipse(cx - 7 + reach, y - 2 - (s.atk === 1 ? 3 : 0), 4, 3, SIRI_CLAW);
-    p.put(cx - 10 + reach, y - 3 - (s.atk === 1 ? 3 : 0), C.ink);
-    p.vline(cx - 2, y - 6, y - 4, dk(body));
-    p.put(cx - 2, y - 7, C.ink);
+    const lift = s.atk === 1 ? 3 : 0;
+    p.line(cx - 3, y, cx - 6 + reach, y - 1 - lift, legL);
+    claw(p, cx - 8 + reach, y - 2 - lift, 3.6, s.atk === 1, false);
+    // olho de palito
+    p.vline(cx - 2, y - 7, y - 4, SIRI_R[1]!);
+    p.set(cx - 3, y - 8, C.ink);
+    p.set(cx - 2, y - 8, C.ink);
+    p.set(cx - 3, y - 9, C.pureWhite);
+    p.set(cx - 2, y - 9, C.ink);
     return;
   }
   for (let k = 0; k < 3; k++) {
     const off = (k + legStep) % 2;
-    p.line(cx - 5, y + 1 + k, cx - 9 - k, gy - off, dk(body));
-    p.line(cx + 4, y + 1 + k, cx + 8 + k, gy - (1 - off), dk(body));
+    // pernas com junta: sobe até o joelho e desce até o chão
+    p.line(cx - 5, y + 1 + k, cx - 9 - k, y - 1 + k - off, legL);
+    p.line(cx - 9 - k, y - 1 + k - off, cx - 11 - k, gy - off, legC);
+    p.line(cx + 4, y + 1 + k, cx + 8 + k, y - 1 + k - (1 - off), legL);
+    p.line(cx + 8 + k, y - 1 + k - (1 - off), cx + 10 + k, gy - (1 - off), legC);
   }
-  p.ellipse(cx, y, 7.5, 4.5, body);
-  p.hline(cx - 5, cx + 4, y - 3, light(body, 0.2));
+  shadedEllipse(p, cx, y, 8, 5, SIRI_R);
+  // borda da carapaça e pintas
+  p.hline(cx - 6, cx + 5, y + 4, SIRI_R[0]!);
+  p.set(cx - 3, y - 1, SIRI_R[1]!);
+  p.set(cx + 3, y - 2, SIRI_R[1]!);
+  p.set(cx + 1, y + 1, SIRI_R[1]!);
   if (s.view === 'front') {
-    p.vline(cx - 3, y - 7, y - 4, dk(body));
-    p.vline(cx + 2, y - 7, y - 4, dk(body));
-    p.put(cx - 3, y - 8, C.ink);
-    p.put(cx + 2, y - 8, C.ink);
-    p.hline(cx - 2, cx + 1, y, C.ink); // boca de pedágio
+    for (const ex of [cx - 3, cx + 2]) {
+      p.vline(ex, y - 7, y - 4, SIRI_R[1]!);
+      p.set(ex, y - 8, C.ink);
+      p.set(ex + 1, y - 8, C.ink);
+      p.set(ex, y - 9, C.pureWhite);
+      p.set(ex + 1, y - 9, C.ink);
+    }
+    // boca de pedágio
+    p.hline(cx - 2, cx + 1, y + 1, C.ink);
+    p.set(cx - 1, y + 2, C.gold);
   }
   // pinça grande (esquerda da tela) e pequena
   const up = s.atk === 1 ? 4 : s.atk === 2 ? -1 : 0;
-  const bx = s.view === 'back' ? cx + 10 : cx - 10;
-  const sx = s.view === 'back' ? cx - 9 : cx + 9;
-  p.ellipse(bx, y - 3 - up, 4.5, 3.5, SIRI_CLAW);
-  p.hline(bx - 3, bx + 1, y - 3 - up, C.ink);
-  p.ellipse(sx, y - 2, 2, 1.6, SIRI_CLAW);
+  const back = s.view === 'back';
+  const bx = back ? cx + 11 : cx - 11;
+  const sx = back ? cx - 10 : cx + 10;
+  p.line(cx + (back ? 6 : -6), y - 1, bx + (back ? -2 : 2), y - 3 - up, legL);
+  claw(p, bx, y - 4 - up, 4.4, s.atk === 1, back);
+  p.line(cx + (back ? -6 : 6), y - 1, sx, y - 2, legL);
+  claw(p, sx, y - 3, 2.4, false, !back);
 };
 
-const MOSQ = hex('#3a3430');
+const MOSQ_R = [hex('#1a1614'), hex('#2e2824'), hex('#4a403a'), hex('#6a5e54')];
+const BELLY_R = [hex('#5a1414'), hex('#8a2222'), hex('#b8322a'), hex('#e0564a'), hex('#ff9a8a')];
 const mosquito: CreatureDraw = (p, s, cx, gy) => {
   const hover = 14 + (s.i % 2) + s.bob;
   const y = gy - hover;
   const flap = (s.i + (s.walk >= 0 ? s.walk : 0)) % 2;
-  const wing = withAlpha(hex('#e8f0f8'), 150);
+  const wing = withAlpha(hex('#e8f0f8'), 140);
+  const vein = withAlpha(hex('#9ab0c4'), 200);
   const dive = s.atk === 2 ? 4 : 0;
-  // sombra
-  p.ellipse(cx, gy - 1, 5, 1.5, C.shadow);
+  // a sombra no chão vem da EntityView (fx_sombra), que fica sob os pés da entidade
   if (s.view === 'side') {
-    p.ellipse(cx + 3, y + dive, 5, 3, hex('#b8322a')); // barriga vermelha satisfeita
-    p.ellipse(cx - 2, y - 1 + dive, 3, 2.5, MOSQ);
-    p.disk(cx - 5, y - 2 + dive, 2, MOSQ);
-    p.line(cx - 7, y - 1 + dive, cx - 12, y + 3 + dive * 1.5, MOSQ); // ferrão
-    p.put(cx - 5, y - 3 + dive, C.red);
-    for (let k = 0; k < 3; k++) p.line(cx - 2 + k * 2, y + 1 + dive, cx - 3 + k * 2, y + 6 + dive, MOSQ);
-    p.ellipse(cx, y - 5 + flap * 2 + dive, 4, 2, wing);
+    for (let k = 0; k < 3; k++) {
+      const lx = cx - 2 + k * 2;
+      p.line(lx, y + 1 + dive, lx - 2, y + 4 + dive, MOSQ_R[2]!);
+      p.line(lx - 2, y + 4 + dive, lx - 1, y + 8 + dive, MOSQ_R[1]!);
+    }
+    shadedEllipse(p, cx + 4, y + dive, 5.5, 3.2, BELLY_R); // barriga vermelha satisfeita
+    for (const sx of [cx + 2, cx + 5]) p.vline(sx, y - 2 + dive, y + 2 + dive, BELLY_R[1]!); // listras
+    shadedEllipse(p, cx - 2, y - 1 + dive, 3, 2.5, MOSQ_R);
+    shadedEllipse(p, cx - 5, y - 2 + dive, 2.2, 2.2, MOSQ_R);
+    p.line(cx - 7, y - 1 + dive, cx - 12, y + 3 + dive * 1.5, MOSQ_R[1]!); // ferrão
+    p.set(cx - 6, y - 3 + dive, C.red);
+    p.set(cx - 6, y - 4 + dive, hex('#ff9a8a'));
+    p.ellipse(cx, y - 5 + flap * 2 + dive, 4.5, 2, wing);
+    p.line(cx - 3, y - 5 + flap * 2 + dive, cx + 3, y - 5 + flap * 2 + dive, vein);
     return;
   }
-  p.ellipse(cx, y + 3, 3.5, 4, hex('#b8322a'));
-  p.ellipse(cx, y - 1, 3, 2.5, MOSQ);
-  p.disk(cx, y - 4, 2.2, MOSQ);
+  for (const d of [-1, 1]) {
+    p.line(cx + d * 2, y + 1, cx + d * 5, y + 4, MOSQ_R[2]!);
+    p.line(cx + d * 5, y + 4, cx + d * 6, y + 8, MOSQ_R[1]!);
+  }
+  shadedEllipse(p, cx, y + 3, 3.8, 4.3, BELLY_R);
+  p.hline(cx - 2, cx + 2, y + 2, BELLY_R[1]!);
+  p.hline(cx - 2, cx + 2, y + 5, BELLY_R[1]!);
+  shadedEllipse(p, cx, y - 1, 3, 2.5, MOSQ_R);
+  shadedEllipse(p, cx, y - 4, 2.4, 2.2, MOSQ_R);
   if (s.view === 'front') {
-    p.put(cx - 1, y - 5, C.red);
-    p.put(cx + 1, y - 5, C.red);
+    // olhos compostos grandes, com brilho
+    p.set(cx - 2, y - 5, C.red);
+    p.set(cx - 1, y - 5, C.red);
+    p.set(cx + 1, y - 5, C.red);
+    p.set(cx + 2, y - 5, shade(C.red, 0.8));
+    p.set(cx - 2, y - 6, hex('#ff9a8a'));
+    p.set(cx + 1, y - 6, hex('#ff9a8a'));
     p.vline(cx, y - 3, y + 1 + dive, hex('#5a4a40'));
   }
   for (const d of [-1, 1]) {
-    p.ellipse(cx + d * 6, y - 3 - flap * 2, 5, 2.5 - flap, wing);
-    p.line(cx + d * 2, y + 1, cx + d * 5, y + 7, MOSQ);
+    p.ellipse(cx + d * 6, y - 3 - flap * 2, 5, 2.5 - flap * 0.5, wing);
+    p.line(cx + d * 2, y - 3 - flap * 2, cx + d * 9, y - 3 - flap * 2, vein);
+    p.set(cx + d * 4, y - 4 - flap * 2, withAlpha(C.pureWhite, 220));
   }
 };
 
@@ -750,7 +819,9 @@ function drawCreatureFrame(def: CreatureDef, side: 'esquerda' | 'direita', anim:
     if (dir === 3) out = out.flipX();
     return out;
   }
-  p.outline({ minAlpha: 200 });
+  // volume pela silhueta (luz de cima à esquerda) e contorno seletivo
+  shadeDiff(p, null, 0.8);
+  p.outlineSelective(200);
   let out = k >= 0 ? deathTransform(p, k) : p;
   if (s.cast > 0) {
     const fx = side === 'esquerda' ? C.leaf : C.neonCyan;
@@ -780,13 +851,13 @@ export function buildEnemySheet(enemyId: string, tier?: Tier): SheetData {
   let sheet: SheetData;
   const decorPad = t === 'normal' ? 0 : 2;
   if (human) {
-    const rl = resolveLook(human());
-    // chefe humano: 1,25x (Bruno Ferro), até 64 de altura
-    const sc = t === 'chefe' ? 1.25 : 1;
-    const fw = Math.round(rl.W * sc) + decorPad * 2;
-    const fh = Math.min(64, Math.round(rl.H * sc) + decorPad);
+    // chefe humano (Bruno Ferro): boneco gigante desenhado em resolução nativa, até 64 de altura
+    const base = resolveLook(human());
+    const rl = t === 'chefe' ? giantLook(base, Math.min(10, 64 - decorPad - base.H)) : base;
+    const fw = rl.W + decorPad * 2;
+    const fh = Math.min(64, rl.H + decorPad);
     sheet = buildAnimSheet(key, fw, fh, (anim, dir, i) => {
-      const f = scaleFrame(drawCharacterFrame(rl, anim, dir, i), sc);
+      const f = drawCharacterFrame(rl, anim, dir, i);
       const padded = new Pix(fw, fh);
       padded.blit(f, fr((fw - f.w) / 2), fh - f.h - (decorPad > 0 ? 1 : 0));
       return tierDecor(padded, t, i);

@@ -15,6 +15,7 @@ import {
 import { passivesOf, recomputeShield, resourceMaxOf } from './combat';
 import { alcanceTiles, combatStatsFrom, resolveKit, speedFactor, statRowAt, type Kit } from './stats';
 import { msToTicks, type EnemyTier, type Entity, type Loadout, type Team, type World } from './types';
+import type { CharacterLook } from '../game/types';
 import { addEntity, blankStats, emit } from './world';
 
 export interface SpawnPlayerOpts {
@@ -30,6 +31,15 @@ export interface SpawnPlayerOpts {
   side?: 'esquerda' | 'direita';
   /** habilidade da classe no botão 3 (padrão: slot3Padrao da classe) */
   slot3?: string;
+  // ---- Fase 2 (game/): o servidor passa o que sai do PlayerRecord ----
+  /** visual em camadas (game/visual.ts lookOf) */
+  look?: CharacterLook;
+  /** teto de nível (game/progression.ts simLevelCap) */
+  levelCap?: number;
+  /** XP de quem está no Delta conta como grupo (o Seu Jacó acompanha) */
+  deltaRookie?: boolean;
+  /** XP dentro do nível, vindo do registro */
+  xp?: number;
 }
 
 /** Nível padrão de cada etapa quando não vem nível: Delta 1, classe 8, arquétipo 12 (aprendiz). */
@@ -136,13 +146,16 @@ export function spawnPlayer(w: World, opts: SpawnPlayerOpts): Entity {
   applyKit(e, kit, level, opts.slot3);
   e.hp = e.stats.hpMax;
   e.resource = e.stats.resourceMax;
-  e.xp = 0;
+  e.xp = opts.xp ?? 0;
   e.semente = 0;
   e.credito = 0;
   e.inventory = [];
   e.doctrine = [];
   e.auto = false;
   if (opts.playerId !== undefined) e.playerId = opts.playerId;
+  if (opts.look !== undefined) e.look = opts.look;
+  if (opts.levelCap !== undefined) e.levelCap = opts.levelCap;
+  if (opts.deltaRookie) e.deltaRookie = true;
   return e;
 }
 

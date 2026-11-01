@@ -1,30 +1,53 @@
 /**
- * WorldRoom: adaptador Colyseus 0.18 do GameServerCore. Sala 'mundo', 20 ticks por segundo, sem
- * estado sincronizado do Colyseus: tudo vai em mensagens (MSG) montadas pelo núcleo.
+ * WorldRoom: adaptador Colyseus 0.18 do GameServerCore. Uma sala por mapa: todas se chamam 'mundo'
+ * e se distinguem pela opção `mapId` (define(...).filterBy(['mapId']) no app.ts; o app cria uma de
+ * cada mapa ao subir). 20 ticks por segundo, sem estado sincronizado do Colyseus: tudo vai em
+ * mensagens (MSG e GAME_MSG) montadas pelo núcleo.
+ *
+ * Troca de sala (Fase 2): quem entra sem mapId cai na primeira sala (a do Delta); se o personagem
+ * for de outro mapa, ou depois da travessia, o núcleo manda 'trocar_sala' { mapId } e o cliente sai
+ * desta sala e entra com joinOrCreate('mundo', { mapId }). A sala do protótipo (sandbox) só aceita
+ * quem pediu por ela (mapId: 'prototipo_delta').
  *
  * Simulação de rede ruim pelo ambiente (ver netsim.ts): PQP_LAG_MS (RTT extra, metade em cada
  * sentido), PQP_LOSS (perda de entradas e snapshots), PQP_LOSS_MODE (travada, o padrão, como no
  * TCP, ou descarte), PQP_STALL_MS, PQP_JITTER_MS (variação, sem embaralhar) e PQP_NET_SEED.
- * hello, welcome, ping, pong, need e info sofrem o atraso e esperam na mesma fila em ordem do
- * cliente, mas não sorteiam perda.
+ * hello, welcome, ping, pong, need, info e as mensagens de jogo sofrem o atraso e esperam na mesma
+ * fila em ordem do cliente, mas não sorteiam perda.
  */
 import { Room, type Client } from 'colyseus';
-import { CLOSE_CODE, MSG, type C2S_Hello, type C2S_Input, type C2S_Need, type C2S_Ping } from '@pqp/shared/net';
+import { hasMap, START_MAP } from '@pqp/shared/map';
+import { CLOSE_CODE, GAME_MSG, MSG, type C2S_Hello, type C2S_Input, type C2S_Need, type C2S_Ping } from '@pqp/shared/net';
 import { TICK_MS } from '@pqp/shared/sim';
 import { COLYSEUS_RECONNECT_S, MAX_CATCHUP_TICKS } from '../config';
 import { GameServerCore, type CoreOptions } from '../core';
 import { LinkSim, linkConfigFromEnv, type LinkConfig } from '../netsim';
 import type { Store } from '../persistence/store';
 
-/** Opções simples (JSON) passadas ao define da sala. */
+/** Opções simples (JSON) passadas ao define da sala (e o mapId de cada sala). */
 export interface WorldRoomOptions {
+  /** mapa desta sala (padrão: START_MAP, o Delta) */
+  mapId?: string;
   seed?: number;
   companions?: boolean;
+  /** o Seu Jacó acompanha quem está no Delta (padrão: sim na sala do Delta) */
+  jaco?: boolean;
   content?: boolean;
   offlineAutoMs?: number;
   /** sobrepõe as variáveis PQP_LAG_MS/PQP_LOSS/PQP_JITTER_MS */
   link?: Partial<LinkConfig>;
 }
+
+/** Mensagens de jogo do cliente (GAME_MSG) que a sala repassa ao núcleo. */
+const GAME_IN = [
+  GAME_MSG.criarPersonagem,
+  GAME_MSG.maquinaVisual,
+  GAME_MSG.falar,
+  GAME_MSG.dialogoOpcao,
+  GAME_MSG.missaoAceitar,
+  GAME_MSG.travessia,
+  GAME_MSG.tutorialPasso,
+] as const;
 
 /** Dependências que não cabem em JSON (Store, log), postas antes do define. */
 const deps: { store?: Store; log?: (m: string) => void } = {};
@@ -37,7 +60,7 @@ export function setWorldRoomDeps(d: { store?: Store; log?: (m: string) => void }
 export const liveRooms = new Set<WorldRoom>();
 
 export class WorldRoom extends Room {
-  // SUGESTÃO: até 200 jogadores na sala do mapa aberto do piloto.
+  // SUGESTÃO: até 200 jogadores na sala de cada mapa do piloto.
   override maxClients = 200;
   override autoDispose = false;
 
@@ -46,11 +69,16 @@ export class WorldRoom extends Room {
   private outLink!: LinkSim;
   private acc = 0;
   private bySid = new Map<string, Client>();
+  /** quem entrou pedindo esta sala pelo mapId */
+  private explicit = new Set<string>();
 
   override onCreate(options: WorldRoomOptions = {}): void {
-    const coreOpts: CoreOptions = {};
+    const mapId = typeof options.mapId === 'string' ? options.mapId : START_MAP;
+    if (!hasMap(mapId)) throw new Error(`mapa desconhecido: ${mapId}`);
+    const coreOpts: CoreOptions = { mapId };
     if (options.seed !== undefined) coreOpts.seed = options.seed;
     if (options.companions !== undefined) coreOpts.companions = options.companions;
+    if (options.jaco !== undefined) coreOpts.jaco = options.jaco;
     if (options.content !== undefined) coreOpts.content = options.content;
     if (options.offlineAutoMs !== undefined) coreOpts.offlineAutoMs = options.offlineAutoMs;
     if (deps.store) coreOpts.store = deps.store;
@@ -59,7 +87,7 @@ export class WorldRoom extends Room {
     const link: LinkConfig = { ...linkConfigFromEnv(), ...(options.link ?? {}) };
     this.inLink = new LinkSim(link, 1);
     this.outLink = new LinkSim(link, 2);
-    if (this.inLink.active) (deps.log ?? console.log)(`[mundo] rede simulada: RTT +${link.lagMs} ms, perda ${link.loss * 100}% (${this.inLink.mode}), variação ${link.jitterMs} ms`);
+    if (this.inLink.active) (deps.log ?? console.log)(`[mundo:${mapId}] rede simulada: RTT +${link.lagMs} ms, perda ${link.loss * 100}% (${this.inLink.mode}), variação ${link.jitterMs} ms`);
     liveRooms.add(this);
 
     // cada cliente tem a sua fila em ordem nos dois sentidos (chave = sessionId), como uma conexão TCP
@@ -89,6 +117,18 @@ export class WorldRoom extends Room {
         client.sessionId,
       );
     });
+    for (const type of GAME_IN) {
+      this.onMessage(type, (client: Client, msg: unknown) => {
+        this.inLink.run(
+          false,
+          () => {
+            this.core.onGameMessage(client.sessionId, type, msg);
+            this.drainOutbox();
+          },
+          client.sessionId,
+        );
+      });
+    }
 
     // laço de 20 Hz com acumulador: o tempo medido decide quantos ticks fixos rodam. O tempo vem
     // do performance.now() e não do clock da sala, que também anda por outros intervalos.
@@ -106,7 +146,7 @@ export class WorldRoom extends Room {
 
   private async handleHello(client: Client, msg: C2S_Hello): Promise<void> {
     try {
-      const wel = await this.core.join(client.sessionId, msg ?? ({} as C2S_Hello));
+      const wel = await this.core.join(client.sessionId, msg ?? ({} as C2S_Hello), { explicit: this.explicit.has(client.sessionId) });
       if (!this.bySid.has(client.sessionId)) {
         // saiu enquanto o Store carregava
         this.core.removeClient(client.sessionId);
@@ -116,9 +156,18 @@ export class WorldRoom extends Room {
         const old = this.bySid.get(sid);
         if (old && old !== client) old.leave(CLOSE_CODE.outroAparelho, 'entrou em outro aparelho');
       }
-      this.outLink.run(false, () => this.safeSend(client, MSG.welcome, wel), client.sessionId);
+      if (wel) this.outLink.run(false, () => this.safeSend(client, MSG.welcome, wel), client.sessionId);
+      this.drainOutbox();
     } catch (err) {
       (deps.log ?? console.error)(`[mundo] hello falhou: ${String(err)}`);
+    }
+  }
+
+  /** Manda as mensagens que o núcleo deixou na caixa (perfil, missões, avisos, welcome tardio, trocar_sala). */
+  private drainOutbox(): void {
+    for (const o of this.core.takeOutbox()) {
+      const c = this.bySid.get(o.sid);
+      if (c) this.outLink.run(false, () => this.safeSend(c, o.type, o.msg), o.sid);
     }
   }
 
@@ -141,6 +190,8 @@ export class WorldRoom extends Room {
       (deps.log ?? console.error)(`[mundo] tick falhou: ${err instanceof Error ? err.stack : String(err)}`);
       return;
     }
+    // as mensagens de jogo do tick saem antes do snapshot (o welcome tardio precisa chegar primeiro)
+    this.drainOutbox();
     for (const [sid, snap] of snaps) {
       const c = this.bySid.get(sid);
       if (c) this.outLink.run(true, () => this.safeSend(c, MSG.snap, snap), sid);
@@ -159,8 +210,9 @@ export class WorldRoom extends Room {
     }
   }
 
-  override onJoin(client: Client): void {
+  override onJoin(client: Client, options?: { mapId?: unknown }): void {
     this.bySid.set(client.sessionId, client);
+    if (options && options.mapId === this.core.mapId) this.explicit.add(client.sessionId);
   }
 
   override onDrop(client: Client, code?: number): void {
@@ -179,6 +231,7 @@ export class WorldRoom extends Room {
 
   override onLeave(client: Client): void {
     this.bySid.delete(client.sessionId);
+    this.explicit.delete(client.sessionId);
     this.core.removeClient(client.sessionId);
     this.inLink.forget(client.sessionId);
     this.outLink.forget(client.sessionId);

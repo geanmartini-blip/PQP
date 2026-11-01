@@ -33,7 +33,7 @@ describe('ponta a ponta com 200 ms e 2% de perda', () => {
     const lines: string[] = [];
     const rep = await runE2E({ url: `http://127.0.0.1:${srv.port}`, skipBoss: true, stepTimeoutMs: 30_000, log: (m) => lines.push(m) });
     if (!rep.ok) console.log(lines.join('\n'));
-    expect(rep.steps.map((s) => s.name)).toEqual(['entrar', 'snapshots ~20/s', 'andar até um bando', 'matar um inimigo com os botões']);
+    expect(rep.steps.map((s) => s.name)).toEqual(['criar personagem', 'entrar','snapshots ~20/s', 'andar até um bando', 'matar um inimigo com os botões']);
     for (const s of rep.steps) expect(s.ok, `${s.name}: ${s.info}`).toBe(true);
     expect(rep.snapsPerS).toBeGreaterThan(16);
     expect(rep.snapsPerS).toBeLessThanOrEqual(21);

@@ -58,16 +58,28 @@ function alvo(color: Color): Pix[] {
   });
 }
 
-/** Aviso em círculo: borda forte e um disco interno que cresce com o progresso. */
+/**
+ * Borda do aviso que pulsa: a cada quadro (o quadro anda com o progresso do aviso) a borda alterna
+ * forte e fraca, e os tracinhos brancos de dentro giram. Assim o aviso "pisca" sem código por quadro.
+ */
+const EDGE_HOT = hex('#ffe0a0');
+function edgeColor(i: number): Color {
+  return i % 2 === 1 ? withAlpha(mix(RED, EDGE_HOT, 0.35 + i * 0.05), 255) : WARN_EDGE;
+}
+
+/** Aviso em círculo: borda dupla pulsando, tracejado girando e um disco interno que cresce. */
 function avisoCirculo(): Pix[] {
   return frames(8, 64, 64, (p, i) => {
-    p.ellipse(32, 32, 31.5, 31.5, WARN_FILL);
+    p.ellipse(32, 32, 31.5, 31.5, withAlpha(RED, 50 + i * 6));
     const r = 31.5 * ((i + 1) / 8);
     p.ellipse(32, 32, r, r, WARN_CORE);
-    p.ring(32, 32, 31.5, 31.5, 2, WARN_EDGE);
-    for (let k = 0; k < 16; k++) {
-      const a = (k / 16) * Math.PI * 2;
-      p.put(Math.round(32 + Math.cos(a) * 27), Math.round(32 + Math.sin(a) * 27), withAlpha(C.pureWhite, 90));
+    p.ring(32, 32, r, r, 1, withAlpha(hex('#ffb08a'), 150));
+    p.ring(32, 32, 31.5, 31.5, i % 2 ? 3 : 2, edgeColor(i));
+    p.ring(32, 32, 31.5, 31.5, 1, withAlpha(hex('#5a0a10'), 230));
+    for (let k = 0; k < 24; k++) {
+      if (k % 2) continue;
+      const a = (k / 24) * Math.PI * 2 + i * (Math.PI / 24);
+      for (const rr of [27, 27.8]) p.put(Math.round(32 + Math.cos(a) * rr - 0.5), Math.round(32 + Math.sin(a) * rr - 0.5), withAlpha(C.pureWhite, 120 + i * 12));
     }
   });
 }
@@ -78,6 +90,7 @@ function avisoCone(deg: number): Pix[] {
   return frames(8, 64, 64, (p, i) => {
     const R = 63;
     const prog = R * ((i + 1) / 8);
+    const thick = i % 2 ? 3 : 2;
     for (let y = 0; y < 64; y++)
       for (let x = 0; x < 64; x++) {
         const dx = x + 0.5;
@@ -85,21 +98,28 @@ function avisoCone(deg: number): Pix[] {
         const d = Math.hypot(dx, dy);
         const a = Math.abs(Math.atan2(dy, dx));
         if (d > R || a > half) continue;
-        const edge = d > R - 2 || a > half - 1.6 / Math.max(d, 1);
-        p.put(x, y, edge ? WARN_EDGE : d <= prog ? WARN_CORE : WARN_FILL);
+        const outer = d > R - 1 || a > half - 0.9 / Math.max(d, 1);
+        const edge = d > R - thick || a > half - (thick * 0.8) / Math.max(d, 1);
+        const dash = !edge && Math.abs(d - (R - 6)) < 0.8 && Math.floor((a * 20 + i) % 2) === 0;
+        p.put(x, y, outer ? withAlpha(hex('#5a0a10'), 230) : edge ? edgeColor(i) : dash ? withAlpha(C.pureWhite, 140) : d <= prog ? WARN_CORE : withAlpha(RED, 50 + i * 6));
       }
   });
 }
 
 function avisoLinha(): Pix[] {
   return frames(8, 64, 16, (p, i) => {
-    p.rect(0, 0, 64, 16, WARN_FILL);
+    p.rect(0, 0, 64, 16, withAlpha(RED, 50 + i * 6));
     p.rect(0, 0, Math.round(64 * ((i + 1) / 8)), 16, WARN_CORE);
-    p.frame(0, 0, 63, 15, WARN_EDGE);
+    p.frame(0, 0, 63, 15, withAlpha(hex('#5a0a10'), 230));
+    p.frame(1, 1, 62, 14, edgeColor(i));
+    if (i % 2) p.frame(2, 2, 61, 13, edgeColor(i));
+    // setas andando no sentido do golpe
     for (let x = 6 + ((i * 2) % 8); x < 60; x += 8) {
-      p.put(x, 7, withAlpha(C.pureWhite, 130));
-      p.put(x + 1, 8, withAlpha(C.pureWhite, 130));
-      p.put(x, 9, withAlpha(C.pureWhite, 130));
+      p.put(x, 6, withAlpha(C.pureWhite, 150));
+      p.put(x + 1, 7, withAlpha(C.pureWhite, 170));
+      p.put(x + 2, 8, withAlpha(C.pureWhite, 170));
+      p.put(x + 1, 9, withAlpha(C.pureWhite, 170));
+      p.put(x, 10, withAlpha(C.pureWhite, 150));
     }
   });
 }
@@ -354,8 +374,44 @@ function pavio(): Pix[] {
   });
 }
 
+/** Larguras (px) das sombras no chão: o quadro i tem SHADOW_WIDTHS[i] de largura (escala 1, sem borrão). */
+export const SHADOW_WIDTHS = [12, 16, 20, 24, 28, 32, 40, 48, 56] as const;
+
+/** Quadro de fx_sombra com a largura mais próxima de `px`. */
+export function shadowFrameFor(px: number): string {
+  let best = 0;
+  for (let i = 0; i < SHADOW_WIDTHS.length; i++) if (Math.abs(SHADOW_WIDTHS[i]! - px) < Math.abs(SHADOW_WIDTHS[best]! - px)) best = i;
+  return String(best);
+}
+
+/** Sombra elíptica macia: miolo mais escuro e borda pontilhada, em tom frio. */
 function sombra(): Pix[] {
-  return frames(1, 24, 8, (p) => p.ellipse(12, 4, 11.5, 3.5, withAlpha(C.black, 80)));
+  const ink = hex('#120e24');
+  return SHADOW_WIDTHS.map((w) => {
+    const h = Math.max(5, Math.round(w / 3) + 1);
+    const p = new Pix(w, h);
+    const rx = w / 2 - 0.5;
+    const ry = h / 2 - 0.5;
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        const dx = (x + 0.5 - w / 2) / rx;
+        const dy = (y + 0.5 - h / 2) / ry;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d >= 1) continue;
+        const a = d < 0.55 ? 120 : d < 0.8 ? 90 : (x + y) % 2 ? 60 : 0;
+        if (a > 0) p.set(x, y, withAlpha(ink, a));
+      }
+    return p;
+  });
+}
+
+/** Vagalume: ponto de luz com halo. */
+function vagalume(): Pix[] {
+  return frames(2, 7, 7, (p, i) => {
+    p.ellipse(3.5, 3.5, 3.4, 3.4, withAlpha(hex('#c8f05a'), i ? 70 : 40));
+    p.ellipse(3.5, 3.5, 2, 2, withAlpha(hex('#c8f05a'), i ? 170 : 110));
+    p.set(3, 3, hex('#fbffc0'));
+  });
 }
 
 /** Saquinho de saque no chão, com a cor da raridade. */
@@ -401,7 +457,8 @@ export function coneKeyFor(deg: number): string {
 const DEFS: Record<string, [() => Pix[], Omit<FxInfo, 'frames' | 'w' | 'h'>]> = {
   fx_alvo: [() => alvo(hex('#ff4a3a')), { ox: 0.5, oy: 0.5, fps: 4, loop: true, uso: 'marcador sob o alvo travado (inimigo)' }],
   fx_alvo_aliado: [() => alvo(hex('#5ae05a')), { ox: 0.5, oy: 0.5, fps: 4, loop: true, uso: 'marcador sob o aliado escolhido' }],
-  fx_sombra: [sombra, { ox: 0.5, oy: 0.5, fps: 0, loop: false, uso: 'sombra no chão sob bonecos e voadores' }],
+  fx_sombra: [sombra, { ox: 0.5, oy: 0.5, fps: 0, loop: false, uso: 'sombra no chão sob bonecos e voadores; quadro = largura (shadowFrameFor)' }],
+  fx_vagalume: [vagalume, { ox: 0.5, oy: 0.5, fps: 3, loop: true, uso: 'vagalume piscando (mangue e mata)' }],
   fx_aviso_circulo: [avisoCirculo, { ox: 0.5, oy: 0.5, fps: 0, loop: false, uso: 'aviso de área em círculo; quadro = progresso 0..7 até o impacto; escala = raio' }],
   ...Object.fromEntries(
     CONE_ANGLES.map((a) => [`fx_aviso_cone_${a}`, [() => avisoCone(a), { ox: 0, oy: 0.5, fps: 0, loop: false, uso: `aviso em cone de ${a} graus, ápice na origem, apontando para o ângulo 0; girar pela direção` }]]),
@@ -481,6 +538,8 @@ export function buildFontPix(): Pix {
     const y = Math.floor(i / FONT_PER_ROW) * FONT_CELL_H;
     const cell = new Pix(FONT_CELL_W, FONT_CELL_H);
     if (ch !== ' ') drawGlyph(cell, 1, 1, ch, C.pureWhite);
+    // degradê de 2 tons (a parte de baixo da letra um pouco mais escura): o número tingido ganha volume
+    for (let yy = 1 + FONT_H - 2; yy <= FONT_H; yy++) for (let xx = 0; xx < FONT_CELL_W; xx++) if (cell.alphaAt(xx, yy) === 255) cell.set(xx, yy, hex('#c4c0cc'));
     cell.outline({ color: hex('#140c16'), diagonal: true });
     p.blit(cell, x, y);
   }

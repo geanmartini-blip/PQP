@@ -6,7 +6,25 @@
  * - ignora snapshot velho (chegou fora de ordem) e tira quem veio em 'gone'.
  * Usado pelos testes (canal em memória) e pelo script de carga (bot/run.ts, com @colyseus/sdk).
  */
-import { dequantize, quantizeAxis, type C2S_Hello, type C2S_Input, type EntSnap, type HudSnap, type S2C_Info, type S2C_Snapshot, type S2C_Welcome } from '@pqp/shared/net';
+import {
+  dequantize,
+  GAME_MSG,
+  MSG,
+  quantizeAxis,
+  type C2S_Hello,
+  type C2S_Input,
+  type EntSnap,
+  type HudSnap,
+  type S2C_Aviso,
+  type S2C_Dialogo,
+  type S2C_Info,
+  type S2C_MissaoEstado,
+  type S2C_Perfil,
+  type S2C_Snapshot,
+  type S2C_TravessiaOpcoes,
+  type S2C_TrocarSala,
+  type S2C_Welcome,
+} from '@pqp/shared/net';
 import type { CombatEvent, PlayerCommand, PlayerInput } from '@pqp/shared/sim';
 
 /** Comando sem id (o robô numera). */
@@ -94,6 +112,46 @@ export class RobotClient {
     this.history.push(inp);
     if (this.history.length > 3) this.history.shift();
     return { inputs: [...this.history], cmds: [...this.pending], ackTick: Math.max(0, this.lastTick), rtt: this.rtt };
+  }
+
+  // ---- Fase 2: mensagens de jogo (GAME_MSG) ----
+  perfil?: S2C_Perfil;
+  missao?: S2C_MissaoEstado;
+  dialogo?: S2C_Dialogo;
+  travessia?: S2C_TravessiaOpcoes;
+  trocarSala?: S2C_TrocarSala;
+  avisos: S2C_Aviso[] = [];
+  /** todas as mensagens de jogo recebidas, em ordem */
+  gameLog: { type: string; msg: unknown }[] = [];
+
+  /** Mensagem de jogo (ou welcome tardio) do servidor. */
+  onGame(type: string, msg: unknown): void {
+    this.gameLog.push({ type, msg });
+    switch (type) {
+      case MSG.welcome:
+        this.onWelcome(msg as S2C_Welcome);
+        break;
+      case GAME_MSG.perfil:
+        this.perfil = msg as S2C_Perfil;
+        break;
+      case GAME_MSG.missaoEstado:
+        this.missao = msg as S2C_MissaoEstado;
+        break;
+      case GAME_MSG.dialogo:
+        this.dialogo = msg as S2C_Dialogo;
+        break;
+      case GAME_MSG.travessiaOpcoes:
+        this.travessia = msg as S2C_TravessiaOpcoes;
+        break;
+      case GAME_MSG.trocarSala:
+        this.trocarSala = msg as S2C_TrocarSala;
+        break;
+      case GAME_MSG.aviso:
+        this.avisos.push(msg as S2C_Aviso);
+        break;
+      default:
+        break;
+    }
   }
 
   /** Processa um snapshot. Devolve os ids que precisam de 'need'. */

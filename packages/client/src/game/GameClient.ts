@@ -27,6 +27,17 @@ import { makeInput, Predictor, TELEPORT_ERROR_TILES } from '../net/prediction';
 import { RttMeter } from '../net/rtt';
 import type { NetStatus, Transport } from '../net/transport';
 import { ClientWorld, FL } from './clientWorld';
+import { GameState } from './gameState';
+import {
+  GAME_MSG,
+  type C2S_CriarPersonagem,
+  type C2S_DialogoOpcao,
+  type C2S_Falar,
+  type C2S_MaquinaVisual,
+  type C2S_MissaoAceitar,
+  type C2S_Travessia,
+  type C2S_TutorialPasso,
+} from '@pqp/shared/net';
 
 export interface StorageLike {
   getItem(k: string): string | null;
@@ -114,6 +125,10 @@ export class GameClient {
   /** joystick ou teclado (-1..1), lido a cada passo */
   readonly intent: Vec = { x: 0, y: 0 };
   readonly notices: Notice[] = [];
+  /** Fase 2: perfil, missões, diálogo e telas pedidas pelo servidor */
+  readonly game = new GameState();
+  /** controles do tutorial já avisados ao servidor nesta sessão */
+  private sentControls = new Set<string>();
   /** quantas mensagens de entrada e snapshots passaram (diagnóstico) */
   readonly stats = { inputsSent: 0, snapsIn: 0, welcomes: 0 };
 
@@ -218,6 +233,8 @@ export class GameClient {
         if (text) this.pushNotice(text);
         break;
       }
+      default:
+        this.game.onMessage(type, msg, this.now);
     }
   }
 
@@ -260,7 +277,10 @@ export class GameClient {
     this.stats.snapsIn++;
     this.clock.onSnapshot(s.t, this.now);
     this.cmds.ack(s.cack);
-    for (const ev of s.ev ?? []) this.eventsOut.push(ev);
+    for (const ev of s.ev ?? []) {
+      this.eventsOut.push(ev);
+      if (ev.t === 'xp' && ev.dst === this.world.you && this.game.active) this.game.onXp(ev.amount, this.now);
+    }
     const me = s.ents.find((e) => e.i === this.world.you);
     if (me && this.pred && this.map) {
       const p = unstick(this.map, dequantize(me.x), dequantize(me.y), this.pred.radius);
@@ -442,7 +462,7 @@ export class GameClient {
     const e = this.world.ents.get(entityId);
     if (!e || !this.pred) return false;
     if (this.inTalkRange(e.x, e.y)) {
-      this.command({ c: 'interagir', entity: entityId });
+      this.talkNow(entityId);
       return true;
     }
     if (this.goTo(e.x, e.y + 0.8) || this.goTo(e.x, e.y)) {
@@ -469,8 +489,99 @@ export class GameClient {
     }
     if (this.inTalkRange(e.x, e.y)) {
       this.pendingInteract = undefined;
-      this.command({ c: 'interagir', entity: p.id });
+      this.talkNow(p.id);
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Fase 2: criação, Máquina de Visual, diálogo, missões, tutorial e travessia
+
+  /**
+   * Conversa pelas regras da Fase 2 (mensagem 'falar' e caixa de diálogo) quando o servidor manda
+   * perfil; no modo de teste (?ala=) e no protótipo, o comando 'interagir' da simulação (fala solta
+   * e troca de ala com Wesley e Li Wei).
+   */
+  get dialogMode(): boolean {
+    return this.game.active && !this.opts.archetypeId;
+  }
+
+  private talkNow(entityId: number): void {
+    if (this.dialogMode) {
+      const e = this.world.ents.get(entityId);
+      const m: C2S_Falar = { entity: entityId, ...(e?.defId ? { npcId: e.defId } : {}) };
+      this.sendGame(GAME_MSG.falar, m);
+    } else this.command({ c: 'interagir', entity: entityId });
+  }
+
+  /** Mensagem da Fase 2 (vai pelo mesmo canal; nunca se perde na rede simulada). */
+  sendGame(type: string, msg: unknown): boolean {
+    if (!this.welcomed) return false;
+    this.transport.send(type, msg);
+    return true;
+  }
+
+  createCharacter(name: string, appearance: C2S_CriarPersonagem['appearance']): boolean {
+    const m: C2S_CriarPersonagem = { name, appearance };
+    return this.sendGame(GAME_MSG.criarPersonagem, m);
+  }
+
+  visualMachine(change: C2S_MaquinaVisual['change'], maquina?: string): boolean {
+    const m: C2S_MaquinaVisual = { change, ...(maquina ? { maquina } : {}) };
+    return this.sendGame(GAME_MSG.maquinaVisual, m);
+  }
+
+  dialogOption(npcId: string, opcao: string): boolean {
+    const m: C2S_DialogoOpcao = { npcId, opcao };
+    return this.sendGame(GAME_MSG.dialogoOpcao, m);
+  }
+
+  acceptMission(id: string): boolean {
+    const m: C2S_MissaoAceitar = { id };
+    return this.sendGame(GAME_MSG.missaoAceitar, m);
+  }
+
+  crossRiver(side: string, institution: string, guide: string): boolean {
+    const m: C2S_Travessia = { side, institution, guide };
+    return this.sendGame(GAME_MSG.travessia, m);
+  }
+
+  /**
+   * Controle do tutorial usado aqui no cliente (andar com o joystick, tocar no chão, auto-caminho,
+   * trocar o alvo...). Cada um vai uma vez por sessão e só se o perfil ainda não tiver.
+   */
+  tutorialControl(controle: string, passo?: string): void {
+    if (!this.game.active || this.sentControls.has(controle) || this.game.usedControl(controle)) return;
+    this.sentControls.add(controle);
+    this.game.localSteps.add('c:' + controle);
+    if (passo) this.game.localSteps.add(passo);
+    const m: C2S_TutorialPasso = { controle, ...(passo ? { passo } : {}) };
+    this.sendGame(GAME_MSG.tutorialPasso, m);
+  }
+
+  /**
+   * Auto-caminho até o alvo da missão (tocar no rastreador ou na seta): NPC visível anda e fala;
+   * o resto vai pelo A* até o ponto. Devolve true se achou caminho.
+   */
+  autoPath(): boolean {
+    const alvo = this.game.missions?.alvo;
+    if (!alvo || !this.map || alvo.mapa !== this.world.mapId) return false;
+    this.tutorialControl('auto_caminho', 'botao');
+    if (alvo.npc) {
+      let best: number | undefined;
+      let bd = Infinity;
+      const me = this.pred;
+      for (const e of this.world.ents.values()) {
+        if (e.kind !== 'n' || e.defId !== alvo.npc) continue;
+        const d = me ? Math.hypot(e.x - me.x, e.y - me.y) : 0;
+        if (d < bd) {
+          bd = d;
+          best = e.id;
+        }
+      }
+      if (best !== undefined && this.interact(best)) return true;
+    }
+    if (alvo.x === undefined || alvo.y === undefined) return false;
+    return this.goTo(alvo.x, alvo.y) !== null || this.goTo(alvo.x, alvo.y + 0.8) !== null;
   }
 
   close(): void {

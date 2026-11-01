@@ -6,6 +6,7 @@
  * - O saque cai no chão como entidade 'loot'; quem encosta pega (raioColetaSaqueTiles).
  */
 import { getData } from '../data';
+import { groupXp } from '../game/progression';
 import type { LootTable } from '../schema/item';
 import { bal, XP_PARTICIPATION_MS, XP_PARTICIPATION_RADIUS } from './constants';
 import { isPartyMember, isUp, statPts } from './entity';
@@ -48,7 +49,8 @@ export function grantXp(w: World, e: Entity, amount: number): void {
   if (amount <= 0) return;
   e.xp = (e.xp ?? 0) + amount;
   emit(w, { t: 'xp', dst: e.id, amount });
-  while ((e.xp ?? 0) >= xpToNext(e.level)) {
+  // Fase 2: teto de nível (Delta 7 até o Bruno Ferro, travessia 8); o XP passa do teto e fica guardado
+  while ((e.xp ?? 0) >= xpToNext(e.level) && (e.levelCap === undefined || e.level < e.levelCap)) {
     e.xp = (e.xp ?? 0) - xpToNext(e.level);
     relevel(w, e, e.level + 1);
     emit(w, { t: 'level', dst: e.id, level: e.level });
@@ -64,15 +66,14 @@ export function tickRewards(w: World): void {
     if (ai.rewarded) continue;
     ai.rewarded = true;
     const parts = participants(w, enemy);
-    // XP: só em grupo
-    if (parts.length >= c.grupoMin) {
-      const live = parts.filter((p) => p.kind === 'player' && !p.onDuty).length;
-      const bonus = 1 + (c.xpBonusPorJogadorVivoExtraPct / 100) * Math.max(0, live - 1);
-      for (const p of parts) {
-        if (p.kind !== 'player') continue;
-        const mult = (p.onDuty ? c.plantonistaXpMult : 1) * (1 + statPts(p, 'xp') / 100);
-        grantXp(w, p, Math.round(ai.xp * bonus * mult));
-      }
+    // XP: só em grupo (regra em game/progression.ts groupXp). Fase 2: quem ainda está no Delta
+    // (deltaRookie) tem o Seu Jacó junto, então a luta dele conta como grupo.
+    const live = parts.filter((p) => p.kind === 'player' && !p.onDuty).length;
+    for (const p of parts) {
+      if (p.kind !== 'player') continue;
+      if (parts.length < c.grupoMin && !p.deltaRookie) continue;
+      const amount = groupXp(ai.xp, { personagens: parts.length, aoVivo: live, plantonista: !!p.onDuty, xpPct: statPts(p, 'xp') }, { delta: !!p.deltaRookie });
+      grantXp(w, p, amount);
     }
     // saque: rolagem individual, para cada jogador que participou (solo também)
     const table = resolveLootTable(ai.lootTable, enemy.defId);

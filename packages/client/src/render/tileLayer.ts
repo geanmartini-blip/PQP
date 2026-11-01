@@ -1,30 +1,40 @@
 /**
- * Chão do mapa como Tilemap estático do Phaser (só desenha os tiles na tela).
+ * Chão do mapa em blocos estáticos: cada bloco de CHUNK_TILES x CHUNK_TILES tiles é desenhado uma
+ * vez pelo terreno puro (art/terrain.ts: textura, transições, palafita, sombras, decoração) e vira
+ * uma textura de canvas com uma imagem. Só os blocos perto da câmera existem: são gerados sob
+ * demanda (no máximo um por quadro depois do primeiro) e os mais antigos fora da tela são
+ * descartados (LRU), para caber na memória do celular.
  *
- * O tileset da arte é uma folha com quadros nomeados; aqui ela vira uma grade de 32x32 (textura
- * 'tiles_grid') com uma célula por (tile, variante) que o mapa usa. Água e piso neon são animados
- * sem mexer no mapa: cada (tile, fase) tem uma célula, e a cada TILE_ANIM_MS só essas células são
- * redesenhadas (tileFrame usa fase = (3x + 5y) & 3).
+ * Por cima do chão, uma camada de Tilemap só com o que anima: brilho da água, mato que balança e
+ * piso neon. Cada (tipo, variante, fase) é uma célula da textura 'tiles_grid'; a cada TILE_ANIM_MS
+ * só essas células são redesenhadas.
  *
- * As copas das árvores (48x40, por cima de quem passa) são imagens com profundidade pelo y quando
- * ficam perto de chão andável; as do meio da mata vão num Blitter barato, abaixo dos bonecos.
+ * Árvores (64x96, 2x3 tiles) são imagens com profundidade pelo y do tronco quando ficam perto de
+ * chão andável (a copa cobre quem passa atrás); as do meio da mata vão num Blitter barato por bloco.
+ * O clima (luz por região, vinheta e partículas) vem de art/ambient.ts.
  */
 import * as Phaser from 'phaser';
 import { isSolidTile, Tile, type TileMap } from '@pqp/shared/map';
-import { ANIMATED_TILES, TILE_ANIM_MS, TILE_KEY, TILE_PX, TILE_VARIANTS, tileFrame } from '../art/index';
+import { createAmbient, type Ambient } from '../art/ambient';
+import { TILE_ANIM_MS, TILE_KEY, TILE_PX, uploadPix } from '../art/index';
+import { MATO_FRAMES, OVERLAY_FRAMES, overlayKind, renderTerrain, styleOfRegion, type Style, type TerrainSource, TREE_BASE_Y, TREE_H } from '../art/terrain';
+import { hashInt } from '../art/noise';
+import { treeFrame } from '../art/tiles';
 import { DEPTH } from './depth';
 
 export const GRID_KEY = 'tiles_grid';
 const COLS = 16;
-// SUGESTÃO: blocos de 16x16 tiles para as copas do meio da mata.
+/** SUGESTÃO: blocos de 8x8 tiles (256 px); até 40 blocos na memória (~10 MB). */
+export const CHUNK_TILES = 8;
+const MAX_CHUNKS = 40;
+// SUGESTÃO: blocos de 16x16 tiles para as árvores do meio da mata.
 export const CANOPY_CHUNK = 16;
 
 export interface TileLayerView {
-  floor: Phaser.Tilemaps.TilemapLayer;
-  deco?: Phaser.Tilemaps.TilemapLayer;
+  overlay?: Phaser.Tilemaps.TilemapLayer;
   canopies: Phaser.GameObjects.Image[];
   update(timeMs: number): void;
-  /** liga só as copas perto da câmera */
+  /** liga só as copas e os blocos perto da câmera; gera os que faltam */
   cull(view: Phaser.Geom.Rectangle): void;
   destroy(): void;
 }
@@ -35,15 +45,43 @@ export function regionAt(map: TileMap, x: number, y: number): string | undefined
   return undefined;
 }
 
-interface Cell {
-  /** quadro fixo, ou tile animado com fase */
-  frame?: string;
-  anim?: { tile: number; phase: number };
+/** O mapa como fonte do terreno (estilo por região, em cache por tile). */
+export function mapSource(map: TileMap): TerrainSource {
+  const W = map.width;
+  const H = map.height;
+  const styles = new Uint8Array(W * H);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) styles[y * W + x] = styleOfRegion(regionAt(map, x, y));
+  const cl = (v: number, n: number) => (v < 0 ? 0 : v >= n ? n - 1 : v);
+  return {
+    width: W,
+    height: H,
+    tile: (x, y) => map.tiles[cl(y, H) * W + cl(x, W)]!,
+    style: (x, y) => styles[cl(y, H) * W + cl(x, W)]! as Style,
+    deco: (x, y) => (x < 0 || y < 0 || x >= W || y >= H ? 0 : (map.deco?.[y * W + x] ?? 0)),
+  };
+}
+
+let layerSeq = 0;
+
+interface Chunk {
+  key: string;
+  img: Phaser.GameObjects.Image;
+  used: number;
 }
 
 export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView {
-  const src = scene.textures.get(TILE_KEY);
-  const srcImg = src.getSourceImage() as HTMLCanvasElement | HTMLImageElement;
+  const seq = ++layerSeq;
+  const src = mapSource(map);
+  const W = map.width;
+  const H = map.height;
+  const tex = scene.textures.get(TILE_KEY);
+  const srcImg = tex.getSourceImage() as HTMLCanvasElement | HTMLImageElement;
+
+  // ---------------- camada animada
+  interface Cell {
+    frames: string[];
+    phase: number;
+  }
   const cells: Cell[] = [];
   const index = new Map<string, number>();
   const cellFor = (key: string, c: Cell) => {
@@ -55,139 +93,207 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
     }
     return i;
   };
-  const W = map.width, H = map.height;
-  const floorData: number[][] = [];
-  const decoData: number[][] = [];
-  let hasDeco = false;
+  const ovData: number[][] = [];
+  let anyOverlay = false;
   for (let y = 0; y < H; y++) {
     const row: number[] = [];
-    const drow: number[] = [];
     for (let x = 0; x < W; x++) {
       const t = map.tiles[y * W + x]!;
-      if (ANIMATED_TILES.has(t)) {
-        const phase = (x * 3 + y * 5) & 3;
-        row.push(cellFor(`a${t}_${phase}`, { anim: { tile: t, phase } }));
-      } else {
-        const f = tileFrame(t, x, y, regionAt(map, x, y));
-        row.push(cellFor(f, { frame: src.has(f) ? f : `${t}_0` }));
+      const kind = overlayKind(t);
+      if (!kind) {
+        row.push(-1);
+        continue;
       }
-      const d = map.deco?.[y * W + x] ?? 0;
-      if (d > 0 && src.has(`deco_${d}`)) {
-        drow.push(cellFor(`deco_${d}`, { frame: `deco_${d}` }));
-        hasDeco = true;
-      } else drow.push(-1);
+      const phase = (x * 3 + y * 5) & 3;
+      const v = hashInt(x, y, 81) & 3;
+      let key: string;
+      let frames: string[];
+      if (kind === 'rasa' || kind === 'funda') {
+        key = `${kind}_${v}_${phase}`;
+        frames = Array.from({ length: OVERLAY_FRAMES }, (_, f) => `ov_${kind}_${v}_${f}`);
+      } else if (kind === 'mato') {
+        const st = src.style(x, y);
+        const mv = v % 3;
+        key = `mato_${st}_${mv}_${phase}`;
+        frames = Array.from({ length: MATO_FRAMES }, (_, f) => `ov_mato_${st}_${mv}_${f}`);
+      } else {
+        key = `neon_${phase}`;
+        frames = [0, 1, 2, 3].map((f) => `ov_neon_${f}`);
+      }
+      row.push(cellFor(key, { frames, phase }));
+      anyOverlay = true;
     }
-    floorData.push(row);
-    decoData.push(drow);
+    ovData.push(row);
   }
-
-  // grade de células
-  if (scene.textures.exists(GRID_KEY)) scene.textures.remove(GRID_KEY);
-  const rows = Math.max(1, Math.ceil(cells.length / COLS));
-  const grid = scene.textures.createCanvas(GRID_KEY, COLS * TILE_PX, rows * TILE_PX)!;
-  const ctx = grid.getContext();
-  ctx.imageSmoothingEnabled = false;
+  let overlay: Phaser.Tilemaps.TilemapLayer | undefined;
+  let tm: Phaser.Tilemaps.Tilemap | undefined;
+  let grid: Phaser.Textures.CanvasTexture | undefined;
+  let ctx: CanvasRenderingContext2D | undefined;
   const drawCell = (i: number, frameName: string) => {
-    const fr = src.get(frameName);
-    const dx = (i % COLS) * TILE_PX, dy = Math.floor(i / COLS) * TILE_PX;
+    if (!ctx || !tex.has(frameName)) return;
+    const fr = tex.get(frameName);
+    const dx = (i % COLS) * TILE_PX;
+    const dy = Math.floor(i / COLS) * TILE_PX;
     ctx.clearRect(dx, dy, TILE_PX, TILE_PX);
-    ctx.drawImage(srcImg, fr.cutX, fr.cutY, Math.min(TILE_PX, fr.cutWidth), Math.min(TILE_PX, fr.cutHeight), dx, dy, TILE_PX, TILE_PX);
+    ctx.drawImage(srcImg, fr.cutX, fr.cutY, fr.cutWidth, fr.cutHeight, dx, dy, TILE_PX, TILE_PX);
   };
-  const animCells: { i: number; tile: number; phase: number }[] = [];
-  cells.forEach((c, i) => {
-    if (c.frame) drawCell(i, c.frame);
-    else if (c.anim) {
-      animCells.push({ i, ...c.anim });
-      drawCell(i, `${c.anim.tile}_${c.anim.phase % (TILE_VARIANTS[c.anim.tile] ?? 1)}`);
-    }
-  });
-  grid.refresh();
-  grid.setFilter(Phaser.Textures.FilterMode.NEAREST);
-
-  const tm = scene.make.tilemap({ data: floorData, tileWidth: TILE_PX, tileHeight: TILE_PX });
-  const ts = tm.addTilesetImage(GRID_KEY, GRID_KEY, TILE_PX, TILE_PX, 0, 0)!;
-  const floor = tm.createLayer(0, ts, 0, 0)!;
-  floor.setDepth(DEPTH.floor);
-  let deco: Phaser.Tilemaps.TilemapLayer | undefined;
-  let tmDeco: Phaser.Tilemaps.Tilemap | undefined;
-  if (hasDeco) {
-    tmDeco = scene.make.tilemap({ data: decoData, tileWidth: TILE_PX, tileHeight: TILE_PX });
-    const tsd = tmDeco.addTilesetImage(GRID_KEY, GRID_KEY, TILE_PX, TILE_PX, 0, 0)!;
-    deco = tmDeco.createLayer(0, tsd, 0, 0)!;
-    deco.setDepth(DEPTH.deco);
+  if (anyOverlay) {
+    if (scene.textures.exists(GRID_KEY)) scene.textures.remove(GRID_KEY);
+    const rows = Math.max(1, Math.ceil(cells.length / COLS));
+    grid = scene.textures.createCanvas(GRID_KEY, COLS * TILE_PX, rows * TILE_PX)!;
+    ctx = grid.getContext();
+    ctx.imageSmoothingEnabled = false;
+    cells.forEach((c, i) => drawCell(i, c.frames[c.phase % c.frames.length]!));
+    grid.refresh();
+    grid.setFilter(Phaser.Textures.FilterMode.NEAREST);
+    tm = scene.make.tilemap({ data: ovData, tileWidth: TILE_PX, tileHeight: TILE_PX });
+    const ts = tm.addTilesetImage(GRID_KEY, GRID_KEY, TILE_PX, TILE_PX, 0, 0)!;
+    overlay = tm.createLayer(0, ts, 0, 0)!;
+    overlay.setDepth(DEPTH.deco);
   }
 
-  // copas: perto do chão andável viram imagens com profundidade; as do meio da mata, Blitter em
-  // blocos de CANOPY_CHUNK×CANOPY_CHUNK tiles (o Blitter não recorta pela câmera: só os blocos perto
-  // da tela ficam ligados)
+  // ---------------- blocos do chão
+  const CPX = CHUNK_TILES * TILE_PX;
+  const chunkCols = Math.ceil(W / CHUNK_TILES);
+  const chunkRows = Math.ceil(H / CHUNK_TILES);
+  const chunks = new Map<number, Chunk>();
+  let frameNo = 0;
+  let firstCull = true;
+  const makeChunk = (cx: number, cy: number): Chunk => {
+    const tx0 = cx * CHUNK_TILES;
+    const ty0 = cy * CHUNK_TILES;
+    const tw = Math.min(CHUNK_TILES, W - tx0);
+    const th = Math.min(CHUNK_TILES, H - ty0);
+    const pix = renderTerrain(src, tx0, ty0, tw, th);
+    const key = `terreno_${seq}_${cx}_${cy}`;
+    uploadPix(scene, key, pix);
+    const img = scene.add.image(tx0 * TILE_PX, ty0 * TILE_PX, key).setOrigin(0, 0).setDepth(DEPTH.floor);
+    return { key, img, used: frameNo };
+  };
+  const dropChunk = (k: number) => {
+    const c = chunks.get(k);
+    if (!c) return;
+    c.img.destroy();
+    if (scene.textures.exists(c.key)) scene.textures.remove(c.key);
+    chunks.delete(k);
+  };
+
+  // ---------------- árvores
   const canopies: Phaser.GameObjects.Image[] = [];
-  const chunks = new Map<number, { b: Phaser.GameObjects.Blitter; cx: number; cy: number }>();
-  const chunkCols = Math.ceil(W / CANOPY_CHUNK);
+  const blitters = new Map<number, { b: Phaser.GameObjects.Blitter; cx: number; cy: number }>();
+  const bCols = Math.ceil(W / CANOPY_CHUNK);
   const blitterAt = (x: number, y: number) => {
-    const cx = Math.floor(x / CANOPY_CHUNK), cy = Math.floor(y / CANOPY_CHUNK);
-    const k = cy * chunkCols + cx;
-    let c = chunks.get(k);
+    const cx = Math.floor(x / CANOPY_CHUNK);
+    const cy = Math.floor(y / CANOPY_CHUNK);
+    const k = cy * bCols + cx;
+    let c = blitters.get(k);
     if (!c) {
       c = { b: scene.add.blitter(0, 0, TILE_KEY).setDepth(DEPTH.canopyFar), cx, cy };
-      chunks.set(k, c);
+      blitters.set(k, c);
     }
     return c.b;
   };
-  for (let y = 0; y < H; y++) {
+  for (let y = 0; y < H; y++)
     for (let x = 0; x < W; x++) {
       if (map.tiles[y * W + x] !== Tile.Arvore) continue;
-      const v = tileFrame(Tile.Arvore, x, y, regionAt(map, x, y)).split('_')[1] ?? '0';
-      const frame = `copa_${Tile.Arvore}_${v}`;
-      if (!src.has(frame)) continue;
-      // copa centrada no tronco, subindo meio tile
-      const px = x * TILE_PX - 8, py = y * TILE_PX - 18;
+      const frame = treeFrame(src.style(x, y), x, y);
+      if (!tex.has(frame)) continue;
+      const flip = (hashInt(x, y, 83) & 1) === 1;
+      // base do tronco no meio do tile, perto da borda de baixo
+      const bx = x * TILE_PX + 16;
+      const by = y * TILE_PX + 28;
       let open = false;
-      for (let dy = -1; dy <= 2 && !open; dy++) for (let dx = -1; dx <= 1 && !open; dx++) if (!isSolidTile(map, x + dx, y + dy)) open = true;
+      for (let dy = -3; dy <= 1 && !open; dy++) for (let dx = -1; dx <= 1 && !open; dx++) if (!isSolidTile(map, x + dx, y + dy)) open = true;
       if (open) {
-        const img = scene.add.image(px, py, TILE_KEY, frame).setOrigin(0, 0);
-        img.setDepth(DEPTH.entity + (y + 1) * TILE_PX);
+        const img = scene.add.image(bx, by + (TREE_H - TREE_BASE_Y), TILE_KEY, frame).setOrigin(0.5, 1).setFlipX(flip);
+        img.setDepth(DEPTH.entity + by);
         canopies.push(img);
-      } else blitterAt(x, y).create(px, py, frame);
+      } else {
+        const bob = blitterAt(x, y).create(bx - 32, by - TREE_BASE_Y, frame);
+        bob.setFlipX(flip);
+      }
     }
-  }
-  const chunkPx = CANOPY_CHUNK * TILE_PX;
+  const bPx = CANOPY_CHUNK * TILE_PX;
+
+  // ---------------- clima
+  const ambient: Ambient = createAmbient(scene, src);
 
   let lastStep = -1;
+  let lastTime = 0;
   return {
-    floor,
-    ...(deco ? { deco } : {}),
+    ...(overlay ? { overlay } : {}),
     canopies,
     update(timeMs: number) {
-      if (animCells.length === 0) return;
+      lastTime = timeMs;
+      if (!grid) return;
       const k = Math.floor(timeMs / TILE_ANIM_MS);
       if (k === lastStep) return;
       lastStep = k;
-      for (const c of animCells) {
-        const n = TILE_VARIANTS[c.tile] ?? 1;
-        drawCell(c.i, `${c.tile}_${(k + c.phase) % n}`);
-      }
+      cells.forEach((c, i) => drawCell(i, c.frames[(k + c.phase) % c.frames.length]!));
       grid.refresh();
     },
     cull(view: Phaser.Geom.Rectangle) {
-      const x0 = view.x - 64, y0 = view.y - 64, x1 = view.right + 64, y1 = view.bottom + 64;
+      frameNo++;
+      const x0 = view.x - 64;
+      const y0 = view.y - 64;
+      const x1 = view.right + 64;
+      const y1 = view.bottom + 64;
+      // blocos: os da tela já; a margem de um bloco, um por quadro
+      const cx0 = Math.max(0, Math.floor(x0 / CPX));
+      const cy0 = Math.max(0, Math.floor(y0 / CPX));
+      const cx1 = Math.min(chunkCols - 1, Math.floor(x1 / CPX));
+      const cy1 = Math.min(chunkRows - 1, Math.floor(y1 / CPX));
+      let budget = firstCull ? Infinity : 1;
+      firstCull = false;
+      for (let cy = cy0; cy <= cy1; cy++)
+        for (let cx = cx0; cx <= cx1; cx++) {
+          const k = cy * chunkCols + cx;
+          let c = chunks.get(k);
+          if (!c) {
+            c = makeChunk(cx, cy);
+            chunks.set(k, c);
+            budget--;
+          }
+          c.used = frameNo;
+        }
+      if (budget > 0)
+        outer: for (let cy = Math.max(0, cy0 - 1); cy <= Math.min(chunkRows - 1, cy1 + 1); cy++)
+          for (let cx = Math.max(0, cx0 - 1); cx <= Math.min(chunkCols - 1, cx1 + 1); cx++) {
+            const k = cy * chunkCols + cx;
+            if (chunks.has(k)) continue;
+            const c = makeChunk(cx, cy);
+            c.used = frameNo - 1;
+            c.img.setVisible(false);
+            chunks.set(k, c);
+            if (--budget <= 0) break outer;
+          }
+      for (const c of chunks.values()) {
+        const vis = c.used === frameNo;
+        if (c.img.visible !== vis) c.img.setVisible(vis);
+      }
+      if (chunks.size > MAX_CHUNKS) {
+        const old = [...chunks.entries()].filter(([, c]) => c.used !== frameNo).sort((a, b) => a[1].used - b[1].used);
+        for (const [k] of old.slice(0, chunks.size - MAX_CHUNKS)) dropChunk(k);
+      }
       for (const c of canopies) {
-        const vis = c.x < x1 && c.x + 48 > x0 && c.y < y1 && c.y + 40 > y0;
+        const vis = c.x + 32 > x0 && c.x - 32 < x1 && c.y > y0 && c.y - TREE_H < y1;
         if (c.visible !== vis) c.setVisible(vis);
       }
-      // bloco de copas: a área dele (mais a copa que passa da borda) cruza a tela?
-      for (const c of chunks.values()) {
-        const bx = c.cx * chunkPx - 8, by = c.cy * chunkPx - 18;
-        const vis = bx < x1 && bx + chunkPx + 48 > x0 && by < y1 && by + chunkPx + 40 > y0;
+      for (const c of blitters.values()) {
+        const bx = c.cx * bPx - 32;
+        const by = c.cy * bPx - TREE_BASE_Y;
+        const vis = bx < x1 && bx + bPx + 64 > x0 && by < y1 && by + bPx + TREE_H > y0;
         if (c.b.visible !== vis) c.b.setVisible(vis);
       }
+      ambient.update(lastTime, view);
     },
     destroy() {
-      floor.destroy();
-      deco?.destroy();
-      tm.destroy();
-      tmDeco?.destroy();
+      overlay?.destroy();
+      tm?.destroy();
+      for (const k of [...chunks.keys()]) dropChunk(k);
       for (const c of canopies) c.destroy();
-      for (const c of chunks.values()) c.b.destroy();
+      for (const c of blitters.values()) c.b.destroy();
+      ambient.destroy();
     },
   };
 }

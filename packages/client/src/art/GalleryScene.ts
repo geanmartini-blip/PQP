@@ -12,9 +12,13 @@ import { archetypeLook, type ArtLook, defaultLook } from './character';
 import { ANIMS, type AnimName, type CharacterLook } from './contract';
 import { ENEMY_ART_IDS } from './creatures';
 import { buildFx, coneKeyFor, FONT_KEY, fontText } from './fx';
-import { createArt, sheetMeta } from './index';
+import { Tile } from '@pqp/shared/map';
+import { asciiSource, DEMO_CITY_ROWS, DEMO_ROWS } from './demoMap';
+import { createArt, sheetMeta, uploadPix } from './index';
+import { hashInt } from './noise';
 import { STORY_NPC_IDS } from './npcs';
-import { TILE_KEY, TILE_VALUES, TILE_VARIANTS, ANIMATED_TILES, tileFrame } from './tiles';
+import { MATO_FRAMES, OVERLAY_FRAMES, overlayKind, renderTerrain, type TerrainSource, TREE_BASE_Y, TREE_H, TREE_W } from './terrain';
+import { TILE_ANIM_MS, TILE_KEY, TILE_VALUES, TILE_VARIANTS, ANIMATED_TILES, tileFrame, treeFrame, TREE_SUBS } from './tiles';
 
 // SUGESTÃO: tempo de geração por quadro na galeria.
 const BUDGET_MS = 12;
@@ -38,6 +42,8 @@ export class GalleryScene extends Phaser.Scene {
   private animLabel?: Phaser.GameObjects.BitmapText;
   private tileSprites: { s: Phaser.GameObjects.Image; tile: number; x: number; y: number }[] = [];
   private warnSprites: { s: Phaser.GameObjects.Image; frames: number }[] = [];
+  private ovSprites: { s: Phaser.GameObjects.Image; frames: string[]; phase: number }[] = [];
+  private demoSeq = 0;
   private tasks: (() => void)[] = [];
   private doneTasks = 0;
   private finished = false;
@@ -117,6 +123,33 @@ export class GalleryScene extends Phaser.Scene {
     for (const s of getData().summons) for (const side of ['esquerda', 'direita'] as const) t(() => this.animated(this.art.summonSheet(this, s.id, side), 0));
     t(() => this.newline());
 
+    // ---------------- opções de aparência (tela de criação)
+    const opt = (title: string, looks: CharacterLook[]) => {
+      t(() => this.title(title));
+      for (const lk of looks) t(() => this.single(this.art.characterSheet(this, lk), 'parado_0_0'));
+      t(() => this.newline());
+    };
+    const base = defaultLook();
+    opt('5 CORPOS', ap.corpos.map((c) => ({ ...base, body: c.id })));
+    opt('15 PELES (3 ZOEIRAS)', ap.peles.map((p) => ({ ...base, skin: p.id })));
+    opt('16 ROSTOS', ap.rostos.map((r) => ({ ...base, face: r.id })));
+    opt('20 CORTES', ap.cortes.map((c) => ({ ...base, hair: c.id })));
+    opt('12 CORES DE CABELO', ap.coresCabelo.map((c) => ({ ...base, hair: 'black_power', hairColor: c.id })));
+    opt('DETALHES', ap.detalhes.map((x) => ({ ...base, details: [x.id] })));
+    opt('TRAJE DO DELTA: 6 CORES', ap.roupaInicial.cores.map((_, i) => ({ ...base, outfit: { tier: 'delta' as const, palette: i } })));
+
+    // ---------------- terreno
+    t(() => this.terrainDemo('TERRENO DO DELTA: TRANSICOES, PALAFITA, MANGUE', asciiSource(DEMO_ROWS, 2)));
+    t(() => this.terrainDemo('TERRENO DA ESQUERDA', asciiSource(DEMO_ROWS, 0)));
+    t(() => this.terrainDemo('TERRENO DA DIREITA', asciiSource(DEMO_CITY_ROWS, 1)));
+    t(() => {
+      this.title('ARVORES 2X3 (ESQUERDA, DIREITA, MANGUE)');
+      for (let st = 0; st < 3; st++)
+        for (let sub = 0; sub < TREE_SUBS; sub++)
+          this.place((x, y) => this.add.image(x, y, TILE_KEY, `arvore_${st}_${sub}`).setOrigin(0).setScale(this.S), TREE_W * this.S, TREE_H * this.S);
+      this.newline();
+    });
+
     // ---------------- tiles
     t(() => {
       const S = this.S;
@@ -126,7 +159,6 @@ export class GalleryScene extends Phaser.Scene {
           const img = this.place((x, y) => this.add.image(x, y, TILE_KEY, `${tile}_${v}`).setOrigin(0).setScale(S), 32 * S, 32 * S);
           if (ANIMATED_TILES.has(tile)) this.tileSprites.push({ s: img, tile, x: v, y: 0 });
         }
-      for (let v = 0; v < 3; v++) this.place((x, y) => this.add.image(x, y, TILE_KEY, `copa_21_${v}`).setOrigin(0).setScale(S), 48 * S, 40 * S);
       this.newline();
     });
 
@@ -203,6 +235,8 @@ export class GalleryScene extends Phaser.Scene {
       callback: () => {
         const now = this.time.now;
         for (const ts of this.tileSprites) ts.s.setFrame(tileFrame(ts.tile, ts.x, ts.y, undefined, now));
+        const step = Math.floor(now / TILE_ANIM_MS);
+        for (const o of this.ovSprites) o.s.setFrame(o.frames[(step + o.phase) % o.frames.length]!);
         const k = Math.floor(now / 120);
         for (const w of this.warnSprites) w.s.setFrame(String(k % w.frames));
       },
@@ -249,6 +283,45 @@ export class GalleryScene extends Phaser.Scene {
     this.cursorX += w + this.GAP;
     this.rowH = Math.max(this.rowH, h);
     return r;
+  }
+
+  /** Terreno de demonstração: o bloco puro, as árvores por y e a camada animada por cima. */
+  private terrainDemo(label: string, src: TerrainSource): void {
+    this.title(label);
+    const pix = renderTerrain(src, 0, 0, src.width, src.height);
+    const key = `demo_terreno_${++this.demoSeq}`;
+    uploadPix(this, key, pix);
+    const s = Math.max(0.5, Math.min(this.S, (this.scale.width - 2 * this.GAP) / pix.w));
+    const x0 = this.GAP;
+    const y0 = this.cursorY;
+    this.add.image(x0, y0, key).setOrigin(0).setScale(s);
+    const T = 32 * s;
+    for (let y = 0; y < src.height; y++)
+      for (let x = 0; x < src.width; x++) {
+        const tile = src.tile(x, y);
+        const kind = overlayKind(tile);
+        if (kind) {
+          const phase = (x * 3 + y * 5) & 3;
+          const v = hashInt(x, y, 81) & 3;
+          const frames =
+            kind === 'mato'
+              ? Array.from({ length: MATO_FRAMES }, (_, f) => `ov_mato_${src.style(x, y)}_${v % 3}_${f}`)
+              : kind === 'neon'
+                ? [0, 1, 2, 3].map((f) => `ov_neon_${f}`)
+                : Array.from({ length: OVERLAY_FRAMES }, (_, f) => `ov_${kind}_${v}_${f}`);
+          const img = this.add.image(x0 + x * T, y0 + y * T, TILE_KEY, frames[0]).setOrigin(0).setScale(s).setDepth(1);
+          this.ovSprites.push({ s: img, frames, phase });
+        }
+        if (tile === Tile.Arvore) {
+          const img = this.add
+            .image(x0 + (x * 32 + 16) * s, y0 + (y * 32 + 28 + TREE_H - TREE_BASE_Y) * s, TILE_KEY, treeFrame(src.style(x, y), x, y))
+            .setOrigin(0.5, 1)
+            .setScale(s)
+            .setFlipX((hashInt(x, y, 83) & 1) === 1);
+          img.setDepth(2 + y);
+        }
+      }
+    this.cursorY += pix.h * s + this.GAP;
   }
 
   private character(look: CharacterLook | ArtLook): void {

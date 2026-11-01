@@ -65,32 +65,117 @@ export function drawBareFeet(pix: Pix, rig: Rig, t: Tone): void {
   }
 }
 
-export function drawHeadSkin(pix: Pix, rig: Rig, t: Tone): void {
-  for (let y = rig.headTop; y <= rig.headBot; y++) {
-    const s = headSpan(rig, y);
-    if (!s) continue;
-    pix.hline(s[0], s[1], y, t.base);
-    // sombreamento de 3 tons: borda direita e queixo mais escuros, testa clara à esquerda
-    pix.put(s[1], y, t.shade);
-    if (y >= rig.headBot - 1) pix.hline(s[0] + 1, s[1], y, t.shade);
-    if (y === rig.headTop + 2 && rig.view !== 'back') pix.put(s[0] + 2, y, t.light);
+/**
+ * Cabeças desenhadas à mão, uma por vista, como mapa de pixels: h highlight, l luz, b base,
+ * s sombra, d sombra funda. Luz de cima à esquerda. A silhueta é a mesma de headSpan (chapéus e
+ * máscaras do artCatalog se apoiam nela). De lado, o rosto olha para a esquerda.
+ */
+const HEAD_FRONT = [
+  '....lllbbbbb....',
+  '..llhhlbbbbbbs..',
+  '.llhhlbbbbbbbbs.',
+  'llhlbbbbbbbbbbss',
+  'llbbbbbbbbbbbbss',
+  'lbbbbbbbbbbbbbss',
+  'lbbbbbbbbbbbbbss',
+  'lbbbbbbbbbbbbbss',
+  'bbbbbbbbbbbbbbss',
+  'blbbbbbbbbbbbsss',
+  'bbbbbbbbbbbbbsss',
+  'sbbbbbbbbbbbbssd',
+  '.sbbbbbbbbbbbsd.',
+  '..ssbbbbbbbssd..',
+  '....sssssssd....',
+];
+const HEAD_SIDE = [
+  '....lllbbbb...',
+  '..llhhbbbbbbs.',
+  '.llhhbbbbbbbbs',
+  'llhbbbbbbbbbss',
+  'lbbbbbbbbbbbss',
+  'lbbbbbbbbbbbss',
+  'bbbbbbbbbbbbss',
+  'bbbbbbbbbbbbss',
+  'bbbbbbbbbbbsss',
+  'bbbbbbbbbbbsss',
+  'bbbbbbbbbbbsss',
+  'sbbbbbbbbbsss.',
+  'sbbbbbbbbssd..',
+  '.ssbbbbssd....',
+  '...sssss......',
+];
+const HEAD_BACK = [
+  '....lllbbbbb....',
+  '..llllbbbbbbbs..',
+  '.llllbbbbbbbbbs.',
+  'llbbbbbbbbbbbbss',
+  'lbbbbbbbbbbbbbss',
+  'lbbbbbbbbbbbbbss',
+  'bbbbbbbbbbbbbbss',
+  'bbbbbbbbbbbbbbss',
+  'bbbbbbbbbbbbbsss',
+  'bbbbbbbbbbbbbsss',
+  'bbbbbbbbbbbbbsss',
+  'sbbbbbbbbbbbbssd',
+  '.sbbbbbbbbbbbsd.',
+  '..ssssbbbbsssd..',
+  '....ssssssss....',
+];
+
+function skinTone(t: Tone, ch: string): Color | undefined {
+  switch (ch) {
+    case 'h':
+      return light(t.base, 0.42);
+    case 'l':
+      return t.light;
+    case 'b':
+      return t.base;
+    case 's':
+      return t.shade;
+    case 'd':
+      return shade(t.shade, 0.8);
+    default:
+      return undefined;
   }
-  // pescoço
+}
+
+/** Desenha um mapa de pixels ASCII com a rampa de pele. */
+export function drawSkinMap(pix: Pix, x0: number, y0: number, rows: readonly string[], t: Tone): void {
+  for (let j = 0; j < rows.length; j++) {
+    const r = rows[j]!;
+    for (let i = 0; i < r.length; i++) {
+      const c = skinTone(t, r[i]!);
+      if (c !== undefined) pix.set(x0 + i, y0 + j, c);
+    }
+  }
+}
+
+export function drawHeadSkin(pix: Pix, rig: Rig, t: Tone): void {
+  const rows = rig.view === 'side' ? HEAD_SIDE : rig.view === 'back' ? HEAD_BACK : HEAD_FRONT;
+  // pescoço com sombra do queixo
   const nx = rig.view === 'side' ? rig.cx : rig.cx - 2;
-  pix.box(nx, rig.headBot + 1, nx + 3, rig.headBot + 1, t.shade);
-  // orelhas
+  pix.box(nx, rig.headBot, nx + 3, rig.headBot + 1, t.shade);
+  pix.put(nx + 3, rig.headBot + 1, shade(t.shade, 0.82));
+  drawSkinMap(pix, rig.headL, rig.headTop, rows, t);
+  // orelhas: lóbulo claro em cima, sombra embaixo e o miolo fundo
   if (rig.view === 'front' || rig.view === 'back') {
+    pix.put(rig.headL - 1, rig.eyeY, t.light);
     pix.put(rig.headL - 1, rig.eyeY + 1, t.base);
     pix.put(rig.headL - 1, rig.eyeY + 2, t.shade);
-    pix.put(rig.headR + 1, rig.eyeY + 1, t.base);
-    pix.put(rig.headR + 1, rig.eyeY + 2, t.shade);
+    pix.put(rig.headR + 1, rig.eyeY, t.base);
+    pix.put(rig.headR + 1, rig.eyeY + 1, t.shade);
+    pix.put(rig.headR + 1, rig.eyeY + 2, shade(t.shade, 0.8));
   } else {
-    pix.put(rig.cx + 2, rig.eyeY + 1, t.shade);
+    pix.put(rig.cx + 2, rig.eyeY, t.base);
+    pix.put(rig.cx + 3, rig.eyeY, t.shade);
+    pix.put(rig.cx + 2, rig.eyeY + 1, shade(t.shade, 0.75));
+    pix.put(rig.cx + 3, rig.eyeY + 1, t.shade);
     pix.put(rig.cx + 2, rig.eyeY + 2, t.shade);
-    // nariz para fora
+    // nariz para fora, com luz em cima
+    pix.put(rig.headL - 1, rig.eyeY + 1, t.light);
     pix.put(rig.headL - 1, rig.eyeY + 2, t.base);
+    pix.put(rig.headL, rig.eyeY + 3, t.shade);
   }
-  // marca de regata: ombros claros por cima do tom (fica escondida por roupa)
 }
 
 // ---------------------------------------------------------------------------
@@ -144,15 +229,25 @@ export function faceWithExpression(f: FaceSpec, e: 'neutro' | 'briga' | 'vitoria
   return { ...f, eyes: f.eyes === 'sleepy' ? 'sleepy' : 'x', brows: 'worried', mouth: f.mouth === 'service' ? 'service' : 'wobble' };
 }
 
+const IRIS = hex('#3a2a40');
+
 function drawEye(pix: Pix, rig: Rig, ex: number, ey: number, kind: EyeKind, outer: -1 | 1, skin: Tone, which: 0 | 1): void {
   const d = C.eye;
+  // olho de 2x2 com brilho no canto de cima à esquerda (a luz vem de lá nos dois olhos)
+  const x0 = Math.min(ex, ex + outer);
   switch (kind) {
     case 'dot':
-      pix.set(ex, ey, d);
-      pix.set(ex, ey + 1, d);
+      pix.set(x0, ey, C.eyeWhite);
+      pix.set(x0 + 1, ey, d);
+      pix.set(x0, ey + 1, d);
+      pix.set(x0 + 1, ey + 1, IRIS);
+      // pálpebra: sombra da pele em cima
+      pix.set(x0, ey - 1, skin.shade);
+      pix.set(x0 + 1, ey - 1, skin.shade);
       break;
     case 'down':
       pix.set(ex, ey + 1, d);
+      pix.set(ex + outer, ey + 1, IRIS);
       pix.set(ex + outer, ey, skin.shade);
       pix.set(ex, ey, skin.shade);
       break;
@@ -169,10 +264,14 @@ function drawEye(pix: Pix, rig: Rig, ex: number, ey: number, kind: EyeKind, oute
       pix.set(ex, ey + 1, d);
       pix.set(ex + outer, ey - 1, d);
       pix.set(ex, ey - 1, d);
+      pix.set(ex - outer, ey, C.eyeWhite);
+      pix.set(ex + outer, ey + 2, skin.shade);
       break;
     case 'squint':
       pix.set(ex, ey + 1, d);
       pix.set(ex + outer, ey + 1, d);
+      pix.set(ex, ey, skin.shade);
+      pix.set(ex + outer, ey, skin.shade);
       break;
     case 'wink':
       if (which === 1) {
@@ -196,13 +295,19 @@ function drawEye(pix: Pix, rig: Rig, ex: number, ey: number, kind: EyeKind, oute
       pix.set(ex - 1, ey + 1, d);
       pix.set(ex + 1, ey + 1, d);
       break;
-    case 'aside':
-      pix.set(ex + (rig.view === 'side' ? -1 : 1), ey, d);
-      pix.set(ex + (rig.view === 'side' ? -1 : 1), ey + 1, d);
+    case 'aside': {
+      const s = rig.view === 'side' ? -1 : 1;
+      pix.set(ex, ey, C.eyeWhite);
+      pix.set(ex, ey + 1, C.eyeWhite);
+      pix.set(ex + s, ey, d);
+      pix.set(ex + s, ey + 1, d);
       break;
+    }
     case 'teary':
-      pix.set(ex, ey, d);
-      pix.set(ex, ey + 1, d);
+      pix.set(x0, ey, C.eyeWhite);
+      pix.set(x0 + 1, ey, d);
+      pix.set(x0, ey + 1, d);
+      pix.set(x0 + 1, ey + 1, d);
       pix.set(ex, ey + 2, hex('#7ac8f0'));
       break;
   }
@@ -369,9 +474,16 @@ export function drawFace(pix: Pix, rig: Rig, f: FaceSpec, skin: Tone, ex: FaceEx
     drawEye(pix, rig, rx, ey, f.eyes, 1, skin, 1);
     drawBrow(pix, lx, by, f.brows, 1, ex.browColor, 0);
     drawBrow(pix, rx, by, f.brows, -1, ex.browColor, 1);
-    // nariz
+    // nariz: luz em cima à esquerda, sombra embaixo à direita
+    pix.set(cx - 1, ey + 2, skin.light);
     pix.set(cx - 1, ey + 3, skin.shade);
+    pix.set(cx, ey + 3, shade(skin.shade, 0.85));
     if (f.noseUp) pix.set(cx, ey + 2, skin.shade);
+    // bochecha: um toque rosado sutil
+    if (!f.cheeks) {
+      pix.set(lx - 1, ey + 3, mix(skin.base, hex('#e86a6a'), 0.18));
+      pix.set(rx + 1, ey + 3, mix(skin.shade, hex('#e86a6a'), 0.15));
+    }
     if (f.wrinkles) {
       pix.hline(cx - 2, cx + 1, by - 2, skin.shade);
     }
@@ -380,7 +492,14 @@ export function drawFace(pix: Pix, rig: Rig, f: FaceSpec, skin: Tone, ex: FaceEx
     const exx = rig.headL + 3;
     if (f.cheeks) pix.hline(exx, exx + 1, ey + 3, mix(skin.base, hex('#e86a6a'), 0.45));
     if (ex.darkCircles) pix.hline(exx - 1, exx, ey + 2, mix(skin.shade, hex('#5a3a6a'), 0.5));
-    drawEye(pix, rig, exx, ey, f.eyes, 1, skin, 0);
+    if (f.eyes === 'dot') {
+      // de lado: pupila na frente, branco atrás
+      pix.set(exx, ey, C.eye);
+      pix.set(exx, ey + 1, C.eye);
+      pix.set(exx + 1, ey, C.eyeWhite);
+      pix.set(exx + 1, ey + 1, IRIS);
+      pix.set(exx, ey - 1, skin.shade);
+    } else drawEye(pix, rig, exx, ey, f.eyes, 1, skin, 0);
     drawBrow(pix, exx, by, f.brows, 1, ex.browColor, 1);
     if (f.noseUp) pix.set(rig.headL - 1, ey + 1, skin.base);
     drawMouthSide(pix, rig.headL + 1, rig.mouthY, f.mouth, ex.goldTooth);
@@ -451,6 +570,42 @@ export const HAIRS: Record<string, HairSpec> = {
   espetado_de_gel: { style: 'spiky', top: 3, fringe: 3, sides: 6, back: 10, long: 0 },
   corte_feito_em_casa: { style: 'homecut', top: 1, fringe: 3, sides: 6, back: 10, long: 0 },
 };
+
+/**
+ * Volume e mechas do cabelo desenhado num buffer só dele: luz em cima e à esquerda (com brilho no
+ * canto), sombra embaixo e à direita, e mechas (linhas de meia-sombra) no miolo. Só recolore os
+ * pixels no tom base do cabelo, para não estragar detalhe (elástico, fita, boné).
+ */
+export function shadeHair(pix: Pix, t: Tone, style: HairStyle): void {
+  const w = pix.w;
+  const h = pix.h;
+  const op = (x: number, y: number) => pix.alphaAt(x, y) >= 200;
+  const strand = mix(t.base, t.shade, 0.55);
+  const hi = light(t.light, 0.3);
+  const changes: [number, number, Color][] = [];
+  for (let y = 0; y < h; y++)
+    for (let x = 0; x < w; x++) {
+      if (!op(x, y) || pix.get(x, y) !== t.base) continue;
+      const up = op(x, y - 1);
+      const dn = op(x, y + 1);
+      const lf = op(x - 1, y);
+      const rt = op(x + 1, y);
+      let c: Color | undefined;
+      if (!up && dn) c = !lf ? hi : t.light;
+      else if (!up && !dn) c = undefined;
+      else if (!dn) c = t.shade;
+      else if (!rt && lf) c = t.shade;
+      else if (!lf && rt) c = t.light;
+      else if (style !== 'buzz' && up && dn && lf && rt) {
+        // mechas: listras de meia-sombra que descem, deslocadas a cada 4 linhas
+        if ((x * 5 + (y >> 2) * 3) % 4 === 0) c = strand;
+        // reflexo (faixa de brilho) na parte de cima do cabelo
+        else if (!op(x, y - 2) && x < w / 2 + 2 && (x + y) % 3 !== 0) c = t.light;
+      }
+      if (c !== undefined) changes.push([x, y, c]);
+    }
+  for (const [x, y, c] of changes) pix.set(x, y, c);
+}
 
 /** Parte do cabelo que fica atrás da cabeça e do tronco (volume, cabelo comprido, rabo). */
 export function drawHairBack(pix: Pix, rig: Rig, h: HairSpec, t: Tone): void {
@@ -752,17 +907,22 @@ export function drawDetail(pix: Pix, rig: Rig, grupo: string, hair: Tone, skin: 
   }
 }
 
-/** Tatuagem com o nome errado no antebraço do braço principal. */
+/** Tatuagem com o nome errado no antebraço do braço principal: coraçãozinho e a faixa do nome. */
 export function drawTattoo(pix: Pix, rig: Rig, text: string): void {
   if (rig.view === 'back') return;
   const l = rig.armMain;
-  const ink = hex('#3a5a8a');
-  const t0 = 0.45;
-  const x = l.a.x + (l.b.x - l.a.x) * t0;
-  const y = l.a.y + (l.b.y - l.a.y) * t0;
-  pix.put(Math.floor(x) - 1, Math.floor(y), ink);
-  pix.put(Math.floor(x), Math.floor(y) + 1, ink);
-  pix.put(Math.floor(x), Math.floor(y), text.length % 2 ? C.red : ink);
+  const ink = hex('#2e4a7a');
+  const t0 = 0.4;
+  const x = Math.floor(l.a.x + (l.b.x - l.a.x) * t0);
+  const y = Math.floor(l.a.y + (l.b.y - l.a.y) * t0);
+  // coração vermelho com contorno de tinta
+  pix.paint(x - 1, y, C.red);
+  pix.paint(x, y, text.length % 2 ? C.red : hex('#e85a5a'));
+  pix.paint(x, y + 1, shade(C.red, 0.7));
+  // faixa do nome (letra miúda = 1 px de tinta)
+  pix.paint(x - 1, y + 2, ink);
+  pix.paint(x, y + 2, ink);
+  pix.paint(x + 1, y + 1, ink);
 }
 
 /** Cor de pele com marca de regata: ombros mais claros. */

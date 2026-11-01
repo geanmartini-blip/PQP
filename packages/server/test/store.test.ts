@@ -27,7 +27,44 @@ describe('FileStore', () => {
     expect(back.data.level).toBe(14);
     expect(back.data.semente).toBe(9);
     expect(readdirSync(path.dirname(file)).filter((f) => f.endsWith('.tmp'))).toEqual([]);
-    expect(JSON.parse(readFileSync(file, 'utf8')).version).toBe(1);
+    expect(JSON.parse(readFileSync(file, 'utf8')).version).toBe(2);
+    expect(back.data.version).toBe(2);
+    expect(back.data.criado).toBe(false);
+  });
+
+  it('migra o players.json da Fase 1: ala vira margem, Delta continua no Delta; grava no formato novo', async () => {
+    const dir = path.join(tmpRoot, 'fase1');
+    const file = path.join(dir, 'players.json');
+    mkdirSync(dir, { recursive: true });
+    const old = {
+      version: 1,
+      players: [
+        { id: '11111111-1111-4111-8111-111111111111', token: 'tok-fase1-ala', name: 'Dona Cida', data: { archetypeId: 'idol', level: 13, xp: 7, semente: 42, itemCount: 2 } },
+        { id: '22222222-2222-4222-8222-222222222222', token: 'tok-fase1-delta', name: 'Zé', data: { archetypeId: 'delta', level: 5, xp: 3 } },
+      ],
+    };
+    writeFileSync(file, JSON.stringify(old));
+    const s = new FileStore(file, 10);
+    const a = await s.getOrCreatePlayer('tok-fase1-ala');
+    expect(a.id).toBe('11111111-1111-4111-8111-111111111111');
+    expect(a.data.version).toBe(2);
+    expect(a.data.id).toBe(a.id);
+    expect(a.data.name).toBe('Dona Cida');
+    expect(a.data.stage).toBe('margem');
+    expect(a.data.archetype).toBe('idol');
+    expect(a.data.side).toBe('direita');
+    expect(a.data.level).toBe(13);
+    expect(a.data.semente).toBe(42);
+    expect(a.data.item_count).toBe(2);
+    const b = await s.getOrCreatePlayer('tok-fase1-delta');
+    expect(b.data.stage).toBe('delta');
+    expect(b.data.criado).toBe(false);
+    expect(b.data.level).toBe(5);
+    expect(s.migrated).toBe(2);
+    await s.flush();
+    const disk = JSON.parse(readFileSync(file, 'utf8'));
+    expect(disk.version).toBe(2);
+    expect(disk.players[0].data.version).toBe(2);
   });
 
   it('arquivo corrompido não derruba o servidor e ganha uma cópia', async () => {
@@ -51,7 +88,7 @@ describe('FileStore', () => {
     const m = new MemoryStore();
     const r = await m.getOrCreatePlayer('tok-memoria-01');
     r.data.level = 99;
-    expect((await m.getOrCreatePlayer('tok-memoria-01')).data.level).toBeUndefined();
+    expect((await m.getOrCreatePlayer('tok-memoria-01')).data.level).toBe(1);
   });
 });
 

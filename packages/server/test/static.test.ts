@@ -44,8 +44,9 @@ describe('estático do cliente', () => {
     const missing = await fetch(`${base}/favicon-que-nao-existe.png`);
     expect(missing.status).toBe(404);
     const health = await fetch(`${base}/health`);
-    const body = (await health.json()) as { ok: boolean; rooms: { players: number }[] };
+    const body = (await health.json()) as { ok: boolean; rooms: { players: number; mapId: string }[] };
     expect(body.ok).toBe(true);
-    expect(body.rooms.length).toBe(1); // a sala do mapa existe desde o início
+    // uma sala por mapa, desde o início (o Delta primeiro)
+    expect(body.rooms.map((r) => r.mapId).sort()).toEqual(['delta', 'prototipo_delta', 'qg_direita', 'qg_esquerda']);
   });
 });

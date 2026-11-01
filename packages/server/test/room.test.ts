@@ -4,13 +4,17 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Client, type Room } from '@colyseus/sdk';
-import { CLOSE_CODE, MSG, type S2C_Pong, type S2C_Snapshot, type S2C_Welcome } from '@pqp/shared/net';
+import { CLOSE_CODE, GAME_MSG, MSG, type S2C_Pong, type S2C_Snapshot, type S2C_Welcome } from '@pqp/shared/net';
+import { defaultAppearance } from '@pqp/shared/game/appearance';
+import { migratePlayerRecord } from '@pqp/shared/game/record';
 import { startServer, type Running } from '../src/app';
 import { RobotClient } from '../src/bot/robot';
 import { MemoryStore } from '../src/persistence/store';
 
 let srv: Running;
 const store = new MemoryStore();
+/** a sala do protótipo (sandbox, template da Fase 1) só recebe quem pede por ela */
+const PROTO = { mapId: 'prototipo_delta' };
 
 beforeAll(async () => {
   srv = await startServer({
@@ -47,7 +51,7 @@ describe('WorldRoom (Colyseus 0.18)', () => {
 
   it("hello → welcome → snap com HUD; o joystick move o personagem; ping → pong", async () => {
     const client = new Client(`http://127.0.0.1:${srv.port}`);
-    const room: Room = await client.joinOrCreate('mundo');
+    const room: Room = await client.joinOrCreate('mundo', PROTO);
     const robot = new RobotClient('tok-sala-real-01', 'Robô de Verdade');
     let welcome: S2C_Welcome | undefined;
     let pong: S2C_Pong | undefined;
@@ -97,7 +101,7 @@ describe('WorldRoom (Colyseus 0.18)', () => {
 
     // hello sem token: o servidor gera um
     const c2 = new Client(`http://127.0.0.1:${srv.port}`);
-    const room2: Room = await c2.joinOrCreate('mundo');
+    const room2: Room = await c2.joinOrCreate('mundo', PROTO);
     let w2: S2C_Welcome | undefined;
     room2.onMessage(MSG.welcome, (w: S2C_Welcome) => (w2 = w));
     room2.onMessage(MSG.snap, () => undefined);
@@ -109,10 +113,51 @@ describe('WorldRoom (Colyseus 0.18)', () => {
     await room.leave(true);
   });
 
+  it('Fase 2: sem mapId cai no Delta; sem personagem recebe perfil, cria e recebe o welcome; o registro de outra margem troca de sala', async () => {
+    const c = new Client(`http://127.0.0.1:${srv.port}`);
+    const room: Room = await c.joinOrCreate('mundo');
+    const robot = new RobotClient('tok-sala-fase2-001', 'Novata');
+    for (const t of [MSG.welcome, ...Object.values(GAME_MSG)]) room.onMessage(t, (m: unknown) => robot.onGame(t, m));
+    room.onMessage(MSG.snap, (s: S2C_Snapshot) => robot.onSnapshot(s));
+    room.onMessage(MSG.info, () => undefined);
+    room.send(MSG.hello, robot.hello());
+    await waitFor(() => robot.perfil !== undefined);
+    expect(robot.perfil!.criado).toBe(false);
+    expect(robot.you).toBeUndefined();
+    room.send(GAME_MSG.criarPersonagem, { name: 'Dona Novata', appearance: defaultAppearance() });
+    await waitFor(() => robot.you !== undefined && robot.me()?.lk !== undefined);
+    expect(robot.welcome!.mapId).toBe('delta');
+    expect(robot.perfil!.criado).toBe(true);
+    expect(robot.missao?.ativas[0]?.id).toBe('delta_01_cadastro');
+    expect((await store.getOrCreatePlayer('tok-sala-fase2-001')).data.criado).toBe(true);
+    await room.leave(true);
+
+    // registro da Direita entrando sem mapId: trocar_sala para o QG da Direita, que recebe o personagem
+    const old = await store.getOrCreatePlayer('tok-sala-fase2-002', 'Idolzinho');
+    const rec = migratePlayerRecord({ id: old.id, name: 'Idolzinho', data: { archetypeId: 'idol', level: 12 } }, old.id);
+    await store.savePlayer({ ...old, data: rec });
+    const r2: Room = await c.joinOrCreate('mundo');
+    const b2 = new RobotClient('tok-sala-fase2-002', 'Idolzinho');
+    for (const t of [MSG.welcome, ...Object.values(GAME_MSG)]) r2.onMessage(t, (m: unknown) => b2.onGame(t, m));
+    r2.onMessage(MSG.snap, () => undefined);
+    r2.send(MSG.hello, b2.hello());
+    await waitFor(() => b2.trocarSala !== undefined);
+    expect(b2.trocarSala).toEqual({ mapId: 'qg_direita', motivo: 'registro' });
+    await r2.leave(true);
+    const r3: Room = await c.joinOrCreate('mundo', { mapId: b2.trocarSala!.mapId });
+    for (const t of [MSG.welcome, ...Object.values(GAME_MSG)]) r3.onMessage(t, (m: unknown) => b2.onGame(t, m));
+    r3.onMessage(MSG.snap, () => undefined);
+    r3.send(MSG.hello, b2.hello());
+    await waitFor(() => b2.welcome !== undefined);
+    expect(b2.welcome!.mapId).toBe('qg_direita');
+    expect(b2.perfil?.archetype).toBe('idol');
+    await r3.leave(true);
+  });
+
   it('sair e entrar de novo com o mesmo token retoma o personagem', async () => {
     const join = async () => {
       const c = new Client(`http://127.0.0.1:${srv.port}`);
-      const room: Room = await c.joinOrCreate('mundo');
+      const room: Room = await c.joinOrCreate('mundo', PROTO);
       let w: S2C_Welcome | undefined;
       room.onMessage(MSG.welcome, (x: S2C_Welcome) => (w = x));
       room.onMessage(MSG.snap, () => undefined);
@@ -131,7 +176,7 @@ describe('WorldRoom (Colyseus 0.18)', () => {
   it('o mesmo token em outro aparelho derruba o primeiro com CLOSE_CODE.outroAparelho, sem reconexão', async () => {
     const join = async () => {
       const c = new Client(`http://127.0.0.1:${srv.port}`);
-      const room: Room = await c.joinOrCreate('mundo');
+      const room: Room = await c.joinOrCreate('mundo', PROTO);
       let w: S2C_Welcome | undefined;
       room.onMessage(MSG.welcome, (x: S2C_Welcome) => (w = x));
       room.onMessage(MSG.snap, () => undefined);

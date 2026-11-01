@@ -6,7 +6,7 @@
  * pés (ordem por y). Nada é alocado por quadro: só posição, quadro e escala mudam.
  */
 import * as Phaser from 'phaser';
-import { FONT_KEY, sheetMeta, TILE_PX } from '../art/index';
+import { FONT_KEY, shadowFrameFor, sheetMeta, TILE_PX } from '../art/index';
 import type { AnimName } from '../art/contract';
 import { fontText } from '../art/fx';
 import { FL } from '../game/clientWorld';
@@ -104,9 +104,9 @@ export class EntityView {
     this.kind = o.kind;
     this.isSelf = o.isSelf === true;
     this.radius = o.radius;
-    this.shadow = scene.add.image(0, 0, 'fx_sombra', '0').setDepth(DEPTH.shadow).setAlpha(0.8);
-    const sw = this.shadow.width || 32;
-    this.shadow.setScale(Math.max(0.5, (o.radius * 2.4 * TILE_PX) / sw));
+    // sombra elíptica no chão sob todo boneco: largura pelo raio, sempre em escala 1 (pixel nítido)
+    // SUGESTÃO: a sombra tem 2,2 raios de largura.
+    this.shadow = scene.add.image(0, 0, 'fx_sombra', shadowFrameFor(o.radius * 2.2 * TILE_PX)).setDepth(DEPTH.shadow);
     if (o.glow) {
       this.glow = scene.add.sprite(0, 0, o.glow, '0').setDepth(DEPTH.shadow).setAlpha(0.9);
       if (scene.anims.exists(`${o.glow}:play:0`)) this.glow.play(`${o.glow}:play:0`);
@@ -183,7 +183,7 @@ export class EntityView {
       this.depthY = dy;
       this.sprite.setDepth(DEPTH.entity + dy);
     }
-    this.shadow.setPosition(px, py - 1);
+    this.shadow.setPosition(Math.round(px), Math.round(py) - 1);
     this.glow?.setPosition(px, py - 4);
     const top = py - this.frameH * this.originY;
     if (this.barBg) {

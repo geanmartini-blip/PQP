@@ -1,8 +1,8 @@
 [
   { "id": "delta_cadastro_feito", "descricao": "Fez o cadastro do Delta com o Seu Jacó e criou o personagem.", "escopo": "jogador", "cadeia": "delta_1_a_7", "emPiloto": true },
   { "id": "delta_aprendeu_remar", "descricao": "Remou com o Seu Jacó; aprendeu o auto-caminho e o alvo automático.", "escopo": "jogador", "cadeia": "delta_1_a_7", "emPiloto": true },
-  { "id": "delta_aprendeu_lutar", "descricao": "Aprendeu a trocar de alvo, usar a habilidade 1 e pegar o saque.", "escopo": "jogador", "cadeia": "delta_1_a_7", "emPiloto": true },
-  { "id": "delta_aprendeu_habilidades", "descricao": "Usou os três botões de habilidade e o Especial.", "escopo": "jogador", "cadeia": "delta_1_a_7", "emPiloto": true, "sugestao": true },
+  { "id": "delta_aprendeu_lutar", "descricao": "Aprendeu a trocar de alvo, limpar o mangue e pegar o saque.", "escopo": "jogador", "cadeia": "delta_1_a_7", "emPiloto": true, "sugestaoCampos": ["descricao"] },
+  { "id": "delta_aprendeu_habilidades", "descricao": "Espantou a nuvem de mosquito e aprendeu a usar o item (no Delta não há botões de habilidade nem Especial).", "escopo": "jogador", "cadeia": "delta_1_a_7", "emPiloto": true, "sugestao": true },
   { "id": "delta_comprou_chopindita_falsa", "descricao": "Comprou a chopindita barata, que era pedra pintada. Seu Jacó não esquece.", "escopo": "jogador", "exclusiva": "delta_chopindita", "cadeia": "delta_1_a_7", "emPiloto": true, "sugestao": true },
   { "id": "delta_desconfiou_da_chopindita", "descricao": "Desconfiou de quem vendia chopindita barata.", "escopo": "jogador", "exclusiva": "delta_chopindita", "cadeia": "delta_1_a_7", "emPiloto": true },
   { "id": "delta_chopindita_resolvida", "descricao": "Resolveu a história da chopindita barata e enfrentou os capangas do Capataz.", "escopo": "jogador", "cadeia": "delta_1_a_7", "emPiloto": true },

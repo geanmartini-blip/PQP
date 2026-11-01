@@ -31,7 +31,7 @@ interface RunOpts {
 function session(o: RunOpts) {
   const core = new GameServerCore({ content: false, log: () => undefined });
   const sid = 'p1';
-  const wel = core.addClient(sid, { token: 'tok-previsao-0001' });
+  const wel = core.addClient(sid, { token: 'tok-previsao-0001' })!;
   const ch = { delayMs: 100, loss: o.loss, jitterMs: o.jitterMs ?? 0, ...(o.lossMode ? { lossMode: o.lossMode } : {}), ...(o.stallMs ? { stallMs: o.stallMs } : {}) };
   const up = new MemoryChannel<C2S_Input>({ ...ch, seed: o.seed });
   const down = new MemoryChannel<S2C_Snapshot>({ ...ch, seed: o.seed + 1 });

@@ -5,19 +5,13 @@
  * - MemoryStore: só na memória (testes).
  * - FileStore: JSON em .data/players.json na raiz do projeto. Escrita atômica (arquivo temporário +
  *   rename) e com debounce. É o padrão: funciona sem nada instalado.
- * - SupabaseStore: liga quando SUPABASE_URL e SUPABASE_SERVICE_KEY existem. Usa a tabela `players`.
- *   Não foi testado contra um Supabase de verdade (não há conta ainda; ver PENDENTE.md).
+ * - SupabaseStore: liga quando SUPABASE_URL e SUPABASE_SERVICE_KEY existem. Usa a tabela `players`
+ *   (supabase/migrations/0001_players.sql e 0002_player_record_v2.sql). Não foi testado contra um
+ *   Supabase de verdade (não há conta ainda; ver PENDENTE.md).
  *
- * SQL da tabela para o Supabase (Postgres):
- *
- *   create table if not exists public.players (
- *     id uuid primary key default gen_random_uuid(),
- *     token text not null unique,
- *     name text not null,
- *     data jsonb not null default '{}'::jsonb,
- *     created_at timestamptz not null default now(),
- *     updated_at timestamptz not null default now()
- *   );
+ * Fase 2: a linha guarda o PlayerRecord inteiro das regras (shared/game, version 2) em `data`;
+ * `id` e `name` repetem rec.id e rec.name para consulta. Toda linha lida passa por migrateRow, que
+ * aceita a linha da Fase 1 ({ id, token, name, data: { archetypeId, level, xp, ... } }) e a da Fase 2.
  *
  * O token é o login de convidado: gerado no aparelho (ou pelo servidor) até o Supabase Auth entrar.
  */
@@ -25,75 +19,86 @@ import { randomUUID } from 'node:crypto';
 import { promises as fsp } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { DoctrineCard } from '@pqp/shared/sim';
+import { migratePlayerRecord, newPlayerRecord } from '@pqp/shared/game/record';
+import type { PlayerRecord as GameRecord } from '@pqp/shared/game/types';
 
-/** Dados do personagem guardados entre sessões (subconjunto do modelo `player` do CLAUDE.md). */
-export interface PlayerData {
-  /** arquétipo, classe ou 'delta' */
-  archetypeId?: string;
-  slot3?: string;
-  level?: number;
-  xp?: number;
-  semente?: number;
-  credito?: number;
-  inventory?: string[];
-  /** poções no botão de item */
-  itemCount?: number;
-  doctrine?: DoctrineCard[];
-  auto?: boolean;
-  /** aparência em camadas (body, skin, face, hair, hairColor, details); a criação de personagem é da Fase 2 */
-  appearance?: Record<string, unknown>;
-  /** paleta do traje (0..2) */
-  palette?: number;
-  [key: string]: unknown;
-}
-
-export interface PlayerRecord {
+/** Linha de um jogador: token (login de convidado) e o registro das regras. */
+export interface StoredPlayer {
   id: string;
   token: string;
   name: string;
-  data: PlayerData;
+  /** PlayerRecord da Fase 2 (shared/game/types.ts), sempre version 2 depois de migrateRow */
+  data: GameRecord;
 }
 
 export interface Store {
   readonly kind: 'memoria' | 'arquivo' | 'supabase';
-  /** jogador do token; cria um novo (com `name`) se não existir */
-  getOrCreatePlayer(token: string, name?: string): Promise<PlayerRecord>;
+  /** jogador do token; cria um novo (com `name`, ainda sem personagem: criado=false) se não existir */
+  getOrCreatePlayer(token: string, name?: string): Promise<StoredPlayer>;
   /** grava (cria ou substitui) o registro */
-  savePlayer(rec: PlayerRecord): Promise<void>;
+  savePlayer(rec: StoredPlayer): Promise<void>;
   /** grava o que estiver pendente agora */
   flush(): Promise<void>;
 }
 
 const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
+const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
-const newRecord = (token: string, name?: string): PlayerRecord => ({
-  id: randomUUID(),
-  token,
-  name: name ?? 'Visitante',
-  data: {},
-});
+// SUGESTÃO: nome de quem entra sem nome (o cadastro do Delta troca).
+const DEFAULT_NAME = 'Visitante';
+
+/** Linha nova: registro da Fase 2 no Delta, nível 1, sem personagem criado. */
+export function newStoredPlayer(token: string, name?: string): StoredPlayer {
+  const id = randomUUID();
+  const rec = newPlayerRecord(id, name ?? DEFAULT_NAME);
+  return { id, token, name: rec.name, data: rec };
+}
+
+/**
+ * Lê uma linha de qualquer fase e devolve a linha da Fase 2 (ou undefined, sem token).
+ * - Fase 2: data.version >= 2, passa por migratePlayerRecord (completa campos que faltarem);
+ * - Fase 1: { id, token, name, data: PlayerData }, migratePlayerRecord converte (ala vira margem).
+ */
+export function migrateRow(raw: unknown): StoredPlayer | undefined {
+  if (!isObj(raw)) return undefined;
+  const token = raw['token'];
+  if (typeof token !== 'string' || token.length === 0) return undefined;
+  const id = typeof raw['id'] === 'string' && raw['id'].length > 0 ? raw['id'] : randomUUID();
+  const d = raw['data'];
+  const v2 = isObj(d) && typeof d['version'] === 'number' && d['version'] >= 2;
+  const rec = migratePlayerRecord(v2 ? d : { id, name: raw['name'], data: isObj(d) ? d : {} }, id);
+  rec.id = id;
+  return { id, token, name: rec.name, data: rec };
+}
+
+/** Linha pronta para gravar: id e name iguais aos do registro. */
+function normalizeRow(rec: StoredPlayer): StoredPlayer {
+  const c = clone(rec);
+  c.data.id = c.id;
+  c.name = c.data.name;
+  return c;
+}
 
 // ---------------------------------------------------------------------------
 
 /** Só na memória: testes e servidor sem disco. */
 export class MemoryStore implements Store {
   readonly kind = 'memoria' as const;
-  readonly byToken = new Map<string, PlayerRecord>();
+  readonly byToken = new Map<string, StoredPlayer>();
   saves = 0;
 
-  async getOrCreatePlayer(token: string, name?: string): Promise<PlayerRecord> {
+  async getOrCreatePlayer(token: string, name?: string): Promise<StoredPlayer> {
     let r = this.byToken.get(token);
     if (!r) {
-      r = newRecord(token, name);
+      r = newStoredPlayer(token, name);
       this.byToken.set(token, r);
     }
     return clone(r);
   }
 
-  async savePlayer(rec: PlayerRecord): Promise<void> {
+  async savePlayer(rec: StoredPlayer): Promise<void> {
     this.saves++;
-    this.byToken.set(rec.token, clone(rec));
+    this.byToken.set(rec.token, normalizeRow(rec));
   }
 
   async flush(): Promise<void> {}
@@ -115,24 +120,29 @@ export function defaultPlayersFile(): string {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/** Versão do arquivo: 1 = linhas da Fase 1, 2 = linhas com o PlayerRecord da Fase 2. */
+export const FILE_VERSION = 2;
+
 interface FileShape {
-  version: 1;
-  players: PlayerRecord[];
+  version: number;
+  players: StoredPlayer[];
 }
 
 /**
- * JSON em disco. Lê uma vez, guarda na memória e grava o arquivo inteiro com debounce. A gravação
- * escreve num temporário e troca pelo rename (atômico no mesmo disco), com novas tentativas quando o
- * Windows ou o OneDrive seguram o arquivo (EPERM/EBUSY).
+ * JSON em disco. Lê uma vez (migrando cada linha), guarda na memória e grava o arquivo inteiro com
+ * debounce. A gravação escreve num temporário e troca pelo rename (atômico no mesmo disco), com
+ * novas tentativas quando o Windows ou o OneDrive seguram o arquivo (EPERM/EBUSY).
  */
 export class FileStore implements Store {
   readonly kind = 'arquivo' as const;
-  private byToken = new Map<string, PlayerRecord>();
+  private byToken = new Map<string, StoredPlayer>();
   private loaded: Promise<void> | undefined;
   private timer: ReturnType<typeof setTimeout> | undefined;
   private dirty = false;
   private writing: Promise<void> = Promise.resolve();
   writes = 0;
+  /** linhas que vieram de uma versão antiga e foram migradas na leitura */
+  migrated = 0;
 
   constructor(
     readonly file: string = defaultPlayersFile(),
@@ -144,7 +154,15 @@ export class FileStore implements Store {
       try {
         const txt = await fsp.readFile(this.file, 'utf8');
         const parsed = JSON.parse(txt) as Partial<FileShape>;
-        for (const p of parsed.players ?? []) if (p && typeof p.token === 'string') this.byToken.set(p.token, p);
+        for (const p of parsed.players ?? []) {
+          const old = !isObj(p) || !isObj(p['data']) || typeof p['data']['version'] !== 'number' || (p['data']['version'] as number) < 2;
+          const row = migrateRow(p);
+          if (!row) continue;
+          if (old) this.migrated++;
+          this.byToken.set(row.token, row);
+        }
+        // grava já no formato novo (sem perder o original: o rename só troca depois de escrever)
+        if (this.migrated > 0 || parsed.version !== FILE_VERSION) this.schedule();
       } catch (err) {
         const code = (err as NodeJS.ErrnoException).code;
         if (code !== 'ENOENT') {
@@ -158,20 +176,20 @@ export class FileStore implements Store {
     return this.loaded;
   }
 
-  async getOrCreatePlayer(token: string, name?: string): Promise<PlayerRecord> {
+  async getOrCreatePlayer(token: string, name?: string): Promise<StoredPlayer> {
     await this.load();
     let r = this.byToken.get(token);
     if (!r) {
-      r = newRecord(token, name);
+      r = newStoredPlayer(token, name);
       this.byToken.set(token, r);
       this.schedule();
     }
     return clone(r);
   }
 
-  async savePlayer(rec: PlayerRecord): Promise<void> {
+  async savePlayer(rec: StoredPlayer): Promise<void> {
     await this.load();
-    this.byToken.set(rec.token, clone(rec));
+    this.byToken.set(rec.token, normalizeRow(rec));
     this.schedule();
   }
 
@@ -190,7 +208,7 @@ export class FileStore implements Store {
     this.writing = this.writing.then(async () => {
       if (!this.dirty) return;
       this.dirty = false;
-      const body: FileShape = { version: 1, players: Array.from(this.byToken.values()) };
+      const body: FileShape = { version: FILE_VERSION, players: Array.from(this.byToken.values()) };
       const json = JSON.stringify(body, null, 1);
       await fsp.mkdir(path.dirname(this.file), { recursive: true });
       const tmp = `${this.file}.${process.pid}.tmp`;
@@ -228,13 +246,14 @@ export class FileStore implements Store {
 // ---------------------------------------------------------------------------
 
 /**
- * Supabase (Postgres). Tabela `players` (SQL no topo deste arquivo). As gravações ficam numa fila
- * por token e saem a cada `debounceMs`, para não mandar um upsert por tick.
+ * Supabase (Postgres). Tabela `players` (supabase/migrations). As gravações ficam numa fila por
+ * token e saem a cada `debounceMs`, para não mandar um upsert por tick. A leitura confere a fila
+ * antes do banco: a travessia grava e o jogador entra na sala da margem logo em seguida.
  * Sem teste real: não há projeto Supabase ainda.
  */
 export class SupabaseStore implements Store {
   readonly kind = 'supabase' as const;
-  private pending = new Map<string, PlayerRecord>();
+  private pending = new Map<string, StoredPlayer>();
   private timer: ReturnType<typeof setTimeout> | undefined;
   private client: Promise<SupabaseLike>;
 
@@ -249,22 +268,24 @@ export class SupabaseStore implements Store {
     );
   }
 
-  async getOrCreatePlayer(token: string, name?: string): Promise<PlayerRecord> {
+  async getOrCreatePlayer(token: string, name?: string): Promise<StoredPlayer> {
+    const queued = this.pending.get(token);
+    if (queued) return clone(queued);
     const sb = await this.client;
     const found = await sb.from(this.table).select('id, token, name, data').eq('token', token).maybeSingle();
     if (found.error) throw new Error(`supabase: ${found.error.message}`);
-    if (found.data) return found.data as PlayerRecord;
-    const created = await sb
-      .from(this.table)
-      .insert({ token, name: name ?? 'Visitante', data: {} })
-      .select('id, token, name, data')
-      .single();
+    if (found.data) {
+      const row = migrateRow(found.data);
+      if (row) return row;
+    }
+    const fresh = newStoredPlayer(token, name);
+    const created = await sb.from(this.table).insert({ id: fresh.id, token, name: fresh.name, data: fresh.data }).select('id, token, name, data').single();
     if (created.error) throw new Error(`supabase: ${created.error.message}`);
-    return created.data as PlayerRecord;
+    return migrateRow(created.data) ?? fresh;
   }
 
-  async savePlayer(rec: PlayerRecord): Promise<void> {
-    this.pending.set(rec.token, clone(rec));
+  async savePlayer(rec: StoredPlayer): Promise<void> {
+    this.pending.set(rec.token, normalizeRow(rec));
     if (this.timer) return;
     this.timer = setTimeout(() => {
       this.timer = undefined;

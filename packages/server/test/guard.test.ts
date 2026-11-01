@@ -5,6 +5,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import type { PlayerCommand } from '@pqp/shared/sim';
+import { defaultAppearance } from '@pqp/shared/game/appearance';
+import { createCharacter } from '@pqp/shared/game/travessia';
 import { GameServerCore } from '../src/core';
 import { sanitizeDoctrine, sanitizeDoctrineCard } from '../src/doctrine_guard';
 import { MemoryStore } from '../src/persistence/store';
@@ -52,10 +54,12 @@ describe('Doutrina validada no servidor', () => {
   it('Doutrina ruim gravada no Store (de antes da validação) é limpa ao nascer', async () => {
     const store = new MemoryStore();
     const rec = await store.getOrCreatePlayer('tok-registro-velho', 'Seu Zé');
+    expect(createCharacter(rec.data, 'Seu Zé', defaultAppearance()).ok).toBe(true);
     rec.data.doctrine = [{ se: { t: 'sempre' }, faca: { t: 'dancar' } }, { se: { t: 'especial_pronto' }, faca: { t: 'usar_especial' } }] as never;
     rec.data.auto = true;
     await store.savePlayer(rec);
-    const core = new GameServerCore({ content: false, log: () => undefined, store });
+    // o Store só vale fora da sala do protótipo: o personagem criado entra no Delta
+    const core = new GameServerCore({ mapId: 'delta', content: false, jaco: false, log: () => undefined, store });
     await core.join('s', { token: 'tok-registro-velho' });
     const e = core.entityOf('s')!;
     expect(e.doctrine).toEqual([{ se: { t: 'especial_pronto' }, faca: { t: 'usar_especial' } }]);
