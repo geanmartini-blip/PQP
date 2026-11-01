@@ -10,9 +10,12 @@
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
-    "@pqp/shared": "*",
     "@colyseus/sdk": "^0.18.9",
-    "phaser": "3.90.0"
+    "@fontsource/alegreya": "^5.2.5",
+    "@fontsource/pixelify-sans": "^5.2.5",
+    "@pqp/shared": "*",
+    "phaser": "3.90.0",
+    "phaser4": "npm:phaser@^4.2.1"
   },
   "devDependencies": {
     "vite": "^8.0.0"

@@ -119,6 +119,43 @@ O registro completo está em `decisoes/fase5-masmorra.md`. Os pontos principais:
 - Os números e as falas novas estão marcados como sugestão (`BOAT_TUNING`, dicas da aula, falas do
   guia).
 
+## Revisão visual: nova direção de arte (2026-11-01)
+- **Mudança:** o jogo passa a seguir `docs/referencia-estilo.png`, com `docs/alvo-tela.png` e
+  `docs/alvo-personagens.png` como alvo. É pixel art hi-bit em câmera 3/4:
+  - contorno escuro colorido e 3 a 4 tons por material, com hue shift;
+  - luz de cima à esquerda;
+  - Esquerda mística e Direita neon.
+  Os sistemas de jogo não mudam.
+- **Etapa 1, a cena de teste:**
+  - Abre em `/teste-visual.html`, com o código em `packages/client/src/testeVisual/`.
+  - A arte provisória é gerada por script em `tools/art/` (`chao`, `cenario`, `personagens`, `icones`,
+    `manifesto`) e vai para `packages/client/public/teste-visual/`.
+  - Os prints saem de `node tools/art/print-teste.mjs`, em 390x844 com dpr 3.
+  - O jogo principal ainda não foi tocado.
+- **Phaser 4 só na cena de teste:** ele entrou como o pacote `phaser4` (alias de `phaser@4.2.1`), ao
+  lado do 3.90 do jogo. A pasta `src/testeVisual` fica fora do `tsconfig` do cliente porque os tipos
+  globais dos dois colidem. A migração do jogo todo para o Phaser 4 fica para a etapa 3.
+- **Zoom:** cada pixel de arte vira um bloco inteiro de pixels físicos, de no mínimo 2x:
+  - 2x em telas de dpr 2 e 3x em dpr 3;
+  - o `?px=` da URL força o valor.
+  Assim a tela de 390 px de CSS mostra cerca de 390 px de arte, como o alvo. Com 2x fixo num celular de
+  dpr 3, os bonecos ficariam com 2/3 do tamanho do alvo. O canvas tem o tamanho em pixels de arte e o
+  CSS estica com `pixelated`. Por isso a quantização com dither e a luz trabalham no pixel da arte.
+- **Luz:**
+  - Phaser 4 com normal map, gerado pelo script a partir da forma (bisel do alfa mais o brilho).
+  - O ambiente segue um ciclo de dia e noite. O padrão é o fim de tarde (`?hora=18.6`); `?ciclo=1` roda
+    o ciclo e a tecla N avança 2 horas.
+- **Bloom:** só no que brilha (neon, magia, janela, chama). Cada sprite pode ter um `<chave>_e.png`
+  emissivo, desenhado em ADD, mais um halo desfocado criado uma vez na carga. Não há filtro de bloom em
+  tela cheia, para poupar o celular.
+- **Quantização:** a câmera usa `Quantize` com 28 passos por canal e dither leve.
+- **HUD em DOM:**
+  - painéis escuros com borda dourada;
+  - fontes Alegreya e Pixelify Sans pelo `@fontsource`, que funciona offline;
+  - ícones em pixel art ampliados.
+- **Animação:** o lado é desenhado virado para a direita e a esquerda sai por flipX. Os quadros seguem
+  o padrão `<animacao>_<direcao>_<i>`.
+
 ## Sugestões (o que não está nos docs)
 Lista mantida por fase. Tudo aqui pode ser trocado pelos autores.
 

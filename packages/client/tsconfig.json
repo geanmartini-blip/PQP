@@ -4,5 +4,7 @@
     "types": ["vite/client"],
     "allowImportingTsExtensions": true
   },
-  "include": ["src", "test", "vite.config.ts", "vite.pwa.ts"]
+  "include": ["src", "test", "vite.config.ts", "vite.pwa.ts"],
+  // a cena de teste visual usa o Phaser 4 (pacote phaser4), cujos tipos globais colidem com os do 3
+  "exclude": ["src/testeVisual"]
 }

@@ -1,0 +1,262 @@
+{
+ "agua": {
+  "atlas": true,
+  "n": true,
+  "e": false
+ },
+ "agua_tile": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "arbusto": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "arvore": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "arvore_roxa": {
+  "atlas": false,
+  "n": true,
+  "e": true
+ },
+ "aviso_area": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "banca_roxa_frente": {
+  "atlas": false,
+  "n": true,
+  "e": true
+ },
+ "banca_roxa_fundo": {
+  "atlas": false,
+  "n": true,
+  "e": true
+ },
+ "bandeira_raizes": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "barril": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "barril_madeira": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "benzedeira": {
+  "atlas": true,
+  "n": true,
+  "e": true
+ },
+ "caixa": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "cano": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "casa_musgo": {
+  "atlas": false,
+  "n": true,
+  "e": true
+ },
+ "cascata": {
+  "atlas": true,
+  "n": true,
+  "e": false
+ },
+ "cerca_madeira": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "cerca_metal": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "chao": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "cogumelos": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "drone": {
+  "atlas": true,
+  "n": true,
+  "e": true
+ },
+ "drone_elite": {
+  "atlas": true,
+  "n": true,
+  "e": true
+ },
+ "flores_0": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "flores_1": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "flores_2": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "icone_chapeu": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "icone_chifre": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "icone_especial": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "icone_garrafada": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "icone_laco": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "idol": {
+  "atlas": true,
+  "n": true,
+  "e": false
+ },
+ "kit_chao": {
+  "atlas": true,
+  "n": true,
+  "e": false
+ },
+ "lampiao_madeira": {
+  "atlas": false,
+  "n": true,
+  "e": true
+ },
+ "lampiao_metal": {
+  "atlas": false,
+  "n": true,
+  "e": true
+ },
+ "lixeira": {
+  "atlas": false,
+  "n": true,
+  "e": true
+ },
+ "marcador_alvo": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "painel_holograma": {
+  "atlas": false,
+  "n": true,
+  "e": true
+ },
+ "peao": {
+  "atlas": true,
+  "n": true,
+  "e": false
+ },
+ "pedras": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "pedra_runa": {
+  "atlas": false,
+  "n": true,
+  "e": true
+ },
+ "pedra_runa_2": {
+  "atlas": false,
+  "n": true,
+  "e": true
+ },
+ "pilha_caixas": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "pinheiro": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "placa_perigo": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "pm": {
+  "atlas": true,
+  "n": true,
+  "e": true
+ },
+ "ponte_chao": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "ponte_grade_frente": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "predio_neon": {
+  "atlas": false,
+  "n": true,
+  "e": true
+ },
+ "quiosque_laranja": {
+  "atlas": false,
+  "n": true,
+  "e": true
+ },
+ "sombra": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "touceira": {
+  "atlas": false,
+  "n": true,
+  "e": false
+ },
+ "tubo_ciano": {
+  "atlas": false,
+  "n": true,
+  "e": true
+ }
+}
