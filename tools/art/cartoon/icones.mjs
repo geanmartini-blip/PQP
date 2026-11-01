@@ -13,15 +13,12 @@ const laco =
   traco(`M14,38 C20,46 28,52 34,58`, '#5a3a1a', 11) + traco(`M14,38 C20,46 28,52 34,58`, corda, 7) +
   [0, 1, 2, 3, 4, 5].map((k) => traco(`M${16 + k * 6},${21 - (k % 2) * 1} l3,5`, '#a87a3a', 1.6)).join('');
 
+// chifrada: dois chifres curvos em investida, com rastro de impacto
 const chifre =
-  cel(blob([[6, 30], [4, 14], [10, 6], [14, 18], [20, 24]]), '#f4e6c4', { s: 3, l: 2, w: 3 }) +
-  cel(blob([[58, 30], [60, 14], [54, 6], [50, 18], [44, 24]]), '#f4e6c4', { s: 3, l: 2, w: 3 }) +
-  cel(blob([[14, 26], [32, 18], [50, 26], [52, 44], [42, 58], [22, 58], [12, 44]]), '#8a4a2a', { s: 5, l: 3, w: 3.5 }) +
-  cel(elipse(32, 50, 11, 7), '#c88a6a', { s: 2, l: 1.5, w: 2.5 }) +
-  `<circle cx="28" cy="50" r="1.8" fill="#3a1a10"/><circle cx="36" cy="50" r="1.8" fill="#3a1a10"/>` +
-  `<circle cx="23" cy="34" r="3.4" fill="#1a0e0a"/><circle cx="41" cy="34" r="3.4" fill="#1a0e0a"/><circle cx="24" cy="33" r="1.1" fill="#fff"/><circle cx="42" cy="33" r="1.1" fill="#fff"/>` +
-  traco('M18,28 L27,31', '#2a140c', 3) + traco('M46,28 L37,31', '#2a140c', 3) +
-  cel(`M27,58 a5,5 0 1,0 10,0`, '#ffd23a', { s: 1, l: 1, w: 2 });
+  traco('M6,50 L20,44 M8,58 L24,50 M4,42 L16,38', '#c8b896', 3, 0.7) +
+  cel(blob([[18, 46], [24, 30], [36, 18], [52, 10], [58, 12], [46, 22], [34, 36], [28, 50]]), '#e2d4b4', { s: 3, l: 2, w: 2.5, cc: '#3a2c1c' }) +
+  cel(blob([[30, 54], [38, 40], [48, 32], [60, 30], [60, 34], [50, 40], [42, 50], [38, 58]]), '#cfc09e', { s: 3, l: 2, w: 2.5, cc: '#3a2c1c' }) +
+  cel(blob([[16, 44], [26, 42], [36, 50], [34, 60], [22, 60], [14, 54]]), '#5a3a26', { s: 3, l: 2, w: 2.5 });
 
 const chapeu =
   cel(blob([[4, 42], [14, 36], [32, 36], [50, 36], [60, 42], [52, 50], [32, 52], [12, 50]]), '#9a6234', { s: 4, l: 2, w: 3.2 }) +
@@ -29,13 +26,15 @@ const chapeu =
   cel(retRed(16, 34, 32, 7, 3), '#4a2a14', { s: 1.5, l: 1, w: 2 }) +
   [22, 32, 42].map((x) => cel(elipse(x, 37.5, 2.4, 2.4), '#ffd23a', { s: 1, l: 0.8, w: 1.2 })).join('') + brilho(23, 22, 4, 2);
 
+// touro-espírito: crânio de touro translúcido em brasa azul, sem cara de mascote
 const especial =
-  `<defs><radialGradient id="ge"><stop offset="0" stop-color="#ffffff"/><stop offset="0.5" stop-color="#7fe8ff"/><stop offset="1" stop-color="#2a9be0"/></radialGradient></defs>` +
-  cel(blob([[4, 22], [6, 6], [16, 16], [22, 20]]), '#bff6ff', { s: 2, l: 1.5, w: 2.5, cc: '#0a3a6a' }) +
-  cel(blob([[60, 22], [58, 6], [48, 16], [42, 20]]), '#bff6ff', { s: 2, l: 1.5, w: 2.5, cc: '#0a3a6a' }) +
-  `<path d="${blob([[12, 22], [32, 14], [52, 22], [54, 40], [44, 58], [20, 58], [10, 40]])}" fill="url(#ge)" stroke="#0a3a6a" stroke-width="3.5"/>` +
-  `<ellipse cx="23" cy="34" rx="4" ry="3" fill="#0a3a6a"/><ellipse cx="41" cy="34" rx="4" ry="3" fill="#0a3a6a"/><circle cx="24" cy="33" r="1.4" fill="#fff"/><circle cx="42" cy="33" r="1.4" fill="#fff"/>` +
-  traco(curva([[24, 50], [32, 53], [40, 50]]), '#0a3a6a', 2.5) + brilho(20, 24, 6, 3);
+  `<defs><radialGradient id="ge" cx="0.5" cy="0.45"><stop offset="0" stop-color="#e8fbff"/><stop offset="0.45" stop-color="#6ccce8"/><stop offset="1" stop-color="#1c5a86"/></radialGradient></defs>` +
+  `<path d="${blob([[4, 18], [10, 8], [20, 14], [24, 22], [16, 22]])}" fill="url(#ge)" stroke="#0c2a44" stroke-width="2.5"/>` +
+  `<path d="${blob([[60, 18], [54, 8], [44, 14], [40, 22], [48, 22]])}" fill="url(#ge)" stroke="#0c2a44" stroke-width="2.5"/>` +
+  `<path d="${blob([[16, 20], [32, 16], [48, 20], [50, 36], [42, 54], [32, 60], [22, 54], [14, 36]])}" fill="url(#ge)" stroke="#0c2a44" stroke-width="3"/>` +
+  `<path d="M20,32 L28,36 L22,38Z M44,32 L36,36 L42,38Z" fill="#0c2a44"/>` +
+  `<path d="M28,50 Q32,54 36,50" fill="none" stroke="#0c2a44" stroke-width="2"/><circle cx="29" cy="47" r="1.3" fill="#0c2a44"/><circle cx="35" cy="47" r="1.3" fill="#0c2a44"/>` +
+  traco('M32,22 L32,40', '#ffffff', 1.5, 0.5);
 
 const garrafada =
   cel(retRed(26, 6, 12, 10, 3), '#9a6a3a', { s: 1.5, l: 1, w: 2.5 }) +

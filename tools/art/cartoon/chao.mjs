@@ -33,20 +33,20 @@ const G = { grama: '#5fb043', gramaEsc: '#3f8a37', gramaClara: '#8fd052', terra:
 let svg = '';
 
 // ---------- Esquerda: grama ----------
-svg += `<defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6cbd4a"/><stop offset="1" stop-color="#4f9e3e"/></linearGradient></defs>`;
+svg += `<defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5e8a40"/><stop offset="1" stop-color="#3f6a34"/></linearGradient></defs>`;
 svg += `<rect x="0" y="0" width="${rioX0 + 4}" height="${H}" fill="url(#gg)"/>`;
 // manchas grandes de luz e sombra (pintado)
 for (let i = 0; i < 70; i++) {
   const x = r() * rioX0, y = r() * H, rr = 30 + r() * 70;
   const pts = Array.from({ length: 8 }, (_, k) => { const a = (k / 8) * Math.PI * 2; const q = rr * (0.7 + r() * 0.5); return [x + Math.cos(a) * q, y + Math.sin(a) * q * 0.7]; });
-  svg += `<path d="${blob(pts)}" fill="${r() > 0.5 ? '#8fd052' : '#3f8a37'}" opacity="${0.18 + r() * 0.18}"/>`;
+  svg += `<path d="${blob(pts)}" fill="${r() > 0.5 ? '#7c9a4c' : '#2c4a28'}" opacity="${0.18 + r() * 0.2}"/>`;
 }
 // trilhas de terra e calçamento (base de terra com borda escura)
-for (const p of TRILHA) svg += traco(pathD(p), '#6e4a2e', p.larg * 2 + 6, 0.55) + traco(pathD(p), G.terra, p.larg * 2) + traco(pathD(p), luz(G.terra, 0.15), p.larg * 1.1, 0.5);
+for (const p of TRILHA) svg += traco(pathD(p), '#6e4a2e', p.larg * 2 + 6, 0.55) + traco(pathD(p), '#8a6a4a', p.larg * 2) + traco(pathD(p), luz(G.terra, 0.15), p.larg * 1.1, 0.5);
 for (const p of CALCADA) svg += traco(pathD(p), '#5a3c28', p.larg * 2 + 8, 0.6) + traco(pathD(p), '#7a5638', p.larg * 2 + 2);
 // pedras redondas do calçamento
 {
-  const cores = ['#c3a083', '#b08a6a', '#d0b090', '#a89080', '#bfa48c'];
+  const cores = ['#9c8c7a', '#8a7b6a', '#a89a86', '#7e7468', '#948678'];
   for (let y = 300; y < H; y += 11)
     for (let x = 0; x < rioX0; x += 13) {
       const px = x + (y / 11) % 2 * 6 + (r() - 0.5) * 4, py = y + (r() - 0.5) * 3;
@@ -66,14 +66,14 @@ for (let i = 0; i < 1300; i++) {
   for (let k = 0; k < n; k++) {
     const a = (k / (n - 1) - 0.5) * 1.3 + (r() - 0.5) * 0.2;
     const tx = x + Math.sin(a) * hgt, ty = y - Math.cos(a) * hgt;
-    t += `<path d="M${x - 1.6},${y} Q${(x + tx) / 2 - 1},${(y + ty) / 2} ${tx},${ty} Q${(x + tx) / 2 + 1},${(y + ty) / 2} ${x + 1.6},${y}Z" fill="${escuro ? '#3f8a37' : '#8fd052'}"/>`;
+    t += `<path d="M${x - 1.6},${y} Q${(x + tx) / 2 - 1},${(y + ty) / 2} ${tx},${ty} Q${(x + tx) / 2 + 1},${(y + ty) / 2} ${x + 1.6},${y}Z" fill="${escuro ? '#2f5229' : '#7f9e4e'}"/>`;
   }
   svg += t;
 }
-for (let i = 0; i < 260; i++) {
+for (let i = 0; i < 90; i++) {
   const x = r() * rioX0, y = r() * H;
   if (!naGrama(x, y)) continue;
-  const c = ['#fff4d0', '#ffd23a', '#c57cf0', '#7fd2ff', '#ff8fb0'][Math.floor(r() * 5)];
+  const c = ['#e6dcc4', '#d4b452', '#9a80b0', '#8aaec0', '#c4949c'][Math.floor(r() * 5)];
   for (let k = 0; k < 3; k++) {
     const fx = x + (r() - 0.5) * 10, fy = y + (r() - 0.5) * 7;
     svg += `<circle cx="${fx}" cy="${fy + 1.2}" r="2.6" fill="${sombra(c, 0.4)}"/><circle cx="${fx}" cy="${fy}" r="2.5" fill="${c}"/><circle cx="${fx}" cy="${fy}" r="0.9" fill="#ffe27a"/>`;
@@ -123,7 +123,7 @@ svg += `<rect x="${rioX0 - 4}" y="0" width="${B + 6}" height="${H}" fill="#3a2a2
   for (let y = 0; y < H; y += 14) {
     const x = rioX0 - 4;
     if (r() > 0.6) continue;
-    svg += `<path d="M${x - 6},${y} Q${x + 3 + r() * 4},${y + 3} ${x + 2 + r() * 5},${y + 9 + r() * 6} Q${x},${y + 5} ${x - 6},${y + 8}Z" fill="${r() > 0.5 ? '#5fb043' : '#4f9e3e'}" stroke="#2a4a20" stroke-width="1.2"/>`;
+    svg += `<path d="M${x - 6},${y} Q${x + 3 + r() * 4},${y + 3} ${x + 2 + r() * 5},${y + 9 + r() * 6} Q${x},${y + 5} ${x - 6},${y + 8}Z" fill="${r() > 0.5 ? '#557e3c' : '#40663a'}" stroke="#1e3018" stroke-width="1.2"/>`;
   }
 }
 // Direita: cais de pedra cortada (fiadas) descendo até a água
@@ -166,18 +166,18 @@ const chao = `<defs><mask id="semRio" maskUnits="userSpaceOnUse" x="0" y="0" wid
 
 // ---------- água: textura que repete (256x256) ----------
 const T = 256;
-let agua = `<rect width="${T}" height="${T}" fill="#2a8fc0"/>`;
+let agua = `<rect width="${T}" height="${T}" fill="#1d5f7c"/>`;
 const ra = rnd(7);
 for (let i = 0; i < 26; i++) {
   const x = ra() * T, y = ra() * T, rr = 20 + ra() * 40;
   for (const dx of [-T, 0, T]) for (const dy of [-T, 0, T])
-    agua += `<ellipse cx="${x + dx}" cy="${y + dy}" rx="${rr * 0.6}" ry="${rr}" fill="${ra() > 0.5 ? '#3aa8d8' : '#1f7aae'}" opacity="0.45"/>`;
+    agua += `<ellipse cx="${x + dx}" cy="${y + dy}" rx="${rr * 0.6}" ry="${rr}" fill="${ra() > 0.5 ? '#2a7894' : '#164c64'}" opacity="0.45"/>`;
 }
 for (let i = 0; i < 40; i++) {
   const x = ra() * T, y = ra() * T, len = 10 + ra() * 18;
   for (const dx of [-T, 0, T]) for (const dy of [-T, 0, T]) {
     const X = x + dx, Y = y + dy;
-    agua += `<path d="M${X - len / 2},${Y} q${len / 4},-4 ${len / 2},0 t${len / 2},0" fill="none" stroke="${ra() > 0.4 ? '#bdeeff' : '#ffffff'}" stroke-width="2.2" stroke-linecap="round" opacity="0.8"/>`;
+    agua += `<path d="M${X - len / 2},${Y} q${len / 4},-4 ${len / 2},0 t${len / 2},0" fill="none" stroke="${ra() > 0.4 ? '#9ccfe0' : '#d8f0f8'}" stroke-width="2" stroke-linecap="round" opacity="0.55"/>`;
   }
 }
 

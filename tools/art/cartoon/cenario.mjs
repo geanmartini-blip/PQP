@@ -9,10 +9,14 @@ const DIR = 'packages/client/public/teste-cartoon';
 const mods = [pecasEsquerda];
 try { mods.push((await import('./pecas-dir.mjs')).pecasDireita); } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e; }
 try { mods.push((await import('./pecas-meio.mjs')).pecasMeio); } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e; }
+mods.push((await import('./pecas-guerra.mjs')).pecasGuerra);
 
 const filtro = process.argv[2];
 let pecas = mods.flatMap((m) => m());
 if (filtro) pecas = pecas.filter((p) => p.nome.includes(filtro));
+// Tom sóbrio: tira ~20% da saturação da camada de cor (a camada emissiva fica intacta: o neon e a magia
+// são o acento que dá o contraste).
+for (const p of pecas) p.svg = `<defs><filter id="sobrio" filterUnits="userSpaceOnUse" x="0" y="0" width="${p.w}" height="${p.h}" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0.8"/></filter></defs><g filter="url(#sobrio)">${p.svg}</g>`;
 const man = await renderizar(DIR, pecas);
 if (!filtro) writeFileSync(`${DIR}/pecas-cenario.json`, JSON.stringify(man, null, 1));
 await prancha(`tools/art/saida/cartoon-cenario${filtro ? '-' + filtro : ''}.png`, DIR, pecas.map((p) => p.nome), { zoom: 1 });

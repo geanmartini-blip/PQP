@@ -9,6 +9,8 @@ export { blob, curva, elipse, retRed, brilho, traco, halo, sombra, luz, contorno
 
 let n = 0;
 export const uid = (p = 'b') => `${p}x${++n}`;
+/** kw: multiplica a espessura do contorno (compensa grupos desenhados em escala, como a cabeça). */
+export const cfg = { kw: 1 };
 const f = (v) => v.toFixed(2);
 
 /** Cápsula afunilada entre dois círculos (braço, perna, dedo). */
@@ -20,10 +22,10 @@ export function capsula(x1, y1, r1, x2, y2, r2) {
 }
 
 /** Faixas de sombra (embaixo à direita) e luz (em cima à esquerda) de uma silhueta, por cima de qualquer cor. */
-export function sombreia(d, { s = 4, l = 2.4, op = 0.32, opl = 0.2, cs = '#2a1250', cl = '#fff4c8' } = {}) {
+export function sombreia(d, { s = 4, l = 2.4, op = 0.22, opl = 0.12, cs = '#2a2238', cl = '#fff4e6' } = {}) {
   const m1 = uid('m'), m2 = uid('m');
   const M = (id, dx, dy) => `<mask id="${id}" maskUnits="userSpaceOnUse" x="-500" y="-500" width="1000" height="1000"><path d="${d}" fill="#fff"/><path d="${d}" fill="#000" transform="translate(${dx},${dy})"/></mask>`;
-  op = Math.min(op, 0.3);
+  op = Math.min(op, 0.24); opl = Math.min(opl, 0.14);
   let o = `<defs>${M(m1, -s, -s * 1.1)}${M(m2, l, l * 1.2)}</defs>`;
   if (s > 0) o += `<path d="${d}" fill="${cs}" opacity="${op}" mask="url(#${m1})"/>`;
   if (l > 0) o += `<path d="${d}" fill="${cl}" opacity="${opl}" mask="url(#${m2})"/>`;
@@ -34,7 +36,45 @@ export function sombreia(d, { s = 4, l = 2.4, op = 0.32, opl = 0.2, cs = '#2a125
 export function comp(d, inner, o = {}) {
   const cp = uid('c');
   return `<defs><clipPath id="${cp}"><path d="${d}"/></clipPath></defs><g clip-path="url(#${cp})">${inner}${sombreia(d, o)}</g>` +
-    `<path d="${d}" fill="none" stroke="${o.cc ?? '#1d1024'}" stroke-width="${o.w ?? 2.2}" stroke-linejoin="round"/>`;
+    `<path d="${d}" fill="none" stroke="${o.cc ?? '#1d1024'}" stroke-width="${(o.w ?? 2.1) * cfg.kw}" stroke-linejoin="round"/>`;
+}
+
+/**
+ * Olho adulto amendoado: branco levemente creme, íris pequena, pupila, 1 brilho discreto, pálpebra
+ * de cima marcada e vinco. m = 1 (canto externo à direita) ou -1 (espelhado). o.olheira = 0..1.
+ */
+export function olhoAdulto(x, y, o = {}) {
+  const rx = o.rx ?? 3, ry = o.ry ?? 1.9, iris = o.iris ?? '#4a3020', cc = o.cc ?? '#1e1210', dx = o.dx ?? 0.2, m = o.m ?? 1;
+  const cp = uid('c'), g = uid('g');
+  const d = `M${-rx},0.2 Q${-rx * 0.3},${-ry * 1.35} ${rx},${-ry * 0.15} Q${rx * 0.2},${ry * 1.15} ${-rx},0.2Z`;
+  let s = `<g transform="translate(${x},${y}) scale(${m},1)">`;
+  s += `<defs><clipPath id="${cp}"><path d="${d}"/></clipPath><radialGradient id="${g}" cx="0.5" cy="0.65" r="0.6"><stop offset="0" stop-color="${mistura(iris, '#ffffff', 0.25)}"/><stop offset="1" stop-color="${sombra(iris, 0.35)}"/></radialGradient></defs>`;
+  if (o.olheira) s += `<path d="M${-rx * 0.8},${ry * 0.9} Q${rx * 0.1},${ry * 2.1} ${rx * 0.95},${ry * 0.55}" fill="none" stroke="${o.corOlheira ?? '#5a3a44'}" stroke-width="1.1" opacity="${0.35 * o.olheira + 0.1}" stroke-linecap="round"/>`;
+  s += `<path d="${d}" fill="#ece4da"/>`;
+  s += `<g clip-path="url(#${cp})"><circle cx="${dx}" cy="0.1" r="${ry * 0.98}" fill="url(#${g})"/><circle cx="${dx}" cy="0.15" r="${ry * 0.42}" fill="#120a0a"/>` +
+    `<path d="M${-rx},${-ry * 1.4} L${rx},${-ry * 1.4} L${rx},${-ry * 0.25} Q0,${-ry * 0.7} ${-rx},${-ry * 0.1}Z" fill="#000" opacity=".22"/></g>`;
+  s += `<circle cx="${dx - ry * 0.35}" cy="${-ry * 0.3}" r="${Math.max(0.35, ry * 0.2)}" fill="#fff" opacity=".7"/>`;
+  s += `<path d="M${-rx},0.2 Q${rx * 0.2},${ry * 1.15} ${rx},${-ry * 0.15}" fill="none" stroke="${cc}" stroke-width="0.6" opacity=".55"/>`;
+  s += `<path d="M${-rx - 0.3},0.35 Q${-rx * 0.3},${-ry * 1.42} ${rx + 0.4},${-ry * 0.2}" fill="none" stroke="${cc}" stroke-width="${o.lw ?? 1.5}" stroke-linecap="round"/>`;
+  if (o.delineado) s += `<path d="M${rx + 0.2},${-ry * 0.2} l${1.6},${-0.9}" fill="none" stroke="${cc}" stroke-width="1.1" stroke-linecap="round"/>`;
+  s += `<path d="M${-rx * 0.55},${-ry * 1.45} Q${rx * 0.1},${-ry * 2.05} ${rx * 0.85},${-ry * 1.05}" fill="none" stroke="${cc}" stroke-width="0.7" opacity=".35" stroke-linecap="round"/>`;
+  if (o.palpebra) s += `<path d="M${-rx - 0.3},0.1 Q${-rx * 0.3},${-ry * 1.5} ${rx + 0.4},${-ry * 0.25} L${rx + 0.4},${-ry * 0.25 + ry * o.palpebra} Q0,${-ry * 0.9 + ry * o.palpebra * 1.2} ${-rx - 0.3},${0.1 + ry * o.palpebra * 0.4}Z" fill="${o.pele}"/>` +
+    `<path d="M${-rx - 0.3},${0.1 + ry * o.palpebra * 0.4} Q0,${-ry * 0.9 + ry * o.palpebra * 1.2} ${rx + 0.4},${-ry * 0.25 + ry * o.palpebra}" fill="none" stroke="${cc}" stroke-width="${o.lw ?? 1.5}" stroke-linecap="round"/>`;
+  return s + '</g>';
+}
+
+/** Remendo costurado (tecido por cima, pesponto tracejado). */
+export function remendo(x, y, w, h, cor, rot = 0, cc = '#1e1610') {
+  return `<g transform="rotate(${rot} ${x + w / 2} ${y + h / 2})"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="0.6" fill="${cor}" stroke="${cc}" stroke-width="0.6"/>` +
+    `<rect x="${x + 0.7}" y="${y + 0.7}" width="${w - 1.4}" height="${h - 1.4}" rx="0.4" fill="none" stroke="${mistura(cor, '#f0e6d0', 0.55)}" stroke-width="0.4" stroke-dasharray="0.8 0.6"/></g>`;
+}
+/** Poeira/sujeira: manchas translúcidas recortadas pela forma. */
+export function poeira(d, x0, y0, w, h, seed = 3, cor = '#8a7458', op = 0.22) {
+  let r = (seed * 9301 + 49297) % 233280;
+  const R = () => ((r = (r * 9301 + 49297) % 233280) / 233280);
+  let s = '';
+  for (let i = 0; i < 9; i++) s += `<ellipse cx="${x0 + R() * w}" cy="${y0 + R() * h}" rx="${0.8 + R() * 2}" ry="${0.5 + R() * 1}" fill="${cor}" opacity="${op * (0.5 + R())}"/>`;
+  return recorta(d, s);
 }
 
 /** Recorta conteúdo por um caminho. */

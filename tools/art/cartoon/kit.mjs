@@ -1,7 +1,14 @@
 // Kit de cenário cartoon: blocos de construção em cima da lib (tábuas com veio e prego, pedras com
 // bisel, blocos de concreto, musgo, tufos, janelas acesas, faixa de perigo, rebites, letreiros, lanternas).
 // Tudo devolve SVG em u (1 u = 1 px CSS). As funções que têm parte que brilha devolvem { s, e }.
-import { blob, brilho, cel, contorno, curva, elipse, halo, luz, mistura, retRed, rnd, sombra, traco } from './lib.mjs';
+import { blob, brilho as brilhoLib, cel as celLib, contorno, curva, elipse, halo, luz, mistura, retRed, rnd, sombra, traco } from './lib.mjs';
+
+// Tom sóbrio: contorno de no máximo 2,4 u, faixa de luz discreta (nada de plástico), sombra um pouco mais funda.
+export function cel(d, base, o = {}) {
+  return celLib(d, base, { cl: luz(base, 0.13), cs: sombra(base, 0.34), ...o, w: Math.min(o.w ?? 2.2, 2.4) });
+}
+/** Brilho especular contido. */
+export const brilho = (x, y, rx = 3, ry = 1.6, rot = -35, op = 0.85) => brilhoLib(x, y, rx, ry, rot, op * 0.4);
 
 let n = 0;
 export const kid = (p = 'k') => `${p}K${++n}`;
@@ -33,7 +40,7 @@ export function desfoque(inner, sd = 3, op = 1) {
 }
 /** União de formas com contorno só por fora (copas, musgo, espuma) e cel shading. */
 export function massa(d, base, o = {}) {
-  const w = o.w ?? 3, cc = o.cc ?? contorno(base);
+  const w = Math.min(o.w ?? 2.2, 2.4) * 0.85, cc = o.cc ?? contorno(base);
   return `<path d="${d}" fill="${cc}" stroke="${cc}" stroke-width="${w * 2}" stroke-linejoin="round"/>` + cel(d, base, { ...o, w: 0 });
 }
 /** Várias elipses num só caminho (união). l = [[cx, cy, rx, ry?]] */
@@ -45,10 +52,33 @@ export function cachoD(cx, cy, rx, ry = rx, seed = 1, gomos = null) {
   const pts = [];
   const a0 = r() * Math.PI;
   for (let i = 0; i < nn * 2; i++) {
-    const a = a0 + (i / (nn * 2)) * Math.PI * 2, k = i % 2 ? 0.84 + r() * 0.05 : 1.02 + r() * 0.06;
+    const a = a0 + (i / (nn * 2)) * Math.PI * 2 + (r() - 0.5) * 0.15, k = i % 2 ? 0.82 + r() * 0.06 : 1.0 + r() * 0.07;
     pts.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k]);
   }
-  return blob(pts, 0.75);
+  return blob(pts, 0.6);
+}
+/**
+ * Desgaste: oclusão no pé da parede, manchas de sujeira, arranhões e escorridos, recortados em d.
+ * Dá peso e idade às superfícies (o que tira o ar de brinquedo novo).
+ */
+export function desgaste(d, x, y, w, h, seed = 1, { forca = 1, escorrido = true } = {}) {
+  const r = rnd(seed);
+  const g = kid('ao');
+  let s = `<defs><linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0610" stop-opacity="${0.28 * forca}"/><stop offset="0.12" stop-color="#0a0610" stop-opacity="0"/><stop offset="0.75" stop-color="#0a0610" stop-opacity="0"/><stop offset="1" stop-color="#0a0610" stop-opacity="${0.4 * forca}"/></linearGradient></defs>`;
+  s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#${g})"/>`;
+  for (let i = 0; i < (w * h) / 500; i++) {
+    const mx = x + r() * w, my = y + r() * h;
+    s += `<ellipse cx="${f1(mx)}" cy="${f1(my)}" rx="${f1(2 + r() * 7)}" ry="${f1(1 + r() * 3)}" fill="${r() < 0.75 ? '#1a1018' : '#5a4a30'}" opacity="${f1((0.06 + r() * 0.1) * forca)}"/>`;
+  }
+  for (let i = 0; i < (w * h) / 900; i++) {
+    const mx = x + r() * w, my = y + r() * h;
+    s += `<path d="M${f1(mx)},${f1(my)} l${f1(2 + r() * 5)},${f1((r() - 0.5) * 2)}" stroke="#fff" stroke-width="0.6" opacity="${f1(0.12 * forca)}"/>`;
+  }
+  if (escorrido) for (let i = 0; i < w / 30; i++) {
+    const mx = x + r() * w, my = y + r() * h * 0.4;
+    s += `<path d="M${f1(mx - 1.5)},${f1(my)} q1.5,${f1(8 + r() * 16)} 3,0Z" fill="#1a1018" opacity="${f1(0.18 * forca)}"/>`;
+  }
+  return recorte(d, s);
 }
 export const cachos = (l, seed = 1) => l.map(([x, y, rx, ry]) => cachoD(x, y, rx, ry ?? rx, seed)).join(' ');
 
@@ -165,7 +195,7 @@ export function tufo(x, y, cor = '#5fae3c', seed = 1, esc = 1) {
   return s;
 }
 /** Janela acesa. tipo: 'ret' | 'arco' | 'redonda'. Devolve { s, e }. */
-export function janela(x, y, w, h, { tipo = 'ret', moldura = '#7a4a2a', quente = ['#fff2a8', '#ffc24a', '#ff8a2a'], cruz = true, vidroD = null, haloCor = '#ffb040', haloR = 1.1 } = {}) {
+export function janela(x, y, w, h, { tipo = 'ret', moldura = '#7a4a2a', quente = ['#ffe9b0', '#f2b44c', '#cf7630'], cruz = true, vidroD = null, haloCor = '#e89a40', haloR = 1.1 } = {}) {
   const cx = x + w / 2, cy = y + h / 2;
   const forma = (m) => tipo === 'redonda' ? elipse(cx, cy, w / 2 + m, h / 2 + m)
     : tipo === 'arco' ? `M${x - m},${y + h + m} V${y + w / 2} A${w / 2 + m},${w / 2 + m} 0 0 1 ${x + w + m},${y + w / 2} V${y + h + m}Z`
@@ -197,7 +227,7 @@ export function texto(x, y, t, size, fill, { stroke = TINTA, sw = null, ls = 0, 
   return `<text x="${x}" y="${y}" font-family="${fonte}" font-weight="${peso}" font-size="${size}" letter-spacing="${ls}" text-anchor="${anchor}" fill="${fill}" stroke="${stroke}" stroke-width="${sw ?? size * 0.2}" stroke-linejoin="round" paint-order="stroke" opacity="${op}"${tr ? ` transform="${tr}"` : ''}>${t}</text>`;
 }
 /** Lanterna de vidro pendurada (topo do gancho em x, y). Devolve { s, e }. */
-export function lanterna(x, y, { metal = '#3a3240', luzc = ['#fff4b0', '#ffc24a', '#ff8a2a'], haloCor = '#ffb040', esc = 1, haloR = 26 } = {}) {
+export function lanterna(x, y, { metal = '#3a3240', luzc = ['#ffe9b0', '#f2b44c', '#cf7630'], haloCor = '#e89a40', esc = 1, haloR = 26 } = {}) {
   const k = esc, w = 10 * k, h = 14 * k, gy = y + 6 * k;
   const [dg, url] = degrade(luzc);
   let s = `<path d="M${x},${y} v${3 * k}" stroke="${TINTA}" stroke-width="${1.4 * k}"/>`;
@@ -242,16 +272,71 @@ export function chapa(x, y, w, h, cor = '#5d6470', o = {}) {
   return s;
 }
 /** Cano horizontal ou vertical com anéis. */
-export function canoH(x, y, w, esp, cor = '#d9742a', aneis = []) {
+export function canoH(x, y, w, esp, cor = '#a8582a', aneis = []) {
   let s = cel(retRed(x, y - esp / 2, w, esp, esp * 0.3), cor, { s: esp * 0.3, l: esp * 0.18, w: 1.8 });
-  s += `<rect x="${x + 2}" y="${f1(y - esp * 0.3)}" width="${w - 4}" height="${f1(esp * 0.14)}" fill="#fff" opacity="0.35" rx="1"/>`;
+  s += `<rect x="${x + 2}" y="${f1(y - esp * 0.3)}" width="${w - 4}" height="${f1(esp * 0.14)}" fill="#fff" opacity="0.15" rx="1"/>`;
   for (const a of aneis) s += cel(retRed(a - 2.5, y - esp / 2 - 1.8, 5, esp + 3.6, 1.2), sombra(cor, 0.1), { s: 1.4, l: 1, w: 1.5 }) + rebite(a, y, 0.9);
   return s;
 }
-export function canoV(x, y, h, esp, cor = '#d9742a', aneis = []) {
+export function canoV(x, y, h, esp, cor = '#a8582a', aneis = []) {
   let s = cel(retRed(x - esp / 2, y, esp, h, esp * 0.3), cor, { s: esp * 0.3, l: esp * 0.18, w: 1.8 });
-  s += `<rect x="${f1(x - esp * 0.3)}" y="${y + 2}" width="${f1(esp * 0.14)}" height="${h - 4}" fill="#fff" opacity="0.35" rx="1"/>`;
+  s += `<rect x="${f1(x - esp * 0.3)}" y="${y + 2}" width="${f1(esp * 0.14)}" height="${h - 4}" fill="#fff" opacity="0.15" rx="1"/>`;
   for (const a of aneis) s += cel(retRed(x - esp / 2 - 1.8, a - 2.5, esp + 3.6, 5, 1.2), sombra(cor, 0.1), { s: 1.4, l: 1, w: 1.5 }) + rebite(x, a, 0.9);
   return s;
 }
-export { blob, brilho, cel, contorno, curva, elipse, halo, luz, mistura, retRed, rnd, sombra, traco };
+/** Janela sem luz elétrica: vidro escuro e, se vela = true, uma vela no peitoril com brilho fraco. */
+export function janelaVela(x, y, w, h, { tipo = 'ret', moldura = '#523424', vela = true, cruz = true } = {}) {
+  const j = janela(x, y, w, h, { tipo, moldura, quente: ['#3e3436', '#2a2028', '#1c141c'], cruz, haloR: 0.01 });
+  let s = j.s, e = '';
+  if (vela) {
+    const cx = x + w * 0.5 + (cruz ? w * 0.2 : 0), by = y + h - 2;
+    const [dg, url] = degrade(['#8a5a3a', '#4a2e24', '#2a1c1c']);
+    s += dg + recorte(tipo === 'redonda' ? elipse(x + w / 2, y + h / 2, w / 2, h / 2) : ret(x, y, w, h), `<ellipse cx="${cx}" cy="${by - 4}" rx="${w * 0.55}" ry="${h * 0.45}" fill="${url}" opacity="0.8"/>`);
+    s += `<rect x="${cx - 1.6}" y="${by - 7}" width="3.2" height="7" fill="#d8ccb4" stroke="${TINTA}" stroke-width="0.7"/><path d="M${cx},${by - 8} q-1.6,-2.4 0,-4.6 q1.6,2.2 0,4.6Z" fill="#f0b048"/>`;
+    e = halo(cx, by - 9, Math.max(w, h) * 0.7, '#e08a3a', 0.45) + `<path d="M${cx},${by - 8} q-1.6,-2.4 0,-4.6 q1.6,2.2 0,4.6Z" fill="#ffd890"/>`;
+  }
+  return { s, e };
+}
+/** Tábuas pregadas atravessadas (janela tapada, conserto). */
+export function tabuasPregadas(x, y, w, h, seed = 1, cor = '#6a4a34') {
+  const r = rnd(seed);
+  let s = '';
+  const n = Math.max(2, Math.round(h / 10));
+  for (let i = 0; i < n; i++) {
+    const yy = y + (i + 0.5) * (h / n) + (r() - 0.5) * 3, ang = (r() - 0.5) * 16, th = 6 + r() * 2;
+    const c = mistura(cor, r() < 0.5 ? luz(cor, 0.15) : sombra(cor, 0.15), r());
+    s += `<g transform="rotate(${f1(ang)} ${f1(x + w / 2)} ${f1(yy)})">` + cel(ret(x - 4, yy - th / 2, w + 8, th), c, { s: 1.6, l: 1, w: 1.4, gradiente: false }) +
+      traco(`M${x},${f1(yy - 0.5)} h${w * 0.7}`, sombra(c, 0.3), 0.7, 0.8) + prego(x - 1, yy, 1) + prego(x + w + 1, yy, 1) + '</g>';
+  }
+  return s;
+}
+/** Arame farpado: dois fios torcidos com farpas, ao longo da curva pts. */
+export function arame(pts, seed = 1, cor = '#5a5658') {
+  const r = rnd(seed);
+  let s = traco(curva(pts), '#1a1418', 2.2) + traco(curva(pts.map(([x, y], i) => [x, y + (i % 2 ? 1.2 : -1.2)])), cor, 0.9) + traco(curva(pts), cor, 0.9);
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [x0, y0] = pts[i], [x1, y1] = pts[i + 1];
+    for (let t = 0.25; t < 1; t += 0.5) {
+      const x = x0 + (x1 - x0) * t, y = y0 + (y1 - y0) * t, a = r() * 3;
+      s += `<path d="M${f1(x - 2.2)},${f1(y - 2.2 + a * 0.3)} L${f1(x + 2.2)},${f1(y + 2.2)} M${f1(x + 2.2)},${f1(y - 2.2)} L${f1(x - 2.2)},${f1(y + 2.2 - a * 0.3)}" stroke="${cor}" stroke-width="1" stroke-linecap="round"/>`;
+    }
+  }
+  return s;
+}
+/** Fio de gambiarra caído entre dois pontos (catenária). */
+export function fio(x0, y0, x1, y1, queda = 10, cor = '#1c1820', w = 1.2) {
+  return traco(`M${f1(x0)},${f1(y0)} Q${f1((x0 + x1) / 2)},${f1(Math.max(y0, y1) + queda)} ${f1(x1)},${f1(y1)}`, cor, w);
+}
+/** Mancha de fuligem / queimado (decal escuro e difuso). */
+export function fuligem(cx, cy, rx, ry, op = 0.55) {
+  const g = kid('fu');
+  return `<defs><radialGradient id="${g}"><stop offset="0" stop-color="#0c080c" stop-opacity="${op}"/><stop offset="0.55" stop-color="#1a1214" stop-opacity="${op * 0.6}"/><stop offset="1" stop-color="#1a1214" stop-opacity="0"/></radialGradient></defs><ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="url(#${g})"/>`;
+}
+/** Etiqueta de preço remarcada: número antigo riscado e o novo, maior, escrito à mão em cima. */
+export function etiqueta(x, y, velho, novo, cor = '#d8ccb4') {
+  return cel(poli([[x, y], [x + 16, y], [x + 18, y + 5], [x + 16, y + 10], [x, y + 10]]), cor, { s: 1.2, l: 0.8, w: 1 }) +
+    `<circle cx="${x + 14.5}" cy="${y + 5}" r="1" fill="${TINTA}"/>` +
+    texto(x + 6.5, y + 4.6, velho, 3.8, '#5a5458', { sw: 0, fonte: 'Arial,sans-serif', peso: 700 }) + traco(`M${x + 2},${y + 3.6} h9`, '#8a2a24', 0.8) +
+    texto(x + 7.5, y + 9.6, novo, 4.8, '#8a2a24', { sw: 0, fonte: "'Segoe Print',Arial,sans-serif", peso: 700, rot: -6 });
+}
+export { blob, contorno, curva, elipse, halo, luz, mistura, retRed, rnd, sombra, traco };

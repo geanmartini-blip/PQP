@@ -190,7 +190,15 @@ O registro completo está em `decisoes/fase5-masmorra.md`. Os pontos principais:
 - **Partículas:** vaga-lumes, pétalas, vapor, névoa na cascata e faíscas do neon.
 - **Cena:** abre em `/teste-cartoon.html`, com o código em `packages/client/src/testeCartoon/`. A cena
   em pixel art (`/teste-visual.html`) ficou como histórico.
-- **Sugestão (não está nos docs):** os textos de piada nas peças. São "CÁPSULA R$ 999/h",
+- **Tom (revisão do usuário):** a primeira versão cartoon ficou "muito meme, tipo Club Penguin".
+  - **Fundo:** sério. Há uma guerra, e os dois lados sofrem com falta de energia e carestia. Isso
+    aparece no cenário: neon com letras mortas, velas, postes quebrados, gambiarra de fios, geradores,
+    sacos de areia, posto de controle, prateleiras vazias e preço remarcado.
+  - **Luz:** lampiões e neon apagados ou falhando (`energia` no layout), fumaça ao longe, fuligem e
+    brasas no ar.
+  - **Bonecos:** proporção adulta e paleta madura. O humor flui natural nos detalhes de cada um (recibos
+    no bolso, headset com fita, bateria no fim, sacola de troca), sem cota de piada.
+- **Sugestão (não está nos docs), na primeira versão cartoon:** os textos de piada nas peças. São "CÁPSULA R$ 999/h",
   "PREÇO DINÂMICO +37%", "TAXA 30%", "SCORE 742", "SOMOS UMA FAMÍLIA *sujeito a meta",
   "ASSEMBLEIA HOJE!!" e "100% MACHO".
 

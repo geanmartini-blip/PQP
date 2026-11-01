@@ -18,6 +18,8 @@ export interface Peca {
   luz?: [number, number, number, number, number];
   /** sem sombra projetada (peças planas no chão) */
   plana?: boolean;
+  /** falta de energia: luz apagada (sem luz nem brilho) ou piscando */
+  energia?: 'apagado' | 'pisca';
 }
 
 const LAMP_E: Peca['luz'] = [0, -100, 170, 0xffa040, 1.6];
@@ -42,7 +44,7 @@ const FIXAS: Peca[] = [
   { k: 'banca_roxa_fundo', x: 350, y: 1240, z: -50, bloqueia: [-70, -40, 140, 40] },
   { k: 'banca_roxa_frente', x: 350, y: 1241 },
   { k: 'vasos_ervas', x: 430, y: 1250 },
-  { k: 'lampiao_madeira', x: 430, y: 1160, luz: LAMP_E },
+  { k: 'lampiao_madeira', x: 430, y: 1160, luz: LAMP_E, energia: 'apagado' },
   { k: 'rochedo', x: 80, y: 1060 },
   { k: 'troncos', x: 120, y: 1290 },
   { k: 'cerca_madeira', x: 200, y: 1330 },
@@ -52,11 +54,11 @@ const FIXAS: Peca[] = [
   { k: 'totem_raizes', x: 60, y: 1380, luz: [0, -60, 110, 0x70ffb0, 0.6] },
   // ---------- Direita ----------
   { k: 'predio_alto', x: 920, y: 760 },
-  { k: 'predio_neon', x: 760, y: 900, bloqueia: [-125, -70, 250, 70], luz: [0, -150, 240, 0xff40d0, 1.2] },
+  { k: 'predio_neon', x: 760, y: 900, bloqueia: [-125, -70, 250, 70], luz: [0, -150, 240, 0xff40d0, 1.0], energia: 'pisca' },
   { k: 'tubo_ciano', x: 640, y: 905, luz: [0, -45, 110, 0x40f0ff, 1.4] },
-  { k: 'tubo_ciano', x: 896, y: 915, luz: [0, -45, 110, 0x40f0ff, 1.4] },
-  { k: 'lampiao_metal', x: 622, y: 970, luz: LAMP_D },
-  { k: 'lampiao_metal', x: 622, y: 1160, luz: LAMP_D },
+  { k: 'tubo_ciano', x: 896, y: 915, luz: [0, -45, 110, 0x40f0ff, 1.4], energia: 'apagado' },
+  { k: 'lampiao_metal', x: 622, y: 970, luz: LAMP_D, energia: 'pisca' },
+  { k: 'lampiao_metal', x: 622, y: 1160, luz: LAMP_D, energia: 'apagado' },
   { k: 'poca_neon', x: 730, y: 1040, plana: true },
   { k: 'bueiro', x: 820, y: 1000, plana: true },
   { k: 'painel_holograma', x: 940, y: 1050 },
@@ -76,6 +78,26 @@ const FIXAS: Peca[] = [
   { k: 'oficina_neon', x: 820, y: 1520, bloqueia: [-115, -60, 230, 60] },
   { k: 'cano', x: 660, y: 1380 },
   { k: 'lampiao_metal', x: 622, y: 1400, luz: LAMP_D },
+  // ---------- guerra e escassez (os dois lados) ----------
+  { k: 'posto_controle', x: 700, y: 958 },
+  { k: 'sacos_areia', x: 640, y: 1072 },
+  { k: 'barricada', x: 410, y: 960 },
+  { k: 'sacos_areia', x: 405, y: 1075 },
+  { k: 'holofote', x: 615, y: 940 },
+  { k: 'gerador', x: 880, y: 975, luz: [0, -30, 60, 0xff3020, 0.6] },
+  { k: 'baterias', x: 945, y: 990 },
+  { k: 'painel_solar_quebrado', x: 960, y: 1110 },
+  { k: 'gambiarra_fios', x: 860, y: 1080, luz: [-20, -40, 70, 0xffc070, 0.6], energia: 'pisca' },
+  { k: 'fila_marcada', x: 790, y: 1215, plana: true },
+  { k: 'caixotes_vazios', x: 700, y: 1170 },
+  { k: 'entulho', x: 930, y: 1360 },
+  { k: 'arame_farpado', x: 828, y: 1312 },
+  { k: 'fuligem_marca', x: 700, y: 1400, plana: true },
+  { k: 'poste_quebrado', x: 622, y: 1270 },
+  { k: 'panela_comunitaria', x: 215, y: 1000, luz: [0, -20, 90, 0xff8030, 1.0] },
+  { k: 'caixotes_vazios', x: 140, y: 960 },
+  { k: 'entulho', x: 90, y: 1200 },
+  { k: 'arame_farpado', x: 330, y: 1332 },
 ];
 
 // enfeites espalhados na grama da Esquerda

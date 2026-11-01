@@ -36,9 +36,9 @@ const CSS = `
 #hud .bt .rec { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(#000a var(--p), transparent 0); }
 #hud .bt .num { position: absolute; font-size: 22px; color: #fff; text-shadow: 2px 2px 0 #000; }
 #hud .bt.esp { width: 78px; height: 78px; right: 0; bottom: 0; border-color: #ffd860;
-  background: radial-gradient(circle at 45% 40%, #3a6a8a, #0e1a2a 75%); animation: brilho 1.2s ease-in-out infinite alternate; }
+  background: radial-gradient(circle at 45% 40%, #2a4256, #0e141c 75%); animation: brilho 1.2s ease-in-out infinite alternate; }
 #hud .bt.esp img { width: 60px; height: 60px; }
-@keyframes brilho { from { box-shadow: 0 0 0 2px #2a1c0c, 0 0 8px 2px #ffd86088, 0 3px 0 2px #0009; } to { box-shadow: 0 0 0 2px #2a1c0c, 0 0 22px 8px #ffe080cc, 0 3px 0 2px #0009; } }
+@keyframes brilho { from { box-shadow: 0 0 0 2px #2a1c0c, 0 0 8px 2px #ffd86088, 0 3px 0 2px #0009; } to { box-shadow: 0 0 0 2px #2a1c0c, 0 0 16px 5px #ffe08099, 0 3px 0 2px #0009; } }
 #hud .bt.item { width: 44px; height: 44px; }
 #hud .bt.item img { width: 34px; height: 34px; }
 #hud .bt .qtd { position: absolute; right: -2px; bottom: -4px; font-size: 12px; background: #1a0c0e; border: 1px solid #c9a24a; border-radius: 6px; padding: 0 3px; }

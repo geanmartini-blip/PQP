@@ -22,7 +22,7 @@ const DPR = Math.min(3, Number(q.get('dpr')) || window.devicePixelRatio || 1);
 // [hora, ambiente, força das luzes]
 const CEU: [number, number, number][] = [
   [0, 0x343a70, 1.3], [5, 0x444478, 1.2], [7, 0xc8c0d8, 0.4], [10, 0xffffff, 0.2], [15, 0xfff8ec, 0.25],
-  [17.5, 0xffe2c4, 0.55], [18.6, 0xf2c8b4, 0.85], [19.6, 0xa090c0, 1.05], [21, 0x50548c, 1.25], [24, 0x343a70, 1.3],
+  [17.5, 0xf0d4b8, 0.6], [18.6, 0xd8b0a4, 0.9], [19.6, 0xa090c0, 1.05], [21, 0x50548c, 1.25], [24, 0x343a70, 1.3],
 ];
 function ceu(h: number) {
   h = ((h % 24) + 24) % 24;
@@ -35,7 +35,14 @@ function ceu(h: number) {
 }
 
 type Manif = Record<string, InfoPeca>;
-interface Luz { l: Phaser.GameObjects.Light; i: number; fase: number }
+interface Luz { l: Phaser.GameObjects.Light; i: number; fase: number; pisca?: boolean }
+/** Luz que falha: quase sempre acesa, com quedas curtas e irregulares (rede elétrica no limite). */
+function falha(t: number, fase: number): number {
+  const s = Math.sin(t / 900 + fase * 7) + Math.sin(t / 370 + fase * 3);
+  if (s > 1.55) return 0.08;
+  if (s > 1.35) return (Math.floor(t / 60) % 2) ? 0.2 : 1;
+  return 1;
+}
 
 class Ponte extends Phaser.Scene {
   info: Manif = {};
@@ -47,6 +54,7 @@ class Ponte extends Phaser.Scene {
   keys!: Record<string, Phaser.Input.Keyboard.Key>;
   luzes: Luz[] = [];
   emissivos: Phaser.GameObjects.Image[] = [];
+  piscantes: { e: Phaser.GameObjects.Image; fase: number }[] = [];
   bloqueios: Phaser.Geom.Rectangle[] = [];
   agua!: Phaser.GameObjects.TileSprite;
   hora = Number(q.get('hora') ?? 18.6);
@@ -249,14 +257,18 @@ class Ponte extends Phaser.Scene {
         }
       }
     }
-    if (i.e && this.tem(p.k + '_e')) {
+    // falta de energia: peça apagada não acende; a que pisca falha de vez em quando
+    const fase = Math.random() * 10;
+    if (i.e && this.tem(p.k + '_e') && p.energia !== 'apagado') {
       const e = this.add.image(p.x, p.y, p.k + '_e').setOrigin(i.ax, i.ay).setScale(1 / i.escala).setDepth(d + 0.2).setBlendMode(Phaser.BlendModes.ADD).setFlipX(!!p.flip);
+      if (p.k.startsWith('pedra_runa')) e.setData('fator', 0.4);
       this.emissivos.push(e);
+      if (p.energia === 'pisca') this.piscantes.push({ e, fase });
     }
     if (p.bloqueia) this.bloqueios.push(new Phaser.Geom.Rectangle(p.x + p.bloqueia[0], p.y + p.bloqueia[1], p.bloqueia[2], p.bloqueia[3]));
-    if (p.luz) {
+    if (p.luz && p.energia !== 'apagado') {
       const [dx, dy, r, c, int] = p.luz;
-      this.luzes.push({ l: this.lights.addLight(p.x + (p.flip ? -dx : dx), p.y + dy, r, c, int), i: int, fase: Math.random() * 10 });
+      this.luzes.push({ l: this.lights.addLight(p.x + (p.flip ? -dx : dx), p.y + dy, r, c, int), i: int, fase, pisca: p.energia === 'pisca' });
     }
     return img;
   }
@@ -285,15 +297,29 @@ class Ponte extends Phaser.Scene {
   }
 
   particulas() {
-    // vaga-lumes na Esquerda
+    // guerra ao fundo: colunas de fumaça escura longe, fuligem no ar e brasas subindo
+    for (const [x, y] of [[90, 420], [960, 330], [700, 120]] as const)
+      this.add.particles(x, y, 'fumaca', {
+        x: { min: -20, max: 20 }, lifespan: 9000, frequency: 260, speedY: { min: -30, max: -18 }, speedX: { min: 6, max: 16 },
+        scale: { start: 1.2, end: 4.5 }, alpha: { start: 0.5, end: 0 }, tint: 0x2a2630,
+      }).setDepth(7000);
     this.add.particles(0, 0, 'ponto', {
-      x: { min: 20, max: 440 }, y: { min: 650, max: 1500 }, lifespan: 4200, frequency: 120, quantity: 1,
+      x: { min: 0, max: 1000 }, y: { min: 500, max: 1600 }, lifespan: 7000, frequency: 70,
+      speedX: { min: 8, max: 22 }, speedY: { min: 4, max: 14 }, scale: { min: 0.08, max: 0.16 }, alpha: { start: 0.55, end: 0 }, tint: 0x2e2a30,
+    }).setDepth(8002);
+    this.add.particles(0, 0, 'ponto', {
+      x: { min: 0, max: 1000 }, y: { min: 700, max: 1700 }, lifespan: 3000, frequency: 600,
+      speedX: { min: 4, max: 16 }, speedY: { min: -40, max: -20 }, scale: { start: 0.18, end: 0 }, tint: [0xff8a3a, 0xffc060], blendMode: 'ADD',
+    }).setDepth(8003);
+    // poucos vaga-lumes na Esquerda (a vida que resiste)
+    this.add.particles(0, 0, 'ponto', {
+      x: { min: 20, max: 440 }, y: { min: 650, max: 1500 }, lifespan: 4200, frequency: 450, quantity: 1,
       speedX: { min: -8, max: 8 }, speedY: { min: -12, max: 4 }, scale: { start: 0.35, end: 0.15 },
       alpha: { start: 0, end: 0, ease: (t: number) => Math.sin(t * Math.PI) }, tint: [0xd8ff70, 0xa8ff9a, 0xfff08a], blendMode: 'ADD',
     }).setDepth(8000);
     // pétalas da árvore roxa
     this.add.particles(230, 900, 'petala', {
-      x: { min: -90, max: 90 }, y: { min: -40, max: 20 }, lifespan: 5000, frequency: 260, speedX: { min: 6, max: 22 }, speedY: { min: 10, max: 22 },
+      x: { min: -90, max: 90 }, y: { min: -40, max: 20 }, lifespan: 5000, frequency: 900, speedX: { min: 6, max: 22 }, speedY: { min: 10, max: 22 },
       rotate: { min: 0, max: 360 }, scale: { min: 0.7, max: 1 }, alpha: { start: 1, end: 0 },
     }).setDepth(8001);
     // vapor dos prédios e do bueiro
@@ -323,9 +349,10 @@ class Ponte extends Phaser.Scene {
   aplicarCeu(t: number) {
     const { amb, luz } = ceu(this.hora);
     this.lights.setAmbientColor(amb);
-    for (const L of this.luzes) L.l.intensity = L.i * luz * (1 + Math.sin(t / 170 + L.fase) * 0.04 + Math.sin(t / 53 + L.fase * 3) * 0.03);
+    for (const L of this.luzes) L.l.intensity = L.i * luz * (1 + Math.sin(t / 170 + L.fase) * 0.04 + Math.sin(t / 53 + L.fase * 3) * 0.03) * (L.pisca ? falha(t, L.fase) : 1);
     const a = Math.min(0.8, 0.4 + luz * 0.4);
-    for (const e of this.emissivos) e.setAlpha(a);
+    for (const e of this.emissivos) e.setAlpha(a * ((e.getData('fator') as number | undefined) ?? 1));
+    for (const p of this.piscantes) p.e.setAlpha(a * falha(t, p.fase));
     this.hud?.setHora(this.hora);
   }
 

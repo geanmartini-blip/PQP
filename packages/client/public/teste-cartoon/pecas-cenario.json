@@ -12,7 +12,7 @@
   "h": 150,
   "ax": 0.5,
   "ay": 1,
-  "e": true,
+  "e": false,
   "escala": 3
  },
  "banca_roxa_frente": {
@@ -260,7 +260,7 @@
   "h": 44,
   "ax": 0.5,
   "ay": 1,
-  "e": true,
+  "e": false,
   "escala": 3
  },
  "barril_madeira": {
@@ -413,6 +413,142 @@
   "ax": 0.5,
   "ay": 1,
   "e": false,
+  "escala": 3
+ },
+ "sacos_areia": {
+  "w": 96,
+  "h": 46,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "barricada": {
+  "w": 120,
+  "h": 74,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "gerador": {
+  "w": 86,
+  "h": 66,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "posto_controle": {
+  "w": 132,
+  "h": 152,
+  "ax": 0.3939393939393939,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "holofote": {
+  "w": 44,
+  "h": 74,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "lona_remendo": {
+  "w": 84,
+  "h": 52,
+  "ax": 0.5,
+  "ay": 0.5,
+  "e": false,
+  "escala": 3
+ },
+ "entulho": {
+  "w": 88,
+  "h": 46,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "fila_marcada": {
+  "w": 130,
+  "h": 34,
+  "ax": 0.5,
+  "ay": 0.5,
+  "e": false,
+  "escala": 3
+ },
+ "painel_solar_quebrado": {
+  "w": 74,
+  "h": 64,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "poste_quebrado": {
+  "w": 40,
+  "h": 132,
+  "ax": 0.35,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "baterias": {
+  "w": 66,
+  "h": 48,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "gambiarra_fios": {
+  "w": 172,
+  "h": 66,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "caixotes_vazios": {
+  "w": 78,
+  "h": 54,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "fuligem_marca": {
+  "w": 92,
+  "h": 62,
+  "ax": 0.5,
+  "ay": 0.5,
+  "e": false,
+  "escala": 3
+ },
+ "tabuas_janela": {
+  "w": 48,
+  "h": 46,
+  "ax": 0.5,
+  "ay": 0.5,
+  "e": false,
+  "escala": 3
+ },
+ "arame_farpado": {
+  "w": 64,
+  "h": 30,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "panela_comunitaria": {
+  "w": 70,
+  "h": 60,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
   "escala": 3
  }
 }
