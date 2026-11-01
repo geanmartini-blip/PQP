@@ -134,6 +134,19 @@ export class InterpBuffer {
   }
 }
 
+// SUGESTÃO: a entrada do jogador espera ~1 tick na fila do servidor antes de andar.
+export const INPUT_QUEUE_TICKS = 1;
+
+/**
+ * Tick (fracionário) do servidor em que uma entrada feita agora vai andar: o "agora" estimado do
+ * servidor (serverNow, que é a hora do último snapshot, uma ida atrás) + uma ida de volta e uma de
+ * ida (≈ RTT) + a espera na fila. É o tempo em que o próprio boneco previsto está desenhado, então
+ * os avisos no chão são desenhados nele: o círculo enche junto com a chance real de sair dele.
+ */
+export function actionTick(serverNowMs: number, rttMs: number, queueTicks = INPUT_QUEUE_TICKS): number {
+  return (serverNowMs + Math.max(0, rttMs)) / TICK_MS + queueTicks;
+}
+
 // SUGESTÃO: peso da média móvel do relógio do servidor (0,1 = segue em ~10 snapshots).
 const CLOCK_ALPHA = 0.1;
 // SUGESTÃO: diferença maior que isto (ms) faz o relógio pular direto (reconexão, aba voltando).

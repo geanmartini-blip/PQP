@@ -3,7 +3,8 @@
  *
  * Ambiente:
  * - PORT (padrão 2567) e HOST (padrão 0.0.0.0, para o celular na rede local);
- * - PQP_LAG_MS, PQP_LOSS, PQP_JITTER_MS, PQP_NET_SEED: rede ruim simulada (ver netsim.ts);
+ * - PQP_LAG_MS, PQP_LOSS, PQP_LOSS_MODE (travada | descarte), PQP_STALL_MS, PQP_JITTER_MS,
+ *   PQP_NET_SEED: rede ruim simulada (ver netsim.ts; por padrão a perda vira travada, como no TCP);
  * - PQP_COMPANHEIRO=1: cada jogador ganha um companheiro de IA;
  * - PQP_SEED: semente do mundo;
  * - SUPABASE_URL e SUPABASE_SERVICE_KEY: usa o Supabase; senão grava em .data/players.json;

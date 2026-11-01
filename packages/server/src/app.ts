@@ -69,10 +69,29 @@ export async function startServer(opts: StartOptions = {}): Promise<Running> {
         res.json({ ok: true, store: store.kind, uptimeS: Math.round(process.uptime()), rooms });
       });
       if (serveClient) {
-        app.use(express.static(dist, { index: 'index.html', maxAge: '1h' }));
-        // volta para o index.html (rotas do cliente); a API do Colyseus responde antes daqui
+        // index.html sempre revalida (aponta para os assets do build atual); os assets do Vite
+        // levam hash no nome e podem ficar no cache para sempre; o resto, 1 h
+        app.use(
+          express.static(dist, {
+            index: 'index.html',
+            setHeaders: (res, filePath) => {
+              const rel = path.relative(dist, filePath).split(path.sep).join('/');
+              if (rel === 'index.html' || rel.endsWith('.html')) res.setHeader('Cache-Control', 'no-cache');
+              else if (rel.startsWith('assets/')) res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+              else res.setHeader('Cache-Control', 'public, max-age=3600');
+            },
+          }),
+        );
+        // volta para o index.html (rotas do cliente); a API do Colyseus responde antes daqui.
+        // Arquivo que não existe (caminho com extensão ou em /assets/) responde 404: um build novo
+        // apagou o JS velho e o navegador não pode receber HTML no lugar do script.
         app.use((req, res, next) => {
           if (req.method !== 'GET' || req.path.startsWith('/matchmake')) return next();
+          if (req.path.startsWith('/assets/') || path.posix.extname(req.path) !== '') {
+            res.status(404).type('text/plain; charset=utf-8').send('não encontrado');
+            return;
+          }
+          res.setHeader('Cache-Control', 'no-cache');
           res.sendFile(path.join(dist, 'index.html'));
         });
       } else {

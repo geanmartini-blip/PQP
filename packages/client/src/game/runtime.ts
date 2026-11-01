@@ -1,11 +1,13 @@
 /**
  * Objetos que as cenas compartilham: configuração, cliente de rede, gerador de arte e dicas.
  * Criado uma vez na BootScene.
+ *
+ * O servidor local (?offline=1) entra por import() dinâmico: quem joga online não baixa nem analisa
+ * o LocalServer.
  */
 import type { ArtApi } from '../art/contract';
 import type { ClientConfig } from '../config';
 import { ColyseusTransport } from '../net/colyseusTransport';
-import { LocalTransport } from '../net/localTransport';
 import { LaggedTransport, type Transport } from '../net/transport';
 import { Tips } from '../ui/tips';
 import { GameClient, type StorageLike } from './GameClient';
@@ -52,17 +54,31 @@ export function browserStorage(): StorageLike | undefined {
   }
 }
 
-export function createRuntime(cfg: ClientConfig, art: ArtApi): Runtime {
+/** Transporte de base: Colyseus, ou o servidor local (carregado só no modo offline). */
+export async function makeBaseTransport(cfg: ClientConfig, joinOptions: () => Record<string, unknown>): Promise<Transport> {
+  if (cfg.offline) {
+    const m = await import('../net/localTransport');
+    return new m.LocalTransport();
+  }
+  return new ColyseusTransport(cfg.endpoint, joinOptions);
+}
+
+/**
+ * Cria o runtime. `base` é o transporte já pronto (makeBaseTransport); sem ele, usa o Colyseus.
+ * `joinRef` recebe o GameClient para as opções do joinOrCreate do Colyseus.
+ */
+export function createRuntime(cfg: ClientConfig, art: ArtApi, base?: Transport, joinRef?: { gc?: GameClient }): Runtime {
   const storage = browserStorage();
-  let gc: GameClient | undefined;
-  const base: Transport = cfg.offline ? new LocalTransport() : new ColyseusTransport(cfg.endpoint, () => gc?.joinOptions() ?? {});
-  const transport = LaggedTransport.wrapIfNeeded(base, { lagMs: cfg.lag, jitterMs: cfg.jitter, loss: cfg.loss });
-  gc = new GameClient(transport, {
+  const ref = joinRef ?? {};
+  const t: Transport = base ?? new ColyseusTransport(cfg.endpoint, () => ref.gc?.joinOptions() ?? {});
+  const transport = LaggedTransport.wrapIfNeeded(t, { lagMs: cfg.lag, jitterMs: cfg.jitter, loss: cfg.loss });
+  const gc = new GameClient(transport, {
     ...(cfg.name ? { name: cfg.name } : {}),
     ...(cfg.archetypeId ? { archetypeId: cfg.archetypeId } : {}),
     storage,
     now: () => performance.now(),
   });
+  ref.gc = gc;
   current = { cfg, gc, art, tips: new Tips(storage), storage, offline: cfg.offline };
   return current;
 }

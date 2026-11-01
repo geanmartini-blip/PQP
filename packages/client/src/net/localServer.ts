@@ -4,11 +4,19 @@
  * testes de previsão com atraso. Não substitui o servidor autoritativo: é um espelho simplificado
  * dele para um jogador só.
  *
- * Regras de rede que ele segue (iguais às que o cliente espera do servidor):
- * - entradas numa fila, uma por tick (ack = última seq aplicada);
- * - comandos com id maior que o último processado (cack), na ordem;
+ * Regras de rede que ele segue (as mesmas do GameServerCore, server/src/core.ts):
+ * - entradas: só seq maior que a última consumida e ainda não enfileirada, fila em ordem de seq;
+ *   uma por tick (ack = última seq aplicada); com mais de INPUT_TARGET_BACKLOG esperando, até
+ *   INPUT_CATCHUP_PER_TICK extras andam na hora, pagas por um crédito de entradas (ninguém anda
+ *   mais rápido mandando mais entradas); a fila corta as mais velhas em INPUT_QUEUE_MAX;
+ * - sem entrada por STALE_INPUT_TICKS, o joystick volta ao centro;
+ * - comandos: cada id uma vez só (cack = maior id visto, mais um conjunto dos recentes), guardados
+ *   na chegada e aplicados no tick, depois da entrada e antes do step();
  * - snapshot completo a cada tick, com d/n/lk/lv só para quem é novo (ou mudou);
- * - compensação: rewind de rtt/2, até 250 ms.
+ * - compensação: rewind de RTT + INTERP_DELAY_MS + meio tick, até 250 ms.
+ * O que o núcleo faz e este espelho não faz: entrada suposta quando a fila esvazia, comando com
+ * afterSeq, vários jogadores, persistência. O teste net.core.test.ts liga o GameClient ao núcleo de
+ * verdade.
  */
 import { findPath, getMap, type TileMap } from '@pqp/shared/map';
 import {
@@ -28,18 +36,23 @@ import {
 import {
   applyCommand,
   applyInput,
+  canMove,
   createWorld,
   entityFlags,
   hudSnapshot,
+  moveSpeedOf,
+  moveVelocity,
   spawnEnemy,
   spawnNpc,
   spawnPack,
   spawnPlayer,
   step,
+  stepMovement,
   TICK_MS,
   TICK_RATE,
   type CombatEvent,
   type Entity,
+  type PlayerCommand,
   type PlayerInput,
   type World,
 } from '@pqp/shared/sim';
@@ -52,8 +65,17 @@ export const RESPAWN_BAND_MS = 30000;
 export const RESPAWN_BOSS_MS = 60000;
 // SUGESTÃO: ala inicial do personagem template do protótipo.
 export const DEFAULT_ARCHETYPE = 'peao_brabo';
-// SUGESTÃO: fila de entradas maior que isto descarta as mais velhas (o cliente atrasou demais).
-const MAX_INPUT_BACKLOG = 4;
+// SUGESTÃO: os mesmos números do servidor (server/src/config.ts): fila alvo de 1 entrada, até 2
+// extras por tick, crédito de 1,05 por tick até 20, fila de no máximo 40, joystick ao centro depois
+// de 10 ticks sem entrada, 128 ids de comando lembrados, 16 comandos lidos por mensagem.
+export const INPUT_TARGET_BACKLOG = 1;
+export const INPUT_CATCHUP_PER_TICK = 2;
+export const INPUT_CREDIT_PER_TICK = 1.05;
+export const INPUT_CREDIT_MAX = 20;
+export const INPUT_QUEUE_MAX = 40;
+export const STALE_INPUT_TICKS = 10;
+export const RECENT_CMD_IDS = 128;
+export const MAX_CMDS_PER_MSG = 16;
 
 export type Outgoing = [string, unknown];
 
@@ -87,7 +109,12 @@ export class LocalServer {
   private spawn = { x: 1.5, y: 1.5 };
   private inputs: PlayerInput[] = [];
   private lastSeq = 0;
+  private lastInputTick = 0;
+  private credit = INPUT_CREDIT_MAX;
   private cack = 0;
+  private recent = new Set<number>();
+  private recentOrder: number[] = [];
+  private cmdQ: PlayerCommand[] = [];
   private rtt = 0;
   private known = new Set<number>();
   private sentLv = new Map<number, number>();
@@ -189,34 +216,85 @@ export class LocalServer {
 
   private onInput(m: C2S_Input): void {
     const p = this.player;
-    if (!p) return;
-    this.rtt = Math.max(0, m.rtt || 0);
-    const lastQueued = this.inputs.length > 0 ? this.inputs[this.inputs.length - 1]!.seq : this.lastSeq;
-    for (const inp of m.inputs ?? []) if (inp.seq > lastQueued && inp.seq > this.lastSeq) this.inputs.push(inp);
-    // o jogador vê os outros meia ida mais INTERP_DELAY_MS no passado (igual ao servidor de jogo)
-    const rewindTicks = Math.round(Math.min(MAX_REWIND_MS, this.rtt / 2 + INTERP_DELAY_MS) / TICK_MS);
-    for (const c of m.cmds ?? []) {
-      if (c.id <= this.cack) continue;
-      this.cack = c.id;
-      // eventos soltos pelo comando (fala do treinador, 'cast' da habilidade) saem fora do step(),
-      // que zera w.events no começo: guarda para o próximo snapshot
-      const before = this.w.events.length;
-      applyCommand(this.w, p, c, { rewindTicks });
-      for (let i = before; i < this.w.events.length; i++) this.cmdEvents.push(this.w.events[i]!);
+    if (!p || !m || typeof m !== 'object') return;
+    if (typeof m.rtt === 'number' && Number.isFinite(m.rtt)) this.rtt = Math.max(0, Math.min(2000, m.rtt));
+    // joystick: só seq maior que a última consumida e ainda não enfileirada, fila em ordem
+    if (Array.isArray(m.inputs)) {
+      const ins = m.inputs.slice(-8);
+      for (const inp of ins) {
+        if (!inp || typeof inp.seq !== 'number' || inp.seq <= this.lastSeq || this.inputs.some((q) => q.seq === inp.seq)) continue;
+        this.inputs.push({ seq: inp.seq, mx: inp.mx, my: inp.my });
+      }
+      if (ins.length > 0) this.lastInputTick = this.w.tick;
+      this.inputs.sort((a, b) => a.seq - b.seq);
+      while (this.inputs.length > INPUT_QUEUE_MAX) this.inputs.shift();
+    }
+    // comandos: cada id uma vez só; aplicados no próximo tick
+    if (Array.isArray(m.cmds)) {
+      const cmds = m.cmds.slice(0, MAX_CMDS_PER_MSG).filter((c) => c && Number.isInteger(c.id) && c.id > 0);
+      cmds.sort((a, b) => a.id - b.id);
+      for (const c of cmds) {
+        if (this.recent.has(c.id) || c.id <= this.cack - RECENT_CMD_IDS) continue;
+        this.recent.add(c.id);
+        this.recentOrder.push(c.id);
+        while (this.recentOrder.length > RECENT_CMD_IDS) this.recent.delete(this.recentOrder.shift()!);
+        if (c.id > this.cack) this.cack = c.id;
+        this.cmdQ.push(c);
+      }
     }
   }
 
-  /** Um tick do servidor: aplica uma entrada, roda a simulação e manda o snapshot. */
+  /** Anda um passo agora com o joystick (entrada extra da drenagem), como o moveNow do núcleo. */
+  private moveNow(e: Entity): void {
+    if (!canMove(e)) return;
+    const { vx, vy } = moveVelocity(e.moveIntent, moveSpeedOf(e));
+    if (vx === 0 && vy === 0) return;
+    const p = stepMovement(this.w.map, e, vx, vy, TICK_MS);
+    e.x = p.x;
+    e.y = p.y;
+  }
+
+  /** Entradas do tick: as extras da drenagem andam na hora; a do tick anda no step. */
+  private consumeInputs(p: Entity): void {
+    this.credit = Math.min(INPUT_CREDIT_MAX, this.credit + INPUT_CREDIT_PER_TICK);
+    let extra = 0;
+    while (this.inputs.length > INPUT_TARGET_BACKLOG + 1 && extra < INPUT_CATCHUP_PER_TICK && this.credit >= 2) {
+      const inp = this.inputs.shift()!;
+      applyInput(this.w, p, inp);
+      this.moveNow(p);
+      this.lastSeq = inp.seq;
+      this.credit -= 1;
+      extra++;
+    }
+    const inp = this.inputs.shift();
+    if (inp) {
+      applyInput(this.w, p, inp);
+      this.lastSeq = inp.seq;
+      this.credit -= 1;
+    } else if (this.w.tick - this.lastInputTick > STALE_INPUT_TICKS && (p.moveIntent.x !== 0 || p.moveIntent.y !== 0)) {
+      p.moveIntent = { x: 0, y: 0 };
+    }
+  }
+
+  /** Ticks de compensação, como o núcleo: RTT + atraso de interpolação + meio tick, até 250 ms. */
+  private rewindTicks(): number {
+    return Math.round(Math.min(MAX_REWIND_MS, this.rtt + INTERP_DELAY_MS + TICK_MS / 2) / TICK_MS);
+  }
+
+  /** Um tick do servidor: entrada e comandos, simulação e snapshot. */
   tick(): void {
     const p = this.player;
+    this.w.events = [];
     if (p) {
-      if (this.inputs.length > MAX_INPUT_BACKLOG) this.inputs.splice(0, this.inputs.length - 2);
-      const inp = this.inputs.shift();
-      if (inp) {
-        applyInput(this.w, p, inp);
-        this.lastSeq = inp.seq;
+      this.consumeInputs(p);
+      if (this.cmdQ.length > 0) {
+        const rewindTicks = this.rewindTicks();
+        for (const c of this.cmdQ) applyCommand(this.w, p, c, { rewindTicks });
+        this.cmdQ = [];
       }
     }
+    // eventos soltos pelos comandos (fala do treinador, 'cast') saem antes do step(), que zera w.events
+    for (const e of this.w.events) this.cmdEvents.push(e);
     const stepEv = step(this.w);
     const ev = this.cmdEvents.length > 0 ? [...this.cmdEvents, ...stepEv] : stepEv;
     this.cmdEvents = [];

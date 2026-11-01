@@ -3,9 +3,10 @@
  * estado sincronizado do Colyseus: tudo vai em mensagens (MSG) montadas pelo núcleo.
  *
  * Simulação de rede ruim pelo ambiente (ver netsim.ts): PQP_LAG_MS (RTT extra, metade em cada
- * sentido), PQP_LOSS (perda de entradas e snapshots), PQP_JITTER_MS (variação) e PQP_NET_SEED.
- * hello, welcome, ping, pong, need e info sofrem o atraso mas não a perda (o protocolo já trata a
- * perda das mensagens de tick; as de controle viajam no WebSocket, que não perde).
+ * sentido), PQP_LOSS (perda de entradas e snapshots), PQP_LOSS_MODE (travada, o padrão, como no
+ * TCP, ou descarte), PQP_STALL_MS, PQP_JITTER_MS (variação, sem embaralhar) e PQP_NET_SEED.
+ * hello, welcome, ping, pong, need e info sofrem o atraso e esperam na mesma fila em ordem do
+ * cliente, mas não sorteiam perda.
  */
 import { Room, type Client } from 'colyseus';
 import { CLOSE_CODE, MSG, type C2S_Hello, type C2S_Input, type C2S_Need, type C2S_Ping } from '@pqp/shared/net';
@@ -58,26 +59,35 @@ export class WorldRoom extends Room {
     const link: LinkConfig = { ...linkConfigFromEnv(), ...(options.link ?? {}) };
     this.inLink = new LinkSim(link, 1);
     this.outLink = new LinkSim(link, 2);
-    if (this.inLink.active) (deps.log ?? console.log)(`[mundo] rede simulada: RTT +${link.lagMs} ms, perda ${link.loss * 100}%, variação ${link.jitterMs} ms`);
+    if (this.inLink.active) (deps.log ?? console.log)(`[mundo] rede simulada: RTT +${link.lagMs} ms, perda ${link.loss * 100}% (${this.inLink.mode}), variação ${link.jitterMs} ms`);
     liveRooms.add(this);
 
+    // cada cliente tem a sua fila em ordem nos dois sentidos (chave = sessionId), como uma conexão TCP
     this.onMessage(MSG.hello, (client: Client, msg: C2S_Hello) => {
-      this.inLink.run(false, () => void this.handleHello(client, msg));
+      this.inLink.run(false, () => void this.handleHello(client, msg), client.sessionId);
     });
     this.onMessage(MSG.input, (client: Client, msg: C2S_Input) => {
-      this.inLink.run(true, () => this.core.onInput(client.sessionId, msg));
+      this.inLink.run(true, () => this.core.onInput(client.sessionId, msg), client.sessionId);
     });
     this.onMessage(MSG.ping, (client: Client, msg: C2S_Ping) => {
-      this.inLink.run(false, () => {
-        const pong = this.core.pong(msg?.t);
-        this.outLink.run(false, () => this.safeSend(client, MSG.pong, pong));
-      });
+      this.inLink.run(
+        false,
+        () => {
+          const pong = this.core.pong(msg?.t);
+          this.outLink.run(false, () => this.safeSend(client, MSG.pong, pong), client.sessionId);
+        },
+        client.sessionId,
+      );
     });
     this.onMessage(MSG.need, (client: Client, msg: C2S_Need) => {
-      this.inLink.run(false, () => {
-        const info = this.core.onNeed(client.sessionId, msg);
-        if (info.ents.length > 0) this.outLink.run(false, () => this.safeSend(client, MSG.info, info));
-      });
+      this.inLink.run(
+        false,
+        () => {
+          const info = this.core.onNeed(client.sessionId, msg);
+          if (info.ents.length > 0) this.outLink.run(false, () => this.safeSend(client, MSG.info, info), client.sessionId);
+        },
+        client.sessionId,
+      );
     });
 
     // laço de 20 Hz com acumulador: o tempo medido decide quantos ticks fixos rodam. O tempo vem
@@ -106,7 +116,7 @@ export class WorldRoom extends Room {
         const old = this.bySid.get(sid);
         if (old && old !== client) old.leave(CLOSE_CODE.outroAparelho, 'entrou em outro aparelho');
       }
-      this.outLink.run(false, () => this.safeSend(client, MSG.welcome, wel));
+      this.outLink.run(false, () => this.safeSend(client, MSG.welcome, wel), client.sessionId);
     } catch (err) {
       (deps.log ?? console.error)(`[mundo] hello falhou: ${String(err)}`);
     }
@@ -133,7 +143,7 @@ export class WorldRoom extends Room {
     }
     for (const [sid, snap] of snaps) {
       const c = this.bySid.get(sid);
-      if (c) this.outLink.run(true, () => this.safeSend(c, MSG.snap, snap));
+      if (c) this.outLink.run(true, () => this.safeSend(c, MSG.snap, snap), sid);
     }
     for (const sid of this.core.takeKicked()) {
       const c = this.bySid.get(sid);
@@ -170,6 +180,8 @@ export class WorldRoom extends Room {
   override onLeave(client: Client): void {
     this.bySid.delete(client.sessionId);
     this.core.removeClient(client.sessionId);
+    this.inLink.forget(client.sessionId);
+    this.outLink.forget(client.sessionId);
   }
 
   override async onDispose(): Promise<void> {

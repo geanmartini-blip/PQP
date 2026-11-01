@@ -12,7 +12,8 @@ import { fontText } from '../art/fx';
 import { FL } from '../game/clientWorld';
 import { DEPTH } from './depth';
 
-export type ViewKind = 'p' | 'n' | 'e' | 's' | 'l';
+import type { ViewKind } from './viewRules';
+export type { ViewKind } from './viewRules';
 
 // SUGESTÃO: cores das barras e dos nomes.
 const COLOR = {
@@ -42,7 +43,14 @@ export interface EntityViewOpts {
   label?: string;
   labelColor?: number;
   elite?: boolean;
+  /** escala inteira do rótulo (layout.worldTextScale) */
+  textScale?: number;
 }
+
+// SUGESTÃO: rótulo com mais de 10 letras sai uma escala menor (nome de elite comprido não cobre a tela).
+const LONG_LABEL_CHARS = 10;
+
+export { shouldRevive } from './viewRules';
 
 export class EntityView {
   readonly id: number;
@@ -82,6 +90,8 @@ export class EntityView {
   visible = true;
   dying = false;
   private dieAt = 0;
+  private depthY = NaN;
+  private labelText = '';
   lastSeen = 0;
 
   static colors = COLOR;
@@ -121,9 +131,28 @@ export class EntityView {
       this.setBarVisible(this.barShown);
     }
     if (o.label) {
-      this.label = scene.add.bitmapText(0, 0, FONT_KEY, fontText(o.label), 7).setOrigin(0.5, 1).setDepth(DEPTH.overlay + 3);
+      this.labelText = fontText(o.label);
+      this.label = scene.add.bitmapText(0, 0, FONT_KEY, this.labelText, 7).setOrigin(0.5, 1).setDepth(DEPTH.overlay + 3);
       this.label.setTint(o.labelColor ?? COLOR.nameNpc);
+      this.setTextScale(o.textScale ?? 2);
     }
+  }
+
+  /** Escala inteira do rótulo (muda com o zoom da câmera). */
+  setTextScale(s: number): void {
+    if (!this.label) return;
+    const base = Math.max(1, Math.round(s));
+    this.label.setScale(this.labelText.length > LONG_LABEL_CHARS ? Math.max(1, base - 1) : base);
+  }
+
+  /** Voltou de pé depois de um 'death' (jogador que renasceu no QG). */
+  revive(): void {
+    if (!this.dying) return;
+    this.dying = false;
+    this.anim = '';
+    this.sprite.setAlpha(1);
+    this.setBarVisible(this.visible);
+    this.aura?.setVisible(this.visible);
   }
 
   setSheet(key: string): void {
@@ -147,7 +176,13 @@ export class EntityView {
     this.px = px;
     this.py = py;
     this.sprite.setPosition(px, py);
-    this.sprite.setDepth(DEPTH.entity + py);
+    // a ordem por y só é refeita quando o pixel muda (setDepth reordena a lista inteira)
+    const dy = Math.round(py);
+    const depthChanged = dy !== this.depthY;
+    if (depthChanged) {
+      this.depthY = dy;
+      this.sprite.setDepth(DEPTH.entity + dy);
+    }
     this.shadow.setPosition(px, py - 1);
     this.glow?.setPosition(px, py - 4);
     const top = py - this.frameH * this.originY;
@@ -159,9 +194,18 @@ export class EntityView {
       this.barShield!.setPosition(bx, by - 2);
     }
     if (this.label) this.label.setPosition(Math.round(px), Math.round(top - (this.barBg && this.barShown ? 6 : 1)));
-    if (this.stun) this.stun.setPosition(px, top + 2).setDepth(DEPTH.entity + py + 1);
-    if (this.aura) this.aura.setPosition(px, this.auraAtFeet ? py + 2 : top - 2).setDepth(DEPTH.entity + py + (this.auraAtFeet ? -1 : 1));
-    if (this.bubble) this.bubble.setPosition(px, py + 4).setDepth(DEPTH.entity + py + 2);
+    if (this.stun) {
+      this.stun.setPosition(px, top + 2);
+      if (depthChanged) this.stun.setDepth(DEPTH.entity + dy + 1);
+    }
+    if (this.aura) {
+      this.aura.setPosition(px, this.auraAtFeet ? py + 2 : top - 2);
+      if (depthChanged) this.aura.setDepth(DEPTH.entity + dy + (this.auraAtFeet ? -1 : 1));
+    }
+    if (this.bubble) {
+      this.bubble.setPosition(px, py + 4);
+      if (depthChanged) this.bubble.setDepth(DEPTH.entity + dy + 2);
+    }
   }
 
   private setBarVisible(v: boolean): void {
@@ -219,7 +263,7 @@ export class EntityView {
   private statusFx(fl: number, now: number): void {
     const stunned = (fl & FL.atordoado) !== 0;
     if (stunned && !this.stun) {
-      this.stun = this.scene.add.sprite(this.px, this.py, 'fx_atordoado', '0').setOrigin(0.5, 1);
+      this.stun = this.scene.add.sprite(this.px, this.py, 'fx_atordoado', '0').setOrigin(0.5, 1).setDepth(DEPTH.entity + Math.round(this.py) + 1);
       this.stun.play('fx_atordoado:play:0');
     }
     if (stunned !== this.stunned || !stunned) {
@@ -240,7 +284,7 @@ export class EntityView {
 
   setShieldBubble(on: boolean): void {
     if (on && !this.bubble) {
-      this.bubble = this.scene.add.sprite(this.px, this.py, 'fx_escudo', '0').setOrigin(0.5, 1).setAlpha(0.75);
+      this.bubble = this.scene.add.sprite(this.px, this.py, 'fx_escudo', '0').setOrigin(0.5, 1).setAlpha(0.75).setDepth(DEPTH.entity + Math.round(this.py) + 2);
       this.bubble.play('fx_escudo:play:0');
     }
     if (on !== this.bubbleOn) {

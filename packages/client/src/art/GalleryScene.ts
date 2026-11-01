@@ -3,7 +3,8 @@
  * Brabo e do Idol, paletas, treinadores, personagens, inimigos (normal, elite, chefe), invocações,
  * tiles (água e neon animados), efeitos, ícones, emblemas e retratos.
  *
- * Arraste para rolar. Toque no botão do topo para trocar a animação dos bonecos.
+ * As folhas são geradas aos poucos (alguns ms por quadro), com "gerando N/M" no topo: no celular a
+ * tela não fica parada. Arraste para rolar. Toque no botão do topo para trocar a animação.
  */
 import * as Phaser from 'phaser';
 import { getData } from '@pqp/shared';
@@ -15,8 +16,8 @@ import { createArt, sheetMeta } from './index';
 import { STORY_NPC_IDS } from './npcs';
 import { TILE_KEY, TILE_VALUES, TILE_VARIANTS, ANIMATED_TILES, tileFrame } from './tiles';
 
-const SCALE = 2;
-const GAP = 6;
+// SUGESTÃO: tempo de geração por quadro na galeria.
+const BUDGET_MS = 12;
 
 interface AnimSprite {
   sprite: Phaser.GameObjects.Sprite;
@@ -26,7 +27,10 @@ interface AnimSprite {
 
 export class GalleryScene extends Phaser.Scene {
   private art = createArt();
-  private cursorX = GAP;
+  /** escala da arte (2 px de CSS por pixel da arte, inteiro em pixels de canvas) e folga */
+  private S = 2;
+  private GAP = 6;
+  private cursorX = 6;
   private cursorY = 40;
   private rowH = 0;
   private animSprites: AnimSprite[] = [];
@@ -34,19 +38,29 @@ export class GalleryScene extends Phaser.Scene {
   private animLabel?: Phaser.GameObjects.BitmapText;
   private tileSprites: { s: Phaser.GameObjects.Image; tile: number; x: number; y: number }[] = [];
   private warnSprites: { s: Phaser.GameObjects.Image; frames: number }[] = [];
+  private tasks: (() => void)[] = [];
+  private doneTasks = 0;
+  private finished = false;
 
   constructor() {
     super('GalleryScene');
   }
 
   create(): void {
+    const px = (this.registry.get('px') as number | undefined) ?? 1;
+    const Z = Math.max(1, Math.round(px));
+    this.S = 2 * Z;
+    this.GAP = 6 * Z;
+    this.cursorX = this.GAP;
+    this.cursorY = 40 * Z;
     this.cameras.main.setBackgroundColor('#2e3a2e');
     this.art.fx(this);
     this.art.tileset(this);
     const W = this.scale.width;
+    const t = (fn: () => void) => this.tasks.push(fn);
 
     // ---------------- bonecos
-    this.title('BONECOS (4 DIRECOES)');
+    t(() => this.title('BONECOS (4 DIRECOES)'));
     const ap = getData().appearance;
     const zoeiros: CharacterLook[] = [
       defaultLook(),
@@ -55,84 +69,92 @@ export class GalleryScene extends Phaser.Scene {
       { ...defaultLook(), body: 'baixinho', skin: 'marca_de_regata', hair: 'mullet', hairColor: 'loiro_de_farmacia', face: 'piscadinha', details: ['tatuagem_nome_errado', 'cicatriz'], outfit: { tier: 'delta', palette: 4 } },
       { ...defaultLook(), body: 'fortao', skin: ap.peles[10]!.id, hair: 'moicano', hairColor: 'azul_eletrico', face: 'cara_fechada', details: ['barba'], outfit: { tier: 'delta', palette: 3 } },
     ];
-    for (const lk of zoeiros) this.character(lk);
-    this.newline();
-    this.title('PEAO BRABO: BASE, APRENDIZ, VETERANO E ITENS RAROS');
-    for (const t of ['base', 'aprendiz', 'veterano'] as const) this.character(archetypeLook('peao_brabo', t));
-    this.character({ ...archetypeLook('peao_brabo', 'veterano'), items: [{ slot: 'adorno', rarity: 'raro' }, { slot: 'cabeca', rarity: 'raro' }] });
-    this.newline();
-    this.title('IDOL: BASE, APRENDIZ, VETERANO');
-    for (const t of ['base', 'aprendiz', 'veterano'] as const) this.character(archetypeLook('idol', t));
-    this.newline();
-    this.title('PALETAS DA ALA (3)');
-    for (const a of ['peao_brabo', 'idol']) for (let p = 0; p < 3; p++) this.single(this.art.characterSheet(this, archetypeLook(a, 'veterano', p)), 'parado_0_0');
-    this.newline();
+    for (const lk of zoeiros) t(() => this.character(lk));
+    t(() => this.newline());
+    t(() => this.title('PEAO BRABO: BASE, APRENDIZ, VETERANO E ITENS RAROS'));
+    for (const tier of ['base', 'aprendiz', 'veterano'] as const) t(() => this.character(archetypeLook('peao_brabo', tier)));
+    t(() => this.character({ ...archetypeLook('peao_brabo', 'veterano'), items: [{ slot: 'adorno', rarity: 'raro' }, { slot: 'cabeca', rarity: 'raro' }] }));
+    t(() => this.newline());
+    t(() => this.title('IDOL: BASE, APRENDIZ, VETERANO'));
+    for (const tier of ['base', 'aprendiz', 'veterano'] as const) t(() => this.character(archetypeLook('idol', tier)));
+    t(() => this.newline());
+    t(() => this.title('PALETAS DA ALA (3)'));
+    for (const a of ['peao_brabo', 'idol']) for (let p = 0; p < 3; p++) t(() => this.single(this.art.characterSheet(this, archetypeLook(a, 'veterano', p)), 'parado_0_0'));
+    t(() => this.newline());
 
     // ---------------- os 24 arquétipos (aprendiz e veterano)
-    this.title('24 ALAS: APRENDIZ E VETERANO');
+    t(() => this.title('24 ALAS: APRENDIZ E VETERANO'));
     for (const a of getData().archetypes) {
-      this.single(this.art.characterSheet(this, archetypeLook(a.id, 'aprendiz')), 'parado_0_0');
-      this.single(this.art.characterSheet(this, archetypeLook(a.id, 'veterano')), 'parado_2_0');
+      t(() => this.single(this.art.characterSheet(this, archetypeLook(a.id, 'aprendiz')), 'parado_0_0'));
+      t(() => this.single(this.art.characterSheet(this, archetypeLook(a.id, 'veterano')), 'parado_2_0'));
     }
-    this.newline();
-    this.title('BASES DAS 8 INSTITUICOES');
+    t(() => this.newline());
+    t(() => this.title('BASES DAS 8 INSTITUICOES'));
     for (const i of getData().institutions.instituicoes) {
       const lk: CharacterLook = { ...defaultLook(), outfit: { tier: 'base', institutionId: i.id, palette: 0 } };
-      this.single(this.art.characterSheet(this, lk), 'parado_0_0');
-      this.single(this.art.characterSheet(this, lk), 'parado_2_0');
+      t(() => {
+        this.single(this.art.characterSheet(this, lk), 'parado_0_0');
+        this.single(this.art.characterSheet(this, lk), 'parado_2_0');
+      });
     }
-    this.newline();
+    t(() => this.newline());
 
     // ---------------- NPCs
-    this.title('TREINADORES (VISUAL DE MESTRE)');
-    for (const t of getData().trainers) this.animated(this.art.npcSheet(this, t.id), 0);
-    this.newline();
-    this.title('PERSONAGENS');
-    for (const id of STORY_NPC_IDS) this.animated(this.art.npcSheet(this, id), 0);
-    this.newline();
+    t(() => this.title('TREINADORES (VISUAL DE MESTRE)'));
+    for (const tr of getData().trainers) t(() => this.animated(this.art.npcSheet(this, tr.id), 0));
+    t(() => this.newline());
+    t(() => this.title('PERSONAGENS'));
+    for (const id of STORY_NPC_IDS) t(() => this.animated(this.art.npcSheet(this, id), 0));
+    t(() => this.newline());
 
     // ---------------- inimigos
     for (const tier of ['normal', 'elite', 'chefe'] as const) {
-      this.title(`INIMIGOS ${tier.toUpperCase()}`);
-      for (const id of ENEMY_ART_IDS) this.animated(this.art.enemySheet(this, id, tier), 0);
-      this.newline();
+      t(() => this.title(`INIMIGOS ${tier.toUpperCase()}`));
+      for (const id of ENEMY_ART_IDS) t(() => this.animated(this.art.enemySheet(this, id, tier), 0));
+      t(() => this.newline());
     }
-    this.title('INVOCACOES (ESQUERDA E DIREITA)');
-    for (const s of getData().summons) for (const side of ['esquerda', 'direita'] as const) this.animated(this.art.summonSheet(this, s.id, side), 0);
-    this.newline();
+    t(() => this.title('INVOCACOES (ESQUERDA E DIREITA)'));
+    for (const s of getData().summons) for (const side of ['esquerda', 'direita'] as const) t(() => this.animated(this.art.summonSheet(this, s.id, side), 0));
+    t(() => this.newline());
 
     // ---------------- tiles
-    this.title('TILES');
-    for (const t of TILE_VALUES)
-      for (let v = 0; v < (TILE_VARIANTS[t] ?? 1); v++) {
-        const img = this.place((x, y) => this.add.image(x, y, TILE_KEY, `${t}_${v}`).setOrigin(0).setScale(SCALE), 32 * SCALE, 32 * SCALE);
-        if (ANIMATED_TILES.has(t)) this.tileSprites.push({ s: img, tile: t, x: v, y: 0 });
-      }
-    for (let v = 0; v < 3; v++) this.place((x, y) => this.add.image(x, y, TILE_KEY, `copa_21_${v}`).setOrigin(0).setScale(SCALE), 48 * SCALE, 40 * SCALE);
-    this.newline();
+    t(() => {
+      const S = this.S;
+      this.title('TILES');
+      for (const tile of TILE_VALUES)
+        for (let v = 0; v < (TILE_VARIANTS[tile] ?? 1); v++) {
+          const img = this.place((x, y) => this.add.image(x, y, TILE_KEY, `${tile}_${v}`).setOrigin(0).setScale(S), 32 * S, 32 * S);
+          if (ANIMATED_TILES.has(tile)) this.tileSprites.push({ s: img, tile, x: v, y: 0 });
+        }
+      for (let v = 0; v < 3; v++) this.place((x, y) => this.add.image(x, y, TILE_KEY, `copa_21_${v}`).setOrigin(0).setScale(S), 48 * S, 40 * S);
+      this.newline();
+    });
 
     // ---------------- efeitos
-    this.title('EFEITOS');
-    const { info } = buildFx();
-    for (const [key, fi] of Object.entries(info)) {
-      const w = fi.w * SCALE;
-      const h = fi.h * SCALE;
-      this.place((x, y) => {
-        const s = this.add.sprite(x + w * fi.ox, y + h * fi.oy, key, '0').setOrigin(fi.ox, fi.oy).setScale(SCALE);
-        if (fi.fps > 0) s.play(`${key}:play:0`);
-        else if (fi.frames > 1) this.warnSprites.push({ s, frames: fi.frames });
-        return s;
-      }, w, h);
-    }
-    this.newline();
-    this.title(`CONE PARA 70 GRAUS: ${coneKeyFor(70)}`);
-    this.newline();
-    this.add.bitmapText(this.cursorX, this.cursorY, FONT_KEY, fontText('0123456789 +15 CRITICO! -42'), 7).setScale(SCALE).setTint(0xffe23a);
-    this.cursorY += 9 * SCALE + GAP;
+    t(() => {
+      const S = this.S;
+      this.title('EFEITOS');
+      const { info } = buildFx();
+      for (const [key, fi] of Object.entries(info)) {
+        const w = fi.w * S;
+        const h = fi.h * S;
+        this.place((x, y) => {
+          const s = this.add.sprite(x + w * fi.ox, y + h * fi.oy, key, '0').setOrigin(fi.ox, fi.oy).setScale(S);
+          if (fi.fps > 0) s.play(`${key}:play:0`);
+          else if (fi.frames > 1) this.warnSprites.push({ s, frames: fi.frames });
+          return s;
+        }, w, h);
+      }
+      this.newline();
+      this.title(`CONE PARA 70 GRAUS: ${coneKeyFor(70)}`);
+      this.newline();
+      this.add.bitmapText(this.cursorX, this.cursorY, FONT_KEY, fontText('0123456789 +15 CRITICO! -42'), 7).setScale(S).setTint(0xffe23a);
+      this.cursorY += 9 * S + this.GAP;
+    });
 
     // ---------------- ícones, emblemas, retratos
-    this.title('ICONES');
     const d = getData();
+    t(() => this.title('ICONES'));
     const iconIds = [
       ...d.abilitiesArchetype.filter((a) => a.ownerKey === 'peao_brabo' || a.ownerKey === 'idol').map((a) => a.id),
       ...d.abilitiesClass.map((a) => a.id),
@@ -142,29 +164,33 @@ export class GalleryScene extends Phaser.Scene {
       ...d.items.itens.filter((_, i) => i % 9 === 0).map((i) => i.id),
       ...d.uniques.unicos.slice(0, 2).map((u) => u.id),
     ];
-    for (const id of iconIds) this.place((x, y) => this.add.image(x, y, this.art.icon(this, id)).setOrigin(0).setScale(SCALE / 2 + 0.5), 48 * (SCALE / 2 + 0.5), 48 * (SCALE / 2 + 0.5));
-    this.newline();
-    this.title('EMBLEMAS');
+    for (const id of iconIds) {
+      t(() => {
+        const s = this.S / 2;
+        this.place((x, y) => this.add.image(x, y, this.art.icon(this, id)).setOrigin(0).setScale(s), 48 * s, 48 * s);
+      });
+    }
+    t(() => this.newline());
+    t(() => this.title('EMBLEMAS'));
     for (const i of [...d.institutions.instituicoes.map((x) => x.id), 'casa_da_assembleia', 'torre_do_consorcio'])
-      this.place((x, y) => this.add.image(x, y, this.art.emblem(this, i)).setOrigin(0).setScale(1.5), 96, 96);
-    this.newline();
-    this.title('RETRATOS');
+      t(() => this.place((x, y) => this.add.image(x, y, this.art.emblem(this, i)).setOrigin(0).setScale(this.S / 2), 32 * this.S, 32 * this.S));
+    t(() => this.newline());
+    t(() => this.title('RETRATOS'));
     for (const w of ['wesley', 'li_wei', 'seu_jaco', 'bruno_ferro', 'o_sombra', 'bruno_ferro_chefe', 'siri_do_mangue'])
-      this.place((x, y) => this.add.image(x, y, this.art.portrait(this, w)).setOrigin(0).setScale(1.5), 96, 96);
-    this.place((x, y) => this.add.image(x, y, this.art.portrait(this, zoeiros[1]!)).setOrigin(0).setScale(1.5), 96, 96);
-    this.newline();
+      t(() => this.place((x, y) => this.add.image(x, y, this.art.portrait(this, w)).setOrigin(0).setScale(this.S / 2), 32 * this.S, 32 * this.S));
+    t(() => this.place((x, y) => this.add.image(x, y, this.art.portrait(this, zoeiros[1]!)).setOrigin(0).setScale(this.S / 2), 32 * this.S, 32 * this.S));
+    t(() => this.newline());
 
     // ---------------- interface
-    const bar = this.add.rectangle(0, 0, W, 32, 0x141018, 0.9).setOrigin(0).setScrollFactor(0).setDepth(10);
-    bar.setInteractive().on('pointerup', () => this.nextAnim());
-    this.animLabel = this.add.bitmapText(8, 8, FONT_KEY, '', 7).setScale(SCALE).setScrollFactor(0).setDepth(11);
+    const barH = 32 * Z;
+    const bar = this.add.rectangle(0, 0, W, barH, 0x141018, 0.9).setOrigin(0).setScrollFactor(0).setDepth(10);
+    bar.setInteractive().on('pointerup', () => this.finished && this.nextAnim());
+    this.animLabel = this.add.bitmapText(8 * Z, 8 * Z, FONT_KEY, '', 7).setScrollFactor(0).setDepth(11);
     this.updateLabel();
-    const maxY = this.cursorY + 40;
-    this.cameras.main.setBounds(0, 0, Math.max(W, 10), Math.max(maxY, this.scale.height));
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
       if (!p.isDown) return;
-      this.cameras.main.scrollY -= (p.y - p.prevPosition.y);
-      this.cameras.main.scrollX -= (p.x - p.prevPosition.x);
+      this.cameras.main.scrollY -= p.y - p.prevPosition.y;
+      this.cameras.main.scrollX -= p.x - p.prevPosition.x;
     });
     this.input.on('wheel', (_p: unknown, _o: unknown, dx: number, dy: number) => {
       this.cameras.main.scrollY += dy;
@@ -175,12 +201,30 @@ export class GalleryScene extends Phaser.Scene {
       delay: 100,
       loop: true,
       callback: () => {
-        const t = this.time.now;
-        for (const ts of this.tileSprites) ts.s.setFrame(tileFrame(ts.tile, ts.x, ts.y, undefined, t));
-        const k = Math.floor(t / 120);
+        const now = this.time.now;
+        for (const ts of this.tileSprites) ts.s.setFrame(tileFrame(ts.tile, ts.x, ts.y, undefined, now));
+        const k = Math.floor(now / 120);
         for (const w of this.warnSprites) w.s.setFrame(String(k % w.frames));
       },
     });
+  }
+
+  override update(): void {
+    if (this.finished) return;
+    const t0 = performance.now();
+    while (this.doneTasks < this.tasks.length && performance.now() - t0 < BUDGET_MS) {
+      this.tasks[this.doneTasks]!();
+      this.doneTasks++;
+    }
+    if (this.doneTasks < this.tasks.length) {
+      this.setLabel(`GERANDO ${this.doneTasks}/${this.tasks.length}`);
+      return;
+    }
+    this.finished = true;
+    this.newline();
+    const maxY = this.cursorY + 40;
+    this.cameras.main.setBounds(0, 0, Math.max(this.scale.width, 10), Math.max(maxY, this.scale.height));
+    this.updateLabel();
     this.playAll();
   }
 
@@ -188,20 +232,21 @@ export class GalleryScene extends Phaser.Scene {
 
   private title(text: string): void {
     this.newline();
-    this.add.bitmapText(GAP, this.cursorY, FONT_KEY, fontText(text), 7).setScale(SCALE).setTint(0xffe8a0);
-    this.cursorY += 9 * SCALE + 4;
+    const s = this.fitScale(fontText(text), this.S);
+    this.add.bitmapText(this.GAP, this.cursorY, FONT_KEY, fontText(text), 7).setScale(s).setTint(0xffe8a0);
+    this.cursorY += 9 * s + 4;
   }
 
   private newline(): void {
-    if (this.rowH > 0) this.cursorY += this.rowH + GAP;
-    this.cursorX = GAP;
+    if (this.rowH > 0) this.cursorY += this.rowH + this.GAP;
+    this.cursorX = this.GAP;
     this.rowH = 0;
   }
 
   private place<T>(make: (x: number, y: number) => T, w: number, h: number): T {
-    if (this.cursorX + w > this.scale.width - GAP && this.cursorX > GAP) this.newline();
+    if (this.cursorX + w > this.scale.width - this.GAP && this.cursorX > this.GAP) this.newline();
     const r = make(this.cursorX, this.cursorY);
-    this.cursorX += w + GAP;
+    this.cursorX += w + this.GAP;
     this.rowH = Math.max(this.rowH, h);
     return r;
   }
@@ -209,16 +254,17 @@ export class GalleryScene extends Phaser.Scene {
   private character(look: CharacterLook | ArtLook): void {
     const key = this.art.characterSheet(this, look);
     for (let dir = 0; dir < 4; dir++) this.animated(key, dir);
-    this.cursorX += GAP;
+    this.cursorX += this.GAP;
   }
 
   private animated(key: string, dir: number): void {
     const m = sheetMeta(key);
     if (!m) return;
-    const w = m.frameW * SCALE;
-    const h = m.frameH * SCALE;
+    const S = this.S;
+    const w = m.frameW * S;
+    const h = m.frameH * S;
     this.place((x, y) => {
-      const s = this.add.sprite(x + w / 2, y + h, key, `parado_${dir}_0`).setOrigin(m.originX, m.originY).setScale(SCALE);
+      const s = this.add.sprite(x + w / 2, y + h, key, `parado_${dir}_0`).setOrigin(m.originX, m.originY).setScale(S);
       s.on('animationcomplete', () => this.time.delayedCall(500, () => s.active && s.play(`${key}:${this.anim}:${dir}`)));
       this.animSprites.push({ sprite: s, key, dir });
       return s;
@@ -228,7 +274,8 @@ export class GalleryScene extends Phaser.Scene {
   private single(key: string, frame: string): void {
     const m = sheetMeta(key);
     if (!m) return;
-    this.place((x, y) => this.add.image(x, y, key, frame).setOrigin(0).setScale(SCALE), m.frameW * SCALE, m.frameH * SCALE);
+    const S = this.S;
+    this.place((x, y) => this.add.image(x, y, key, frame).setOrigin(0).setScale(S), m.frameW * S, m.frameH * S);
   }
 
   private nextAnim(): void {
@@ -238,8 +285,25 @@ export class GalleryScene extends Phaser.Scene {
     this.playAll();
   }
 
+  /** Maior escala inteira (até `max`) em que o texto cabe na largura da tela. */
+  private fitScale(text: string, max: number): number {
+    const avail = this.scale.width - 2 * this.GAP;
+    let s = max;
+    while (s > 1 && text.length * 7 * s > avail) s--;
+    return s;
+  }
+
+  private setLabel(text: string): void {
+    const t = fontText(text);
+    this.animLabel?.setText(t).setScale(this.fitScale(t, this.S));
+  }
+
   private updateLabel(): void {
-    this.animLabel?.setText(fontText(`ANIM: ${this.anim} (TOQUE PARA TROCAR)`));
+    // cabe numa linha: o texto curto em tela estreita
+    const long = `ANIM: ${this.anim} (TOQUE PARA TROCAR)`;
+    const short = `ANIM: ${this.anim} (TOQUE)`;
+    const fits = fontText(long).length * 7 * Math.max(1, this.S - 1) <= this.scale.width - 2 * this.GAP;
+    this.setLabel(fits ? long : short);
   }
 
   private playAll(): void {

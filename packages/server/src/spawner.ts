@@ -4,12 +4,15 @@
  *
  * O núcleo da simulação não forma bandos sozinho: o spawner chama spawnPack (sim/ai_pack.ts) para
  * os bandos de um inimigo só (packId = id do marcador, escolta e promoção a elite pela
- * promocaoElite.chancePorBando). Bando misto no marcador nasce um por slot.
+ * promocaoElite.chancePorBando). Bando misto no marcador nasce um por slot. Marcador 'inimigo' ou
+ * 'chefe' de um inimigo com escolta (enemies.json) nasce com a escolta em volta, no mesmo bando
+ * ("inimigos vêm em bandos"); o spawnPack não recebe afixos, por isso o líder nasce aqui.
  */
 import { getData } from '@pqp/shared/data';
 import { circleFree, isSolidTile } from '@pqp/shared/map';
 import type { MapMarker } from '@pqp/shared/map';
-import { msToTicks, spawnEnemy, spawnNpc, spawnPack, type EnemyTier, type SpawnEnemyOpts, type World } from '@pqp/shared/sim';
+import { msToTicks, spawnEnemy, spawnNpc, spawnPack, type EnemyTier, type Entity, type SpawnEnemyOpts, type World } from '@pqp/shared/sim';
+import { enemyMind } from '@pqp/shared/sim/ai_state';
 import { BAND_SPREAD_TILES, RESPAWN_MS, RESPAWN_SAFE_RADIUS } from './config';
 
 interface SpawnSlot {
@@ -33,6 +36,13 @@ export interface SpawnGroup {
    * Os slots são refeitos a cada nascimento.
    */
   pack?: { enemyId: string; x: number; y: number; n: number };
+  /**
+   * Marcador 'inimigo' ou 'chefe' com escolta em enemies.json (ex.: o Cobrador do Capataz anda com
+   * 2 capangas): o líder nasce com o tier, os afixos e o nível do marcador, e a escolta nasce em
+   * volta, com o mesmo packId (id do marcador) e leaderId = líder, como no spawnPack. Os slots são
+   * refeitos a cada nascimento.
+   */
+  lead?: { enemyId: string; x: number; y: number; opts: SpawnEnemyOpts };
 }
 
 export interface SpawnerOptions {
@@ -101,7 +111,12 @@ export class Spawner {
           if (affixes.length > 0) opts.affixes = affixes;
           const lv = Number(m.params?.['level']);
           if (Number.isFinite(lv) && lv > 0) opts.level = lv;
-          this.addGroup({ markerId: m.id, tier: opts.tier ?? def.tier, slots: [{ enemyId: def.id, x: m.x, y: m.y, opts }] });
+          const tierOf = opts.tier ?? def.tier;
+          if ((def.escolta ?? []).length > 0) {
+            this.addGroup({ markerId: m.id, tier: tierOf, slots: [], lead: { enemyId: def.id, x: m.x, y: m.y, opts } });
+            continue;
+          }
+          this.addGroup({ markerId: m.id, tier: tierOf, slots: [{ enemyId: def.id, x: m.x, y: m.y, opts }] });
         }
       } catch (err) {
         this.log(`[spawner] falha no marcador ${m.id}: ${String(err)}`);
@@ -115,7 +130,7 @@ export class Spawner {
   }
 
   /** Ponto do i-ésimo membro de um bando: círculo em volta do marcador, só em chão livre. */
-  private spreadPoint(m: MapMarker, i: number, n: number, r: number): [number, number] {
+  private spreadPoint(m: Pick<MapMarker, 'x' | 'y'>, i: number, n: number, r: number): [number, number] {
     if (n <= 1) return [m.x, m.y];
     const ang = (i / n) * Math.PI * 2;
     for (const k of [1, 0.6, 0.3]) {
@@ -133,11 +148,43 @@ export class Spawner {
       g.respawnAt = undefined;
       return;
     }
+    if (g.lead) {
+      this.spawnLed(g, g.lead);
+      g.respawnAt = undefined;
+      return;
+    }
     for (const s of g.slots) {
       const e = spawnEnemy(this.w, s.enemyId, s.x, s.y, s.opts);
       s.entityId = e.id;
     }
     g.respawnAt = undefined;
+  }
+
+  /**
+   * Líder com escolta: o líder no marcador, com as opções dele; a escolta (enemies.json, escolta[])
+   * num anel em volta, quantidade sorteada pelo RNG do mundo entre min e max, no nível do marcador.
+   */
+  private spawnLed(g: SpawnGroup, lead: NonNullable<SpawnGroup['lead']>): void {
+    const D = getData();
+    const def = D.enemiesById.get(lead.enemyId)!;
+    const leader = spawnEnemy(this.w, lead.enemyId, lead.x, lead.y, lead.opts);
+    const all: Entity[] = [leader];
+    const escorts: { id: string; r: number }[] = [];
+    for (const esc of def.escolta ?? []) {
+      const edef = D.enemiesById.get(esc.inimigo);
+      if (!edef) continue;
+      const q = this.w.rng.int(esc.min, esc.max);
+      for (let i = 0; i < q; i++) escorts.push({ id: edef.id, r: edef.raioCorpoTiles });
+    }
+    escorts.forEach((esc, i) => {
+      // anel em volta do líder (o líder fica no centro do marcador)
+      const [x, y] = this.spreadPoint(lead, i, Math.max(2, escorts.length), esc.r);
+      const m = spawnEnemy(this.w, esc.id, x, y, lead.opts.level !== undefined ? { level: lead.opts.level } : {});
+      enemyMind(m).leaderId = leader.id;
+      all.push(m);
+    });
+    for (const e of all) enemyMind(e).packId = g.markerId;
+    g.slots = all.map((e) => ({ enemyId: e.defId, x: e.x, y: e.y, opts: {}, entityId: e.id }));
   }
 
   private alive(s: SpawnSlot): boolean {

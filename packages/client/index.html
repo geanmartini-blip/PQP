@@ -75,6 +75,44 @@
           transform: rotate(0deg);
         }
       }
+      /* aparece na hora, antes do JavaScript; o main.ts tira quando o Phaser abre */
+      #carregando {
+        position: fixed;
+        inset: 0;
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        background: #0d0b10;
+        font-size: 18px;
+        text-align: center;
+      }
+      #carregando .titulo {
+        font-size: 24px;
+      }
+      #carregando .barra {
+        width: 160px;
+        height: 8px;
+        border: 2px solid #ffe8a0;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      #carregando .barra div {
+        width: 40%;
+        height: 100%;
+        background: #ffe8a0;
+        animation: vai 1.2s ease-in-out infinite alternate;
+      }
+      @keyframes vai {
+        from {
+          transform: translateX(-40%);
+        }
+        to {
+          transform: translateX(190%);
+        }
+      }
       /* celular deitado: pede para girar (no PC a janela larga continua jogável) */
       @media (orientation: landscape) and (max-height: 520px) and (pointer: coarse) {
         #girar {
@@ -85,6 +123,11 @@
   </head>
   <body>
     <div id="jogo"></div>
+    <div id="carregando" role="status">
+      <div class="titulo">Ponte que Partiu</div>
+      <div class="barra"><div></div></div>
+      <div>Carregando...</div>
+    </div>
     <div id="girar" role="alert">
       <div class="icone"></div>
       <div>Gire o celular para ficar em pé</div>

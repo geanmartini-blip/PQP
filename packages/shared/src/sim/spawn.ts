@@ -80,7 +80,18 @@ function applyKit(e: Entity, kit: Kit, level: number, slot3?: string): void {
   }
   const hpFrac = e.stats.hpMax > 0 ? e.hp / e.stats.hpMax : 1;
   const resFrac = e.stats.resourceMax > 0 ? e.resource / e.stats.resourceMax : 1;
+  // bônus fixos (itens, talentos, afixos) ficam: só a linha da tabela muda
+  const prevPct = { ...e.stats.pct };
   e.stats = combatStatsFrom(row, basic?.cooldownS ?? bal().combate.intervaloAtaqueBasicoBaseS, resMax, resRegen);
+  e.stats.pct = prevPct;
+  // reforços de vida ativos: refaz o acréscimo sobre a vida máxima nova (o fim do reforço tira o mesmo valor)
+  const base = e.stats.hpMax;
+  for (const s of e.statuses) {
+    if (s.kind !== 'reforco:hp' || s.data?.['hpAdd'] === undefined) continue;
+    const add = base * (s.value / 100);
+    s.data = { ...s.data, hpAdd: add };
+    e.stats.hpMax += add;
+  }
   e.hp = Math.max(1, e.stats.hpMax * hpFrac);
   e.resource = resMax * resFrac;
   e.level = level;
@@ -137,13 +148,15 @@ export function spawnPlayer(w: World, opts: SpawnPlayerOpts): Entity {
 
 /**
  * Troca de arquétipo (ou de classe/Delta), e de classe se precisar. Mantém a fração de vida e de
- * recurso, zera as recargas e cancela carga e habilidade pendente. Mantém o nível.
+ * recurso, as recargas em andamento (a recarga é por habilidade: a que volta para o kit volta com
+ * o tempo que faltava) e a carga do Especial; aplica a recarga global e cancela carga e
+ * habilidade pendente. Mantém o nível. Quem pode trocar (treinador perto, fora de combate) é
+ * regra do comando (commands.ts, canSwitchArchetype).
  */
 export function setArchetype(w: World, e: Entity, archetypeId: string, slot3?: string): void {
   const kit = resolveKit(archetypeId, e.side);
   applyKit(e, kit, e.level, slot3);
-  e.cooldowns = {};
-  e.gcdUntil = w.tick;
+  e.gcdUntil = Math.max(e.gcdUntil, w.tick + msToTicks(bal().combate.recargaGlobalMs));
   e.casting = undefined;
   e.pendingCast = undefined;
   recomputeShield(e);
@@ -205,6 +218,8 @@ export interface EnemyAi {
   saidHello?: boolean;
   rewarded?: boolean;
   passiveTicks?: Record<string, number>;
+  /** reforço de chefe: id do chefe que chamou (teto de reforços e ida embora no reinício) */
+  reinforcementOf?: number;
 }
 
 /** Sorteia n afixos diferentes da lista (ordem estável). */

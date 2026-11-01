@@ -22,6 +22,9 @@ export const JOYSTICK_DEADZONE = 0.15;
 export const ACQUIRE_RADIUS = 8;
 // SUGESTÃO: o alvo automático cai quando passa disto (tiles).
 export const DROP_RADIUS = 11;
+// SUGESTÃO: com o alvo automático fora do alcance do básico, troca para outro inimigo que esteja no
+// alcance do básico, ou 2 tiles mais perto que o atual (folga para não ficar trocando).
+export const RETARGET_CLOSER_TILES = 2;
 // SUGESTÃO: o alvo escolhido por toque cai depois de 2 s fora de vista.
 export const MANUAL_TARGET_LOSE_MS = 2000;
 // SUGESTÃO: "inimigos à vista" das viradas = até 10 tiles com linha de visão.
@@ -37,11 +40,33 @@ export const REPATH_TICKS = 10;
 // SUGESTÃO: habilidade pedida fora do alcance espera 3 s pelo alcance; depois desiste.
 export const PENDING_CAST_MS = 3000;
 
+// SUGESTÃO: sem grupo (partyId), o grupo implícito é quem também está sem grupo a até 12 tiles.
+export const IMPLICIT_GROUP_TILES = 12;
+// SUGESTÃO: o recuo ('recuo' de inimigo_mais_perto) foge do inimigo visível mais perto a até 10 tiles.
+export const RETREAT_SCAN_TILES = 10;
+// SUGESTÃO: seletor de alvo sem alcance nem raio na habilidade (aliado_menos_vida etc.) olha até 4 tiles.
+export const SELECTOR_FALLBACK_RANGE = 4;
+// SUGESTÃO: invocação nasce 1 tile à frente de quem invoca; várias de uma vez, em roda de 1,2 tile;
+// o ponto precisa caber um corpo de 0,4 tile (senão nasce em cima de quem invocou).
+export const SUMMON_SPAWN_TILES = 1;
+export const SUMMON_RING_TILES = 1.2;
+export const SUMMON_FREE_RADIUS = 0.4;
+// SUGESTÃO: Desconstruído cura o aliado mais ferido a até 8 tiles (5% da vida máxima por golpe sem o parâmetro).
+export const DESCONSTRUIDO_RANGE_TILES = 8;
+export const DESCONSTRUIDO_HEAL_PCT_DEFAULT = 5;
+// SUGESTÃO: o caminho dá o ponto por alcançado a 0,15 tile; o "tocar no chão" para a 0,1 tile do destino.
+export const PATH_WAYPOINT_TILES = 0.15;
+export const MOVE_TO_ARRIVE_TILES = 0.1;
+
 // SUGESTÃO: largura do corredor de "inimigos no caminho" (avanço e tiro que atravessa), além do raio do corpo.
 export const LANE_HALF_WIDTH = 0.5;
 
 // SUGESTÃO: distância para conversar com NPC (comando interagir).
 export const INTERACT_RADIUS = 2.5;
+// SUGESTÃO: o botão de troca de ala (comando trocar_arquetipo) vale com o treinador da ala a até
+// 5 tiles, borda a borda (a praça de treino: no mapa do protótipo o spawn fica a uns 3,4 tiles do
+// Wesley e do Li Wei), e só fora de combate (sem bater nem apanhar há regenForaDeCombate.aposMs).
+export const TRAINER_SWITCH_RADIUS = 5;
 
 // SUGESTÃO: participa do XP quem bateu no inimigo nos últimos 30 s ou estava a até 10 tiles quando ele caiu.
 export const XP_PARTICIPATION_MS = 30000;

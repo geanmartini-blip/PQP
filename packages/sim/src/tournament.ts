@@ -22,6 +22,8 @@ export interface TournamentConfig {
   level?: number;
   maxSeconds?: number;
   distance?: number;
+  /** carga inicial do Especial de todos (0 a 1; padrão 0) */
+  specialStart?: number;
   /** grupo_contra_grupo: tamanho dos grupos (padrão 3) */
   groupSize?: number;
   /** grupo_contra_grupo: lutas de cada papel único contra misturados (padrão: max(4, n/4)); 0 desliga */
@@ -118,7 +120,7 @@ export function allArchetypes(): string[] {
   return Array.from(getData().archetypesById.keys());
 }
 
-export type SeriesOpts = Pick<TournamentConfig, 'seed' | 'level' | 'maxSeconds' | 'distance'>;
+export type SeriesOpts = Pick<TournamentConfig, 'seed' | 'level' | 'maxSeconds' | 'distance' | 'specialStart'>;
 
 /**
  * Série de n lutas de A contra B (1 contra 1), trocando de lado a cada luta. A semente de cada
@@ -137,6 +139,7 @@ export function runSeries(a: string, b: string, n: number, opts: SeriesOpts = {}
       ...(opts.level !== undefined ? { level: opts.level } : {}),
       ...(opts.maxSeconds !== undefined ? { maxSeconds: opts.maxSeconds } : {}),
       ...(opts.distance !== undefined ? { distance: opts.distance } : {}),
+      ...(opts.specialStart !== undefined ? { specialStart: opts.specialStart } : {}),
     });
     row.games++;
     secs += r.seconds;
@@ -170,6 +173,7 @@ export function runTournament(cfg: TournamentConfig): TournamentReport {
     level,
     ...(cfg.maxSeconds !== undefined ? { maxSeconds: cfg.maxSeconds } : {}),
     ...(cfg.distance !== undefined ? { distance: cfg.distance } : {}),
+    ...(cfg.specialStart !== undefined ? { specialStart: cfg.specialStart } : {}),
   };
   const report: TournamentReport = { modo: cfg.modo, n: cfg.n, seed, level, games: 0, draws: 0, avgSeconds: 0, limitPct: limit, rows: [], alerts: [] };
 

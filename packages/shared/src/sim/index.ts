@@ -19,10 +19,10 @@ export {
   type SpawnPlayerOpts,
   type SpawnEnemyOpts,
 } from './spawn';
-export { applyInput, applyCommand } from './commands';
-export { step, stepN } from './step';
-export { autoTarget, retargetTap, nearestVisibleHostile, canSee } from './targeting';
-export { castAbility, effectiveRange, resolveAbility, groupOf, type CastOpts } from './abilities';
+export { applyInput, applyCommand, switchTrainer, inCombat } from './commands';
+export { step, stepN, pruneAttackers } from './step';
+export { autoTarget, retargetTap, nearestVisibleHostile, canSee, basicRangeOf } from './targeting';
+export { castAbility, effectiveRange, approachRange, resolveAbility, groupOf, type CastOpts } from './abilities';
 export { registerHook, getHook, hasHook, hookNames, noopHook, type HookContext, type HookFn } from './hooks';
 export {
   dealDamage,
@@ -44,7 +44,7 @@ export {
   type ControlResult,
 } from './combat';
 export { xpToNext, speedFactor, statRowAt, resolveKit, moveSpeedOf, cooldownRate, basicIntervalTicks } from './stats';
-export { grantXp, resolveLootTable } from './rewards';
+export { grantXp, resolveLootTable, pickupAction, lootFilterOf, autoSellOf } from './rewards';
 export { tickAi } from './ai';
 // bandos (integração da Fase 1): o spawner do servidor forma os bandos por aqui
 export { spawnPack, packMates, type SpawnPackOpts } from './ai_pack';

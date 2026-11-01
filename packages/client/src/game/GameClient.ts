@@ -22,11 +22,11 @@ import {
 import { SIM_TUNING, type CombatEvent, type PlayerCommand, type PlayerInput, type Vec } from '@pqp/shared/sim';
 import { CommandQueue, type CommandBody } from '../net/commandQueue';
 import { FixedStep } from '../net/fixedStep';
-import { ServerClock } from '../net/interpolation';
-import { makeInput, Predictor } from '../net/prediction';
+import { actionTick, ServerClock, type Sample } from '../net/interpolation';
+import { makeInput, Predictor, TELEPORT_ERROR_TILES } from '../net/prediction';
 import { RttMeter } from '../net/rtt';
 import type { NetStatus, Transport } from '../net/transport';
-import { ClientWorld } from './clientWorld';
+import { ClientWorld, FL } from './clientWorld';
 
 export interface StorageLike {
   getItem(k: string): string | null;
@@ -41,6 +41,10 @@ export const NEED_EVERY_MS = 300;
 export const LOCAL_TARGET_GRACE_MS = 300;
 // SUGESTÃO: ir até um NPC para falar desiste depois de 8 s.
 export const PENDING_INTERACT_MS = 8000;
+// SUGESTÃO: o próprio boneco movido só pelo servidor (avanço, automático, empurrão) é desenhado pelo
+// buffer de snapshots 50 ms atrás do último, e a troca entre previsão e snapshots se mistura em ~100 ms.
+export const SELF_INTERP_DELAY_MS = 50;
+export const SELF_BLEND_TAU_MS = 35;
 
 /** Tenta ler/gravar no armazenamento sem quebrar (aba privada, armazenamento bloqueado). */
 export function safeGet(s: StorageLike | undefined, k: string): string | null {
@@ -122,6 +126,14 @@ export class GameClient {
   private pendingInteract: { id: number; until: number } | undefined;
   private welcomeListeners: (() => void)[] = [];
   private eventsOut: CombatEvent[] = [];
+  /** desenho do próprio boneco: previsão ou snapshots (servidor movendo sozinho) */
+  private selfMode: 'pred' | 'snap' = 'pred';
+  private readonly blend = { x: 0, y: 0 };
+  private readonly lastDrawn = { x: 0, y: 0, ok: false };
+  private selfSnapT = -Infinity;
+  private readonly selfSample: Sample = { t: 0, x: 0, y: 0 };
+  /** quantas vezes a mesma sessão voltou depois de uma queda (diagnóstico e testes) */
+  resumes = 0;
 
   constructor(
     readonly transport: Transport,
@@ -137,7 +149,23 @@ export class GameClient {
     };
     transport.onOpen = (fresh) => {
       if (fresh) this.sendHello();
+      else this.onResume();
     };
+  }
+
+  /**
+   * A mesma sessão voltou depois da queda: as entradas guardadas não chegaram (o servidor zerou a
+   * fila e pôs o personagem no automático), então a previsão recomeça do próximo snapshot.
+   */
+  private onResume(): void {
+    this.resumes++;
+    this.lastInputs = [];
+    this.pred?.clearHistory();
+  }
+
+  /** Conectado de verdade (fora da queda): só assim a previsão anda e as entradas saem. */
+  get live(): boolean {
+    return this.status === 'conectado';
   }
 
   /** Opções do joinOrCreate (o servidor também recebe o token aqui). */
@@ -218,6 +246,10 @@ export class GameClient {
     this.lastInputs = [];
     this.localTarget = undefined;
     this.pendingInteract = undefined;
+    this.selfMode = 'pred';
+    this.blend.x = this.blend.y = 0;
+    this.lastDrawn.ok = false;
+    this.selfSnapT = -Infinity;
     this.welcomed = true;
     this.stats.welcomes++;
     for (const fn of this.welcomeListeners) fn();
@@ -258,10 +290,22 @@ export class GameClient {
       this.tickPendingInteract();
     }
     this.pred?.decay(dtMs);
+    if (this.blend.x !== 0 || this.blend.y !== 0) {
+      const k = Math.exp(-Math.max(0, dtMs) / SELF_BLEND_TAU_MS);
+      this.blend.x *= k;
+      this.blend.y *= k;
+      if (Math.abs(this.blend.x) < 1e-4 && Math.abs(this.blend.y) < 1e-4) this.blend.x = this.blend.y = 0;
+    }
   }
 
   private fixedTick(): void {
     if (!this.welcomed || !this.pred) return;
+    // conexão caída: as entradas não chegariam (o servidor põe o personagem no automático); o
+    // boneco fica parado em vez de andar "de mentira" e teletransportar na volta
+    if (!this.live) {
+      this.pred.hold();
+      return;
+    }
     const input = makeInput(++this.seq, this.intent.x, this.intent.y);
     this.pred.step(input);
     if (Math.hypot(this.intent.x, this.intent.y) >= SIM_TUNING.JOYSTICK_DEADZONE) this.pendingInteract = undefined;
@@ -280,10 +324,62 @@ export class GameClient {
     return out;
   }
 
-  /** Posição desenhada do próprio personagem (tiles). */
+  /**
+   * Quem anda com o próprio boneco agora é só o servidor (avanço até o alcance, modo automático,
+   * empurrão): ele se move, sem joystick, sem caminho próprio e sem entrada local sem ack que ande.
+   */
+  get serverDriven(): boolean {
+    const p = this.pred;
+    const me = this.world.self();
+    if (!p || !me || (me.fl & FL.movendo) === 0) return false;
+    if (Math.hypot(this.intent.x, this.intent.y) >= SIM_TUNING.JOYSTICK_DEADZONE) return false;
+    return !p.following && !p.hasPendingMotion && me.buf.length > 0;
+  }
+
+  /**
+   * Posição desenhada do próprio personagem (tiles). Normalmente a prevista; quando o servidor move
+   * o boneco sozinho, pelo buffer de snapshots (como os outros, com atraso menor), para não andar
+   * em pulsos de 20 Hz. A troca de um para o outro se mistura aos poucos.
+   */
   selfRender(out: Vec): Vec | null {
-    if (!this.pred || !this.pred.initialized) return null;
-    return this.pred.render(this.fixed.alpha, out);
+    const p = this.pred;
+    if (!p || !p.initialized) return null;
+    const snap = this.serverDriven;
+    let x: number, y: number;
+    if (snap) {
+      let t = this.clock.serverNow(this.now) - SELF_INTERP_DELAY_MS;
+      // nunca volta no tempo (salvo um relógio refeito, mais de 1 s para trás)
+      if (t < this.selfSnapT && t > this.selfSnapT - 1000) t = this.selfSnapT;
+      this.selfSnapT = t;
+      this.world.self()!.buf.sample(t, this.selfSample);
+      x = this.selfSample.x;
+      y = this.selfSample.y;
+    } else {
+      p.render(this.fixed.alpha, out);
+      x = out.x;
+      y = out.y;
+    }
+    const mode = snap ? 'snap' : 'pred';
+    if (mode !== this.selfMode) {
+      this.selfMode = mode;
+      if (this.lastDrawn.ok) {
+        this.blend.x = this.lastDrawn.x - x;
+        this.blend.y = this.lastDrawn.y - y;
+        // salto grande (volta ao QG) não se mistura
+        if (Math.hypot(this.blend.x, this.blend.y) > TELEPORT_ERROR_TILES) this.blend.x = this.blend.y = 0;
+      }
+    }
+    out.x = x + this.blend.x;
+    out.y = y + this.blend.y;
+    this.lastDrawn.x = out.x;
+    this.lastDrawn.y = out.y;
+    this.lastDrawn.ok = true;
+    return out;
+  }
+
+  /** Tick do servidor (fracionário) em que uma entrada feita agora anda: o tempo dos avisos no chão. */
+  actionTickNow(): number {
+    return actionTick(this.clock.serverNow(this.now), this.rtt.value);
   }
 
   /** Alvo atual: o escolhido por toque (enquanto o servidor não confirma) ou o do HUD. */
@@ -324,8 +420,9 @@ export class GameClient {
     if (entityId !== undefined) this.localTarget = { id: entityId, until: this.now + this.rtt.value + LOCAL_TARGET_GRACE_MS };
   }
 
-  useAbility(botao: 1 | 2 | 3 | 'especial', at?: Vec): void {
-    this.command(at ? { c: 'habilidade', botao, at: { x: at.x, y: at.y } } : { c: 'habilidade', botao });
+  /** Botão de habilidade; devolve o comando (o id serve para a recarga prevista no HUD). */
+  useAbility(botao: 1 | 2 | 3 | 'especial', at?: Vec): PlayerCommand | undefined {
+    return this.command(at ? { c: 'habilidade', botao, at: { x: at.x, y: at.y } } : { c: 'habilidade', botao });
   }
 
   useItem(): void {

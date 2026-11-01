@@ -19,7 +19,7 @@ import { castAbility, effectiveRange, groupOf, type CastOpts } from './abilities
 import { abilityOf, abilityReady, areaRadius, profileOf, type AbilityProfile } from './ai_kit';
 import { AI_TUNING, doctrineMind, fleePoint, goTo, stopMoving } from './ai_state';
 import { bal, JOYSTICK_DEADZONE } from './constants';
-import { getEnt, HARMFUL_STATUS, hpRatio, isDowned, isTargetableBy, isUp } from './entity';
+import { getEnt, HARMFUL_STATUS, hasStatus, hpRatio, isDowned, isTargetableBy, isUp } from './entity';
 import { dist } from './geom';
 import { loadoutFor } from './spawn';
 import { resolveKit } from './stats';
@@ -380,7 +380,13 @@ function routine(w: World, e: Entity, reserved: { b: Set<Button>; especial: bool
   for (const c of cands) if (tryUse(w, e, c.id, opts)) return;
 }
 
-/** Ordem da rotina pelo papel: cura e apoio primeiro para quem cura, controle para o tanque, dano para o dano. */
+/**
+ * Ordem da rotina pelo papel: cura e apoio primeiro para quem cura, controle para o tanque, dano para o dano.
+ * SUGESTÃO: os pesos (10 a 100) e os limiares de tryUse (combate a até 6 tiles ou golpe há 2 s,
+ * folga de 2 tiles no alcance, defesa abaixo de 70% de vida ou com 2 atacantes, recurso abaixo de
+ * 35%, fuga com inimigo a até 2,5 tiles e vida abaixo de 50%; fugir começa com ameaça a até 6
+ * tiles e continua de quem está a até 10; focar olha até 8 tiles) são afinação, não estão nos docs.
+ */
 function priority(w: World, e: Entity, p: AbilityProfile): number {
   const role = e.role ?? 'dano';
   let s = 10;
@@ -399,6 +405,8 @@ function priority(w: World, e: Entity, p: AbilityProfile): number {
 /** Tenta usar a habilidade se fizer sentido agora (alvo, raio, ferido, combate). */
 function tryUse(w: World, e: Entity, id: string | undefined, o: UseOpts = {}): boolean {
   if (!id || !abilityReady(w, e, id)) return false;
+  // confuso ou tonto: o automático não escolhe habilidade (o básico já sai a esmo)
+  if (hasStatus(e, 'confundir') || hasStatus(e, 'tontura')) return false;
   const a = abilityOf(id)!;
   const p = profileOf(id)!;
   const t = target(w, e);

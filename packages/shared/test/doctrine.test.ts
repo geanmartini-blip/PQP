@@ -146,6 +146,8 @@ describe('Doutrina: modo automático e companheiros', () => {
     const p = spawnPlayer(w, { name: 'Ana', archetypeId: 'idol', x: 10, y: 15, playerId: 'p1' });
     const wes = spawnAlly(w, 'wesley', 9, 15, { archetypeId: 'peao_brabo', level: 12 });
     expect(leaderOf(w, wes)?.id).toBe(p.id);
+    // longe (16 tiles), só o grupo (partyId) mantém o líder: sem grupo, o implícito vai até 12 tiles
+    p.partyId = wes.partyId = 'g1';
     p.x = 25;
     stepN(w, 100);
     expect(Math.hypot(wes.x - p.x, wes.y - p.y)).toBeLessThan(3);

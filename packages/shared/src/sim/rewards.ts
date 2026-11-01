@@ -146,7 +146,37 @@ function pickRarity(w: World, t: LootTable): string {
   return 'comum';
 }
 
-/** Coleta automática: jogador de pé encosta no saque (dele ou de ninguém) e pega. */
+const RARITY_ORDER = ['comum', 'raro', 'unico', 'set'] as const;
+const rarityRank = (r: string | undefined) => {
+  const i = RARITY_ORDER.indexOf((r ?? 'comum') as (typeof RARITY_ORDER)[number]);
+  return i < 0 ? 0 : i;
+};
+
+/** Filtro de raridade em uso (o do jogador, ou loot.json coleta.filtroPadrao). */
+export const lootFilterOf = (p: Entity) => p.lootFilter ?? getData().loot.coleta.filtroPadrao;
+/** Venda automática ligada (a do jogador, ou loot.json vendaAutomatica.padraoLigada). */
+export const autoSellOf = (p: Entity) => p.autoSell ?? getData().loot.vendaAutomatica.padraoLigada;
+
+/**
+ * O que a coleta faz com este saque para este jogador: 'pegar', 'vender' (venda automática) ou
+ * 'deixar' (abaixo do filtro de raridade). Moedas, materiais e consumíveis passam sempre
+ * (coleta.moedasEMateriaisSempre); o filtro vale para itens com raridade.
+ */
+export function pickupAction(p: Entity, l: Entity): 'pegar' | 'vender' | 'deixar' {
+  const L = getData().loot;
+  const loot = l.loot ?? {};
+  // moedas, materiais e consumíveis não têm raridade: passam sempre (coleta.moedasEMateriaisSempre)
+  if (!loot.itemId || loot.rarity === undefined) return 'pegar';
+  const sell = autoSellOf(p) && (L.vendaAutomatica.raridades as readonly string[]).includes(loot.rarity);
+  if (sell) return 'vender';
+  return rarityRank(loot.rarity) >= rarityRank(lootFilterOf(p)) ? 'pegar' : 'deixar';
+}
+
+/**
+ * Coleta automática: jogador de pé encosta no saque (dele ou de ninguém) e pega, respeitando o
+ * filtro de raridade; o que está abaixo do filtro fica no chão (some com o tempo), ou vai para a
+ * venda automática quando ela está ligada.
+ */
 export function tickPickup(w: World): void {
   const r = bal().combate.raioColetaSaqueTiles;
   const loots = Array.from(w.entities.values()).filter((e) => e.kind === 'loot' && !e.dead);
@@ -157,9 +187,37 @@ export function tickPickup(w: World): void {
       const owner = p.playerId ?? `#${p.id}`;
       if (l.loot?.forPlayerId !== undefined && l.loot.forPlayerId !== owner) continue;
       if (dist(p.x, p.y, l.x, l.y) > r + p.radius) continue;
-      pickUp(w, p, l);
+      const act = pickupAction(p, l);
+      if (act === 'deixar') continue;
+      if (act === 'vender') sell(w, p, l);
+      else pickUp(w, p, l);
       break;
     }
+  }
+}
+
+/**
+ * Venda automática: o item vira moeda da margem, precoBase × fracaoDoPrecoBase (precoBase é em
+ * Semente; em Crédito multiplica pela cotação base do câmbio, economy.cambio.base).
+ * SUGESTÃO: sem margem (Delta) paga em Semente; arredonda para baixo, mínimo 1.
+ */
+function sell(w: World, p: Entity, l: Entity): void {
+  const D = getData();
+  const id = l.loot?.itemId;
+  const preco = (id && (D.itemsById.get(id)?.precoBase ?? D.uniquesById.get(id)?.precoBase)) || 0;
+  const v = D.loot.vendaAutomatica;
+  // v.moeda é sempre 'da_margem' (esquema)
+  const moeda = p.side === 'direita' ? 'credito' : 'semente';
+  const mult = moeda === 'credito' ? D.economy.cambio.base : 1;
+  const amount = Math.max(1, Math.floor(preco * v.fracaoDoPrecoBase * mult));
+  l.dead = true;
+  emit(w, { t: 'loot_pick', id: l.id, by: p.id });
+  if (moeda === 'credito') {
+    p.credito = (p.credito ?? 0) + amount;
+    emit(w, { t: 'currency', dst: p.id, credito: amount });
+  } else {
+    p.semente = (p.semente ?? 0) + amount;
+    emit(w, { t: 'currency', dst: p.id, semente: amount });
   }
 }
 

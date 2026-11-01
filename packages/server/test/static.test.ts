@@ -31,6 +31,18 @@ describe('estático do cliente', () => {
     expect(await js.text()).toBe('console.log(1)');
     const spa = await fetch(`${base}/qualquer/coisa`);
     expect(await spa.text()).toContain('<title>Ponte que Partiu</title>');
+    // cache: o index revalida sempre; os assets com hash ficam para sempre
+    expect(root.headers.get('cache-control')).toBe('no-cache');
+    expect(js.headers.get('cache-control')).toBe('public, max-age=31536000, immutable');
+    expect(spa.headers.get('cache-control')).toBe('no-cache');
+    const idx = await fetch(`${base}/index.html`);
+    expect(idx.headers.get('cache-control')).toBe('no-cache');
+    // JS de um build velho (apagado) responde 404, nunca o HTML no lugar do script
+    const old = await fetch(`${base}/assets/index-VELHO.js`);
+    expect(old.status).toBe(404);
+    expect(old.headers.get('content-type') ?? '').not.toContain('text/html');
+    const missing = await fetch(`${base}/favicon-que-nao-existe.png`);
+    expect(missing.status).toBe(404);
     const health = await fetch(`${base}/health`);
     const body = (await health.json()) as { ok: boolean; rooms: { players: number }[] };
     expect(body.ok).toBe(true);

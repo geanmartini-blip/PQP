@@ -16,7 +16,59 @@ Comandos rodam com `. .\scripts\env.ps1` antes (Node e Git portáteis).
 - Contratos da Fase 1: `shared/src/map/types.ts`, `shared/src/sim/types.ts`,
   `shared/src/net/protocol.ts` e `client/src/art/contract.ts`.
 
-## Fase 1: protótipo de movimento e combate — EM ANDAMENTO
+## Fase 2: criação, Máquina de Visual, Delta, tutorial e travessia — PLANO
+
+1. Regras em `shared`:
+   - registro do jogador, com aparência, estágio, nível, XP, missões e story_flags;
+   - progressão de 1 a 8, em que só luta em grupo dá XP;
+   - motor de missões: falar, ir, derrotar, coletar, com auto-caminho;
+   - Máquina de Visual, que nunca tira a silhueta;
+   - travessia: margem, instituição, classe e guia.
+2. Mapa do Delta completo pelos lugares de `places.json`:
+   - Seu Jacó;
+   - Espelho do Cadastro, a Máquina de Visual do Delta;
+   - cais e barco;
+   - arena do Bruno Ferro no nível 7.
+3. Servidor:
+   - salva o jogador;
+   - mensagens de criação, visual, missão, conversa e travessia;
+   - troca de mapa.
+4. Cliente:
+   - tela de criação em camadas com botão de sortear;
+   - Máquina de Visual;
+   - diálogo;
+   - rastreador de missão com seta;
+   - tutorial do primeiro minuto;
+   - tela da travessia.
+5. Arte refeita com mais capricho: bonecos com sombreamento, tiles com transição, sombras, árvores e
+   água. Isso responde ao retorno de que a arte do protótipo ficou feia.
+6. Testes, build no celular, commit.
+
+## Fase 1: protótipo de movimento e combate — CONCLUÍDA
+- Simulação determinística em `shared/src/sim`:
+  - os 6 tipos de habilidade e toda a linguagem de efeitos;
+  - controle com imunidade, e chefe que fica lento em vez de controlado;
+  - caído e levantar, saque e XP;
+  - compensação de 250 ms.
+- IA dos inimigos com bandos, elite com afixos e chefe com avisos no chão. A Doutrina cuida do modo
+  automático. O simulador de balanceamento está em `packages/sim`.
+- Servidor Colyseus autoritativo:
+  - snapshots por raio de interesse;
+  - entradas repetidas e comandos com ack;
+  - `PQP_LAG_MS` e `PQP_LOSS`;
+  - FileStore.
+- Cliente Phaser em retrato:
+  - joystick, botões e toque para trocar de alvo;
+  - previsão e interpolação;
+  - HUD;
+  - Wesley e Li Wei trocam a ala;
+  - `?offline=1`, `?lag=`, `?gallery=1`.
+- Verificação: typecheck ok, 406 testes passando e build ok. O e2e passou com 200 ms de atraso e 2% de
+  perda: 20 snapshots/s, andar, matar com os 3 botões e o aviso do chefe.
+- Em aberto, que passa para a Fase 3:
+  - balanceamento: 10 arquétipos acima de 55% no simulador;
+  - Peão Brabo × Idol dá 100% para o Peão.
+- Detalhe em `decisoes/fase1-prototipo.md`.
 
 Plano:
 1. Simulação compartilhada (`shared/src/sim`), determinística a 20 ticks:

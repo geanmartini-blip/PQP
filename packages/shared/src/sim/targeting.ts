@@ -1,13 +1,15 @@
 /**
  * Alvo automático e troca de alvo por toque.
  * - Trava no inimigo mais perto que esteja à vista (linha de visão), nunca atrás de parede.
- * - Mantém o alvo atual enquanto ele continua válido.
+ * - Mantém o alvo atual enquanto ele continua válido e no alcance do básico; fora do alcance do
+ *   básico, o alvo automático passa para o inimigo visível mais perto (closerHostile).
  * - O alvo escolhido por toque só cai quando morre ou fica fora de vista por MANUAL_TARGET_LOSE_MS.
  * - Provocado trava em quem provocou.
  */
+import { getData } from '../data';
 import { hasLineOfSight } from '../map/grid';
-import { bal, ACQUIRE_RADIUS, DROP_RADIUS, MANUAL_TARGET_LOSE_MS } from './constants';
-import { getEnt, isTargetableBy, isUp, statusesOf } from './entity';
+import { bal, ACQUIRE_RADIUS, DROP_RADIUS, MANUAL_TARGET_LOSE_MS, RETARGET_CLOSER_TILES } from './constants';
+import { getEnt, isTargetableBy, isUp, statPts, statusesOf } from './entity';
 import { dist } from './geom';
 import { msToTicks, type Entity, type World } from './types';
 import { historicalPos } from './world';
@@ -62,6 +64,14 @@ export function autoTarget(w: World, e: Entity): number | undefined {
     const visible = dist(e.x, e.y, cur.x, cur.y) - cur.radius <= DROP_RADIUS && canSee(w, e, cur);
     if (visible) {
       e.targetLostTick = undefined;
+      // alvo automático: segue o inimigo mais perto à vista quando o atual saiu do alcance do básico
+      if (!e.manualTarget && e.kind !== 'enemy') {
+        const better = closerHostile(w, e, cur);
+        if (better) {
+          e.targetId = better.id;
+          return better.id;
+        }
+      }
       return cur.id;
     }
     if (e.manualTarget) {
@@ -77,6 +87,33 @@ export function autoTarget(w: World, e: Entity): number | undefined {
   const t = nearestVisibleHostile(w, e, ACQUIRE_RADIUS);
   if (t) e.targetId = t.id;
   return e.targetId;
+}
+
+/** Distância borda a borda. */
+const gap = (a: Entity, b: Entity) => dist(a.x, a.y, b.x, b.y) - a.radius - b.radius;
+
+/** Alcance do ataque básico de `e` (o mesmo cálculo de effectiveRange em abilities.ts). */
+export function basicRangeOf(e: Entity): number {
+  const id = e.loadout?.basico ?? (e.ai?.['basic'] as string | undefined);
+  const a = id ? getData().abilities.get(id) : undefined;
+  const r = !a ? e.stats.range : a.rangeDoAlcance ? e.stats.range : a.range;
+  return r * (1 + statPts(e, 'range') / 100);
+}
+
+/**
+ * Troca do alvo automático (não manual): com o atual fora do alcance do básico, vai para o inimigo
+ * visível mais perto se ele estiver no alcance do básico, ou se estiver RETARGET_CLOSER_TILES mais
+ * perto que o atual (a folga evita ficar trocando entre dois quase à mesma distância). Com o atual
+ * no alcance, não troca.
+ */
+function closerHostile(w: World, e: Entity, cur: Entity): Entity | undefined {
+  const reach = basicRangeOf(e);
+  const dCur = gap(e, cur);
+  if (dCur <= reach) return undefined;
+  const near = nearestVisibleHostile(w, e, ACQUIRE_RADIUS);
+  if (!near || near.id === cur.id) return undefined;
+  const dNear = gap(e, near);
+  return dNear <= reach || dCur - dNear >= RETARGET_CLOSER_TILES ? near : undefined;
 }
 
 /**

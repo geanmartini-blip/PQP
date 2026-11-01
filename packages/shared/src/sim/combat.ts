@@ -8,8 +8,9 @@
  */
 import { getData } from '../data';
 import type { Passive } from '../schema/ability';
-import { bal, MAX_DAMAGE_REDUCTION_PCT, SPECIAL_BANK_MAX_S } from './constants';
+import { bal, DESCONSTRUIDO_HEAL_PCT_DEFAULT, DESCONSTRUIDO_RANGE_TILES, MAX_DAMAGE_REDUCTION_PCT, SPECIAL_BANK_MAX_S } from './constants';
 import {
+  CC_KINDS,
   CC_NO_ABILITY,
   firstStatus,
   getEnt,
@@ -81,9 +82,15 @@ export function removeStatuses(w: World, e: Entity, pred: (s: StatusInstance) =>
   for (const s of e.statuses) (pred(s) ? gone : keep).push(s);
   if (gone.length === 0) return;
   e.statuses = keep;
+  let ccCut = false;
   for (const s of gone) {
     onStatusEnd(e, s);
     emit(w, { t: 'status', dst: e.id, kind: s.kind, on: false });
+    // controle que acabou antes da hora (quebraAoApanhar, limpar): a imunidade conta do fim real
+    if (s.endTick > w.tick && s.kind !== 'provocar' && CC_KINDS.includes(s.kind)) ccCut = true;
+  }
+  if (ccCut && !e.statuses.some((s) => s.kind !== 'provocar' && CC_KINDS.includes(s.kind))) {
+    e.ccImmuneUntil = Math.min(e.ccImmuneUntil, w.tick + msToTicks(bal().combate.imunidadeControleMs));
   }
   recomputeShield(e);
 }
@@ -388,6 +395,7 @@ export function dealDamage(w: World, src: Entity, dst: Entity, mult: number, opt
   const cid = creditId(src);
   dst.attackers ??= {};
   dst.attackers[cid] = w.tick;
+  // (as entradas velhas são podadas no step: pruneAttackers)
   markCombat(w, dst);
   markActive(w, dst);
   markCombat(w, src);
@@ -416,8 +424,8 @@ export function dealDamage(w: World, src: Entity, dst: Entity, mult: number, opt
   // Desconstruído: cada golpe que ele segura cura um aliado
   const desc = firstStatus(dst, 'desconstruido');
   if (desc) {
-    const pct = Number(desc.data?.['curaPctVidaMaxPorGolpe'] ?? 5);
-    const ally = lowestHpAlly(w, dst, 8, true);
+    const pct = Number(desc.data?.['curaPctVidaMaxPorGolpe'] ?? DESCONSTRUIDO_HEAL_PCT_DEFAULT);
+    const ally = lowestHpAlly(w, dst, DESCONSTRUIDO_RANGE_TILES, true);
     if (ally) heal(w, dst, ally, (pct / 100) * ally.stats.hpMax, { abilityId: desc.abilityId });
   }
 

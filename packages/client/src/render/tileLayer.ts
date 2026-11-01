@@ -16,6 +16,8 @@ import { DEPTH } from './depth';
 
 export const GRID_KEY = 'tiles_grid';
 const COLS = 16;
+// SUGESTÃO: blocos de 16x16 tiles para as copas do meio da mata.
+export const CANOPY_CHUNK = 16;
 
 export interface TileLayerView {
   floor: Phaser.Tilemaps.TilemapLayer;
@@ -115,9 +117,22 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
     deco.setDepth(DEPTH.deco);
   }
 
-  // copas: perto do chão andável viram imagens com profundidade; as do meio da mata, Blitter
+  // copas: perto do chão andável viram imagens com profundidade; as do meio da mata, Blitter em
+  // blocos de CANOPY_CHUNK×CANOPY_CHUNK tiles (o Blitter não recorta pela câmera: só os blocos perto
+  // da tela ficam ligados)
   const canopies: Phaser.GameObjects.Image[] = [];
-  const blitter = scene.add.blitter(0, 0, TILE_KEY).setDepth(DEPTH.canopyFar);
+  const chunks = new Map<number, { b: Phaser.GameObjects.Blitter; cx: number; cy: number }>();
+  const chunkCols = Math.ceil(W / CANOPY_CHUNK);
+  const blitterAt = (x: number, y: number) => {
+    const cx = Math.floor(x / CANOPY_CHUNK), cy = Math.floor(y / CANOPY_CHUNK);
+    const k = cy * chunkCols + cx;
+    let c = chunks.get(k);
+    if (!c) {
+      c = { b: scene.add.blitter(0, 0, TILE_KEY).setDepth(DEPTH.canopyFar), cx, cy };
+      chunks.set(k, c);
+    }
+    return c.b;
+  };
   for (let y = 0; y < H; y++) {
     for (let x = 0; x < W; x++) {
       if (map.tiles[y * W + x] !== Tile.Arvore) continue;
@@ -132,9 +147,10 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
         const img = scene.add.image(px, py, TILE_KEY, frame).setOrigin(0, 0);
         img.setDepth(DEPTH.entity + (y + 1) * TILE_PX);
         canopies.push(img);
-      } else blitter.create(px, py, frame);
+      } else blitterAt(x, y).create(px, py, frame);
     }
   }
+  const chunkPx = CANOPY_CHUNK * TILE_PX;
 
   let lastStep = -1;
   return {
@@ -158,6 +174,12 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
         const vis = c.x < x1 && c.x + 48 > x0 && c.y < y1 && c.y + 40 > y0;
         if (c.visible !== vis) c.setVisible(vis);
       }
+      // bloco de copas: a área dele (mais a copa que passa da borda) cruza a tela?
+      for (const c of chunks.values()) {
+        const bx = c.cx * chunkPx - 8, by = c.cy * chunkPx - 18;
+        const vis = bx < x1 && bx + chunkPx + 48 > x0 && by < y1 && by + chunkPx + 40 > y0;
+        if (c.b.visible !== vis) c.b.setVisible(vis);
+      }
     },
     destroy() {
       floor.destroy();
@@ -165,7 +187,7 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
       tm.destroy();
       tmDeco?.destroy();
       for (const c of canopies) c.destroy();
-      blitter.destroy();
+      for (const c of chunks.values()) c.b.destroy();
     },
   };
 }

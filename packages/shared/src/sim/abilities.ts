@@ -31,7 +31,19 @@ import {
   resourceMaxOf,
   reviveEntity,
 } from './combat';
-import { bal, LANE_HALF_WIDTH, PENDING_CAST_MS, VIEW_RADIUS } from './constants';
+import {
+  ACQUIRE_RADIUS,
+  bal,
+  IMPLICIT_GROUP_TILES,
+  LANE_HALF_WIDTH,
+  PENDING_CAST_MS,
+  RETREAT_SCAN_TILES,
+  SELECTOR_FALLBACK_RANGE,
+  SUMMON_FREE_RADIUS,
+  SUMMON_RING_TILES,
+  SUMMON_SPAWN_TILES,
+  VIEW_RADIUS,
+} from './constants';
 import {
   canAct,
   canBasic,
@@ -96,6 +108,8 @@ interface Ctx {
   groupBuff?: boolean;
   /** este ctx é um tick de campo */
   zone?: GroundZone;
+  /** a origem é fixa (aviso no chão): empurrão e puxão saem dela, não de onde quem lançou está agora */
+  fixedOrigin?: boolean;
 }
 
 const ab = (id: string) => getData().abilities.get(id);
@@ -104,6 +118,14 @@ const ab = (id: string) => getData().abilities.get(id);
 export function effectiveRange(e: Entity, a: Ability): number {
   const r = a.rangeDoAlcance ? e.stats.range : a.range;
   return r * (1 + statPts(e, 'range') / 100);
+}
+
+/**
+ * Alcance que o personagem precisa atingir (borda a borda) para a habilidade pegar o alvo: o
+ * alcance real, menos o raio de quem lança no cone (o cone sai do centro do corpo).
+ */
+export function approachRange(e: Entity, a: Ability): number {
+  return effectiveRange(e, a) - (a.type === 'cone' ? e.radius : 0);
 }
 
 const areaMult = (e: Entity) => Math.max(0.25, 1 + statPts(e, 'areaSize') / 100);
@@ -180,7 +202,12 @@ function planCast(w: World, e: Entity, a: Ability, opts: CastOpts): PlanResult {
       return { kind: 'ok', plan: { point: frontPoint(w, e, face, range), dir: face } };
     }
     case 'cone': {
-      const t = hostileTarget(w, e, opts, Math.max(range, 8));
+      // alvo travado (ou o inimigo visível mais perto a até ACQUIRE_RADIUS): fora do alcance, anda
+      // até lá como a travada; sem inimigo nenhum, sai na direção em que o personagem olha
+      // (o cone mede do centro de quem lança: approachRange; sem compensação de atraso, porque o
+      // cone resolve agora nas posições atuais e erraria quem só estava no alcance 250 ms atrás)
+      const t = hostileTarget(w, e, opts, Math.max(range, ACQUIRE_RADIUS));
+      if (t && !reachable(w, e, t, approachRange(e, a), 0)) return { kind: 'approach', targetId: t.id };
       return { kind: 'ok', plan: { targetId: t?.id, point: { x: e.x, y: e.y }, dir: t ? angleTo(e, t) : face } };
     }
     case 'em_volta': {
@@ -316,6 +343,7 @@ function makeCtx(w: World, e: Entity, a: Ability, plan: Plan): Ctx {
   }
   const ctx: Ctx = { w, caster: e, ability: a, team: e.team, point: { ...plan.point }, origin, dir: plan.dir, shape, range, hit: new Set() };
   if (plan.targetId !== undefined) ctx.targetId = plan.targetId;
+  if (plan.origin) ctx.fixedOrigin = true;
   const turne = firstStatus(e, 'turne_mundial');
   if (turne && turne.data?.['habilidade'] === a.id) ctx.groupBuff = true;
   return ctx;
@@ -345,13 +373,20 @@ function defaultSelector(ctx: Ctx, eff: Effect): string {
   return 'self';
 }
 
-/** Membros do grupo de `e` (mesmo partyId; sem grupo, todos os jogadores e companheiros do time). */
+/**
+ * Membros do grupo de `e`: com partyId, quem tem o mesmo partyId; sem grupo, um grupo implícito
+ * de quem também está sem grupo (jogadores e companheiros do time) a até IMPLICIT_GROUP_TILES
+ * (nunca o mapa inteiro: reforço de grupo, Turnê Mundial e a cura da Doutrina não vão atrás de
+ * estranhos longe).
+ */
 export function groupOf(w: World, e: Entity, includeDowned: boolean): Entity[] {
   const out: Entity[] = [];
   for (const m of w.entities.values()) {
     if (m.team !== e.team || m.dead) continue;
-    if (m.id !== e.id && !isPartyMember(m)) continue;
-    if (e.partyId !== undefined && m.partyId !== e.partyId && m.id !== e.id) continue;
+    if (m.id !== e.id) {
+      if (!isPartyMember(m)) continue;
+      if (e.partyId !== undefined ? m.partyId !== e.partyId : m.partyId !== undefined || dist(e.x, e.y, m.x, m.y) > IMPLICIT_GROUP_TILES) continue;
+    }
     if (!includeDowned && m.downedUntil !== undefined) continue;
     out.push(m);
   }
@@ -380,7 +415,7 @@ function selectTargets(ctx: Ctx, eff: Effect): Entity[] {
   const okFriend = (t: Entity) => isFriendly(caster, t) && t.kind !== 'loot' && !t.dead && (allowDowned ? true : t.downedUntil === undefined);
   const okFoe = (t: Entity) => t.id !== caster.id && isHostile(caster, t) && isDamageable(t);
   const shape: Shape = eff.radius !== undefined ? { kind: 'circulo', x: ctx.point.x, y: ctx.point.y, radius: eff.radius * areaMult(caster) } : ctx.shape;
-  const selRange = ctx.range > 0 ? ctx.range : ctx.ability.radius > 0 ? ctx.ability.radius : 4;
+  const selRange = ctx.range > 0 ? ctx.range : ctx.ability.radius > 0 ? ctx.ability.radius : SELECTOR_FALLBACK_RANGE;
   const all = Array.from(w.entities.values());
   switch (sel) {
     case 'self':
@@ -554,7 +589,8 @@ function applyEffect(ctx: Ctx, eff: Effect, index: number): void {
         break;
       }
       case 'puxar': {
-        const c = eff.paraCentro ? ctx.point : { x: caster.x, y: caster.y };
+        // sem paraCentro: puxa para quem lançou (com aviso no chão, para onde ele estava ao lançar)
+        const c = eff.paraCentro ? ctx.point : casterOrigin(ctx);
         if (eff.duracaoMs) {
           const d = dist(t.x, t.y, c.x, c.y);
           const tiles = eff.tiles ?? d;
@@ -648,11 +684,24 @@ function applyEffect(ctx: Ctx, eff: Effect, index: number): void {
   }
 }
 
-/** Centro do empurrão: quem lança (em volta, cone) ou o ponto de efeito (área, raio próprio). */
+/**
+ * Centro do empurrão: quem lança (em volta, cone) ou o ponto de efeito (área, raio próprio). Com
+ * aviso no chão ou campo, sai da origem marcada (quem lançou pode ter andado durante o aviso).
+ */
 function pushCenter(ctx: Ctx, ownRadius: boolean): Vec {
   const t = ctx.ability.type;
   if (ownRadius || t === 'area_alvo' || t === 'campo') return ctx.point;
-  return ctx.zone ? ctx.origin : { x: ctx.caster.x, y: ctx.caster.y };
+  return ctx.zone ? ctx.origin : casterOrigin(ctx);
+}
+
+/**
+ * Onde quem lançou estava para o efeito: em volta e cone com aviso no chão saem do ponto marcado
+ * no lançamento (a origem do aviso); o resto sai de onde ele está agora.
+ */
+function casterOrigin(ctx: Ctx): Vec {
+  const t = ctx.ability.type;
+  if (ctx.fixedOrigin && (t === 'em_volta' || t === 'cone')) return ctx.origin;
+  return { x: ctx.caster.x, y: ctx.caster.y };
 }
 
 function doDamage(ctx: Ctx, eff: Extract<Effect, { kind: 'dano' }>): void {
@@ -739,7 +788,7 @@ function doRetreat(ctx: Ctx, tiles: number, de: 'inimigo_mais_perto' | 'joystick
     ux = mi.x / l;
     uy = mi.y / l;
   } else {
-    const foe = nearestVisibleHostile(w, caster, 10);
+    const foe = nearestVisibleHostile(w, caster, RETREAT_SCAN_TILES);
     if (foe) {
       const l = Math.hypot(caster.x - foe.x, caster.y - foe.y) || 1;
       ux = (caster.x - foe.x) / l;
@@ -766,15 +815,15 @@ function doSummon(ctx: Ctx, summonId: string, durationMs: number, max: number, q
     old.dead = true;
     old.expiresTick = w.tick;
   }
-  const base = a.type === 'campo' && a.range > 0 ? ctx.point : { x: caster.x + Math.cos(ctx.dir) * 1, y: caster.y + Math.sin(ctx.dir) * 1 };
+  const base = a.type === 'campo' && a.range > 0 ? ctx.point : { x: caster.x + Math.cos(ctx.dir) * SUMMON_SPAWN_TILES, y: caster.y + Math.sin(ctx.dir) * SUMMON_SPAWN_TILES };
   for (let k = 0; k < qty; k++) {
     let x = base.x, y = base.y;
     if (qty > 1) {
       const ang = (k / qty) * Math.PI * 2;
-      x += Math.cos(ang) * 1.2;
-      y += Math.sin(ang) * 1.2;
+      x += Math.cos(ang) * SUMMON_RING_TILES;
+      y += Math.sin(ang) * SUMMON_RING_TILES;
     }
-    if (!circleFree(w.map, x, y, 0.4)) {
+    if (!circleFree(w.map, x, y, SUMMON_FREE_RADIUS)) {
       x = caster.x;
       y = caster.y;
     }

@@ -42,8 +42,37 @@ export const BAND_SPREAD_TILES = 1;
 // SUGESTÃO: progresso dos jogadores é salvo a cada 10 s (e ao sair).
 export const SAVE_EVERY_MS = 10_000;
 
-/** Entradas: no máximo 3 na fila (o cliente repete as 3 últimas); mais que isso, as velhas caem. */
+/**
+ * Entradas do joystick (ver core.ts, cabeçalho). O cliente prevê um passo por entrada, então o
+ * servidor também anda um passo por entrada e o ack (lastSeq) anda junto com a posição. Fila vazia:
+ * não anda (sem extrapolar com a entrada velha).
+ *
+ * SUGESTÃO: sobrou entrada na fila depois do tick: até 2 entradas extras por tick andam na hora,
+ * para o atraso não ficar para sempre depois de uma rajada (a fila volta a 0).
+ */
+export const INPUT_TARGET_BACKLOG = 0;
+export const INPUT_CATCHUP_PER_TICK = 2;
+
+// SUGESTÃO: crédito de entradas: +1,05 por tick, até 20 (1 s de rajada). Cada entrada consumida
+// (ou suposta) gasta 1. Quem manda entrada mais rápido que 20 por segundo não anda mais rápido.
+export const INPUT_CREDIT_PER_TICK = 1.05;
+export const INPUT_CREDIT_MAX = 20;
+
+// SUGESTÃO: fila de entradas com no máximo 40 (2 s); passou disso, as mais velhas caem.
+export const INPUT_QUEUE_MAX = 40;
+
+/**
+ * @deprecated a fila agora é drenada (INPUT_TARGET_BACKLOG, INPUT_CATCHUP_PER_TICK) e só corta em
+ * INPUT_QUEUE_MAX. Fica exportado para quem importava.
+ */
 export const INPUT_BACKLOG_MAX = 3;
+
+// SUGESTÃO: comando com afterSeq espera o servidor consumir essa entrada por no máximo 10 ticks (0,5 s).
+export const CMD_HOLD_MAX_TICKS = 10;
+
+// SUGESTÃO: d/n/lk/lv de uma entidade nova (ou que mudou) se repetem a cada 4 ticks até o ack,
+// não em todo tick (o 'need' cobre o resto).
+export const INFO_REPEAT_TICKS = 4;
 
 // SUGESTÃO: comandos lidos por mensagem e ids lembrados para a deduplicação.
 export const MAX_CMDS_PER_MSG = 16;

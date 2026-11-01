@@ -1,10 +1,14 @@
 /**
  * Botão redondo do HUD: ícone da arte, recarga em pizza com os segundos, cinza sem recurso ou sem
- * poder agir, anel de carga (Especial) e contador (item). Só redesenha quando o valor muda.
+ * poder agir, anel de carga (Especial) e contador (item).
+ *
+ * Só Image e Sprite com texturas geradas uma vez (ui/hudTextures.ts); trocar o estado troca a
+ * textura ou o quadro, sem redesenhar nada. `moveTo` muda o botão de lugar (modo de ajuste).
  */
 import * as Phaser from 'phaser';
 import { FONT_KEY } from '../art/index';
 import { fontText } from '../art/fx';
+import { buttonTex, discTex, pieFrame, pieSheet, ringFrame, ringSheet } from './hudTextures';
 import type { Circle } from './layout';
 
 export interface ButtonState {
@@ -24,11 +28,25 @@ export interface ButtonState {
 const RING_READY = 0xffe23a;
 const RING_CHARGE = 0x8ad0ff;
 
+export interface RoundButtonOpts {
+  charge?: boolean;
+  count?: boolean;
+  hint?: string;
+  label?: string;
+  color?: number;
+  /** pixels de canvas por px de CSS */
+  px?: number;
+  /** escala inteira da fonte (pixels de canvas por pixel da fonte) */
+  ts?: number;
+}
+
 export class RoundButton {
   readonly c: Circle;
-  private bg: Phaser.GameObjects.Graphics;
-  private pie: Phaser.GameObjects.Graphics;
-  private ring?: Phaser.GameObjects.Graphics;
+  private readonly px: number;
+  private bg: Phaser.GameObjects.Image;
+  private pie: Phaser.GameObjects.Image;
+  private grey: Phaser.GameObjects.Image;
+  private ring?: Phaser.GameObjects.Image;
   private icon?: Phaser.GameObjects.Image;
   private text: Phaser.GameObjects.BitmapText;
   private countText?: Phaser.GameObjects.BitmapText;
@@ -36,44 +54,41 @@ export class RoundButton {
   private label?: Phaser.GameObjects.BitmapText;
   private iconKey = '';
   private cdTotal = 0;
-  private last = { cd: -1, gcd: -1, disabled: false, charge: -1, count: -1, pressed: false, ready: false };
+  private bgColor: number;
+  private ringReadyKey = '';
+  private ringChargeKey = '';
+  private last = { cd: -1, gcd: -1, disabled: false, charge: -1, count: -1, pressed: false, ready: false, text: '' };
+  private depth = 0;
   visible = true;
 
   constructor(
     private readonly scene: Phaser.Scene,
     c: Circle,
-    opts: { charge?: boolean; count?: boolean; hint?: string; label?: string; color?: number } = {},
+    opts: RoundButtonOpts = {},
   ) {
-    this.c = c;
-    this.bg = scene.add.graphics();
-    this.drawBg(false, opts.color ?? 0x2a2230);
-    this.pie = scene.add.graphics();
-    if (opts.charge) this.ring = scene.add.graphics();
-    this.text = scene.add.bitmapText(c.x, c.y, FONT_KEY, '', 7).setOrigin(0.5).setScale(2).setTint(0xffffff);
-    if (opts.count) this.countText = scene.add.bitmapText(c.x + c.r * 0.55, c.y + c.r * 0.55, FONT_KEY, '', 7).setOrigin(0.5).setScale(2).setTint(0xffe8a0);
-    if (opts.hint) this.hint = scene.add.bitmapText(c.x - c.r * 0.7, c.y - c.r * 0.7, FONT_KEY, fontText(opts.hint), 7).setOrigin(0.5).setTint(0xc8c0d0);
-    if (opts.label) this.label = scene.add.bitmapText(c.x, c.y, FONT_KEY, fontText(opts.label), 7).setOrigin(0.5).setScale(c.r > 26 ? 2 : 1.5).setTint(0xffffff);
-  }
-
-  private bgColor = 0x2a2230;
-
-  private drawBg(pressed: boolean, color = this.bgColor): void {
-    this.bgColor = color;
+    this.c = { ...c };
+    this.px = opts.px ?? 1;
+    const ts = opts.ts ?? 2;
+    this.bgColor = opts.color ?? 0x2a2230;
     const { x, y, r } = this.c;
-    const g = this.bg;
-    g.clear();
-    g.fillStyle(0x000000, 0.35);
-    g.fillCircle(x + 2, y + 3, r);
-    g.fillStyle(pressed ? 0x4a3a52 : color, 0.88);
-    g.fillCircle(x, y, r);
-    g.lineStyle(3, 0x140c16, 1);
-    g.strokeCircle(x, y, r);
-    g.lineStyle(1, 0x8a7a92, 0.9);
-    g.strokeCircle(x, y, r - 3);
+    this.bg = scene.add.image(x, y, buttonTex(scene, r, this.bgColor, false, this.px));
+    this.pie = scene.add.image(x, y, pieSheet(scene, r - Math.round(2 * this.px)), '0').setVisible(false);
+    this.grey = scene.add.image(x, y, discTex(scene, r - Math.round(2 * this.px), 0x1a1a1a, 0.55)).setVisible(false);
+    if (opts.charge) {
+      this.ringChargeKey = ringSheet(scene, r, RING_CHARGE, this.px);
+      this.ringReadyKey = ringSheet(scene, r, RING_READY, this.px);
+      this.ring = scene.add.image(x, y, this.ringChargeKey, '0');
+    }
+    this.text = scene.add.bitmapText(x, y, FONT_KEY, '', 7).setOrigin(0.5).setScale(ts + Math.max(1, Math.round(ts / 2))).setTint(0xffffff);
+    if (opts.count) this.countText = scene.add.bitmapText(x + r * 0.55, y + r * 0.55, FONT_KEY, '', 7).setOrigin(0.5).setScale(ts).setTint(0xffe8a0);
+    if (opts.hint) this.hint = scene.add.bitmapText(x - r * 0.7, y - r * 0.7, FONT_KEY, fontText(opts.hint), 7).setOrigin(0.5).setScale(Math.max(1, ts - 1)).setTint(0xc8c0d0);
+    if (opts.label) this.label = scene.add.bitmapText(x, y, FONT_KEY, fontText(opts.label), 7).setOrigin(0.5).setScale(labelScale(opts.label, r, ts)).setTint(0xffffff);
   }
 
   setColor(color: number): void {
-    if (color !== this.bgColor) this.drawBg(this.last.pressed, color);
+    if (color === this.bgColor) return;
+    this.bgColor = color;
+    this.bg.setTexture(buttonTex(this.scene, this.c.r, color, this.last.pressed, this.px));
   }
 
   setLabel(text: string): void {
@@ -89,18 +104,17 @@ export class RoundButton {
     }
     if (!this.icon) this.icon = this.scene.add.image(this.c.x, this.c.y, key);
     this.icon.setTexture(key).setVisible(this.visible);
+    // ícone 48x48 em escala inteira de canvas (pixel nítido), ~72% do diâmetro
     const s = (this.c.r * 2 * 0.72) / 48;
-    this.icon.setScale(Math.round(s * 4) / 4);
-    // ícone por baixo da pizza e do texto
-    this.icon.setDepth(this.bg.depth + 0.5);
-    this.pie.setDepth(this.bg.depth + 0.6);
-    this.ring?.setDepth(this.bg.depth + 0.7);
-    this.text.setDepth(this.bg.depth + 0.8);
+    this.icon.setScale(s >= 1 ? Math.round(s) : 0.5 * Math.max(1, Math.round(s * 2)));
+    this.setDepth(this.depth);
   }
 
   setDepth(d: number): void {
+    this.depth = d;
     this.bg.setDepth(d);
     this.icon?.setDepth(d + 0.5);
+    this.grey.setDepth(d + 0.55);
     this.pie.setDepth(d + 0.6);
     this.ring?.setDepth(d + 0.7);
     this.text.setDepth(d + 0.8);
@@ -109,35 +123,38 @@ export class RoundButton {
     this.label?.setDepth(d + 0.9);
   }
 
+  /** Muda o botão de lugar (modo de ajuste). */
+  moveTo(x: number, y: number): void {
+    const dx = x - this.c.x, dy = y - this.c.y;
+    if (dx === 0 && dy === 0) return;
+    this.c.x = x;
+    this.c.y = y;
+    for (const o of [this.bg, this.pie, this.grey, this.ring, this.icon, this.text, this.countText, this.hint, this.label]) if (o) o.setPosition(o.x + dx, o.y + dy);
+  }
+
   update(s: ButtonState, now: number): void {
-    const { x, y, r } = this.c;
-    if (s.pressed !== this.last.pressed) {
+    if ((s.pressed === true) !== this.last.pressed) {
       this.last.pressed = s.pressed === true;
-      this.drawBg(this.last.pressed);
+      this.bg.setTexture(buttonTex(this.scene, this.c.r, this.bgColor, this.last.pressed, this.px));
     }
     // recarga em pizza: o total é o maior valor visto desde que começou
     if (s.cd > this.last.cd && s.cd > 0) this.cdTotal = Math.max(s.cd, this.last.cd > 0 ? this.cdTotal : 0);
     if (s.cd === 0) this.cdTotal = 0;
-    const cdChanged = s.cd !== this.last.cd || s.gcd !== this.last.gcd || s.disabled !== this.last.disabled;
-    if (cdChanged) {
+    if (s.cd !== this.last.cd || s.gcd !== this.last.gcd || s.disabled !== this.last.disabled) {
       this.last.cd = s.cd;
       this.last.gcd = s.gcd;
       this.last.disabled = s.disabled;
-      const g = this.pie;
-      g.clear();
       let frac = 0;
       if (s.cd > 0 && this.cdTotal > 0) frac = s.cd / this.cdTotal;
       else if (s.gcd > 0) frac = Math.min(1, s.gcd / 20);
-      if (frac > 0) {
-        g.fillStyle(0x000000, 0.6);
-        g.slice(x, y, r - 2, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2, false);
-        g.fillPath();
+      if (frac > 0) this.pie.setFrame(pieFrame(frac));
+      this.pie.setVisible(this.visible && frac > 0);
+      this.grey.setVisible(this.visible && s.disabled);
+      const t = s.cd > 0 ? String(Math.ceil(s.cd / 20)) : '';
+      if (t !== this.last.text) {
+        this.last.text = t;
+        this.text.setText(t);
       }
-      if (s.disabled) {
-        g.fillStyle(0x1a1a1a, 0.55);
-        g.fillCircle(x, y, r - 2);
-      }
-      this.text.setText(s.cd > 0 ? String(Math.ceil(s.cd / 20)) : '');
       this.icon?.setTint(s.disabled ? 0x777777 : 0xffffff);
     }
     if (this.ring && s.charge !== undefined) {
@@ -146,14 +163,7 @@ export class RoundButton {
       if (ch !== this.last.charge || ready !== this.last.ready) {
         this.last.charge = ch;
         this.last.ready = ready;
-        const g = this.ring;
-        g.clear();
-        g.lineStyle(5, 0x140c16, 0.9);
-        g.strokeCircle(x, y, r + 3);
-        g.lineStyle(4, ready ? RING_READY : RING_CHARGE, 1);
-        g.beginPath();
-        g.arc(x, y, r + 3, -Math.PI / 2, -Math.PI / 2 + Math.max(0.001, s.charge) * Math.PI * 2, false);
-        g.strokePath();
+        this.ring.setTexture(ready ? this.ringReadyKey : this.ringChargeKey, ringFrame(Math.max(0.001, Math.min(1, s.charge))));
       }
       // pronto: brilha pulsando
       if (ready) this.ring.setAlpha(0.65 + 0.35 * Math.sin(now / 140));
@@ -169,7 +179,8 @@ export class RoundButton {
     if (v === this.visible) return;
     this.visible = v;
     this.bg.setVisible(v);
-    this.pie.setVisible(v);
+    this.pie.setVisible(v && (this.last.cd > 0 || this.last.gcd > 0));
+    this.grey.setVisible(v && this.last.disabled);
     this.ring?.setVisible(v);
     this.icon?.setVisible(v && this.iconKey !== '');
     this.text.setVisible(v);
@@ -177,4 +188,16 @@ export class RoundButton {
     this.hint?.setVisible(v);
     this.label?.setVisible(v);
   }
+
+  /** Destaque do modo de ajuste (meio transparente quando não está sendo arrastado). */
+  setAlpha(a: number): void {
+    for (const o of [this.bg, this.icon, this.ring, this.label]) o?.setAlpha(a);
+  }
+}
+
+/** Escala do rótulo: a maior inteira (até ts) em que ele cabe em ~95% do diâmetro. */
+function labelScale(label: string, r: number, ts: number): number {
+  const w = fontText(label).length * 7;
+  for (let s = ts; s >= 1; s--) if (w * s <= r * 1.9) return s;
+  return 1;
 }

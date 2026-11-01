@@ -192,6 +192,11 @@ export interface Entity {
   casting?: CastState;
   /** habilidade pedida fora do alcance: anda até o alcance e lança (expira em untilTick) */
   pendingCast?: PendingCast;
+  // ---- Adições da correção da Fase 1 ----
+  /** coleta automática: só pega item desta raridade para cima (padrão: loot.json coleta.filtroPadrao) */
+  lootFilter?: 'comum' | 'raro' | 'unico' | 'set';
+  /** venda automática ligada (loot.json vendaAutomatica): item abaixo do filtro e da raridade da venda vira moeda */
+  autoSell?: boolean;
 }
 
 /** Carga curta de uma habilidade (castMs). */
@@ -314,7 +319,9 @@ export type PlayerCommand =
   | { id: number; c: 'auto'; on: boolean }
   | { id: number; c: 'interagir'; entity: number }
   | { id: number; c: 'trocar_arquetipo'; archetypeId: string } // protótipo da Fase 1
-  | { id: number; c: 'doutrina'; cards: DoctrineCard[] };
+  | { id: number; c: 'doutrina'; cards: DoctrineCard[] }
+  // adição da correção da Fase 1: filtro de raridade da coleta automática (e venda automática)
+  | { id: number; c: 'filtro_saque'; raridade: 'comum' | 'raro' | 'unico' | 'set'; vendaAutomatica?: boolean };
 
 export interface CommandContext {
   /** quantos ticks voltar no histórico para conferir alvo e alcance (compensação de até 250 ms) */

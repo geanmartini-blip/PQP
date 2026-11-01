@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { Tile } from '../src/map/types';
 import {
   applyCommand,
+  applyBuff,
   applyControl,
   applyInput,
   applyShield,
@@ -14,7 +15,9 @@ import {
   effectiveMoveSpeed,
   hudSnapshot,
   moveVelocity,
+  resolveKit,
   setArchetype,
+  statRowAt,
   spawnAlly,
   spawnEnemy,
   spawnNpc,
@@ -26,6 +29,7 @@ import {
   type Entity,
   type World,
 } from '../src/sim';
+import { relevel } from '../src/sim/spawn';
 import { arena, fill, freeze } from '../src/sim/testkit';
 
 const statusOf = (e: Entity, kind: string) => e.statuses.find((s) => s.kind === kind);
@@ -356,10 +360,12 @@ describe('caído e levantar', () => {
 });
 
 describe('troca de arquétipo e NPCs', () => {
-  it('setArchetype troca classe e botões, mantém a fração de vida e zera recargas', () => {
+  it('setArchetype troca classe e botões, mantém a fração de vida e as recargas', () => {
     const w = createWorld(arena(), 1);
     const p = peao(w);
     castAbility(w, p, 'casca_grossa');
+    const cd = p.cooldowns['casca_grossa'];
+    expect(cd).toBeGreaterThan(w.tick);
     p.hp = p.stats.hpMax / 2;
     setArchetype(w, p, 'idol');
     expect(p.classId).toBe('mascarado');
@@ -368,8 +374,69 @@ describe('troca de arquétipo e NPCs', () => {
     expect(p.loadout?.b2).toBe('encore');
     expect(p.loadout?.basico).toBe('basico_mascarado');
     expect(p.hp / p.stats.hpMax).toBeCloseTo(0.5);
-    expect(Object.keys(p.cooldowns)).toHaveLength(0);
+    expect(p.cooldowns['casca_grossa']).toBe(cd);
     expect(p.stats.range).toBe(4);
+  });
+
+  it('regressão: trocar de ala duas vezes não libera as recargas nem a recarga global', () => {
+    const w = createWorld(arena(), 1);
+    const p = peao(w);
+    const s = spawnEnemy(w, 'siri_do_mangue', 11.2, 15);
+    freeze(s);
+    p.targetId = s.id;
+    expect(castAbility(w, p, 'segura_o_peao')).toBe(true);
+    const cd = p.cooldowns['segura_o_peao']!;
+    setArchetype(w, p, 'idol');
+    setArchetype(w, p, 'peao_brabo');
+    expect(p.cooldowns['segura_o_peao']).toBe(cd);
+    expect(castAbility(w, p, 'segura_o_peao')).toBe(false);
+    // a troca aplica a recarga global
+    stepN(w, 25);
+    setArchetype(w, p, 'idol');
+    expect(p.gcdUntil).toBeGreaterThan(w.tick);
+    expect(castAbility(w, p, 'fanchant')).toBe(false);
+  });
+
+  it('regressão: trocar_arquetipo só com o treinador da ala perto e fora de combate', () => {
+    const w = createWorld(arena(40, 30), 1);
+    const p = peao(w, 10, 15);
+    // longe dos treinadores: recusa; ala fora do template também
+    const li = spawnNpc(w, 'li_wei', 25, 15);
+    expect(applyCommand(w, p, { id: 1, c: 'trocar_arquetipo', archetypeId: 'idol' })).toBe(false);
+    expect(applyCommand(w, p, { id: 2, c: 'trocar_arquetipo', archetypeId: 'cowboy_cromado' })).toBe(false);
+    expect(p.archetypeId).toBe('peao_brabo');
+    // perto do Li Wei: troca para Idol, mas não para outra ala
+    p.x = li.x - 3;
+    expect(applyCommand(w, p, { id: 3, c: 'trocar_arquetipo', archetypeId: 'cowboy_cromado' })).toBe(false);
+    expect(applyCommand(w, p, { id: 4, c: 'trocar_arquetipo', archetypeId: 'idol' })).toBe(true);
+    expect(p.archetypeId).toBe('idol');
+    // em combate (apanhou agora): recusa, e a conversa com o treinador não troca
+    const wes = spawnNpc(w, 'wesley', li.x - 4, 15);
+    const s = spawnEnemy(w, 'siri_do_mangue', 5, 25);
+    dealDamage(w, s, p, 0, { raw: 1 });
+    expect(applyCommand(w, p, { id: 5, c: 'trocar_arquetipo', archetypeId: 'peao_brabo' })).toBe(false);
+    expect(applyCommand(w, p, { id: 6, c: 'interagir', entity: wes.id })).toBe(true);
+    expect(p.archetypeId).toBe('idol');
+    // 5 s depois, fora de combate: troca
+    w.tick += 101;
+    expect(applyCommand(w, p, { id: 7, c: 'trocar_arquetipo', archetypeId: 'peao_brabo' })).toBe(true);
+    expect(p.archetypeId).toBe('peao_brabo');
+  });
+
+  it('regressão: subir de nível e trocar de ala mantém stats.pct e o reforço de vida', () => {
+    const w = createWorld(arena(), 1);
+    const p = peao(w);
+    p.stats.pct['attack'] = 0.1;
+    const base = p.stats.hpMax;
+    applyBuff(w, p, p, 'hp', 50, 3000, 'teste');
+    expect(p.stats.hpMax).toBeCloseTo(base * 1.5);
+    relevel(w, p, p.level + 1);
+    const base2 = statRowAt(resolveKit('peao_brabo'), p.level).vida;
+    expect(p.stats.hpMax).toBeCloseTo(base2 * 1.5);
+    expect(p.stats.pct['attack']).toBeCloseTo(0.1);
+    stepN(w, 61); // o reforço acaba
+    expect(statusOf(p, 'reforco:hp')).toBeUndefined();
+    expect(p.stats.hpMax).toBeCloseTo(base2);
   });
 
   it('interagir com Wesley vira Peão Brabo; com Li Wei, Idol; e eles falam', () => {

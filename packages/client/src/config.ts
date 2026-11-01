@@ -8,6 +8,7 @@
  * - ?gallery=1           galeria da arte
  * - ?offline=1           servidor local no próprio navegador (a simulação de shared), sem rede
  * - ?nome=Fulano&ala=idol   nome e ala de entrada (protótipo)
+ * - ?dpr=2               densidade do canvas (padrão: a do aparelho, até 3; 1 = mais leve)
  */
 
 export interface LocationLike {
@@ -31,6 +32,8 @@ export interface ClientConfig {
   offline: boolean;
   name?: string;
   archetypeId?: string;
+  /** densidade do canvas pedida na URL (sem isso, a do aparelho) */
+  dpr?: number;
 }
 
 /** Porta do servidor de jogo (ARQUITETURA.md). */
@@ -80,5 +83,7 @@ export function parseConfig(search: string, loc: LocationLike): ClientConfig {
   if (name && name.trim()) cfg.name = name.trim().slice(0, 20);
   const arch = q.get('ala') ?? q.get('arch');
   if (arch && /^[a-z_]+$/.test(arch)) cfg.archetypeId = arch;
+  const dpr = q.get('dpr');
+  if (dpr !== null && dpr.trim() !== '' && Number.isFinite(Number(dpr))) cfg.dpr = num(dpr, 1, 1, 4);
   return cfg;
 }

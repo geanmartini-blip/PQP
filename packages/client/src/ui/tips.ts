@@ -5,11 +5,12 @@
 import type { StorageLike } from '../game/GameClient';
 import { safeGet, safeSet } from '../game/GameClient';
 
-export type TipId = 'andar' | 'mira' | 'alvo' | 'estilo';
+export type TipId = 'andar' | 'rumo' | 'mira' | 'alvo' | 'estilo';
 
 // SUGESTÃO: textos das dicas (os docs só pedem que os controles se entendam em 1 minuto, sem texto longo).
 export const TIP_TEXT: Record<TipId, string> = {
   andar: 'Arraste aqui para andar',
+  rumo: 'Inimigos para lá. Toque na seta para ir',
   mira: 'Seus golpes miram sozinhos',
   alvo: 'Toque no inimigo para trocar o alvo',
   estilo: 'Fale com Wesley ou Li Wei para trocar de estilo',
@@ -25,6 +26,8 @@ export interface TipContext {
   now: number;
   hasTarget: boolean;
   enemiesVisible: number;
+  /** há bando fora da tela para a seta apontar (dica "inimigos para lá") */
+  enemyFar?: boolean;
 }
 
 export class Tips {
@@ -45,6 +48,11 @@ export class Tips {
     safeSet(this.storage, TIPS_KEY, [...this.done].join(','));
   }
 
+  /** A seta até o primeiro bando ainda vale (até o primeiro alvo travado)? */
+  get wantsCompass(): boolean {
+    return !this.done.has('rumo');
+  }
+
   /** Dicas a mostrar agora, na ordem. */
   active(ctx: TipContext): TipId[] {
     const out: TipId[] = [];
@@ -53,14 +61,17 @@ export class Tips {
       if (!this.shownAt.has(id)) this.shownAt.set(id, ctx.now);
       out.push(id);
     };
+    // o primeiro combate encerra a seta do rumo
+    if (ctx.hasTarget) this.mark('rumo', ctx.now);
     want('andar', true);
+    want('rumo', ctx.enemyFar === true && ctx.enemiesVisible === 0);
     // a da mira some sozinha: é só para saber, não precisa de ação
     if (this.shownAt.has('mira') && ctx.now - this.shownAt.get('mira')! > AIM_TIP_MS) this.mark('mira', ctx.now);
     want('mira', ctx.hasTarget);
     want('alvo', ctx.enemiesVisible >= 2);
     const walkedLongAgo = this.done.has('andar') && (this.walkedAt === undefined || ctx.now - this.walkedAt > STYLE_TIP_DELAY_MS);
-    // fora da briga: no meio do combate ela só atrapalha
-    want('estilo', walkedLongAgo && ctx.enemiesVisible === 0);
+    // fora da briga: no meio do combate ela só atrapalha; e depois da seta do rumo
+    want('estilo', walkedLongAgo && ctx.enemiesVisible === 0 && !(ctx.enemyFar === true && !this.done.has('rumo')));
     return out;
   }
 

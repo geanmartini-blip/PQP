@@ -3,23 +3,25 @@
  * Roda o laço do GameClient (rede, previsão) e desenha a 60 fps:
  * - o próprio personagem na posição prevista, interpolada entre os passos de 50 ms;
  * - os outros INTERP_DELAY_MS no passado, pelo buffer de snapshots;
- * - avisos no chão pelo "agora" estimado do servidor (a borda enche até o impacto).
- * A câmera tem zoom inteiro ou meio-inteiro para mostrar ~12 tiles de largura.
+ * - avisos no chão no tick em que uma entrada feita agora vai andar no servidor (o mesmo tempo do
+ *   próprio boneco previsto): a borda enche junto com a chance real de sair do círculo.
+ * A câmera tem zoom inteiro (pixels de canvas por pixel da arte) para mostrar ~12 tiles de largura.
  */
 import * as Phaser from 'phaser';
 import { getData } from '@pqp/shared';
 import { hasLineOfSight } from '@pqp/shared/map';
-import { SIM_TUNING, TICK_MS, type CombatEvent, type Vec } from '@pqp/shared/sim';
+import { SIM_TUNING, type CombatEvent, type Vec } from '@pqp/shared/sim';
 import { archetypeLook, asCharacterLook, coneKeyFor, defaultLook, sheetMeta, TILE_PX } from '../art/index';
+import { lookKey, type ArtLook } from '../art/character';
 import type { CharacterLook } from '../art/contract';
 import { FL, type ClientEnt } from '../game/clientWorld';
 import { getRuntime, type Runtime } from '../game/runtime';
 import type { Sample } from '../net/interpolation';
 import { DEPTH } from '../render/depth';
-import { Balloons, FloatTextPool, FxPool } from '../render/effects';
-import { EntityView } from '../render/entityView';
+import { Balloons, FloatTextPool, FxPool, ImagePool } from '../render/effects';
+import { EntityView, shouldRevive } from '../render/entityView';
 import { buildTileLayer, type TileLayerView } from '../render/tileLayer';
-import { computeZoom } from '../ui/layout';
+import { computeZoom, worldTextScale } from '../ui/layout';
 
 const T = TILE_PX;
 // SUGESTÃO: cores dos números.
@@ -28,6 +30,12 @@ const NUM = { selfHurt: 0xff5a4a, dealt: 0xffffff, crit: 0xffe23a, other: 0xc8c0
 const CULL_MARGIN = 96;
 // SUGESTÃO: inimigos "à vista" para as dicas e o Tab: até 8 tiles com linha de visão.
 const VIEW_TILES = SIM_TUNING.ACQUIRE_RADIUS;
+// SUGESTÃO: o toque no mundo mede também até 0,6 tile acima dos pés (o corpo fica acima deles).
+const TAP_BODY_UP_TILES = 0.6;
+// SUGESTÃO: tocar a até 1,2 tile de um NPC abre a conversa.
+const NPC_TAP_TILES = 1.2;
+// SUGESTÃO: no máximo uma folha de boneco nova gerada por quadro (as outras esperam com o visual padrão).
+const NEW_SHEETS_PER_FRAME = 1;
 
 export interface Guide {
   /** alcance da habilidade em tiles (círculo em volta do personagem) */
@@ -35,10 +43,12 @@ export interface Guide {
   /** área no ponto escolhido */
   radius: number;
   at?: Vec;
+  /** o dedo voltou para o botão: soltar cancela (guia cinza) */
+  cancel?: boolean;
 }
 
 interface TelView {
-  img: Phaser.GameObjects.Image;
+  img: Phaser.GameObjects.Sprite;
   frames: number;
   seen: number;
 }
@@ -64,6 +74,11 @@ export class WorldScene extends Phaser.Scene {
   private frameNo = 0;
   private lastLocalCast = -Infinity;
   private zoom = 1;
+  /** escala dos textos do mundo (nomes e números), inteira */
+  private textScale = 2;
+  private telPool!: ImagePool;
+  private zonePool!: ImagePool;
+  private sheetsThisFrame = 0;
   /** posição desenhada do próprio personagem (tiles); null antes do primeiro snapshot */
   selfTile: Vec | null = null;
   fps = 60;
@@ -83,14 +98,27 @@ export class WorldScene extends Phaser.Scene {
     this.floats = new FloatTextPool(this, 48);
     this.fxPool = new FxPool(this);
     this.balloons = new Balloons(this, 6);
+    this.telPool = new ImagePool(this);
+    this.zonePool = new ImagePool(this);
     this.applyZoom();
     this.scale.on(Phaser.Scale.Events.RESIZE, () => this.applyZoom());
   }
 
+  private get px(): number {
+    return (this.registry.get('px') as number | undefined) ?? 1;
+  }
+
   private applyZoom(): void {
-    this.zoom = computeZoom(this.scale.width);
+    this.zoom = computeZoom(this.scale.width, this.scale.height);
     this.cameras.main.setZoom(this.zoom);
     this.cameras.main.setSize(this.scale.width, this.scale.height);
+    const ts = worldTextScale(this.px, this.zoom);
+    const changed = ts !== this.textScale;
+    this.textScale = ts;
+    this.floats.setScale(ts);
+    this.balloons.setDensity(this.px, this.zoom);
+    // os rótulos já criados mudam de escala junto
+    if (changed) for (const v of this.views.values()) v.setTextScale(ts);
   }
 
   // ---------------------------------------------------------------------------
@@ -100,6 +128,7 @@ export class WorldScene extends Phaser.Scene {
     const gc = this.rt.gc;
     gc.update(delta, now);
     this.frameNo++;
+    this.sheetsThisFrame = 0;
     if (delta > 0) this.fps += (1000 / delta - this.fps) * 0.05;
     if (!gc.welcomed || !gc.map) return;
     if (gc.world.mapId !== this.mapId) this.buildMap();
@@ -183,12 +212,32 @@ export class WorldScene extends Phaser.Scene {
     return defaultLook();
   }
 
+  /** a última folha pedida ficou com o visual padrão (gerar a de verdade num próximo quadro) */
+  private sheetPending = false;
+
+  /**
+   * Folha de um jogador: gera na hora só uma folha nova por quadro (cada uma leva dezenas de ms no
+   * celular); as outras usam o visual padrão e são refeitas nos quadros seguintes.
+   */
+  private playerSheet(look: CharacterLook): string {
+    const art = this.rt.art;
+    if (!this.textures.exists(lookKey(look as ArtLook))) {
+      if (this.sheetsThisFrame >= NEW_SHEETS_PER_FRAME) {
+        this.sheetPending = true;
+        return art.characterSheet(this, defaultLook());
+      }
+      this.sheetsThisFrame++;
+    }
+    return art.characterSheet(this, look);
+  }
+
   private sheetFor(e: ClientEnt): string | undefined {
     const art = this.rt.art;
     const id = e.defId ?? '';
+    this.sheetPending = false;
     switch (e.kind) {
       case 'p':
-        return art.characterSheet(this, this.playerLook(e));
+        return this.playerSheet(this.playerLook(e));
       case 'n':
         return art.npcSheet(this, id);
       case 'e':
@@ -238,9 +287,11 @@ export class WorldScene extends Phaser.Scene {
       ...(label ? { label } : {}),
       ...(labelColor !== undefined ? { labelColor } : {}),
       elite,
+      textScale: this.textScale,
     });
     this.views.set(e.id, v);
-    this.lookSig.set(e.id, this.lookSignature(e));
+    // folha provisória: assinatura vazia força refazer no próximo quadro
+    this.lookSig.set(e.id, this.sheetPending ? '' : this.lookSignature(e));
     return v;
   }
 
@@ -251,8 +302,8 @@ export class WorldScene extends Phaser.Scene {
     if (e.kind === 'p') {
       const sig = this.lookSignature(e);
       if (sig !== this.lookSig.get(e.id)) {
-        this.lookSig.set(e.id, sig);
         const key = this.sheetFor(e);
+        this.lookSig.set(e.id, this.sheetPending ? '' : sig);
         if (key) v.setSheet(key);
       }
     }
@@ -275,6 +326,8 @@ export class WorldScene extends Phaser.Scene {
     v.setHp(e.h, e.sh, (e.fl & (FL.atacando | FL.movendo)) !== 0);
     v.setShieldBubble(e.sh > 0);
     if (e.kind === 'e' && e.h <= 0) v.die(now);
+    // jogador que voltou ao QG depois de caído: o servidor manda 'death', mas ele continua no mundo
+    else if (shouldRevive(e.kind, e.h, e.fl, v.dying)) v.revive();
     v.animate(now, facing, moving, e.fl);
   }
 
@@ -288,17 +341,18 @@ export class WorldScene extends Phaser.Scene {
   // ---------------------------------------------------------------------------
   // avisos no chão e zonas
 
-  private syncTelegraphs(now: number): void {
+  private syncTelegraphs(_now: number): void {
     const gc = this.rt.gc;
-    const tickNow = gc.clock.serverNow(now) / TICK_MS;
+    // tempo da ação do jogador (RTT à frente do último snapshot): ver actionTick em interpolation.ts
+    const tickNow = gc.actionTickNow();
     const stamp = this.frameNo;
     for (const t of gc.world.tel) {
       let tv = this.telViews.get(t.id);
       if (!tv) {
         const key = t.shape === 'cone' ? coneKeyFor(t.angleDeg ?? 90) : t.shape === 'linha' ? 'fx_aviso_linha' : 'fx_aviso_circulo';
         const meta = sheetMeta(key)?.fx;
-        const img = this.add.image(0, 0, key, '0').setDepth(DEPTH.telegraph);
-        if (meta) img.setOrigin(meta.ox, meta.oy);
+        const img = this.telPool.get(key, '0', DEPTH.telegraph);
+        img.setOrigin(meta?.ox ?? 0.5, meta?.oy ?? 0.5).setRotation(0).setAlpha(1);
         const w = meta?.w ?? 64;
         const len = t.radius * T;
         if (t.shape === 'circulo') img.setScale((len * 2) / w);
@@ -312,12 +366,13 @@ export class WorldScene extends Phaser.Scene {
       tv.seen = stamp;
       tv.img.setPosition(t.x * T, t.y * T);
       const span = Math.max(1, t.impactTick - t.startTick);
-      const u = Math.max(0, Math.min(1, (tickNow - t.startTick) / span));
+      // nunca passa do impacto (o aviso some quando o servidor resolve)
+      const u = Math.max(0, Math.min(1, (Math.min(tickNow, t.impactTick) - t.startTick) / span));
       if (tv.frames > 1) tv.img.setFrame(String(Math.min(tv.frames - 1, Math.floor(u * tv.frames))));
     }
     for (const [id, tv] of this.telViews) {
       if (tv.seen !== stamp) {
-        tv.img.destroy();
+        this.telPool.release(tv.img);
         this.telViews.delete(id);
       }
     }
@@ -343,7 +398,7 @@ export class WorldScene extends Phaser.Scene {
         if (cone) {
           const key = coneKeyFor(z.ang ?? 90);
           const meta = sheetMeta(key)?.fx;
-          s = this.add.sprite(0, 0, key, String(Math.max(0, (meta?.frames ?? 1) - 1))).setDepth(DEPTH.zone).setAlpha(0.45);
+          s = this.zonePool.get(key, String(Math.max(0, (meta?.frames ?? 1) - 1)), DEPTH.zone).setAlpha(0.45).setRotation(0);
           s.setOrigin(meta?.ox ?? 0, meta?.oy ?? 0.5);
           s.setScale(((z.rg ?? z.r) * T) / (meta?.w ?? 64));
           // cone aliado em verde ou ciano; inimigo fica no vermelho do aviso
@@ -351,7 +406,7 @@ export class WorldScene extends Phaser.Scene {
         } else {
           const key = this.zoneKey(z.team, z.a);
           const meta = sheetMeta(key)?.fx;
-          s = this.add.sprite(0, 0, key, '0').setDepth(DEPTH.zone).setAlpha(0.85);
+          s = this.zonePool.get(key, '0', DEPTH.zone).setAlpha(0.85).setRotation(0).setOrigin(0.5);
           if (this.anims.exists(`${key}:play:0`)) s.play(`${key}:play:0`);
           s.setScale((z.r * 2 * T) / (meta?.w ?? 64));
         }
@@ -364,7 +419,7 @@ export class WorldScene extends Phaser.Scene {
     }
     for (const [id, zv] of this.zoneViews) {
       if (zv.seen !== stamp) {
-        zv.s.destroy();
+        this.zonePool.release(zv.s);
         this.zoneViews.delete(id);
       }
     }
@@ -400,9 +455,11 @@ export class WorldScene extends Phaser.Scene {
     g.fillStyle(0xffffff, 0.06);
     g.fillCircle(cx, cy, gd.range * T);
     if (gd.at) {
-      g.lineStyle(2, 0xffe23a, 0.9);
+      // cinza: soltar aqui cancela
+      const c = gd.cancel ? 0x9a9aa0 : 0xffe23a;
+      g.lineStyle(2, c, 0.9);
       g.strokeCircle(gd.at.x * T, gd.at.y * T, gd.radius * T);
-      g.fillStyle(0xffe23a, 0.18);
+      g.fillStyle(c, gd.cancel ? 0.1 : 0.18);
       g.fillCircle(gd.at.x * T, gd.at.y * T, gd.radius * T);
     }
   }
@@ -514,11 +571,11 @@ export class WorldScene extends Phaser.Scene {
       if (!v.visible || v.dying || v.isSelf) continue;
       // o corpo fica acima dos pés: mede até o meio do boneco também
       const vx = v.px / T, vy = v.py / T;
-      const d = Math.min(Math.hypot(tx - vx, ty - vy), Math.hypot(tx - vx, ty - (vy - 0.6)));
+      const d = Math.min(Math.hypot(tx - vx, ty - vy), Math.hypot(tx - vx, ty - (vy - TAP_BODY_UP_TILES)));
       if (v.kind === 'e' && d <= R + v.radius && d < bestD) {
         best = v;
         bestD = d;
-      } else if (v.kind === 'n' && d <= 1.2 && d < bestNpcD) {
+      } else if (v.kind === 'n' && d <= NPC_TAP_TILES && d < bestNpcD) {
         bestNpc = v;
         bestNpcD = d;
       }

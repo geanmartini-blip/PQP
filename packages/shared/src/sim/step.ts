@@ -16,10 +16,10 @@
  */
 import { getData } from '../data';
 import { circleFree } from '../map/grid';
-import { doBasicAttack, effectiveRange, tickCasting, tickTelegraphs, tickZones } from './abilities';
+import { approachRange, doBasicAttack, tickCasting, tickTelegraphs, tickZones } from './abilities';
 import { tickAi } from './ai';
 import { resourceMaxOf, respawnAtHq, reviveEntity, specialFactor } from './combat';
-import { bal, ENEMY_SEPARATION_PER_TICK, JOYSTICK_DEADZONE } from './constants';
+import { bal, ENEMY_SEPARATION_PER_TICK, JOYSTICK_DEADZONE, MOVE_TO_ARRIVE_TILES, PATH_WAYPOINT_TILES, XP_PARTICIPATION_MS } from './constants';
 import { tickDoctrine } from './doctrine';
 import { canMove, entityList, getEnt, isPartyMember, isUp, statPts } from './entity';
 import { dist, facingFrom } from './geom';
@@ -93,13 +93,13 @@ function movementPhase(w: World): void {
     if (joy) {
       ({ vx, vy } = moveVelocity(e.moveIntent, speed));
     } else if (e.path && e.path.length > 0) {
-      while (e.path.length > 0 && dist(e.x, e.y, e.path[0]!.x, e.path[0]!.y) < 0.15) e.path.shift();
+      while (e.path.length > 0 && dist(e.x, e.y, e.path[0]!.x, e.path[0]!.y) < PATH_WAYPOINT_TILES) e.path.shift();
       const wp = e.path[0] ?? e.moveTo;
       if (wp) ({ vx, vy } = velocityToward(e, wp.x, wp.y, speed, TICK_MS));
       if (e.path.length === 0) e.path = undefined;
     } else if (e.moveTo) {
       const v = velocityToward(e, e.moveTo.x, e.moveTo.y, speed, TICK_MS);
-      if (v.dist < 0.1) e.moveTo = undefined;
+      if (v.dist < MOVE_TO_ARRIVE_TILES) e.moveTo = undefined;
       else ({ vx, vy } = v);
     } else if (e.pendingCast) {
       const p = e.pendingCast;
@@ -107,11 +107,11 @@ function movementPhase(w: World): void {
       const t = getEnt(w, p.targetId);
       const goal = t ? { x: t.x, y: t.y, r: t.radius } : p.at ? { x: p.at.x, y: p.at.y, r: 0 } : undefined;
       if (a && goal) {
-        const range = effectiveRange(e, a);
+        const range = approachRange(e, a);
         if (dist(e.x, e.y, goal.x, goal.y) - e.radius - goal.r > range - 0.2) ({ vx, vy } = velocityToward(e, goal.x, goal.y, speed, TICK_MS));
       }
     }
-    if (e.kind === 'enemy' && e.moveTo && dist(e.x, e.y, e.moveTo.x, e.moveTo.y) < 0.1) e.moveTo = undefined;
+    if (e.kind === 'enemy' && e.moveTo && dist(e.x, e.y, e.moveTo.x, e.moveTo.y) < MOVE_TO_ARRIVE_TILES) e.moveTo = undefined;
     if (vx !== 0 || vy !== 0) {
       const p = stepMovement(w.map, e, vx, vy, TICK_MS);
       e.x = p.x;
@@ -149,8 +149,10 @@ function resourcePhase(w: World): void {
   const b = bal();
   const esp = b.especial;
   const regen = b.combate.regenForaDeCombate;
+  const prune = w.tick % ATTACKERS_PRUNE_EVERY_TICKS === 0;
   for (const e of entityList(w)) {
     if (e.kind === 'loot' || e.dead) continue;
+    if (prune) pruneAttackers(w, e);
     // recargas andam pelo fator da Velocidade e pelos reforços de recarga
     const rate = cooldownRate(e);
     for (const k of Object.keys(e.cooldowns)) {
@@ -195,6 +197,23 @@ function resourcePhase(w: World): void {
     const idle = e.lastCombatTick === undefined || w.tick - e.lastCombatTick >= msToTicks(regen.aposMs);
     // (direto na vida: sem evento 'heal' a cada tick e sem contar como "curou" para o Especial)
     if (idle && e.hp < e.stats.hpMax) e.hp = Math.min(e.stats.hpMax, e.hp + ((regen.pctVidaPorS / 100) * e.stats.hpMax) / TICK_RATE);
+  }
+}
+
+// SUGESTÃO: a lista de quem bateu é podada a cada 20 ticks (1 s).
+const ATTACKERS_PRUNE_EVERY_TICKS = 20;
+
+/**
+ * Tira de `attackers` quem não bate há mais de XP_PARTICIPATION_MS (30 s): ninguém lê golpe mais
+ * velho que isso (XP, comemoração da IA, Doutrina olha 2 s), e a lista não cresce sem fim em quem
+ * fica horas no servidor ou de plantão.
+ */
+export function pruneAttackers(w: World, e: Entity): void {
+  if (!e.attackers) return;
+  const old = w.tick - msToTicks(XP_PARTICIPATION_MS);
+  for (const k of Object.keys(e.attackers)) {
+    const id = Number(k);
+    if (e.attackers[id]! < old) delete e.attackers[id];
   }
 }
 

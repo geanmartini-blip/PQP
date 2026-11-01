@@ -4,15 +4,29 @@
  *
  * Fluxo por tick (20 por segundo):
  *  1. cada sessão consome UMA entrada da fila (o cliente prevê um tick por entrada) e os comandos
- *     novos, com compensação de atraso (rewind = min(250 ms, rtt/2 + 100 ms) em ticks);
+ *     novos, com compensação de atraso (rewind = min(250 ms, rtt + 100 ms + 25 ms) em ticks: o
+ *     cliente desenha os outros 100 ms atrás do que recebeu, que já chegou uma ida atrasado, e o
+ *     comando leva mais uma ida e espera o tick);
+ *     - posição e ack andam juntos: cada entrada é um passo, nunca dois. Fila vazia (a rede travou,
+ *       que no TCP é como a perda aparece): o personagem não anda neste tick, nem pelo joystick
+ *       velho nem pelo caminho do toque no chão (antes ele andava de novo com a entrada velha e
+ *       depois aplicava as atrasadas, contando o movimento duas vezes);
+ *     - fila com mais de INPUT_TARGET_BACKLOG + 1: até INPUT_CATCHUP_PER_TICK entradas extras andam
+ *       na hora, as mais velhas primeiro (drena a rajada depois da travada em poucos ticks), pelo
+ *       crédito de entradas, para ninguém andar mais rápido mandando mais de 20 por segundo;
+ *     - comando com afterSeq (campo opcional, ver sanitizeCmd) espera o servidor ter andado essa
+ *       entrada, para a posição e o A* saírem iguais aos do cliente;
  *  2. step() da simulação;
  *  3. renascimento dos inimigos, saída de quem caiu da conexão há muito tempo, gravação;
  *  4. um snapshot por cliente: entidades no raio de interesse, 'gone', avisos, zonas, eventos e HUD.
  *
  * Entradas: aceita as PlayerInput com seq maior que a última consumida (o cliente repete as 3
  * últimas). Comandos: dedupe por id (maior id processado = cack, mais um conjunto dos recentes).
- * Campos d/n/lk/lv: vão quando a entidade é nova para o cliente ou mudou, e se repetem até o
- * cliente confirmar o tick (C2S_Input.ackTick); 'need' responde com 'info' se mesmo assim faltar.
+ * Campos d/n/lk/lv: vão quando a entidade é nova para o cliente ou mudou, e se repetem a cada
+ * INFO_REPEAT_TICKS até o cliente confirmar o tick (C2S_Input.ackTick); 'need' responde com 'info'
+ * se mesmo assim faltar.
+ * Eventos do tick (say, hit, xp...) vão só no snapshot daquele tick: o transporte de verdade é
+ * WebSocket/TCP, que não perde mensagem (a perda vira atraso, ver netsim.ts).
  * Queda de conexão: o personagem fica no modo automático (Doutrina) por OFFLINE_AUTO_MS e depois sai;
  * o mesmo token retoma o mesmo personagem.
  */
@@ -20,6 +34,7 @@ import { randomUUID } from 'node:crypto';
 import { getData } from '@pqp/shared/data';
 import { findPath, getMap } from '@pqp/shared/map';
 import {
+  dequantizeAxis,
   INTEREST_RADIUS,
   INTERP_DELAY_MS,
   MAX_REWIND_MS,
@@ -36,18 +51,22 @@ import {
 import {
   applyCommand,
   applyInput,
+  canMove,
   createWorld,
   hasStatus,
   hudSnapshot,
   isHostile,
+  moveSpeedOf,
+  moveVelocity,
   msToTicks,
   spawnAlly,
   spawnPlayer,
   step,
+  stepMovement,
   TICK_MS,
   TICK_RATE,
+  velocityToward,
   type CombatEvent,
-  type DoctrineCard,
   type Entity,
   type PlayerCommand,
   type PlayerInput,
@@ -55,13 +74,19 @@ import {
   type World,
 } from '@pqp/shared/sim';
 import {
+  CMD_HOLD_MAX_TICKS,
   DEFAULT_ARCHETYPE,
   DEFAULT_MAP_ID,
   DEFAULT_PLAYER_NAME,
   DEFAULT_WORLD_SEED,
   EVENT_MARGIN_TILES,
   GONE_REPEAT_TICKS,
-  INPUT_BACKLOG_MAX,
+  INFO_REPEAT_TICKS,
+  INPUT_CATCHUP_PER_TICK,
+  INPUT_CREDIT_MAX,
+  INPUT_CREDIT_PER_TICK,
+  INPUT_QUEUE_MAX,
+  INPUT_TARGET_BACKLOG,
   MAX_CLIENT_RTT_MS,
   MAX_CMDS_PER_MSG,
   MAX_NAME_LENGTH,
@@ -70,6 +95,7 @@ import {
   SAVE_EVERY_MS,
 } from './config';
 import type { PlayerRecord, Store } from './persistence/store';
+import { sanitizeDoctrine } from './doctrine_guard';
 import { baseEntSnap, eventOut, eventRefs, lookOf, telegraphOut, zoneOut } from './snapshot';
 import { Spawner, type SpawnerOptions } from './spawner';
 
@@ -108,15 +134,28 @@ interface Session {
   lastSeq: number;
   inputQ: PlayerInput[];
   lastInputTick: number;
+  /** crédito de entradas (ver INPUT_CREDIT_PER_TICK) */
+  credit: number;
+  /** neste tick não havia entrada: o personagem não anda pelo caminho do toque no chão */
+  paused: boolean;
   cack: number;
   recent: Set<number>;
   recentOrder: number[];
-  cmdQ: PlayerCommand[];
+  cmdQ: HeldCmd[];
   rtt: number;
   /** último tick de snapshot que o cliente disse ter recebido */
   ackTick: number;
   sent: Map<number, SentInfo>;
   gone: Map<number, number>;
+}
+
+/** Comando na fila do servidor. */
+interface HeldCmd {
+  c: PlayerCommand;
+  /** seq da última entrada que o cliente já tinha previsto quando criou o comando (opcional) */
+  afterSeq?: number;
+  /** tick em que chegou */
+  since: number;
 }
 
 interface Slot {
@@ -131,8 +170,6 @@ interface Slot {
   lastLevel: number;
 }
 
-// SUGESTÃO: sem entrada nenhuma por 0,5 s, o joystick volta ao centro (aba em segundo plano, rede parada).
-const STALE_INPUT_TICKS = 10;
 // SUGESTÃO: 'need' responde no máximo 64 ids por pedido.
 const MAX_NEED_IDS = 64;
 
@@ -193,13 +230,10 @@ function sanitizeCmd(raw: unknown): PlayerCommand | null {
     case 'trocar_arquetipo':
       return typeof r['archetypeId'] === 'string' ? { id, c: 'trocar_arquetipo', archetypeId: r['archetypeId'] } : null;
     case 'doutrina': {
+      // validação fechada: carta com tipo desconhecido travava o step de todo mundo
       const cards = r['cards'];
       if (!Array.isArray(cards)) return null;
-      const ok = cards.filter((c): c is DoctrineCard => {
-        const o = c as Record<string, unknown> | null;
-        return !!o && typeof o === 'object' && typeof (o['se'] as { t?: unknown } | undefined)?.t === 'string' && typeof (o['faca'] as { t?: unknown } | undefined)?.t === 'string';
-      });
-      return { id, c: 'doutrina', cards: clone(ok.slice(0, 5)) };
+      return { id, c: 'doutrina', cards: sanitizeDoctrine(cards, 5) };
     }
     default:
       return null;
@@ -314,6 +348,9 @@ export class GameServerCore {
         lastSeq: -1,
         inputQ: [],
         lastInputTick: this.world.tick,
+        // SUGESTÃO: começa com 5 de crédito (a primeira rajada depois do welcome drena logo)
+        credit: 5,
+        paused: false,
         cack: 0,
         recent: new Set(),
         recentOrder: [],
@@ -361,6 +398,7 @@ export class GameServerCore {
     s.connected = false;
     s.inputQ.length = 0;
     s.cmdQ.length = 0;
+    s.paused = false;
     const slot = this.slots.get(s.token);
     if (slot && slot.sid === sessionId) this.goOffline(slot);
   }
@@ -465,7 +503,8 @@ export class GameServerCore {
     if (isNum(d.credito)) e.credito = d.credito;
     if (Array.isArray(d.inventory)) e.inventory = d.inventory.filter((x): x is string => typeof x === 'string');
     if (isInt(d.itemCount) && e.loadout) e.loadout.itemCount = Math.max(0, d.itemCount);
-    if (Array.isArray(d.doctrine)) e.doctrine = clone(d.doctrine).slice(0, 5);
+    // o registro pode ter cartas gravadas antes da validação: passam pelo mesmo filtro
+    if (Array.isArray(d.doctrine)) e.doctrine = sanitizeDoctrine(d.doctrine, 5);
     e.auto = d.auto === true;
     const slot: Slot = { token: rec.token, rec, entityId: e.id, autoBefore: e.auto, lastLevel: e.level };
     if (this.companions) this.spawnCompanion(slot, e);
@@ -545,7 +584,7 @@ export class GameServerCore {
     if (!s || !s.connected || !msg || typeof msg !== 'object') return;
     if (isNum(msg.rtt)) s.rtt = Math.max(0, Math.min(MAX_CLIENT_RTT_MS, msg.rtt));
     if (isInt(msg.ackTick)) s.ackTick = Math.max(s.ackTick, Math.min(msg.ackTick, this.world.tick));
-    // joystick: só seq maior que a última consumida; fila em ordem, no máximo INPUT_BACKLOG_MAX
+    // joystick: só seq maior que a última consumida; fila em ordem (drenada no tick)
     if (Array.isArray(msg.inputs)) {
       const ins = msg.inputs.slice(-8).map(sanitizeInput).filter((x): x is PlayerInput => x !== null);
       // cliente que recomeçou a contagem (aba recarregada na mesma sessão)
@@ -559,19 +598,27 @@ export class GameServerCore {
       }
       if (ins.length > 0) s.lastInputTick = this.world.tick;
       s.inputQ.sort((a, b) => a.seq - b.seq);
-      while (s.inputQ.length > INPUT_BACKLOG_MAX) s.inputQ.shift();
+      while (s.inputQ.length > INPUT_QUEUE_MAX) s.inputQ.shift();
     }
     // comandos: cada id uma vez só
     if (Array.isArray(msg.cmds)) {
-      const cmds = msg.cmds.slice(0, MAX_CMDS_PER_MSG).map(sanitizeCmd).filter((x): x is PlayerCommand => x !== null);
-      cmds.sort((a, b) => a.id - b.id);
-      for (const c of cmds) {
+      const raw = msg.cmds.slice(0, MAX_CMDS_PER_MSG);
+      const cmds: { c: PlayerCommand; afterSeq?: number }[] = [];
+      for (const r of raw) {
+        const c = sanitizeCmd(r);
+        if (!c) continue;
+        const after = (r as unknown as Record<string, unknown>)['afterSeq'];
+        cmds.push(isInt(after) && after >= 0 ? { c, afterSeq: after } : { c });
+      }
+      cmds.sort((a, b) => a.c.id - b.c.id);
+      for (const h of cmds) {
+        const c = h.c;
         if (s.recent.has(c.id) || c.id <= s.cack - RECENT_CMD_IDS) continue;
         s.recent.add(c.id);
         s.recentOrder.push(c.id);
         while (s.recentOrder.length > RECENT_CMD_IDS) s.recent.delete(s.recentOrder.shift()!);
         if (c.id > s.cack) s.cack = c.id;
-        s.cmdQ.push(c);
+        s.cmdQ.push({ ...h, since: this.world.tick });
       }
     }
   }
@@ -608,8 +655,96 @@ export class GameServerCore {
     return s ? this.rewindTicks(s) : 0;
   }
 
+  /**
+   * O cliente desenha os outros em serverNow − INTERP_DELAY_MS, e o serverNow dele já está uma ida
+   * atrás do servidor; o comando leva mais uma ida e espera, em média, meio tick. Total: RTT + 100 ms
+   * + 25 ms, limitado a MAX_REWIND_MS.
+   */
   private rewindTicks(s: Session): number {
-    return Math.round(Math.min(MAX_REWIND_MS, s.rtt / 2 + INTERP_DELAY_MS) / TICK_MS);
+    return Math.round(Math.min(MAX_REWIND_MS, s.rtt + INTERP_DELAY_MS + TICK_MS / 2) / TICK_MS);
+  }
+
+  /**
+   * Anda um passo agora com o joystick de `inp` (entrada extra da drenagem ou diferença de uma
+   * suposta). É o mesmo cálculo do movimento do step para o joystick (moveVelocity + stepMovement
+   * com a velocidade efetiva), que o cliente também usa na previsão.
+   */
+  private moveNow(e: Entity, inp: PlayerInput): void {
+    if (!canMove(e)) return;
+    const speed = moveSpeedOf(e);
+    let { vx, vy } = moveVelocity({ x: dequantizeAxis(inp.mx), y: dequantizeAxis(inp.my) }, speed);
+    if (vx === 0 && vy === 0 && !e.auto) {
+      // sem joystick: o passo do caminho do toque no chão (o cliente também prevê um por entrada),
+      // igual ao do movimento do step. No automático, quem anda é a Doutrina, uma vez por tick.
+      if (e.path && e.path.length > 0) {
+        while (e.path.length > 0 && Math.hypot(e.x - e.path[0]!.x, e.y - e.path[0]!.y) < 0.15) e.path.shift();
+        const wp = e.path[0] ?? e.moveTo;
+        if (wp) ({ vx, vy } = velocityToward(e, wp.x, wp.y, speed, TICK_MS));
+        if (e.path.length === 0) e.path = undefined;
+      } else if (e.moveTo) {
+        const v = velocityToward(e, e.moveTo.x, e.moveTo.y, speed, TICK_MS);
+        if (v.dist < 0.1) e.moveTo = undefined;
+        else ({ vx, vy } = v);
+      }
+    }
+    if (vx === 0 && vy === 0) return;
+    const p = stepMovement(this.world.map, e, vx, vy, TICK_MS);
+    e.x = p.x;
+    e.y = p.y;
+  }
+
+  /** Aplica os comandos da fila que já podem rodar (em ordem; o primeiro que espera segura os outros). */
+  private flushCmds(s: Session, e: Entity, movedSeq: number, final: boolean): void {
+    const w = this.world;
+    let n = 0;
+    for (const h of s.cmdQ) {
+      const ready =
+        h.afterSeq === undefined
+          ? final
+          : h.afterSeq <= movedSeq || w.tick - h.since >= CMD_HOLD_MAX_TICKS || h.afterSeq > s.lastSeq + INPUT_QUEUE_MAX;
+      if (!ready) break;
+      n++;
+      try {
+        applyCommand(w, e, h.c, { rewindTicks: this.rewindTicks(s) });
+      } catch (err) {
+        this.log(`[core] comando ${h.c.c} falhou: ${String(err)}`);
+      }
+    }
+    if (n > 0) s.cmdQ.splice(0, n);
+  }
+
+  /** Entradas e comandos de uma sessão neste tick (ver o cabeçalho). */
+  private consumeInputs(s: Session, e: Entity): void {
+    const w = this.world;
+    s.credit = Math.min(INPUT_CREDIT_MAX, s.credit + INPUT_CREDIT_PER_TICK);
+    s.paused = false;
+    // tudo até lastSeq já andou nos ticks anteriores
+    let moved = s.lastSeq;
+    this.flushCmds(s, e, moved, false);
+    // drenagem: as entradas mais velhas além do alvo andam agora (a do tick anda no step)
+    let extra = 0;
+    while (s.inputQ.length > INPUT_TARGET_BACKLOG + 1 && extra < INPUT_CATCHUP_PER_TICK && s.credit >= 2) {
+      const inp = s.inputQ.shift()!;
+      applyInput(w, e, inp);
+      this.moveNow(e, inp);
+      s.lastSeq = moved = inp.seq;
+      s.credit -= 1;
+      extra++;
+      this.flushCmds(s, e, moved, false);
+    }
+    // a entrada deste tick (anda no step)
+    const inp = s.credit >= 1 ? s.inputQ.shift() : undefined;
+    if (inp) {
+      applyInput(w, e, inp);
+      s.lastSeq = inp.seq;
+      s.credit -= 1;
+    } else {
+      // fila vazia (a rede travou ou a aba parou): não anda neste tick, nem pelo joystick velho nem
+      // pelo caminho do toque no chão, porque o ack não anda. A rajada que vier depois é drenada.
+      if (e.moveIntent.x !== 0 || e.moveIntent.y !== 0) e.moveIntent = { x: 0, y: 0 };
+      s.paused = true;
+    }
+    this.flushCmds(s, e, moved, true);
   }
 
   // -------------------------------------------------------------------------
@@ -625,31 +760,34 @@ export class GameServerCore {
       const slot = this.slots.get(s.token);
       const e = slot && slot.sid === s.sid ? w.entities.get(slot.entityId) : undefined;
       if (!e || !s.connected) continue;
-      const inp = s.inputQ.shift();
-      if (inp) {
-        applyInput(w, e, inp);
-        s.lastSeq = inp.seq;
-      } else if (w.tick - s.lastInputTick > STALE_INPUT_TICKS && (e.moveIntent.x !== 0 || e.moveIntent.y !== 0)) {
-        e.moveIntent = { x: 0, y: 0 };
-      }
-      if (s.cmdQ.length > 0) {
-        const rewindTicks = this.rewindTicks(s);
-        for (const c of s.cmdQ) {
-          try {
-            applyCommand(w, e, c, { rewindTicks });
-          } catch (err) {
-            this.log(`[core] comando ${c.c} falhou: ${String(err)}`);
-          }
-        }
-        s.cmdQ.length = 0;
-      }
+      this.consumeInputs(s, e);
     }
     // 2. posições antes do passo (eventos de quem sai do mundo neste tick)
     this.prevPos.clear();
     for (const e of w.entities.values()) this.prevPos.set(e.id, [e.x, e.y]);
+    // sem entrada neste tick, o caminho do toque no chão espera (o cliente prevê um passo por entrada)
+    const parked: { e: Entity; path: Entity['path']; moveTo: Entity['moveTo'] }[] = [];
+    for (const s of this.sessions.values()) {
+      if (!s.paused || !s.connected) continue;
+      const e = this.entityOf(s.sid);
+      if (!e || e.auto || (!e.path && !e.moveTo)) continue;
+      parked.push({ e, path: e.path, moveTo: e.moveTo });
+      e.path = undefined;
+      e.moveTo = undefined;
+    }
     // 3. simulação
     const fromCommands = w.events;
-    const stepped = step(w);
+    let stepped: CombatEvent[];
+    try {
+      stepped = step(w);
+    } finally {
+      for (const p of parked) {
+        if (p.e.path === undefined && p.e.moveTo === undefined) {
+          p.e.path = p.path;
+          p.e.moveTo = p.moveTo;
+        }
+      }
+    }
     const events = fromCommands.length > 0 ? [...fromCommands, ...stepped] : stepped;
     w.events = events;
     this.lastEvents = events;
@@ -739,7 +877,7 @@ export class GameServerCore {
       if (!prev || prev.d !== info.d || prev.n !== info.n || prev.lv !== info.lv || prev.lk !== info.lkJson) {
         s.sent.set(e.id, { d: info.d, n: info.n, lv: info.lv, lk: info.lkJson, tick: now });
         full = true;
-      } else if (s.ackTick < prev.tick) full = true;
+      } else if (s.ackTick < prev.tick && (now - prev.tick) % INFO_REPEAT_TICKS === 0) full = true;
       if (full) {
         o.d = info.d;
         o.n = info.n;

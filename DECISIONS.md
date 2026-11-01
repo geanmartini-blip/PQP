@@ -54,6 +54,19 @@ para todo o código:
 - **Precedência dos retângulos do mapa**: a Usina avança sobre as duas margens de propósito. Ordem:
   ilha do farol, mirante, usina, juncal, rio claro.
 
+## Fase 1: protótipo
+O registro completo está em `decisoes/fase1-prototipo.md`. Os pontos principais:
+- **Distâncias** são medidas de borda a borda (centro menos os raios).
+- **Alvo automático:** inimigo visível mais perto, a até 8 tiles. O alvo manual cai depois de 2 s fora
+  de vista.
+- **Habilidade fora do alcance:** o personagem anda sozinho até o alcance. Custo e recarga só são pagos
+  quando a habilidade sai.
+- **Histórico de posições:** 8 ticks.
+- **Modo offline** (`?offline=1`): roda a simulação no navegador para jogar sem servidor. Não substitui
+  o servidor autoritativo.
+- **Códigos de fechamento:** 4101 quando o mesmo token entra em outro aparelho e 4102 quando o tempo no
+  automático acaba.
+
 ## Sugestões (o que não está nos docs)
 Lista mantida por fase. Tudo aqui pode ser trocado pelos autores.
 

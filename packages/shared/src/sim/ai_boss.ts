@@ -4,15 +4,19 @@
  */
 import { getData } from '../data';
 import { circleFree } from '../map/grid';
-import { enemyMind } from './ai_state';
-import { getEnt, hpRatio, isTargetableBy } from './entity';
+import { enemyMind, type EnemyMind } from './ai_state';
+import { getEnt, hpRatio, isTargetableBy, isUp } from './entity';
 import { getHook } from './hooks';
 import { enemyAi, spawnEnemy } from './spawn';
 import { tauntSource } from './targeting';
 import { msToTicks, type Entity, type World } from './types';
 import { emit } from './world';
 
-/** Fases de chefe pela vida: fala, habilidades, reforços (e repetição) e aoEntrar (gancho). */
+/**
+ * Fases de chefe pela vida: fala, habilidades, reforços (e repetição) e aoEntrar (gancho). Um
+ * golpe que cruza dois limiares passa por todas as fases do meio, uma a uma (fala, reforços e
+ * aoEntrar de cada). Os reforços que repetem (reforcosACadaS) só repõem até o teto da fase.
+ */
 export function bossPhases(w: World, e: Entity): void {
   const ai = enemyAi(e);
   const fases = getData().enemiesById.get(e.defId)?.fases ?? [];
@@ -21,24 +25,65 @@ export function bossPhases(w: World, e: Entity): void {
   let idx = ai.phase;
   while (idx + 1 < fases.length && pct < fases[idx + 1]!.vidaAbaixoPct) idx++;
   if (idx !== ai.phase) {
-    ai.phase = idx;
-    ai.phaseSince = w.tick;
-    const f = fases[idx]!;
-    ai.abilities = f.habilidades;
-    if (f.fala) emit(w, { t: 'say', src: e.id, text: f.fala });
-    spawnReinforcements(w, e, f.reforcos ?? []);
-    for (const ef of f.aoEntrar ?? []) {
-      if (ef.kind === 'gancho') getHook(ef.gancho)({ w, caster: e, effect: ef, targets: [e], point: { x: e.x, y: e.y }, params: ef.params ?? {} });
+    for (let p = ai.phase + 1; p <= idx; p++) {
+      const f = fases[p]!;
+      ai.phase = p;
+      ai.phaseSince = w.tick;
+      ai.abilities = f.habilidades;
+      if (f.fala) emit(w, { t: 'say', src: e.id, text: f.fala });
+      spawnReinforcements(w, e, f.reforcos ?? []);
+      for (const ef of f.aoEntrar ?? []) {
+        if (ef.kind === 'gancho') getHook(ef.gancho)({ w, caster: e, effect: ef, targets: [e], point: { x: e.x, y: e.y }, params: ef.params ?? {} });
+      }
+      ai.nextReinforceTick = f.reforcosACadaS ? w.tick + msToTicks(f.reforcosACadaS * 1000) : undefined;
     }
-    ai.nextReinforceTick = f.reforcosACadaS ? w.tick + msToTicks(f.reforcosACadaS * 1000) : undefined;
   } else if (ai.nextReinforceTick !== undefined && w.tick >= ai.nextReinforceTick) {
     const f = fases[idx]!;
-    spawnReinforcements(w, e, f.reforcos ?? []);
+    const room = reinforcementCap(fases, idx) - reinforcementsOf(w, e).length;
+    if (room > 0) spawnReinforcements(w, e, f.reforcos ?? [], room);
     ai.nextReinforceTick = w.tick + msToTicks((f.reforcosACadaS ?? 20) * 1000);
   }
 }
 
-/** Chefe reiniciado (coleira): volta para a primeira fase, sem reforços pendentes. */
+/**
+ * Teto de reforços vivos ao mesmo tempo na fase idx: a soma dos reforços das fases até ela (os que
+ * a luta teria trazido até aqui). SUGESTÃO: os docs não dão teto; sem ele, a fase que repete
+ * reforços enche o mapa e vira fazenda de XP.
+ */
+export function reinforcementCap(fases: readonly { reforcos?: { quantidade: number }[] | undefined }[], idx: number): number {
+  let n = 0;
+  for (let p = 0; p <= idx && p < fases.length; p++) for (const r of fases[p]!.reforcos ?? []) n += r.quantidade;
+  return n;
+}
+
+/** Reforços vivos de um chefe. */
+export function reinforcementsOf(w: World, boss: Entity): Entity[] {
+  const out: Entity[] = [];
+  for (const o of w.entities.values()) if (o.kind === 'enemy' && !o.dead && enemyAi(o).reinforcementOf === boss.id) out.push(o);
+  return out;
+}
+
+/** O reforço some do mapa sem dar XP nem saque (vai embora: o chefe não está mais na luta). */
+export function dismissReinforcement(e: Entity): void {
+  e.dead = true;
+  e.casting = undefined;
+  e.pendingCast = undefined;
+  enemyAi(e).rewarded = true;
+}
+
+/**
+ * Reforço cujo chefe saiu da luta (morreu, sumiu ou está voltando pela coleira) e que também já
+ * saiu do combate (perdeu o alvo ou voltou pela coleira): vai embora. SUGESTÃO: os docs não dizem
+ * o que acontece com os capangas do chefe depois da luta.
+ */
+export function reinforcementOrphaned(w: World, e: Entity, m: EnemyMind): boolean {
+  const bossId = enemyAi(e).reinforcementOf;
+  if (bossId === undefined || m.state === 'combate') return false;
+  const boss = getEnt(w, bossId);
+  return !boss || !isUp(boss) || enemyMind(boss).state === 'voltando';
+}
+
+/** Chefe reiniciado (coleira): volta para a primeira fase, sem reforços pendentes, e os reforços vão embora. */
 export function resetBoss(w: World, e: Entity): void {
   const ai = enemyAi(e);
   const fases = getData().enemiesById.get(e.defId)?.fases ?? [];
@@ -47,24 +92,30 @@ export function resetBoss(w: World, e: Entity): void {
   ai.phaseSince = w.tick;
   ai.abilities = fases[0]!.habilidades;
   ai.nextReinforceTick = undefined;
+  for (const r of reinforcementsOf(w, e)) dismissReinforcement(r);
 }
 
-/** Reforços em volta do chefe: entram no bando dele, acordados e no mesmo alvo. */
-function spawnReinforcements(w: World, boss: Entity, list: { inimigo: string; quantidade: number }[]): void {
+// SUGESTÃO: reforço nasce a 1,8 tile da borda do chefe (num ponto que caiba um corpo de 0,5 tile).
+const REINFORCE_RING_TILES = 1.8;
+const REINFORCE_FREE_RADIUS = 0.5;
+
+/** Reforços em volta do chefe (até `limit`): entram no bando dele, acordados e no mesmo alvo. */
+function spawnReinforcements(w: World, boss: Entity, list: { inimigo: string; quantidade: number }[], limit = Infinity): void {
   const bm = enemyMind(boss);
   let k = 0;
-  const total = list.reduce((s, r) => s + r.quantidade, 0);
+  const total = Math.min(limit, list.reduce((s, r) => s + r.quantidade, 0));
   for (const r of list) {
-    for (let i = 0; i < r.quantidade; i++, k++) {
+    for (let i = 0; i < r.quantidade && k < total; i++, k++) {
       const a = (k / Math.max(1, total)) * Math.PI * 2 + w.rng.next();
-      let x = boss.x + Math.cos(a) * (boss.radius + 1.8), y = boss.y + Math.sin(a) * (boss.radius + 1.8);
-      if (!circleFree(w.map, x, y, 0.5)) {
+      let x = boss.x + Math.cos(a) * (boss.radius + REINFORCE_RING_TILES), y = boss.y + Math.sin(a) * (boss.radius + REINFORCE_RING_TILES);
+      if (!circleFree(w.map, x, y, REINFORCE_FREE_RADIUS)) {
         x = boss.x;
         y = boss.y;
       }
       const m = spawnEnemy(w, r.inimigo, x, y);
       m.spawnX = boss.spawnX ?? boss.x;
       m.spawnY = boss.spawnY ?? boss.y;
+      enemyAi(m).reinforcementOf = boss.id;
       const mm = enemyMind(m);
       mm.packId = bm.packId ?? `chefe_${boss.id}`;
       mm.leaderId = boss.id;

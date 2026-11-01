@@ -1,12 +1,14 @@
 /**
  * Servidor autoritativo com rede ruim simulada: 200 ms de RTT e 2% de perda (canais em memória
- * semeados), robôs que mandam as 3 últimas entradas por tick e reenviam comandos até o cack.
+ * semeados; por padrão como no TCP, a perda vira travada), robôs que mandam as 3 últimas entradas
+ * por tick e reenviam comandos até o cack.
  */
 import { describe, expect, it } from 'vitest';
 import { getData } from '@pqp/shared/data';
 import { INTEREST_RADIUS, POS_SCALE } from '@pqp/shared/net';
 import { cooldownRate, downEntity, effectiveRange, grantXp, packMates, spawnEnemy, xpToNext, type Entity } from '@pqp/shared/sim';
 import { freeze } from '@pqp/shared/sim/testkit';
+import { enemyMind } from '@pqp/shared/sim/ai_state';
 import { fightBrain, steerTo } from '../src/bot/robot';
 import { GameServerCore } from '../src/core';
 import { MemoryStore } from '../src/persistence/store';
@@ -35,9 +37,9 @@ describe('movimento com 200 ms e 2% de perda', () => {
     expect(dist(p, e)).toBeLessThan(0.05);
   });
 
-  it('com variação de 60 ms (pacotes fora de ordem) ainda chega e para', () => {
+  it('com variação de 60 ms embaralhando a ordem (rede sem garantia de ordem) ainda chega e para', () => {
     const h = new Harness({ content: false });
-    const bot = h.connect({ seed: 13, jitterMs: 60 });
+    const bot = h.connect({ seed: 13, jitterMs: 60, reorder: true, lossMode: 'descarte' });
     const dest = { x: 18.5, y: 74.5 };
     bot.brain = (r) => void steerTo(r, dest.x, dest.y, 0.2);
     const e = h.core.entityOf(bot.sid)!;
@@ -62,7 +64,7 @@ describe('movimento com 200 ms e 2% de perda', () => {
 describe('comandos com id', () => {
   it('um comando executa exatamente uma vez apesar de perda, duplicação e repetição', () => {
     const h = new Harness({ content: false });
-    const bot = h.connect({ seed: 21, loss: 0.1, duplicate: 0.3 });
+    const bot = h.connect({ seed: 21, loss: 0.1, lossMode: 'descarte', duplicate: 0.3 });
     const e = h.core.entityOf(bot.sid)!;
     e.hp = e.stats.hpMax * 0.4;
     const before = e.loadout!.itemCount!;
@@ -128,9 +130,9 @@ describe('combate só com alvo automático e botões', () => {
 
 describe('compensação de atraso', () => {
   /**
-   * Idol parado; turbina parada dentro do alcance do botão 3 e, 3 ticks (150 ms) antes do comando,
-   * longe. Com 200 ms de RTT o rewind é de 4 ticks (100 + 100 ms) e vê o alvo dentro; com RTT 0 é
-   * de 2 ticks (só a interpolação de 100 ms) e já o vê longe.
+   * Idol parado; turbina parada dentro do alcance do botão 3 e, 4 ticks (200 ms) antes do comando,
+   * longe. O rewind é RTT + 100 ms de interpolação + meio tick: com 200 ms de RTT dá 325 ms, limitado
+   * a 250 ms (5 ticks), e vê o alvo dentro; com RTT 0 dá 125 ms (3 ticks) e já o vê longe.
    */
   function setup(rtt: number) {
     const core = new GameServerCore({ content: false, log: () => undefined });
@@ -147,9 +149,7 @@ describe('compensação de atraso', () => {
     for (let i = 0; i < 10; i++) core.tick();
     expect(p.targetId).toBe(s.id);
     s.x = at(range + 3); // o alvo andou: agora está 3 tiles fora do alcance
-    core.tick();
-    core.tick();
-    core.tick();
+    for (let i = 0; i < 4; i++) core.tick();
     core.onInput('a', { inputs: [], cmds: [{ id: 1, c: 'habilidade', botao: 3 }], ackTick: core.world.tick, rtt });
     core.tick();
     return { core, p, s };
@@ -158,14 +158,14 @@ describe('compensação de atraso', () => {
 
   it('com 200 ms de RTT, acerta onde o alvo estava na tela do jogador', () => {
     const { core, p, s } = setup(200);
-    expect(core.rewindTicksFor('a')).toBe(4);
+    expect(core.rewindTicksFor('a')).toBe(5);
     expect(dot(s)).toBeDefined();
     expect(p.pendingCast).toBeUndefined();
   });
 
   it('sem atraso informado, o mesmo comando não acerta na hora (fica esperando o alcance)', () => {
     const { core, s, p } = setup(0);
-    expect(core.rewindTicksFor('a')).toBe(2);
+    expect(core.rewindTicksFor('a')).toBe(3);
     expect(dot(s)).toBeUndefined();
     expect(p.pendingCast).toBeDefined();
   });
@@ -337,7 +337,8 @@ describe('conteúdo do mapa', () => {
     const core = new GameServerCore({ log: () => undefined, spawner: { respawnMs: { normal: 1000 } } });
     const enemies = Array.from(core.world.entities.values()).filter((e) => e.kind === 'enemy');
     expect(enemies.filter((e) => e.defId === 'siri_do_mangue').length).toBe(7);
-    expect(enemies.filter((e) => e.defId === 'capanga_do_capataz').length).toBe(5);
+    // 5 dos bandos de capangas + 2 da escolta do Cobrador (enemies.json)
+    expect(enemies.filter((e) => e.defId === 'capanga_do_capataz').length).toBe(7);
     const cob = enemies.find((e) => e.defId === 'cobrador_do_capataz')!;
     expect(cob.tier).toBe('elite');
     expect(cob.affixes).toEqual(['blindado']);
@@ -377,6 +378,36 @@ describe('conteúdo do mapa', () => {
     const again = g.slots.map((s) => core.world.entities.get(s.entityId!)!);
     expect(again.every((e) => e && !e.dead && e.defId === 'siri_do_mangue')).toBe(true);
     expect(packMates(core.world, again[0]!).length).toBe(3);
+  });
+
+  it('o elite do marcador nasce com a escolta de enemies.json, no mesmo bando, e renasce com ela', () => {
+    const core = new GameServerCore({ log: () => undefined, spawner: { respawnMs: { elite: 1000 } } });
+    const g = core.spawner!.groups.find((x) => x.markerId === 'elite_cobrador')!;
+    expect(g.lead).toBeDefined();
+    const check = () => {
+      const members = g.slots.map((s) => core.world.entities.get(s.entityId!)!);
+      expect(members.length).toBe(3);
+      const cob = members.find((m) => m.defId === 'cobrador_do_capataz')!;
+      expect(cob.tier).toBe('elite');
+      expect(cob.affixes).toEqual(['blindado']);
+      const esc = members.filter((m) => m.defId === 'capanga_do_capataz');
+      expect(esc.length).toBe(2);
+      for (const m of esc) {
+        expect(enemyMind(m).leaderId).toBe(cob.id);
+        expect(dist(m, cob)).toBeLessThan(1.6);
+      }
+      for (const m of members) expect(enemyMind(m).packId).toBe('elite_cobrador');
+      expect(packMates(core.world, cob).map((o) => o.id).sort()).toEqual(esc.map((o) => o.id).sort());
+      return members;
+    };
+    const first = check();
+    for (const m of first) {
+      m.hp = 0;
+      m.dead = true;
+    }
+    for (let i = 0; i < 40; i++) core.tick();
+    const again = check();
+    expect(again.every((m) => !first.includes(m))).toBe(true);
   });
 
   it('companheiro de IA opcional segue o jogador', () => {

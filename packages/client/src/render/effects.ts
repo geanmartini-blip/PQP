@@ -7,10 +7,9 @@ import { FONT_KEY, sheetMeta } from '../art/index';
 import { fontText } from '../art/fx';
 import { DEPTH } from './depth';
 
-// SUGESTÃO: duração e subida dos números, tamanho do crítico.
+// SUGESTÃO: duração e subida dos números; o crítico sai uma escala inteira maior.
 const FLOAT_MS = 750;
 const FLOAT_RISE_PX = 22;
-const CRIT_SCALE = 2;
 
 interface Floater {
   t: Phaser.GameObjects.BitmapText;
@@ -25,6 +24,12 @@ interface Floater {
 export class FloatTextPool {
   private items: Floater[] = [];
   private next = 0;
+  /** escala inteira dos números (a fonte de pixel tem contorno; ver layout.worldTextScale) */
+  private base = 2;
+
+  setScale(s: number): void {
+    this.base = Math.max(1, Math.round(s));
+  }
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -42,7 +47,7 @@ export class FloatTextPool {
     this.next = (this.next + 1) % this.items.length;
     f.t.setText(fontText(text));
     f.t.setTint(color);
-    f.scale = crit ? CRIT_SCALE : 1;
+    f.scale = crit ? this.base + 1 : this.base;
     f.t.setScale(f.scale);
     // espalha um pouco para números seguidos não ficarem um em cima do outro
     f.x = x + ((now * 7) % 13) - 6;
@@ -64,8 +69,30 @@ export class FloatTextPool {
       const rise = FLOAT_RISE_PX * (1 - (1 - u) * (1 - u));
       f.t.setPosition(Math.round(f.x), Math.round(f.y - rise));
       f.t.setAlpha(u < 0.6 ? 1 : 1 - (u - 0.6) / 0.4);
-      if (f.scale > 1 && u < 0.15) f.t.setScale(f.scale * (1 + (0.15 - u) * 2));
     }
+  }
+}
+
+/**
+ * Pool de Sprites para avisos no chão e zonas: soltar só esconde; pegar troca a textura e zera o
+ * estado (animação, tinta, giro). Nada é criado nem destruído no meio do combate.
+ */
+export class ImagePool {
+  private free: Phaser.GameObjects.Sprite[] = [];
+
+  constructor(private readonly scene: Phaser.Scene) {}
+
+  get(key: string, frame: string, depth: number): Phaser.GameObjects.Sprite {
+    const s = this.free.pop() ?? this.scene.add.sprite(0, 0, key, frame);
+    s.anims.stop();
+    s.setTexture(key, frame).clearTint().setRotation(0).setScale(1).setAlpha(1).setDepth(depth).setVisible(true).setActive(true);
+    return s;
+  }
+
+  release(s: Phaser.GameObjects.Sprite): void {
+    s.anims.stop();
+    s.setVisible(false).setActive(false);
+    this.free.push(s);
   }
 }
 
@@ -109,6 +136,21 @@ interface Balloon {
 /** Balões de fala ('say') presos na cabeça de quem fala. */
 export class Balloons {
   private items: Balloon[] = [];
+
+  /**
+   * Texto nítido na densidade da tela: o balão fica no mundo (com o zoom da câmera), então a fonte
+   * vai em px de mundo (~12 px de CSS) e o texto é rasterizado na resolução do zoom.
+   */
+  setDensity(px: number, zoom: number): void {
+    const z = Math.max(1, zoom);
+    const size = Math.max(8, Math.round((12 * px) / z));
+    for (const b of this.items) {
+      b.t.setResolution(z);
+      b.t.setFontSize(size);
+      b.t.setPadding(Math.round((5 * px) / z), Math.round((3 * px) / z));
+      b.t.setWordWrapWidth(Math.round((170 * px) / z), true);
+    }
+  }
 
   constructor(
     private readonly scene: Phaser.Scene,

@@ -27,6 +27,11 @@ export interface MatchConfig {
   doctrineB?: DoctrineCard[];
   /** tamanho do mapa aberto (quadrado) */
   mapSize?: number;
+  /**
+   * carga inicial do Especial (0 a 1; padrão 0). As lutas simuladas duram de 15 a 25 s e o
+   * Especial carrega em 45 a 90 s: com 1, todos começam com ele pronto e ele pesa no resultado.
+   */
+  specialStart?: number;
 }
 
 export interface MatchResult {
@@ -65,6 +70,7 @@ export function setupMatch(cfg: MatchConfig): { w: World; A: Entity[]; B: Entity
       e.auto = true;
       e.doctrine = cards ? [...cards] : [];
       e.loadout!.itemCount = cfg.potions ?? MATCH_DEFAULTS.potions;
+      if (cfg.specialStart !== undefined && e.loadout!.especial) e.special = Math.max(0, Math.min(1, cfg.specialStart));
       return e;
     });
   const ax = cfg.swap ? right : left, bx = cfg.swap ? left : right;

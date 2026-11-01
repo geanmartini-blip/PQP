@@ -3,7 +3,8 @@
  *
  * Opções: --modo 1v1|um_contra_um|grupo|grupo_contra_grupo, --n N, --a ID, --b ID, --todos,
  * --arquetipos id1,id2,..., --seed S, --nivel L, --tempo S (máximo por luta), --distancia D,
- * --grupo K (tamanho do grupo), --json (relatório em JSON).
+ * --grupo K (tamanho do grupo), --especial F (carga inicial do Especial, 0 a 1: com 1 todos
+ * começam com o Especial pronto, para ele pesar nas lutas curtas), --json (relatório em JSON).
  *
  * Desde a integração da Fase 1, o script "sim" da raiz repassa as opções com "--"
  * (npm run sim -- --modo 1v1 --n 500). Continua aceitando a forma antiga, em que o npm comia os
@@ -27,6 +28,8 @@ export interface SimArgs {
   distancia?: number;
   grupo?: number;
   json?: boolean;
+  /** carga inicial do Especial (0 a 1): 1 = todos começam com o Especial pronto */
+  especial?: number;
 }
 
 export const MODOS: Readonly<Record<string, Modo>> = {
@@ -94,6 +97,12 @@ export function parseArgs(argv: readonly string[], env: Record<string, string | 
       case 'grupo':
         out.grupo = numArg(k, val());
         break;
+      case 'especial': {
+        const v = numArg(k, val());
+        if (v < 0 || v > 1) throw new Error('--especial vai de 0 a 1 (carga inicial do Especial)');
+        out.especial = v;
+        break;
+      }
       case 'json':
         out.json = true;
         break;

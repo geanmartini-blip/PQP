@@ -274,6 +274,10 @@ describe('ganchos', () => {
     const w = createWorld(arena(), 1);
     const p = spawnPlayer(w, { name: 'Li', archetypeId: 'idol', x: 10, y: 15 });
     const longe = spawnPlayer(w, { name: 'Peão', archetypeId: 'peao_brabo', x: 25, y: 25 });
+    // o grupo é o partyId (vale a qualquer distância); um estranho sem grupo longe não entra
+    p.partyId = longe.partyId = 'g1';
+    const estranho = spawnPlayer(w, { name: 'Estranho', archetypeId: 'peao_brabo', x: 25, y: 5 });
+    castAbility(w, estranho, 'casca_grossa');
     castAbility(w, longe, 'casca_grossa');
     castAbility(w, p, 'fanchant');
     p.special = 1;
@@ -287,5 +291,7 @@ describe('ganchos', () => {
     expect(castAbility(w, p, 'fanchant')).toBe(true);
     expect(statusOf(longe, 'reforco:speed')).toBeDefined();
     expect(longe.cooldowns['casca_grossa']).toBeUndefined();
+    expect(statusOf(estranho, 'reforco:speed')).toBeUndefined();
+    expect(estranho.cooldowns['casca_grossa']).toBeDefined();
   });
 });

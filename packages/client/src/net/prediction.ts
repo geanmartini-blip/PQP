@@ -12,8 +12,9 @@
  * erro passar de 2 tiles (empurrão grande, volta ao QG), teletransporta.
  *
  * Quando o servidor mexe no personagem sem joystick (modo automático, avanço, habilidade pendente,
- * empurrão), as entradas são zero e a reaplicação não anda: o boneco segue a posição do servidor,
- * suavizado.
+ * empurrão), as entradas são zero e a reaplicação não anda: a posição prevista pula para a do
+ * servidor a cada snapshot. Nesse caso o GameClient desenha o boneco pelo buffer de snapshots, como
+ * os outros (ver hasPendingMotion e GameClient.selfRender).
  */
 import { dequantizeAxis, quantizeAxis } from '@pqp/shared/net';
 import { moveVelocity, SIM_TUNING, stepMovement, TICK_MS, type PlayerInput, type Vec } from '@pqp/shared/sim';
@@ -116,6 +117,32 @@ export class Predictor {
   /** Destino do auto-caminho, se houver (para o marcador no chão). */
   get destination(): Vec | null {
     return this.moveTo;
+  }
+
+  /**
+   * Alguma entrada sem ack anda (joystick ou caminho)? Se não, quem mexe no boneco agora é só o
+   * servidor (avanço, modo automático, empurrão) e o desenho segue os snapshots (GameClient).
+   */
+  get hasPendingMotion(): boolean {
+    for (const r of this.history) {
+      if (r.wp) return true;
+      if (Math.hypot(dequantizeAxis(r.mx), dequantizeAxis(r.my)) >= SIM_TUNING.JOYSTICK_DEADZONE) return true;
+    }
+    return false;
+  }
+
+  /** Parado sem passo (conexão caída): o desenho não anda e nada novo vai para o histórico. */
+  hold(): void {
+    this.prevX = this.x;
+    this.prevY = this.y;
+    this.vx = this.vy = 0;
+  }
+
+  /** Esquece as entradas sem ack e o caminho (a mesma sessão voltou depois da queda). */
+  clearHistory(): void {
+    this.history = [];
+    this.path = null;
+    this.moveTo = null;
   }
 
   /**

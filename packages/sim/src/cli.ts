@@ -31,6 +31,7 @@ function main(): void {
     ...(args.nivel !== undefined ? { level: args.nivel } : {}),
     ...(args.tempo !== undefined ? { maxSeconds: args.tempo } : {}),
     ...(args.distancia !== undefined ? { distance: args.distancia } : {}),
+    ...(args.especial !== undefined ? { specialStart: args.especial } : {}),
   };
   if (args.a && args.b && !args.todos && !args.arquetipos) {
     const row = runSeries(args.a, args.b, n, base);
@@ -53,7 +54,7 @@ function main(): void {
     reports.push(rep);
     if (!args.json) console.log(formatReport(rep) + '\n');
   }
-  // alerta é aviso para a Fase 3, não erro: a saída continua 0
+  // alerta é aviso, não erro: a saída continua 0 (o teste de regressão do torneio é que trava)
   if (args.json) console.log(JSON.stringify(reports.length === 1 ? reports[0] : reports, null, 2));
 }
 

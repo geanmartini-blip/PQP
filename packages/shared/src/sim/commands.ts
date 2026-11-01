@@ -11,12 +11,12 @@
 import { getData } from '../data';
 import { dequantizeAxis } from '../net/protocol';
 import { castAbility } from './abilities';
-import { bal, INTERACT_RADIUS, JOYSTICK_DEADZONE } from './constants';
+import { bal, INTERACT_RADIUS, JOYSTICK_DEADZONE, TRAINER_SWITCH_RADIUS } from './constants';
 import { getEnt, isUp } from './entity';
 import { dist } from './geom';
 import { setArchetype } from './spawn';
 import { retargetTap } from './targeting';
-import type { CommandContext, Entity, PlayerCommand, PlayerInput, World } from './types';
+import { msToTicks, type CommandContext, type Entity, type PlayerCommand, type PlayerInput, type World } from './types';
 import { emit } from './world';
 
 /** Joystick dequantizado vira moveIntent. Joystick fora da zona morta cancela ir_ate e o caminho. */
@@ -71,18 +71,58 @@ export function applyCommand(w: World, e: Entity, cmd: PlayerCommand, ctx: Comma
     case 'interagir':
       return interact(w, e, cmd.entity);
     case 'trocar_arquetipo':
-      if (!getData().archetypesById.has(cmd.archetypeId)) return false;
-      setArchetype(w, e, cmd.archetypeId);
+      if (!switchTrainer(w, e, cmd.archetypeId)) return false;
+      if (e.archetypeId !== cmd.archetypeId) setArchetype(w, e, cmd.archetypeId);
       return true;
     case 'doutrina':
       e.doctrine = cmd.cards.slice(0, bal().combate.doutrinaCartasMax);
       return true;
+    case 'filtro_saque':
+      return setLootFilter(e, cmd.raridade, cmd.vendaAutomatica);
   }
+}
+
+/** Em combate: bateu ou apanhou há menos de regenForaDeCombate.aposMs (5 s). */
+export function inCombat(w: World, e: Entity): boolean {
+  return e.lastCombatTick !== undefined && w.tick - e.lastCombatTick < msToTicks(bal().combate.regenForaDeCombate.aposMs);
+}
+
+/**
+ * Treinador que deixa `e` trocar para a ala `archetypeId` agora: um NPC treinador dessa ala a até
+ * TRAINER_SWITCH_RADIUS (borda a borda), com `e` jogador, de pé e fora de combate. No protótipo,
+ * Wesley ensina Peão Brabo e Li Wei ensina Idol; sem o treinador por perto, não troca.
+ */
+export function switchTrainer(w: World, e: Entity, archetypeId: string): Entity | undefined {
+  if (e.kind !== 'player' || !isUp(e) || !getData().archetypesById.has(archetypeId) || inCombat(w, e)) return undefined;
+  let best: Entity | undefined;
+  let bd = Infinity;
+  for (const n of w.entities.values()) {
+    if (n.kind !== 'npc' || n.dead || TRAINER_ARCHETYPE(n.defId) !== archetypeId) continue;
+    const d = dist(e.x, e.y, n.x, n.y) - n.radius - e.radius;
+    if (d <= TRAINER_SWITCH_RADIUS && d < bd) {
+      bd = d;
+      best = n;
+    }
+  }
+  return best;
+}
+
+/** Filtro de raridade da coleta automática e venda automática (loot.json, coleta e vendaAutomatica). */
+function setLootFilter(e: Entity, raridade: string, venda: boolean | undefined): boolean {
+  const L = getData().loot;
+  if (!(L.coleta.filtros as readonly string[]).includes(raridade)) return false;
+  e.lootFilter = raridade as NonNullable<Entity['lootFilter']>;
+  if (venda !== undefined) {
+    if (!L.vendaAutomatica.opcional && venda !== L.vendaAutomatica.padraoLigada) return false;
+    e.autoSell = venda;
+  }
+  return true;
 }
 
 /**
  * Conversa com um NPC (neutro ou companheiro). No protótipo, falar com o Wesley vira Peão Brabo e
- * falar com o Li Wei vira Idol (qualquer treinador troca para a ala dele). Solta um 'say' com uma
+ * falar com o Li Wei vira Idol (qualquer treinador troca para a ala dele), só fora de combate; em
+ * combate o treinador só fala, sem trocar. Solta um 'say' com uma
  * fala de trainers.json (treino) ou npcs.json, trocando {nome} pelo nome do jogador.
  */
 function interact(w: World, e: Entity, entityId: number): boolean {
@@ -94,7 +134,8 @@ function interact(w: World, e: Entity, entityId: number): boolean {
   const arch = TRAINER_ARCHETYPE(npc.defId);
   let lines: string[] = [];
   if (tr) {
-    if (arch && e.kind === 'player' && e.archetypeId !== arch) setArchetype(w, e, arch);
+    // troca de ala só fora de combate; em combate o treinador só fala
+    if (arch && e.kind === 'player' && e.archetypeId !== arch && !inCombat(w, e)) setArchetype(w, e, arch);
     lines = tr.falas.treino.length > 0 ? tr.falas.treino : tr.falas.saudacao;
   } else {
     const n = D.npcsById.get(npc.defId);

@@ -18,10 +18,10 @@
  */
 import { getData } from '../data';
 import { hasLineOfSight } from '../map/grid';
-import { castAbility, effectiveRange } from './abilities';
+import { approachRange, castAbility, effectiveRange } from './abilities';
 import { abilityOf, abilityReady, areaRadius, profileOf } from './ai_kit';
 import { packMates } from './ai_pack';
-import { bossPhases, resetBoss, tauntOf } from './ai_boss';
+import { bossPhases, dismissReinforcement, reinforcementOrphaned, resetBoss, tauntOf } from './ai_boss';
 import { AI_TUNING, aggroOf, enemyMind, goTo, leashOf, partyNear, stopMoving, waterGoal, fleePoint, type EnemyMind } from './ai_state';
 import { applyStatus, heal, removeStatuses } from './combat';
 import { canAct, getEnt, HARMFUL_STATUS, hasStatus, hpRatio, isDowned, isFriendly, isTargetableBy, isUp } from './entity';
@@ -41,8 +41,14 @@ export function tickAi(w: World, e: Entity): void {
   const ai = enemyAi(e);
   const m = enemyMind(e);
   if (!m.init) initMind(w, e, m);
+  // reforço de chefe sem chefe na luta (morreu, reiniciou ou sumiu): vai embora quando sai do combate
+  if (reinforcementOrphaned(w, e, m)) {
+    dismissReinforcement(e);
+    return;
+  }
   const def = getData().enemiesById.get(e.defId);
-  if (def?.fases) bossPhases(w, e);
+  // voltando pela coleira o chefe já reiniciou (resetBoss): sem fases até chegar, e chega na fase 1
+  if (def?.fases && m.state !== 'voltando') bossPhases(w, e);
 
   // golpe novo recebido?
   const hitBy = newAttacker(w, e, m);
@@ -249,6 +255,8 @@ const gap = (a: Entity, b: Entity) => dist(a.x, a.y, b.x, b.y) - a.radius - b.ra
 
 function useAbilities(w: World, e: Entity, m: EnemyMind, ai: EnemyAi, t: Entity, visible: boolean): void {
   if (!canAct(e) || e.casting || w.tick < e.gcdUntil || w.tick < m.busyUntil) return;
+  // confuso ou tonto: só o básico a esmo (doBasicAttack); nada de habilidade no alvo da IA
+  if (hasStatus(e, 'confundir') || hasStatus(e, 'tontura')) return;
   const scored: { id: string; s: number; i: number }[] = [];
   ai.abilities.forEach((id, i) => {
     if (!abilityReady(w, e, id)) return;
@@ -258,7 +266,11 @@ function useAbilities(w: World, e: Entity, m: EnemyMind, ai: EnemyAi, t: Entity,
   scored.sort((a, b) => b.s - a.s || a.i - b.i);
   for (const c of scored) {
     if (!castAbility(w, e, c.id, { targetId: t.id })) continue;
-    e.pendingCast = undefined; // inimigo nunca fica esperando alcance
+    // inimigo nunca fica esperando alcance: pedido que virou "andar até o alcance" não conta
+    if (e.pendingCast) {
+      e.pendingCast = undefined;
+      continue;
+    }
     m.lastAbility = c.id;
     const a = abilityOf(c.id)!;
     if (e.tier === 'chefe' && a.telegraphMs > 0) {
@@ -268,7 +280,14 @@ function useAbilities(w: World, e: Entity, m: EnemyMind, ai: EnemyAi, t: Entity,
   }
 }
 
-/** Nota de uma habilidade agora (0 = não usar). */
+/**
+ * Nota de uma habilidade agora (0 = não usar).
+ * SUGESTÃO: todos os pesos e limiares daqui (100 + feridos para cura e escudo, abaixo de 80% de
+ * vida para cura e 95% para escudo; dano 40 + 10 × dano; controle 80, −60 se o alvo está imune;
+ * golpe grande +20; avanço e puxão +15/+25 longe e −30 colado, com "longe" a 1,5 tile; marca 55;
+ * reforço em si 35 com o alvo a até 4 tiles; sumiço 45; o chefe tira 25 da que acabou de usar; a
+ * folga de 0,2 tile no raio das áreas em volta) são afinação da IA, não estão nos docs.
+ */
 function scoreAbility(w: World, e: Entity, m: EnemyMind, id: string, t: Entity, visible: boolean): number {
   const a = abilityOf(id);
   const p = profileOf(id);
@@ -287,7 +306,7 @@ function scoreAbility(w: World, e: Entity, m: EnemyMind, id: string, t: Entity, 
   if (p.harmful) {
     let reach: boolean;
     if (a.type === 'em_volta' || (a.type === 'campo' && a.range <= 0)) reach = d + e.radius <= rad - 0.2;
-    else if (a.type === 'cone') reach = d <= range && visible;
+    else if (a.type === 'cone') reach = d <= approachRange(e, a) && visible; // o cone sai do centro do corpo
     else reach = d <= range && visible;
     if (reach) {
       let h = 40 + p.damage * 10;
@@ -319,6 +338,13 @@ function alliesInRadius(w: World, e: Entity, r: number): Entity[] {
 // ---------------------------------------------------------------------------
 // Posição
 
+/**
+ * Onde o inimigo fica.
+ * SUGESTÃO: as distâncias de posicionamento daqui e de idle/mostHurtMate (escolta segue o líder
+ * a mais de 3 tiles, em roda de 1,5 tile, e para a 2; casa a 0,3 tile; o último ponto visto vale
+ * até 0,5 tile; curandeiro sai do alcance do alvo por até 2 tiles; recuo dura até 1 s; suporte
+ * olha aliados feridos abaixo de 90% a até 8 tiles) são afinação da IA, não estão nos docs.
+ */
 function position(w: World, e: Entity, m: EnemyMind, ai: EnemyAi, t: Entity, visible: boolean): void {
   if (ai.imovel) {
     stopMoving(e);
@@ -367,6 +393,8 @@ function position(w: World, e: Entity, m: EnemyMind, ai: EnemyAi, t: Entity, vis
     return;
   }
   // corpo a corpo e enxame
+  // SUGESTÃO: encosta até 0,15 tile dentro do alcance; o enxame cerca a partir de 1,2 tile, numa
+  // roda a reach × 0,6 (mínimo 0,2) da borda do alvo; a distância mantém o alcance com 0,3 de folga.
   const want = Math.max(0.1, reach - 0.15);
   if (d <= want) {
     stopMoving(e);

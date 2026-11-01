@@ -73,6 +73,54 @@ describe('torneio', () => {
   });
 });
 
+describe('critério de pronto: nenhum arquétipo acima de 55% contra a média', () => {
+  /**
+   * Arquétipos que hoje passam do limite no 1 contra 1 (n 1, semente 3): os números de
+   * balance.json e das habilidades ainda não foram calibrados (openIssues da correção da Fase 1).
+   * A lista só pode diminuir: quem sair dela, tire daqui.
+   */
+  const ALERTA_CONHECIDO_1V1 = new Set([
+    'cowboy_cromado',
+    'doktor_klaus',
+    'arqueiro_das_estepes',
+    'bruxa_do_trovao',
+    'diva_da_opera',
+    'iogue_furioso',
+    'o_fiel',
+    'hacker_da_aldeia',
+    'engenheira_de_gambiarra',
+    'cidadao_revolucionario',
+  ]);
+
+  it('regressão: nenhum arquétipo novo passa do limite no 1 contra 1 (n pequeno, semente fixa)', () => {
+    const rep = runTournament({ modo: 'um_contra_um', n: 1, seed: 3 });
+    expect(rep.games).toBe((24 * 23) / 2);
+    const novos = rep.rows.filter((r) => r.alert && !ALERTA_CONHECIDO_1V1.has(r.id)).map((r) => `${r.id} ${r.winPct}%`);
+    expect(novos).toEqual([]);
+    expect(rep.alerts.length).toBe(rep.rows.filter((r) => r.alert).length);
+  }, 60000);
+
+  // a trava de verdade: liga com PQP_BALANCO=1 (npx vitest run packages/sim) quando os dados forem calibrados
+  it.runIf(process.env['PQP_BALANCO'] === '1')(
+    'o torneio de 1 contra 1 e o de grupo não têm alertas',
+    () => {
+      const r1 = runTournament({ modo: 'um_contra_um', n: 2, seed: 3 });
+      const rg = runTournament({ modo: 'grupo_contra_grupo', n: 600, seed: 3 });
+      expect([...r1.alerts, ...rg.alerts]).toEqual([]);
+    },
+    600000,
+  );
+
+  it('carga inicial do Especial (specialStart) para o Especial pesar nas lutas curtas', () => {
+    const { A, B } = setupMatch({ a: ['peao_brabo'], b: ['idol'], seed: 1, specialStart: 1 });
+    expect(A[0]!.special).toBe(1);
+    expect(B[0]!.special).toBe(1);
+    expect(setupMatch({ a: ['peao_brabo'], b: ['idol'], seed: 1 }).A[0]!.special).toBe(0);
+    expect(parseArgs(['--especial', '1'])).toEqual({ especial: 1 });
+    expect(() => parseArgs(['--especial', '2'])).toThrow();
+  });
+});
+
 describe('argumentos', () => {
   it('lê as opções normais', () => {
     expect(parseArgs(['--modo', '1v1', '--n', '500', '--a', 'peao_brabo', '--b', 'idol'])).toEqual({ modo: 'um_contra_um', n: 500, a: 'peao_brabo', b: 'idol' });

@@ -1,12 +1,14 @@
 /**
  * Banco de testes do servidor: GameServerCore + robôs ligados por canais em memória com atraso e
  * perda semeados, num relógio virtual de 50 ms por tick. Não é um arquivo de teste (sem .test).
+ * Os canais modelam o TCP por padrão (em ordem; perda = travada e rajada); 'descarte' e 'reorder'
+ * são opções para testar a robustez do protocolo.
  */
 import type { C2S_Input, C2S_Need, S2C_Info, S2C_Snapshot } from '@pqp/shared/net';
 import type { CombatEvent } from '@pqp/shared/sim';
 import { RobotClient } from '../src/bot/robot';
 import { GameServerCore, type CoreOptions } from '../src/core';
-import { MemoryChannel } from '../src/netsim';
+import { MemoryChannel, type LossMode } from '../src/netsim';
 
 type Up = { k: 'in'; m: C2S_Input } | { k: 'need'; m: C2S_Need };
 type Down = { k: 'snap'; m: S2C_Snapshot } | { k: 'info'; m: S2C_Info };
@@ -17,8 +19,13 @@ export interface BotOptions {
   archetypeId?: string;
   /** RTT da rede (ms); metade em cada sentido */
   rttMs?: number;
+  /** fração com perda (padrão 2%); no modo padrão vira travada, como no TCP */
   loss?: number;
+  lossMode?: LossMode;
+  stallMs?: number;
   jitterMs?: number;
+  /** deixa a variação embaralhar a ordem (rede sem garantia de ordem) */
+  reorder?: boolean;
   duplicate?: number;
   seed?: number;
 }
@@ -54,7 +61,15 @@ export class Harness {
     const sid = `s${++sidCounter}`;
     const seed = o.seed ?? sidCounter * 101;
     const half = (o.rttMs ?? 200) / 2;
-    const chan = { delayMs: half, loss: o.loss ?? 0.02, jitterMs: o.jitterMs ?? 0, duplicate: o.duplicate ?? 0 };
+    const chan = {
+      delayMs: half,
+      loss: o.loss ?? 0.02,
+      jitterMs: o.jitterMs ?? 0,
+      duplicate: o.duplicate ?? 0,
+      ...(o.lossMode ? { lossMode: o.lossMode } : {}),
+      ...(o.stallMs !== undefined ? { stallMs: o.stallMs } : {}),
+      ...(o.reorder ? { reorder: true } : {}),
+    };
     const robot = new RobotClient(o.token ?? `tok-${sid}-abcdef`, o.name ?? `Robô ${sid}`, o.archetypeId);
     robot.rtt = o.rttMs ?? 200;
     const bot: Bot = {
