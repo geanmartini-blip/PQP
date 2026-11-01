@@ -79,6 +79,7 @@ import {
   moveVelocity,
   npcInReach,
   setArchetype,
+  spawnAlly,
   spawnEnemy,
   spawnNpc,
   spawnPack,
@@ -467,6 +468,9 @@ export class LocalServer {
   private nearExit = false;
   private nearInteract = new Set<string>();
   private reviveTicks = 0;
+  /** offline solo: o treinador que anda junto nas margens (só luta em grupo dá XP) */
+  private companionId: number | undefined;
+  private companionGoneTick = -1;
   private telSeen = new Map<number, { x: number; y: number; r: number; near: boolean }>();
   private enemyInfo = new Map<number, { defId: string; tier?: 'normal' | 'elite' | 'chefe'; x: number; y: number; hit: boolean }>();
   // Fase 3
@@ -746,6 +750,61 @@ export class LocalServer {
     this.equipSig = JSON.stringify(simEquipOf(rec) ?? null);
     if (rec.doctrine.length > 0) this.player.doctrine = rec.doctrine.map((c) => ({ ...c }));
     this.spawnDutyAllies();
+    this.spawnSoloCompanion();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Offline solo: companheiro de IA nas margens
+
+  /**
+   * SUGESTÃO: no offline não há outros jogadores nem plantonistas de verdade, e só luta em grupo dá
+   * XP (no Delta o novato já conta como grupo pelo deltaRookie). Nas margens, um treinador da
+   * instituição do jogador anda junto como IA, como o PQP_COMPANHEIRO do servidor: o da ala dele
+   * depois do 12; antes, o da 1ª ala da instituição.
+   */
+  private companionTrainer(rec: PlayerRecord): { id: string; archetype: string } | undefined {
+    const D = getData();
+    const trainers = [...D.trainersById.values()];
+    const arch = rec.archetype ?? (rec.institution ? D.institutionsById.get(rec.institution)?.alas[0] : undefined);
+    const t = arch ? trainers.find((x) => x.archetype === arch) : undefined;
+    return t ? { id: t.id, archetype: t.archetype } : undefined;
+  }
+
+  private spawnSoloCompanion(): void {
+    const rec = this.rec;
+    const p = this.player;
+    this.companionId = undefined;
+    this.companionGoneTick = -1;
+    if (!rec || !p || this.fixedMap || rec.stage !== 'margem' || isBoatRoom(this.mapId) || this.mapId.startsWith('casa:')) return;
+    const t = this.companionTrainer(rec);
+    if (!t) return;
+    let x = p.x + 0.8, y = p.y;
+    if (!circleFree(this.w.map, x, y, 0.45)) {
+      x = p.x;
+      y = p.y;
+    }
+    const c = spawnAlly(this.w, t.id, x, y, { archetypeId: t.archetype, level: Math.max(1, rec.level) });
+    c.partyId = this.partyIdOf();
+    p.partyId = this.partyIdOf();
+    this.companionId = c.id;
+  }
+
+  /** Companheiro que caiu de vez volta perto do jogador depois de um tempo. */
+  private tickSoloCompanion(): void {
+    if (this.companionId === undefined) return;
+    const p = this.player;
+    const c = this.w.entities.get(this.companionId);
+    if (!p || p.dead) return;
+    if (c && !c.dead) {
+      this.companionGoneTick = -1;
+      return;
+    }
+    if (this.companionGoneTick < 0) this.companionGoneTick = this.w.tick;
+    // SUGESTÃO: volta 10 s depois de cair de vez
+    if (this.w.tick - this.companionGoneTick >= TICK_RATE * 10) {
+      if (c) this.w.entities.delete(c.id);
+      this.spawnSoloCompanion();
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -965,6 +1024,7 @@ export class LocalServer {
     const ev = this.cmdEvents.length > 0 ? [...this.cmdEvents, ...stepEv] : stepEv;
     this.cmdEvents = [];
     this.respawns();
+    this.tickSoloCompanion();
     // Fase 5: plantão (XP e saque do plantonista) e encontros que se renderam
     for (const a of this.duty) tickPlantao(this.w, a);
     if (this.rec && !this.floorSt) {
@@ -1216,10 +1276,14 @@ export class LocalServer {
   private gameEvent(ev: GameEvent, once = false): void {
     const rec = this.rec;
     if (!rec || !rec.criado) return;
-    if (once && ev.t === 'control' && rec.tutorial.controles.includes(ev.controle)) return;
+    // controle que um objetivo atual conta (ex.: "toque num inimigo" 0/2) passa sempre, como no
+    // servidor online; sem isso o 2º toque era descartado e a missão do Delta parava em 1/2
+    const counted =
+      ev.t === 'control' && currentObjectives(rec).some((c) => c.objetivo.tipo === 'usar_controle' && c.objetivo.controle === ev.controle);
+    if (once && !counted && ev.t === 'control' && rec.tutorial.controles.includes(ev.controle)) return;
     // controle que não mudou nada (fora do Delta o registro não guarda) não volta até a próxima
     // missão aceita: sem isso, o alvo automático mandaria perfil e gravaria o registro a cada tick
-    const key = once && ev.t === 'control' ? ev.controle : null;
+    const key = once && !counted && ev.t === 'control' ? ev.controle : null;
     if (key !== null && this.onceSent.has(key)) return;
     const r = onGameEvent(rec, ev);
     if (key !== null && !r.mudou) this.onceSent.add(key);
