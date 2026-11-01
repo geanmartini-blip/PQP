@@ -52,9 +52,12 @@ Plano:
    - pronto: as duas margens. Chão da Direita (concreto, asfalto, piso neon), parede de cada margem
      (taipa com trepadeira na Esquerda, concreto com neon na Direita), as 10 fachadas, enfeites
      (horta, totem, lixo, letreiro, holograma), fiscal, contrabandista e drone de cobrança;
-   - falta: os ~40 NPCs das margens (treinadores, líderes, Wesley e Li Wei), a Usina, o Juncal e os
-     estágios do conjunto por ala.
-   Gasto até aqui: 800 gerações (tileset "pro" custa 15, boneco "pro" 25). A lista está abaixo.
+   - pronto: os 39 NPCs das margens. Os 22 treinadores, os 9 da IA de facção, Nayra e Kenji em
+     holograma e 4 avulsos são bonecos parados, só com as 4 direções (`PL_PARADOS`), no tamanho de
+     112 px, que custa 15 e dá a mesma altura. O Wesley e o Li Wei usam o boneco do Peão e da Idol;
+   - falta: a Usina, o Juncal, o andar e o golpe dos 22 treinadores (para virarem o boneco da ala do
+     jogador com o conjunto completo) e os estágios do conjunto por ala.
+   Gasto até aqui: 1.355 gerações (tileset "pro" custa 15, boneco "pro" 25 em 128 px e 15 em 112).
 5. Testes, build, NOVIDADES da v0.3, versão 0.3.0 e commit, sem push.
 
 Visual dos itens:

@@ -39,9 +39,10 @@ export function preloadPixellab(scene: Phaser.Scene): void {
   const bonecos = new Set([...Object.values(PL_ARCHETYPES), PL_BASE, ...Object.values(PL_NPCS), ...Object.values(PL_INIMIGOS)]);
   for (const f of bonecos) {
     if (PL_BICHOS.has(f)) continue;
+    const parado = PL_PARADOS.has(f);
     for (const d of DIR_NAMES) {
-      for (let i = 0; i < WALK; i++) scene.load.image(frameKey(f, d, i), `${base}pl/${f}/${d}_${i}.png`);
-      if (!PL_SEM_GOLPE.has(f)) for (let i = 0; i < GOLPE; i++) scene.load.image(golpeKey(f, d, i), `${base}pl/${f}/golpe_${d}_${i}.png`);
+      for (let i = 0; i < (parado ? 1 : WALK); i++) scene.load.image(frameKey(f, d, i), `${base}pl/${f}/${d}_${i}.png`);
+      if (!parado && !PL_SEM_GOLPE.has(f)) for (let i = 0; i < GOLPE; i++) scene.load.image(golpeKey(f, d, i), `${base}pl/${f}/golpe_${d}_${i}.png`);
     }
   }
 }
@@ -67,6 +68,19 @@ export const PL_NPCS: Record<string, string> = {
   toninho_do_barco: 'toninho',
   vendedor_do_delta: 'vendedor',
   vendedor_de_chopindita_barata: 'chopindita',
+  // margens: os treinadores do Peão e do Idol usam o boneco da ala; os outros, a pasta com o próprio id
+  wesley: 'peao',
+  li_wei: 'idol',
+  ...Object.fromEntries(
+    [
+      'jacques', 'dev_kumar', 'olga', 'batu', 'bazza', 'seamus', 'sigrid', 'ayaan_quispe', 'el_relampago',
+      'donna_valentina', 'tiao', 'takeshi', 'edson', 'thalysson', 'big_mo', 'dusty', 'chidi', 'mei_lin_zhao',
+      'klaus', 'brooke', 'katia', 'kaua_ferreira', 'ilaria_vesta', 'lazzaro_prati', 'teodoro_rinaldi',
+      'amara_okafor', 'yusuf_adeyemi', 'rolf_halvorsen', 'viktor_sahl', 'mateo_silva_park', 'klara_lindqvist',
+      'nayra_sundaram', 'kenji_albrecht', 'benzedeira_do_espelho', 'vizinha_da_bracadeira',
+      'funcionario_da_cabine_neon', 'entregador_de_app',
+    ].map((id) => [id, id]),
+  ),
 };
 export const PL_INIMIGOS: Record<string, string> = {
   bruno_ferro_chefe: 'bruno',
@@ -81,6 +95,10 @@ export const PL_INIMIGOS: Record<string, string> = {
 const PL_BICHOS: ReadonlySet<string> = new Set(['siri', 'mosquito', 'drone']);
 /** NPCs que não lutam: só o andar */
 const PL_SEM_GOLPE: ReadonlySet<string> = new Set(['jaco', 'toninho', 'vendedor', 'chopindita']);
+/** NPCs das margens: só as 4 direções, sem andar nem golpe (ficam no lugar) */
+const PL_PARADOS: ReadonlySet<string> = new Set(
+  Object.values(PL_NPCS).filter((f) => !['jaco', 'bruno', 'toninho', 'vendedor', 'chopindita', 'peao', 'idol'].includes(f)),
+);
 
 /** Folha do PixelLab de um NPC ou inimigo, ou undefined se ele não tem (ou ainda não carregou). */
 export function pixellabEntSheet(scene: Phaser.Scene, kind: 'npc' | 'inimigo', id: string): string | undefined {
@@ -122,6 +140,7 @@ function folhaBoneco(scene: Phaser.Scene, f: string): string | undefined {
   if (!tex) return undefined;
   const ctx = tex.getContext();
   const temGolpe = scene.textures.exists(golpeKey(f, 'south', 0));
+  const temAndar = scene.textures.exists(frameKey(f, 'south', 1));
   DIR_NAMES.forEach((d, dir) => {
     for (let i = 0; i < WALK; i++) {
       const k = frameKey(f, d, i);
@@ -142,7 +161,7 @@ function folhaBoneco(scene: Phaser.Scene, f: string): string | undefined {
           tex.add(`${anim}_${dir}_${i}`, 0, golpe[i % golpe.length]! * w, (DIR_NAMES.length + dir) * h, w, h);
           continue;
         }
-        const col = anim === 'andando' ? i : anim === 'parado' ? 0 : (i * 2 + 1) % WALK;
+        const col = !temAndar || anim === 'parado' ? 0 : anim === 'andando' ? i : (i * 2 + 1) % WALK;
         tex.add(`${anim}_${dir}_${i}`, 0, col * w, dir * h, w, h);
       }
   }

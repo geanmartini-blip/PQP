@@ -9,14 +9,17 @@ import { chromium } from 'playwright';
 
 const [SRC, BONECO] = process.argv.slice(2);
 if (!SRC || !BONECO) throw new Error('uso: node tools/art/pl-boneco.mjs <pasta extraída> <boneco>');
-const estado = readdirSync(SRC).find((f) => existsSync(join(SRC, f, 'animations')));
+const estado = readdirSync(SRC).find((f) => existsSync(join(SRC, f, 'animations'))) ?? readdirSync(SRC).find((f) => existsSync(join(SRC, f, 'rotations')));
 const ANIM = join(SRC, estado, 'animations');
 const OUT = `packages/client/public/pl/${BONECO}`;
 const DIRS = ['south', 'west', 'north', 'east'];
 
 const imgs = [];
+// NPC parado (sem animação): a rotação de cada direção vira o quadro <dir>_0
+if (!existsSync(ANIM))
+  for (const d of DIRS) imgs.push([`${d}_0`, readFileSync(join(SRC, estado, 'rotations', `${d}.png`)).toString('base64')]);
 for (const [anim, prefixo] of [['andar', ''], ['golpe', 'golpe_']]) {
-  if (!existsSync(join(ANIM, anim))) continue;
+  if (!existsSync(ANIM) || !existsSync(join(ANIM, anim))) continue;
   for (const d of DIRS) {
     const pasta = join(ANIM, anim, d);
     if (!existsSync(pasta)) continue;
