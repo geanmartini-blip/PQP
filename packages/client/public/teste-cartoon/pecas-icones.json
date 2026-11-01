@@ -1,0 +1,42 @@
+{
+ "icone_laco": {
+  "w": 64,
+  "h": 64,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "icone_chifre": {
+  "w": 64,
+  "h": 64,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "icone_chapeu": {
+  "w": 64,
+  "h": 64,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "icone_especial": {
+  "w": 64,
+  "h": 64,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "icone_garrafada": {
+  "w": 64,
+  "h": 64,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ }
+}

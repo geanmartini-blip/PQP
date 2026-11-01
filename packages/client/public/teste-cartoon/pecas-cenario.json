@@ -1,0 +1,418 @@
+{
+ "casa_musgo": {
+  "w": 210,
+  "h": 240,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "banca_roxa_fundo": {
+  "w": 150,
+  "h": 150,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "banca_roxa_frente": {
+  "w": 150,
+  "h": 150,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "pedra_runa": {
+  "w": 54,
+  "h": 84,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "pedra_runa_2": {
+  "w": 54,
+  "h": 84,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "arvore_roxa": {
+  "w": 230,
+  "h": 250,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "arvore": {
+  "w": 160,
+  "h": 190,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "arvore_2": {
+  "w": 160,
+  "h": 190,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "pinheiro": {
+  "w": 110,
+  "h": 180,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "arbusto": {
+  "w": 72,
+  "h": 52,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "arbusto_2": {
+  "w": 72,
+  "h": 52,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "touceira": {
+  "w": 30,
+  "h": 22,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "flores_0": {
+  "w": 30,
+  "h": 22,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "flores_1": {
+  "w": 30,
+  "h": 22,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "flores_2": {
+  "w": 30,
+  "h": 22,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "samambaia": {
+  "w": 56,
+  "h": 40,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "cogumelos": {
+  "w": 44,
+  "h": 36,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "rochedo": {
+  "w": 84,
+  "h": 62,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "troncos": {
+  "w": 84,
+  "h": 50,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "lampiao_madeira": {
+  "w": 34,
+  "h": 122,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "bandeira_raizes": {
+  "w": 52,
+  "h": 124,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "cerca_madeira": {
+  "w": 64,
+  "h": 50,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "totem_raizes": {
+  "w": 54,
+  "h": 114,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "varal_lanternas": {
+  "w": 180,
+  "h": 72,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "vasos_ervas": {
+  "w": 64,
+  "h": 48,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "poco": {
+  "w": 84,
+  "h": 104,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "predio_neon": {
+  "w": 262,
+  "h": 322,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "predio_alto": {
+  "w": 222,
+  "h": 384,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "oficina_neon": {
+  "w": 242,
+  "h": 222,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "quiosque_laranja": {
+  "w": 152,
+  "h": 142,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "lampiao_metal": {
+  "w": 40,
+  "h": 132,
+  "ax": 0.35,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "tubo_ciano": {
+  "w": 26,
+  "h": 92,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "barril": {
+  "w": 36,
+  "h": 44,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "barril_madeira": {
+  "w": 36,
+  "h": 44,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "caixa": {
+  "w": 38,
+  "h": 40,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "pilha_caixas": {
+  "w": 72,
+  "h": 72,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "cano": {
+  "w": 72,
+  "h": 32,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "placa_perigo": {
+  "w": 52,
+  "h": 58,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "cerca_metal": {
+  "w": 64,
+  "h": 50,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "lixeira": {
+  "w": 34,
+  "h": 46,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "painel_holograma": {
+  "w": 58,
+  "h": 92,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "cone": {
+  "w": 26,
+  "h": 30,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "bueiro": {
+  "w": 50,
+  "h": 32,
+  "ax": 0.5,
+  "ay": 0.5,
+  "e": false,
+  "escala": 3
+ },
+ "poca_neon": {
+  "w": 82,
+  "h": 38,
+  "ax": 0.5,
+  "ay": 0.5,
+  "e": true,
+  "escala": 3
+ },
+ "ar_condicionado": {
+  "w": 42,
+  "h": 36,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "cartaz": {
+  "w": 54,
+  "h": 68,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "ponte_chao": {
+  "w": 230,
+  "h": 120,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "ponte_grade_frente": {
+  "w": 230,
+  "h": 120,
+  "ax": 0.5,
+  "ay": 1,
+  "e": true,
+  "escala": 3
+ },
+ "cascata_0": {
+  "w": 110,
+  "h": 90,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "cascata_1": {
+  "w": 110,
+  "h": 90,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "cascata_2": {
+  "w": 110,
+  "h": 90,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ },
+ "cascata_3": {
+  "w": 110,
+  "h": 90,
+  "ax": 0.5,
+  "ay": 1,
+  "e": false,
+  "escala": 3
+ }
+}

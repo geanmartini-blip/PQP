@@ -1,0 +1,762 @@
+{
+ "peao_baixo_perna_e": {
+  "w": 20,
+  "h": 31,
+  "ax": 0.47000000000000003,
+  "ay": 0.25806451612903225,
+  "e": false,
+  "escala": 3
+ },
+ "peao_baixo_perna_d": {
+  "w": 20,
+  "h": 31,
+  "ax": 0.53,
+  "ay": 0.25806451612903225,
+  "e": false,
+  "escala": 3
+ },
+ "peao_baixo_tronco": {
+  "w": 43,
+  "h": 46,
+  "ax": 0.5348837209302325,
+  "ay": 0.6956521739130435,
+  "e": false,
+  "escala": 3
+ },
+ "peao_baixo_braco_e": {
+  "w": 19,
+  "h": 36,
+  "ax": 0.4473684210526316,
+  "ay": 0.2222222222222222,
+  "e": false,
+  "escala": 3
+ },
+ "peao_baixo_braco_d": {
+  "w": 19,
+  "h": 36,
+  "ax": 0.5526315789473685,
+  "ay": 0.2222222222222222,
+  "e": false,
+  "escala": 3
+ },
+ "peao_baixo_cabeca": {
+  "w": 66,
+  "h": 50,
+  "ax": 0.5,
+  "ay": 0.9,
+  "e": false,
+  "escala": 3
+ },
+ "peao_cima_perna_e": {
+  "w": 19,
+  "h": 31,
+  "ax": 0.5052631578947369,
+  "ay": 0.25806451612903225,
+  "e": false,
+  "escala": 3
+ },
+ "peao_cima_perna_d": {
+  "w": 19,
+  "h": 31,
+  "ax": 0.4947368421052632,
+  "ay": 0.25806451612903225,
+  "e": false,
+  "escala": 3
+ },
+ "peao_cima_tronco": {
+  "w": 43,
+  "h": 46,
+  "ax": 0.46511627906976744,
+  "ay": 0.6956521739130435,
+  "e": false,
+  "escala": 3
+ },
+ "peao_cima_braco_e": {
+  "w": 19,
+  "h": 36,
+  "ax": 0.5526315789473685,
+  "ay": 0.2222222222222222,
+  "e": false,
+  "escala": 3
+ },
+ "peao_cima_braco_d": {
+  "w": 19,
+  "h": 36,
+  "ax": 0.4473684210526316,
+  "ay": 0.2222222222222222,
+  "e": false,
+  "escala": 3
+ },
+ "peao_cima_cabeca": {
+  "w": 66,
+  "h": 50,
+  "ax": 0.5,
+  "ay": 0.9,
+  "e": false,
+  "escala": 3
+ },
+ "peao_lado_braco_e": {
+  "w": 18,
+  "h": 36,
+  "ax": 0.4722222222222222,
+  "ay": 0.2361111111111111,
+  "e": false,
+  "escala": 3
+ },
+ "peao_lado_perna_e": {
+  "w": 22,
+  "h": 32,
+  "ax": 0.4318181818181818,
+  "ay": 0.25,
+  "e": false,
+  "escala": 3
+ },
+ "peao_lado_tronco": {
+  "w": 31,
+  "h": 46,
+  "ax": 0.45161290322580644,
+  "ay": 0.6956521739130435,
+  "e": false,
+  "escala": 3
+ },
+ "peao_lado_perna_d": {
+  "w": 22,
+  "h": 32,
+  "ax": 0.4090909090909091,
+  "ay": 0.25,
+  "e": false,
+  "escala": 3
+ },
+ "peao_lado_braco_d": {
+  "w": 18,
+  "h": 36,
+  "ax": 0.4722222222222222,
+  "ay": 0.2222222222222222,
+  "e": false,
+  "escala": 3
+ },
+ "peao_lado_cabeca": {
+  "w": 62,
+  "h": 49,
+  "ax": 0.49193548387096775,
+  "ay": 0.8979591836734694,
+  "e": false,
+  "escala": 3
+ },
+ "idol_baixo_cabelo_tras": {
+  "w": 52,
+  "h": 70,
+  "ax": 0.5,
+  "ay": 0.22142857142857142,
+  "e": false,
+  "escala": 3
+ },
+ "idol_baixo_perna_e": {
+  "w": 20,
+  "h": 30,
+  "ax": 0.47000000000000003,
+  "ay": 0.23333333333333334,
+  "e": false,
+  "escala": 3
+ },
+ "idol_baixo_perna_d": {
+  "w": 20,
+  "h": 30,
+  "ax": 0.53,
+  "ay": 0.23333333333333334,
+  "e": false,
+  "escala": 3
+ },
+ "idol_baixo_tronco": {
+  "w": 34,
+  "h": 39,
+  "ax": 0.5,
+  "ay": 0.7948717948717948,
+  "e": false,
+  "escala": 3
+ },
+ "idol_baixo_braco_e": {
+  "w": 17,
+  "h": 33,
+  "ax": 0.43529411764705883,
+  "ay": 0.21212121212121213,
+  "e": false,
+  "escala": 3
+ },
+ "idol_baixo_braco_d": {
+  "w": 17,
+  "h": 33,
+  "ax": 0.5647058823529412,
+  "ay": 0.21212121212121213,
+  "e": false,
+  "escala": 3
+ },
+ "idol_baixo_cabeca": {
+  "w": 44,
+  "h": 40,
+  "ax": 0.5,
+  "ay": 0.95,
+  "e": true,
+  "escala": 3
+ },
+ "idol_cima_perna_e": {
+  "w": 19,
+  "h": 30,
+  "ax": 0.5052631578947369,
+  "ay": 0.23333333333333334,
+  "e": false,
+  "escala": 3
+ },
+ "idol_cima_perna_d": {
+  "w": 19,
+  "h": 30,
+  "ax": 0.4947368421052632,
+  "ay": 0.23333333333333334,
+  "e": false,
+  "escala": 3
+ },
+ "idol_cima_tronco": {
+  "w": 34,
+  "h": 39,
+  "ax": 0.5,
+  "ay": 0.7948717948717948,
+  "e": false,
+  "escala": 3
+ },
+ "idol_cima_braco_e": {
+  "w": 17,
+  "h": 33,
+  "ax": 0.5647058823529412,
+  "ay": 0.21212121212121213,
+  "e": false,
+  "escala": 3
+ },
+ "idol_cima_braco_d": {
+  "w": 17,
+  "h": 33,
+  "ax": 0.43529411764705883,
+  "ay": 0.21212121212121213,
+  "e": false,
+  "escala": 3
+ },
+ "idol_cima_cabelo_tras": {
+  "w": 45,
+  "h": 56,
+  "ax": 0.4888888888888889,
+  "ay": 0.008928571428571428,
+  "e": false,
+  "escala": 3
+ },
+ "idol_cima_cabeca": {
+  "w": 44,
+  "h": 41,
+  "ax": 0.5,
+  "ay": 0.926829268292683,
+  "e": false,
+  "escala": 3
+ },
+ "idol_lado_braco_e": {
+  "w": 16,
+  "h": 33,
+  "ax": 0.46875,
+  "ay": 0.22727272727272727,
+  "e": false,
+  "escala": 3
+ },
+ "idol_lado_perna_e": {
+  "w": 22,
+  "h": 31,
+  "ax": 0.4318181818181818,
+  "ay": 0.22580645161290322,
+  "e": false,
+  "escala": 3
+ },
+ "idol_lado_tronco": {
+  "w": 25,
+  "h": 39,
+  "ax": 0.48,
+  "ay": 0.7948717948717948,
+  "e": false,
+  "escala": 3
+ },
+ "idol_lado_perna_d": {
+  "w": 22,
+  "h": 31,
+  "ax": 0.4090909090909091,
+  "ay": 0.22580645161290322,
+  "e": false,
+  "escala": 3
+ },
+ "idol_lado_cabelo_tras": {
+  "w": 29,
+  "h": 70,
+  "ax": 0.7241379310344828,
+  "ay": 0.20714285714285716,
+  "e": false,
+  "escala": 3
+ },
+ "idol_lado_braco_d": {
+  "w": 16,
+  "h": 33,
+  "ax": 0.46875,
+  "ay": 0.21212121212121213,
+  "e": false,
+  "escala": 3
+ },
+ "idol_lado_cabeca": {
+  "w": 42,
+  "h": 40,
+  "ax": 0.5357142857142857,
+  "ay": 0.95,
+  "e": true,
+  "escala": 3
+ },
+ "benzedeira_baixo_perna_e": {
+  "w": 20,
+  "h": 27,
+  "ax": 0.45,
+  "ay": 0.25925925925925924,
+  "e": false,
+  "escala": 3
+ },
+ "benzedeira_baixo_perna_d": {
+  "w": 20,
+  "h": 27,
+  "ax": 0.55,
+  "ay": 0.25925925925925924,
+  "e": false,
+  "escala": 3
+ },
+ "benzedeira_baixo_tronco": {
+  "w": 44,
+  "h": 43,
+  "ax": 0.5,
+  "ay": 0.627906976744186,
+  "e": false,
+  "escala": 3
+ },
+ "benzedeira_baixo_braco_e": {
+  "w": 16,
+  "h": 31,
+  "ax": 0.44999999999999996,
+  "ay": 0.24193548387096775,
+  "e": false,
+  "escala": 3
+ },
+ "benzedeira_baixo_item_d": {
+  "w": 23,
+  "h": 29,
+  "ax": 0.46608695652173915,
+  "ay": 0.8793103448275862,
+  "e": true,
+  "escala": 3
+ },
+ "benzedeira_baixo_braco_d": {
+  "w": 16,
+  "h": 31,
+  "ax": 0.55,
+  "ay": 0.24193548387096775,
+  "e": false,
+  "escala": 3
+ },
+ "benzedeira_baixo_cabeca": {
+  "w": 42,
+  "h": 42,
+  "ax": 0.5,
+  "ay": 0.9404761904761905,
+  "e": false,
+  "escala": 3
+ },
+ "benzedeira_lado_braco_e": {
+  "w": 16,
+  "h": 32,
+  "ax": 0.46875,
+  "ay": 0.25,
+  "e": false,
+  "escala": 3
+ },
+ "benzedeira_lado_perna_e": {
+  "w": 22,
+  "h": 28,
+  "ax": 0.4318181818181818,
+  "ay": 0.25,
+  "e": false,
+  "escala": 3
+ },
+ "benzedeira_lado_perna_d": {
+  "w": 22,
+  "h": 28,
+  "ax": 0.4090909090909091,
+  "ay": 0.25,
+  "e": false,
+  "escala": 3
+ },
+ "benzedeira_lado_tronco": {
+  "w": 37,
+  "h": 43,
+  "ax": 0.4864864864864865,
+  "ay": 0.627906976744186,
+  "e": false,
+  "escala": 3
+ },
+ "benzedeira_lado_item_d": {
+  "w": 24,
+  "h": 29,
+  "ax": 0.4808333333333333,
+  "ay": 0.8793103448275862,
+  "e": true,
+  "escala": 3
+ },
+ "benzedeira_lado_braco_d": {
+  "w": 16,
+  "h": 31,
+  "ax": 0.46875,
+  "ay": 0.24193548387096775,
+  "e": false,
+  "escala": 3
+ },
+ "benzedeira_lado_cabeca": {
+  "w": 40,
+  "h": 39,
+  "ax": 0.5375,
+  "ay": 0.9358974358974359,
+  "e": false,
+  "escala": 3
+ },
+ "pm_baixo_perna_e": {
+  "w": 20,
+  "h": 33,
+  "ax": 0.48,
+  "ay": 0.24242424242424243,
+  "e": false,
+  "escala": 3
+ },
+ "pm_baixo_perna_d": {
+  "w": 20,
+  "h": 33,
+  "ax": 0.52,
+  "ay": 0.24242424242424243,
+  "e": false,
+  "escala": 3
+ },
+ "pm_baixo_tronco": {
+  "w": 38,
+  "h": 41,
+  "ax": 0.5,
+  "ay": 0.8048780487804879,
+  "e": false,
+  "escala": 3
+ },
+ "pm_baixo_item_e": {
+  "w": 21,
+  "h": 32,
+  "ax": 0.2323809523809525,
+  "ay": 0.1875,
+  "e": true,
+  "escala": 3
+ },
+ "pm_baixo_braco_e": {
+  "w": 19,
+  "h": 38,
+  "ax": 0.46315789473684216,
+  "ay": 0.23684210526315788,
+  "e": false,
+  "escala": 3
+ },
+ "pm_baixo_item_d": {
+  "w": 21,
+  "h": 32,
+  "ax": 0.7676190476190475,
+  "ay": 0.1875,
+  "e": true,
+  "escala": 3
+ },
+ "pm_baixo_braco_d": {
+  "w": 19,
+  "h": 38,
+  "ax": 0.5368421052631579,
+  "ay": 0.23684210526315788,
+  "e": false,
+  "escala": 3
+ },
+ "pm_baixo_cabeca": {
+  "w": 42,
+  "h": 44,
+  "ax": 0.5,
+  "ay": 0.9318181818181818,
+  "e": false,
+  "escala": 3
+ },
+ "pm_cima_perna_e": {
+  "w": 19,
+  "h": 33,
+  "ax": 0.4947368421052632,
+  "ay": 0.24242424242424243,
+  "e": false,
+  "escala": 3
+ },
+ "pm_cima_perna_d": {
+  "w": 19,
+  "h": 33,
+  "ax": 0.5052631578947369,
+  "ay": 0.24242424242424243,
+  "e": false,
+  "escala": 3
+ },
+ "pm_cima_tronco": {
+  "w": 38,
+  "h": 41,
+  "ax": 0.5,
+  "ay": 0.8048780487804879,
+  "e": false,
+  "escala": 3
+ },
+ "pm_cima_item_e": {
+  "w": 21,
+  "h": 32,
+  "ax": 0.7676190476190475,
+  "ay": 0.1875,
+  "e": true,
+  "escala": 3
+ },
+ "pm_cima_braco_e": {
+  "w": 19,
+  "h": 38,
+  "ax": 0.5368421052631579,
+  "ay": 0.23684210526315788,
+  "e": false,
+  "escala": 3
+ },
+ "pm_cima_item_d": {
+  "w": 21,
+  "h": 32,
+  "ax": 0.2323809523809525,
+  "ay": 0.1875,
+  "e": true,
+  "escala": 3
+ },
+ "pm_cima_braco_d": {
+  "w": 19,
+  "h": 38,
+  "ax": 0.46315789473684216,
+  "ay": 0.23684210526315788,
+  "e": false,
+  "escala": 3
+ },
+ "pm_cima_cabeca": {
+  "w": 42,
+  "h": 41,
+  "ax": 0.5,
+  "ay": 0.926829268292683,
+  "e": false,
+  "escala": 3
+ },
+ "pm_lado_item_e": {
+  "w": 19,
+  "h": 32,
+  "ax": 0.7652631578947368,
+  "ay": 0.171875,
+  "e": true,
+  "escala": 3
+ },
+ "pm_lado_braco_e": {
+  "w": 18,
+  "h": 37,
+  "ax": 0.4722222222222222,
+  "ay": 0.22972972972972974,
+  "e": false,
+  "escala": 3
+ },
+ "pm_lado_perna_e": {
+  "w": 22,
+  "h": 34,
+  "ax": 0.4318181818181818,
+  "ay": 0.23529411764705882,
+  "e": false,
+  "escala": 3
+ },
+ "pm_lado_tronco": {
+  "w": 29,
+  "h": 41,
+  "ax": 0.4827586206896552,
+  "ay": 0.8048780487804879,
+  "e": false,
+  "escala": 3
+ },
+ "pm_lado_perna_d": {
+  "w": 22,
+  "h": 34,
+  "ax": 0.4090909090909091,
+  "ay": 0.23529411764705882,
+  "e": false,
+  "escala": 3
+ },
+ "pm_lado_item_d": {
+  "w": 19,
+  "h": 32,
+  "ax": 0.7652631578947368,
+  "ay": 0.1875,
+  "e": true,
+  "escala": 3
+ },
+ "pm_lado_braco_d": {
+  "w": 18,
+  "h": 38,
+  "ax": 0.4722222222222222,
+  "ay": 0.23684210526315788,
+  "e": false,
+  "escala": 3
+ },
+ "pm_lado_cabeca": {
+  "w": 48,
+  "h": 45,
+  "ax": 0.4270833333333333,
+  "ay": 0.9111111111111111,
+  "e": false,
+  "escala": 3
+ },
+ "drone_baixo_corpo": {
+  "w": 32,
+  "h": 33,
+  "ax": 0.5,
+  "ay": 0.5,
+  "e": true,
+  "escala": 3
+ },
+ "drone_baixo_helice_e": {
+  "w": 21,
+  "h": 8,
+  "ax": 0.4845238095238096,
+  "ay": 0.45937499999999964,
+  "e": false,
+  "escala": 3
+ },
+ "drone_baixo_helice_d": {
+  "w": 21,
+  "h": 8,
+  "ax": 0.5154761904761904,
+  "ay": 0.45937499999999964,
+  "e": false,
+  "escala": 3
+ },
+ "drone_cima_corpo": {
+  "w": 32,
+  "h": 32,
+  "ax": 0.5,
+  "ay": 0.515625,
+  "e": false,
+  "escala": 3
+ },
+ "drone_cima_helice_e": {
+  "w": 21,
+  "h": 8,
+  "ax": 0.4845238095238096,
+  "ay": 0.45937499999999964,
+  "e": false,
+  "escala": 3
+ },
+ "drone_cima_helice_d": {
+  "w": 21,
+  "h": 8,
+  "ax": 0.5154761904761904,
+  "ay": 0.45937499999999964,
+  "e": false,
+  "escala": 3
+ },
+ "drone_lado_corpo": {
+  "w": 39,
+  "h": 33,
+  "ax": 0.41025641025641024,
+  "ay": 0.5,
+  "e": true,
+  "escala": 3
+ },
+ "drone_lado_helice_e": {
+  "w": 21,
+  "h": 8,
+  "ax": 0.4845238095238096,
+  "ay": 0.45937499999999964,
+  "e": false,
+  "escala": 3
+ },
+ "drone_lado_helice_d": {
+  "w": 21,
+  "h": 8,
+  "ax": 0.5154761904761904,
+  "ay": 0.45937499999999964,
+  "e": false,
+  "escala": 3
+ },
+ "drone_elite_baixo_corpo": {
+  "w": 42,
+  "h": 54,
+  "ax": 0.5,
+  "ay": 0.6111111111111112,
+  "e": true,
+  "escala": 3
+ },
+ "drone_elite_baixo_helice_e": {
+  "w": 26,
+  "h": 10,
+  "ax": 0.4961538461538462,
+  "ay": 0.49000000000000055,
+  "e": false,
+  "escala": 3
+ },
+ "drone_elite_baixo_helice_d": {
+  "w": 26,
+  "h": 10,
+  "ax": 0.5038461538461537,
+  "ay": 0.49000000000000055,
+  "e": false,
+  "escala": 3
+ },
+ "drone_elite_cima_corpo": {
+  "w": 42,
+  "h": 53,
+  "ax": 0.5,
+  "ay": 0.6226415094339622,
+  "e": false,
+  "escala": 3
+ },
+ "drone_elite_cima_helice_e": {
+  "w": 26,
+  "h": 10,
+  "ax": 0.4961538461538462,
+  "ay": 0.49000000000000055,
+  "e": false,
+  "escala": 3
+ },
+ "drone_elite_cima_helice_d": {
+  "w": 26,
+  "h": 10,
+  "ax": 0.5038461538461537,
+  "ay": 0.49000000000000055,
+  "e": false,
+  "escala": 3
+ },
+ "drone_elite_lado_corpo": {
+  "w": 51,
+  "h": 54,
+  "ax": 0.4117647058823529,
+  "ay": 0.6111111111111112,
+  "e": true,
+  "escala": 3
+ },
+ "drone_elite_lado_helice_e": {
+  "w": 26,
+  "h": 10,
+  "ax": 0.4961538461538462,
+  "ay": 0.49000000000000055,
+  "e": false,
+  "escala": 3
+ },
+ "drone_elite_lado_helice_d": {
+  "w": 26,
+  "h": 10,
+  "ax": 0.5038461538461537,
+  "ay": 0.49000000000000055,
+  "e": false,
+  "escala": 3
+ }
+}

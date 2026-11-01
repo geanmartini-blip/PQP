@@ -5,8 +5,9 @@ import { spawn } from 'node:child_process';
 import { readFileSync, mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
 
-const OUT = 'tools/art/saida/';
-mkdirSync(OUT, { recursive: true });
+const PAGINA = process.env.PAGINA ?? 'teste-cartoon.html';
+const OUT = 'tools/art/saida/' + (PAGINA.startsWith('teste-cartoon') ? 'cartoon-' : '');
+mkdirSync('tools/art/saida/', { recursive: true });
 const PORT = 5181;
 const vite = spawn(process.execPath, ['../../node_modules/vite/bin/vite.js', '--port', String(PORT), '--strictPort'], { cwd: 'packages/client', stdio: ['ignore', 'pipe', 'pipe'] });
 await new Promise((res, rej) => {
@@ -22,7 +23,7 @@ page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') 
 page.on('pageerror', (e) => erros.push(String(e)));
 const shots = [];
 async function tirar(nome, hora, andar = null, ms = 600) {
-  await page.goto(`http://localhost:${PORT}/teste-visual.html?hora=${hora}`);
+  await page.goto(`http://localhost:${PORT}/${PAGINA}?hora=${hora}`);
   await page.waitForFunction(() => window.__pronto === true, null, { timeout: 30000 });
   await page.waitForTimeout(400);
   if (!shots.length) console.log(await page.evaluate(() => window.__escala));
@@ -48,7 +49,7 @@ const p2 = await browser.newPage({ viewport: { width: 1900, height: 860 } });
 await p2.setContent(`<body style="margin:0;background:#111;display:flex;gap:10px;align-items:flex-start;padding:8px">
   <img src="${b64('docs/referencia-estilo.png')}" style="height:520px">
   <img src="${b64('docs/alvo-tela.png')}" style="height:844px">
-  <img src="${b64(OUT + 'teste-fim-de-tarde.png')}" style="height:844px;image-rendering:pixelated">
+  <img src="${b64(OUT + 'teste-fim-de-tarde.png')}" style="height:844px">
 </body>`);
 await p2.waitForTimeout(300);
 await p2.screenshot({ path: OUT + 'comparacao.png' });

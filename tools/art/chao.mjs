@@ -1,6 +1,6 @@
-// ChÃ£o da cena de teste da Ponte do Rio Claro: kit de tiles 32x32 (grama, terra, calÃ§amento de
-// pedra marrom da Esquerda, lajes cinza da Direita, Ã¡gua) e o chÃ£o inteiro da cena jÃ¡ assado, com
-// transiÃ§Ãµes orgÃ¢nicas, bordas do rio e marcas de combate (aviso de Ã¡rea, marcador, sombra).
+// Chão da cena de teste da Ponte do Rio Claro: kit de tiles 32x32 (grama, terra, calçamento de
+// pedra marrom da Esquerda, lajes cinza da Direita, água) e o chão inteiro da cena já assado, com
+// transições orgânicas, bordas do rio e marcas de combate (aviso de área, marcador, sombra).
 // Uso: node tools/art/chao.mjs
 import { R } from './lib/paleta.mjs';
 import { Img, hash, vnoise, pick, mix, shift, outline, normalMap, saveSprite, saveAtlas, savePng, bayer, lightAt } from './lib/img.mjs';
@@ -8,10 +8,10 @@ import { Img, hash, vnoise, pick, mix, shift, outline, normalMap, saveSprite, sa
 const OUT = 'packages/client/public/teste-visual/';
 
 // ---------------- mapa da cena ----------------
-export const MAPA = { w: 736, h: 1600, rioX0: 320, rioX1: 448, ponteY: 800 };
+export const MAPA = { w: 736, h: 1600, rioX0: 304, rioX1: 464, ponteY: 816 };
 const { w: W, h: H, rioX0, rioX1 } = MAPA;
 
-// caminhos da Esquerda (calÃ§amento) e trilhas de terra: polilinhas com largura
+// caminhos da Esquerda (calçamento) e trilhas de terra: polilinhas com largura
 const CALCADA = [
   { pts: [[330, 832], [280, 834], [252, 826], [248, 760], [246, 716]], larg: 20 },
   { pts: [[252, 830], [180, 836], [100, 820], [20, 840]], larg: 15 },
@@ -33,22 +33,22 @@ function distPath(x, y, p) {
 }
 const minPath = (x, y, list) => Math.min(...list.map((p) => distPath(x, y, p)));
 
-// ---------------- pintores de material (coordenadas do mundo: textura contÃ­nua) ----------------
-// rampas de grama misturadas pela variaÃ§Ã£o grande (sem manchas duras)
+// ---------------- pintores de material (coordenadas do mundo: textura contínua) ----------------
+// rampas de grama misturadas pela variação grande (sem manchas duras)
 const GR = [0, 1, 2, 3, 4].map((k) => R.grama.map((c, i) => mix(c, (k < 2 ? R.musgo : R.gramaSeca)[i], [0.55, 0.25, 0, 0.25, 0.5][k])));
 function grama(x, y) {
   const big = vnoise(x / 70, y / 70, 1) * 0.7 + vnoise(x / 23, y / 23, 5) * 0.3;
   const base = GR[Math.max(0, Math.min(4, Math.floor(big * 5.2 - 0.1)))];
-  // tufos: cÃ©lulas pequenas, cada uma sombreada como um montinho (luz de cima Ã  esquerda)
+  // tufos: células pequenas, cada uma sombreada como um montinho (luz de cima à esquerda)
   const v = voronoi(x + 0.5, y + 0.5, 6, 3);
   const dx = (x - v.fx) / 4, dy = (y - v.fy) / 3.5;
   let l = 0.44 - dx * 0.2 - dy * 0.34 + (hash(v.id, 0, 4) - 0.5) * 0.24 + (vnoise(x / 31, y / 31, 7) - 0.5) * 0.35;
   if (v.d2 - v.d1 < 1 && dy > 0) l -= 0.3;
-  // lÃ¢mina clara de vez em quando
+  // lâmina clara de vez em quando
   if (hash(x, Math.floor(y / 2), 6) > 0.94 && dy < 0) l += 0.35;
   return pick(base, l, x, y, 0.55);
 }
-// touceiras e flores por cima da grama (chamado depois do chÃ£o)
+// touceiras e flores por cima da grama (chamado depois do chão)
 function enfeitesGrama(img, ok) {
   const flores = [[0xf4f0e0, 0xe8c840], [0xd070e8, 0xf8e070], [0x8fd0ff, 0xffffff], [0xf8d040, 0xc06020]];
   for (let gy = 0; gy < H; gy += 9)
@@ -57,7 +57,7 @@ function enfeitesGrama(img, ok) {
       if (!ok(x, y) || !ok(x, y - 6) || !ok(x - 3, y) || !ok(x + 3, y)) continue;
       const r = hash(gx, gy, 13);
       if (r < 0.2) {
-        // touceira: 5 lÃ¢minas em leque, base escura e ponta clara
+        // touceira: 5 lâminas em leque, base escura e ponta clara
         const ramp = vnoise(x / 46, y / 46, 1) > 0.62 ? R.gramaSeca : R.grama;
         const lam = [[-3, 3], [-2, 5], [0, 6], [2, 5], [3, 3]];
         for (const [dx, hgt] of lam)
@@ -91,7 +91,7 @@ function terra(x, y) {
   if (hash(x, y, 23) > 0.96) return R.pedraMarrom[2];
   return pick(R.terra, v, x, y, 0.8);
 }
-// cÃ©lulas de Voronoi com grade embaralhada: pedras de rua
+// células de Voronoi com grade embaralhada: pedras de rua
 function voronoi(x, y, cell, seed) {
   const cx = Math.floor(x / cell), cy = Math.floor(y / cell);
   let d1 = 1e9, d2 = 1e9, id = 0, fx = 0, fy = 0;
@@ -120,7 +120,7 @@ function calcada(x, y) {
   return pick(base, l, x, y, 0.6);
 }
 function lajes(x, y) {
-  // blocos em amarraÃ§Ã£o corrida, 16x11, cada fila deslocada
+  // blocos em amarração corrida, 16x11, cada fila deslocada
   // lajes grandes quase quadradas (chão, não parede): 32x26, filas deslocadas meia laje
   const bh = 26, row = Math.floor(y / bh);
   const bw = 32;
@@ -135,12 +135,12 @@ function lajes(x, y) {
   if (ly === bh - 1 || lx === bw - 1) l -= 0.25;
   // trinca ocasional
   if (tone > 0.93 && Math.abs(lx - ly * 1.2 - 3) < 0.7) return base[0];
-  // mancha de Ã³leo / sujeira
+  // mancha de óleo / sujeira
   if (vnoise(x / 13, y / 13, 44) > 0.78) l -= 0.18;
   return pick(base, l, x, y, 0.6);
 }
 
-// ---------------- chÃ£o inteiro ----------------
+// ---------------- chão inteiro ----------------
 function regiao(x, y) {
   const n = (vnoise(x / 6, y / 6, 51) - 0.5) * 6;
   if (x >= rioX0 + 2 + n * 0.5 && x < rioX1 - 2 + n * 0.3) return 'agua';
@@ -150,6 +150,113 @@ function regiao(x, y) {
   const dt = minPath(x, y, TERRA) + n;
   if (dt < 0) return 'terra';
   return 'grama';
+}
+
+// ---------------- margens do rio em cânion ----------------
+const FACE = 26; // largura da face do barranco/cais, que desce do chão até a água
+/**
+ * Esquerda: barranco de rochedos marrons empilhados descendo até a água. Cada rochedo é uma bolota
+ * sombreada (luz de cima à esquerda), com juntas escuras, musgo nas costas, samambaias e cipós
+ * pendurados, a borda de grama caindo por cima e espuma onde encosta na água.
+ */
+function barrancoEsquerda(img) {
+  // fundo escuro da fenda entre as pedras
+  for (let y = 0; y < H; y++)
+    for (let x = rioX0; x < rioX0 + FACE - 4; x++) img.px(x, y, mix(0x120c12, R.pedraMarrom[0], 0.35 + hash(x, y, 70) * 0.15));
+  // rochedos: bolotas grandes empilhadas de cima para baixo (pintor), cada uma com contorno
+  const camada = new Img(W, H);
+  for (let y = -8; y < H + 8; y += 7) {
+    for (let j = 0; j < 3; j++) {
+      const s = hash(j, y, 71);
+      const r = 5 + s * 6;
+      const k = j / 2; // 0 perto do chão, 1 perto da água
+      const cx = rioX0 + 3 + k * (FACE - 8) + (hash(j, y, 72) - 0.5) * 6;
+      const cy = y + (hash(j, y, 73) - 0.5) * 6;
+      const pedra = new Img(Math.ceil(r * 2 + 4), Math.ceil(r * 1.7 + 4));
+      const base = hash(j, y, 74) > 0.75 ? R.pedraCinza.map((c, i) => mix(c, R.pedraMarrom[i], 0.5)) : R.pedraMarrom;
+      pedra.ellipse(r + 2, r * 0.85 + 2, r, r * 0.85, (x, yy, nx, ny) => {
+        let l = lightAt(nx * 0.9, ny * 0.9) * 1.0 - k * 0.3 + (hash(x, yy, 75) - 0.5) * 0.12;
+        let c = pick(base, l, x, yy, 0.5);
+        if (ny < -0.25 && vnoise((cx + x) / 4, (cy + yy) / 4, 76) > 0.38 + k * 0.25) c = pick(R.musgo, 0.3 + lightAt(nx, ny) * 0.7, x, yy, 0.5);
+        return c;
+      });
+      // rachadura
+      if (s > 0.6) for (let q = 0; q < r; q++) pedra.px(r + 2 + Math.round(Math.sin(q) * 1), r * 0.5 + q * 0.6 + 2, base[0]);
+      outline(pedra);
+      camada.blit(pedra, Math.round(cx - r - 2), Math.round(cy - r * 0.85 - 2));
+    }
+  }
+  img.blit(camada, 0, 0);
+  for (let y = 0; y < H; y++) {
+    const e = rioX0;
+    const fim = e + FACE - 2;
+    // borda de grama do topo caindo sobre o barranco
+    const lab = 1 + Math.round(vnoise(9, y / 4, 76) * 4);
+    for (let k = 0; k < lab; k++) img.px(e + k, y, R.grama[k === lab - 1 ? 0 : 1]);
+    img.px(e - 1, y, shift(img.get(e - 1, y) ?? R.grama[1], -0.3));
+    // espuma onde a rocha encosta na água e sombra do barranco
+    for (let k = 0; k < 3; k++) if (!img.alpha(fim + k, y) && hash(k, y, 77) > 0.3) img.px(fim + k, y, k === 0 ? 0xffffff : 0xc8ecfa, 190 - k * 50);
+    for (let k = 3; k < 12; k++) if (!img.alpha(fim + k, y)) img.px(fim + k, y, 0x041018, k < 6 ? 110 : 55);
+  }
+  // cipós e samambaias pendurados
+  for (let y = 4; y < H; y += 5) {
+    if (hash(3, y, 79) > 0.45) continue;
+    const e = Math.round(rioX0 + (vnoise(0, y / 9, 51) - 0.5) * 4) + 2 + Math.floor(hash(4, y, 80) * 6);
+    const len = 6 + Math.floor(hash(5, y, 81) * 14);
+    for (let k = 0; k < len; k++) {
+      const x = e + Math.round(k * 0.9);
+      const yy = y + Math.round(Math.sin(k / 2 + y) * 1.2);
+      img.px(x, yy, R.folha[k < 3 ? 2 : 1]);
+      if (k % 3 === 1) { img.px(x, yy - 1, R.folha[3]); img.px(x + 1, yy + 1, R.folha[0]); }
+    }
+  }
+}
+/**
+ * Direita: cais de blocos de pedra cinza cortada em fiadas inclinadas, coroamento claro com faixa de
+ * perigo, bocas de esgoto pingando, limo e ferrugem perto da água, e espuma no pé.
+ */
+function caisDireita(img) {
+  for (let y = 0; y < H; y++) {
+    const e = rioX1; // topo do cais
+    // coroamento: 4 px claros com faixa de perigo a cada tanto
+    for (let k = 0; k < 4; k++) {
+      const x = e - 1 - k;
+      const listra = Math.floor((y + k) / 6) % 2 === 0;
+      const perigo = Math.floor(y / 96) % 3 === 0;
+      img.px(x, y, perigo ? (listra ? 0xf2c230 : 0x1e1c22) : k === 0 ? R.pedraCinza[3] : k === 3 ? R.pedraCinza[0] : R.pedraCinza[2]);
+    }
+    img.px(e - 5, y, 0x15161c);
+    const fim = e - FACE;
+    for (let x = fim; x < e - 5; x++) {
+      const k = (e - 5 - x) / (e - 5 - fim); // 0 no topo, 1 na água
+      const fiada = 10;
+      const row = Math.floor(y / fiada);
+      const off = row % 2 ? 9 : 0;
+      const col = Math.floor((x + off) / 11);
+      const ly = y % fiada;
+      const lx = (x + off) % 11;
+      let c;
+      if (ly < 1 || lx === 0) c = 0x16171e;
+      else {
+        let l = 0.62 - k * 0.5 + (hash(col, row, 82) - 0.5) * 0.18 + (hash(x, y, 83) - 0.5) * 0.1;
+        if (ly < 2) l += 0.15;
+        if (lx === 1) l += 0.1;
+        if (ly > fiada - 2) l -= 0.15;
+        c = pick(hash(col, row, 84) > 0.7 ? R.grafite : R.ardosia, l, x, y, 0.6);
+        if (k > 0.65 && vnoise(x / 3, y / 4, 85) > 0.5 - k * 0.3) c = mix(c, 0x3a6a3a, 0.6); // limo
+        if (vnoise(x / 2, y / 9, 86) > 0.82) c = mix(c, 0x8a4a22, 0.45); // escorrido de ferrugem
+      }
+      img.px(x, y, c);
+    }
+    if (hash(1, y, 87) > 0.25) img.px(fim - 1, y, 0xd8f4ff, 170);
+    for (let k = 2; k < 12; k++) if (!img.alpha(fim - k, y)) img.px(fim - k, y, 0x041018, k < 6 ? 110 : 55);
+  }
+  // bocas de esgoto com fio d'água
+  for (const by of [380, 700, 980, 1260]) {
+    const x0 = rioX1 - 18;
+    for (let j = -4; j <= 4; j++) for (let i = -5; i <= 5; i++) if (i * i / 25 + j * j / 16 <= 1) img.px(x0 + i, by + j, i * i / 25 + j * j / 16 > 0.55 ? R.metal[1] : 0x0a0a10);
+    for (let k = 0; k < 12; k++) img.px(x0 - 6 - k, by + 1 + (k > 6 ? 1 : 0), 0x9adcf0, 200 - k * 12);
+  }
 }
 
 function chao() {
@@ -175,46 +282,9 @@ function chao() {
     }
   enfeitesGrama(img, (x, y) => at(x, y) === 'grama');
 
-  // borda da Esquerda: barranco de pedra marrom com musgo caindo na Ã¡gua
-  for (let y = 0; y < H; y++) {
-    const e = Math.round(rioX0 + 2 + (vnoise(0, y / 6, 51) - 0.5) * 3);
-    const lip = 10 + Math.round(vnoise(3, y / 11, 71) * 8);
-    // sombra do barranco na Ã¡gua
-    for (let k = lip; k < lip + 7; k++) if (!img.alpha(e + k, y)) img.px(e + k, y, 0x06101c, k < lip + 3 ? 120 : 60);
-    for (let k = -2; k < lip; k++) {
-      const x = e + k;
-      if (k < 0) { img.px(x, y, R.musgo[k === -1 ? 1 : 2]); continue; }
-      // pedras arredondadas descendo
-      const v = voronoi(x, y, 7, 72);
-      const edge = v.d2 - v.d1;
-      const l = 0.6 - (k / lip) * 0.45 - (y - v.fy) / 14 + (hash(x, y, 73) - 0.5) * 0.15;
-      img.px(x, y, edge < 1.2 ? 0x1e1820 : pick(R.pedraMarrom, l, x, y, 0.6));
-      if (k < 3 && vnoise(x / 4, y / 4, 74) > 0.55) img.px(x, y, R.musgo[k === 0 ? 3 : 2]);
-    }
-    // musgo pendurado
-    if (hash(0, y, 75) > 0.85) for (let k = 0; k < 4; k++) img.px(e + 1 + Math.floor(hash(1, y, 76) * 3), y + k, R.musgo[2 - Math.min(2, k)]);
-  }
-  // borda da Direita: cais de blocos de pedra cinza com face vertical e linha de musgo/limo
-  for (let y = 0; y < H; y++) {
-    const e = rioX1;
-    for (let k = 0; k < 16; k++) {
-      const x = e - 1 - k;
-      const row = Math.floor(y / 12);
-      const ly = y % 12;
-      const lx = (y + 400) % 12;
-      let c;
-      if (k === 0) c = R.pedraCinza[3];
-      else if (k === 1) c = R.pedraCinza[2];
-      else if (ly === 0 || (k === 9 && row % 2 === 0) || (k === 5 && row % 2 === 1) || k === 2) c = 0x1c1e26;
-      else c = pick(R.ardosia, 0.55 - k * 0.04 + (hash(x, y, 81) - 0.5) * 0.2, x, y, 0.6);
-      if (k >= 12 && vnoise(x / 3, y / 5, 82) > 0.45) c = mix(c, 0x3f6a3a, 0.55); // limo na linha d'Ã¡gua
-      img.px(x, y, c);
-      void lx;
-    }
-    img.px(e - 17, y, 0x101820);
-    for (let k = 18; k < 26; k++) if (!img.alpha(e - k, y)) img.px(e - k, y, 0x06101c, k < 21 ? 130 : 70);
-  }
-  // pedras dentro da Ã¡gua perto das margens
+  barrancoEsquerda(img);
+  caisDireita(img);
+  // pedras dentro da água perto das margens
   const pedrasRio = [[rioX0 + 14, 300], [rioX0 + 10, 1220], [rioX1 - 16, 470], [rioX1 - 12, 1080], [rioX0 + 18, 1420],
     // pedras ao pé da cascata (y≈560) e espuma
     [rioX0 + 12, 548], [rioX0 + 22, 562], [rioX1 - 14, 550], [rioX1 - 24, 566], [rioX0 + 8, 575], [rioX1 - 10, 578]];
@@ -233,8 +303,8 @@ function chao() {
   return img;
 }
 
-// Ã¡gua: textura de 64x64 que repete (TileSprite) com correnteza descendo
-// ruÃ­do de valor que repete com perÃ­odo p (para a textura da Ã¡gua emendar)
+// água: textura de 64x64 que repete (TileSprite) com correnteza descendo
+// ruído de valor que repete com período p (para a textura da água emendar)
 function vnoiseP(x, y, px, py, seed) {
   const xi = Math.floor(x), yi = Math.floor(y);
   const xf = x - xi, yf = y - yi;
@@ -250,7 +320,7 @@ function agua(frame = 0) {
   for (let y = 0; y < s; y++)
     for (let x = 0; x < s; x++) {
       const yy = y - frame * 8;
-      // correnteza: ruÃ­do esticado na vertical (descendo) + ondinhas
+      // correnteza: ruído esticado na vertical (descendo) + ondinhas
       const n1 = vnoiseP(x / 8, yy / 16, 16, 8, 101);
       const n2 = vnoiseP(x / 4, yy / 8, 32, 16, 102);
       const w = Math.sin((x / s) * Math.PI * 8 + n1 * 5) * 0.5 + 0.5;
@@ -272,7 +342,7 @@ function agua(frame = 0) {
 }
 
 function marcas() {
-  // aviso de Ã¡rea no chÃ£o: elipse vermelha em perspectiva com borda tracejada e preenchimento
+  // aviso de área no chão: elipse vermelha em perspectiva com borda tracejada e preenchimento
   const av = new Img(96, 48);
   av.ellipse(48, 24, 47, 23, (x, y, nx, ny) => {
     const r = Math.hypot(nx, ny);
@@ -319,7 +389,7 @@ for (let i = 0; i < 2; i++) tile('calcada_' + i, calcada, i * 32, 0);
 for (let i = 0; i < 2; i++) tile('lajes_' + i, lajes, i * 32, 0);
 saveAtlas(OUT + 'kit_chao', kit, { cols: 5, normal: { bevel: 1, lumK: 1.2 } });
 
-// preview 2x de um pedaÃ§o do chÃ£o
+// preview 2x de um pedaço do chão
 const prev = new Img(W, 700);
 for (let y = 0; y < 700; y++) for (let x = rioX0 - 20; x < rioX1 + 20; x++) prev.px(x, y, aguas[0].img.get(x % 128, y % 128));
 prev.blit(ch, 0, 0, { sy: 500, h: 700 });

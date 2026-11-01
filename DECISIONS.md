@@ -156,6 +156,44 @@ O registro completo está em `decisoes/fase5-masmorra.md`. Os pontos principais:
 - **Animação:** o lado é desenhado virado para a direita e a esquerda sai por flipX. Os quadros seguem
   o padrão `<animacao>_<direcao>_<i>`.
 
+## Revisão visual, v2: cartoon 2D liso (2026-11-01)
+- **O que aconteceu:** o usuário reprovou a cena em pixel art ("ambiente muito pobre e simples",
+  bonecos sem qualidade) e pediu inspiração em Ravenswatch e Brawl Stars.
+- **Escolha dele:** cartoon 2D liso no lugar do pixel art. Continua 2D, no Phaser 4, com arte gerada
+  por script. Antes ele tinha escolhido bonecos de 48x64; no cartoon, eles têm ~80 a 90 u de altura.
+  Isto substitui as regras de pixel art da seção anterior: zoom inteiro, quantização com dither, normal
+  map e tile de 32 px.
+- **Pipeline:**
+  - Cada peça é um SVG montado por código em `tools/art/cartoon/`: `lib.mjs`, `kit.mjs`, `boneco.mjs`,
+    `chao.mjs`, `cenario.mjs`, `personagens.mjs` e `icones.mjs`.
+  - O estilo tem formas cheias, contorno grosso colorido escuro, cel shading em faixas com luz de cima
+    à esquerda e brilhos.
+  - O Chromium do Playwright rasteriza em 3x (o chão em 1,5x).
+  - A saída vai para `packages/client/public/teste-cartoon/`, com um manifesto de âncoras
+    (`pecas-*.json`).
+- **Unidade:** 1 u = 1 px de CSS. O canvas tem a resolução física da tela e a câmera usa zoom de
+  dpr × 0,75. Assim a tela de 390 px mostra ~520 u, e o boneco ocupa ~16% da largura, como no alvo.
+  O `?zoom=` da URL muda o valor.
+- **Bonecos articulados:** cada direção é feita de peças separadas, com a âncora na junta:
+  - as peças são tronco, cabeça, braços, pernas, cabelo e itens;
+  - a montagem segue o `rigs.json`, e o filho herda a transformação do pai;
+  - a animação é por código: respiração, passo com balanço, golpe (espaço) e hélice;
+  - a esquerda é o lado espelhado.
+- **Luz:**
+  - Phaser 4 com ambiente de fim de tarde e luzes pontuais, sem normal map, porque o sombreamento já
+    vem pintado.
+  - O emissivo (`_e.png`) é desenhado em ADD.
+  - A câmera tem bloom leve com limiar alto (0,9), para pegar só neon, magia e janela. O `?bloom=0`
+    desliga.
+- **Sombras:** cada peça tem uma mancha suave no pé e uma sombra projetada para baixo à direita. A
+  sombra projetada é feita uma vez na carga, a partir da silhueta.
+- **Partículas:** vaga-lumes, pétalas, vapor, névoa na cascata e faíscas do neon.
+- **Cena:** abre em `/teste-cartoon.html`, com o código em `packages/client/src/testeCartoon/`. A cena
+  em pixel art (`/teste-visual.html`) ficou como histórico.
+- **Sugestão (não está nos docs):** os textos de piada nas peças. São "CÁPSULA R$ 999/h",
+  "PREÇO DINÂMICO +37%", "TAXA 30%", "SCORE 742", "SOMOS UMA FAMÍLIA *sujeito a meta",
+  "ASSEMBLEIA HOJE!!" e "100% MACHO".
+
 ## Sugestões (o que não está nos docs)
 Lista mantida por fase. Tudo aqui pode ser trocado pelos autores.
 
