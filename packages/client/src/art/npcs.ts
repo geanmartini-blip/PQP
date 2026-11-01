@@ -223,6 +223,33 @@ const NPC_LOOKS: Record<string, () => ArtLook> = {
       L('cabeca', 'ramo_arruda', ['#2e6e2a']),
       L('acompanhante', 'espelho_grande', ['#5a3a20']),
     ]),
+  // Fase 5, IA de facção. SUGESTÃO: Arte.md não tem ficha dos dois; o visual sai de Narrativa.md.
+  // Lazzaro Prati: comandante da linha-dura das Raízes, que manda tudo para a comissão. Boina,
+  // túnica musgo de militante, braçadeira, megafone e o carimbo "PARA A COMISSÃO" na outra mão.
+  lazzaro_prati: () =>
+    npc('lazzaro_prati', { body: 'fortao', skin: 'tom_4', face: 'cara_fechada', hair: 'curtinho_social', hairColor: 'grisalho', details: ['bigode'] }, [
+      L('torso', 'tunica_musgo', ['#4a5a2e', '#3a2a1a', '#c8b890']),
+      L('bracos', 'bracadeira', ['#a8463f']),
+      L('pernas', 'calca_farda', ['#4a4232']),
+      L('pes', 'coturno', ['#2a1e14']),
+      L('costas', 'lista_reivindicacoes', ['#efe6cf', '#5a3a20'], 'PAUTA'),
+      L('cabeca', 'boina_revolucionaria', ['#3e5a2a', '#a8463f']),
+      L('mao_principal', 'megafone_direcao', ['#8a5a32', '#c8c0a8']),
+      L('mao_secundaria', 'carimbo', ['#6a4a2a'], 'COMISSAO'),
+    ]),
+  // Rolf Halvorsen: comandante da PM do Consórcio, militar que só ataca com certeza. Armadura de
+  // choque, escudo "HOJE NÃO", cassetete com lanterna, óculos escuros e câmera corporal apagada.
+  rolf_halvorsen: () =>
+    npc('rolf_halvorsen', { body: 'alto_e_magrelo', skin: 'tom_1', face: 'cara_de_paisagem', hair: 'raspado', hairColor: 'loiro', details: ['barba'] }, [
+      L('torso', 'armadura_choque_leve', ['#2a2e3a', '#5a6070', '#2ee6f0']),
+      L('torso', 'camera_corporal_apagada', ['#141418']),
+      L('pernas', 'calca_farda', ['#22252e']),
+      L('pes', 'bota_seguranca', ['#111014']),
+      L('rosto', 'oculos_escuros', ['#141414']),
+      L('cabeca', 'viseira', ['#2a2e3a', '#2ee6f0']),
+      L('mao_secundaria', 'escudo_choque_simples', ['#8ab8d8', '#2a2e3a']),
+      L('mao_principal', 'cassetete_lanterna', ['#1a1a20', '#ffe23a']),
+    ], { fxSide: 'direita' }),
   cambista_da_ponte: () =>
     npc('cambista_da_ponte', { face: 'desconfiado' }, [
       L('torso', 'camisa_social_branca', ['#f0f0ec']),

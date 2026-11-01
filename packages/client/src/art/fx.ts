@@ -9,6 +9,8 @@
 import { drawGlyph, FONT_CHARS, FONT_H, FONT_W, fontText } from './font';
 import { C, type Color, hex, light, mix, Pix, prng, shade, withAlpha } from './pixel';
 import { packFrames, type SheetData } from './sheet';
+import { aguaSubindo, avisoBomba, descarga, succao } from './dungeonFx';
+import { controlPoint, plantaoBadge } from './mapIcons';
 
 export interface FxInfo {
   frames: number;
@@ -492,7 +494,30 @@ const DEFS: Record<string, [() => Pix[], Omit<FxInfo, 'frames' | 'w' | 'h'>]> = 
   loot_set: [() => lootBag(hex('#b05aff')), { ox: 0.5, oy: 0.8, fps: 3, loop: true, uso: 'saque de set no chão' }],
   loot_semente: [() => coin(hex('#c89a4a'), 'semente'), { ox: 0.5, oy: 0.8, fps: 4, loop: true, uso: 'Semente no chão' }],
   loot_credito: [() => coin(hex('#3a8ad8'), 'credito'), { ox: 0.5, oy: 0.8, fps: 4, loop: true, uso: 'Crédito no chão' }],
+  // Fase 5: Galerias da Usina, plantão e pontos de controle
+  fx_aviso_bomba: [avisoBomba, { ox: 0.5, oy: 0.5, fps: 0, loop: false, uso: 'aviso da explosão da Bomba Descontrolada (chefe das Galerias); quadro = progresso 0..7; escala = raio/48 px' }],
+  fx_succao: [succao, { ox: 0.5, oy: 0.5, fps: 10, loop: true, uso: 'sucção da turbina puxando para o centro (depois do fx_aviso_circulo)' }],
+  fx_descarga: [descarga, { ox: 0.5, oy: 0.5, fps: 12, loop: true, uso: 'descarga elétrica na água (depois do fx_aviso_circulo)' }],
+  fx_agua_subindo: [aguaSubindo, { ox: 0, oy: 0, fps: 5, loop: true, uso: 'lâmina de água de um tile sobre o chão que alagou (agua_subindo)' }],
+  fx_plantao_esquerda: [() => plantaoBadge('esquerda'), { ox: 0.5, oy: 1, fps: 2, loop: true, uso: 'crachá DE PLANTÃO sobre a cabeça do plantonista da Esquerda' }],
+  fx_plantao_direita: [() => plantaoBadge('direita'), { ox: 0.5, oy: 1, fps: 2, loop: true, uso: 'crachá DE PLANTÃO sobre a cabeça do plantonista da Direita' }],
+  fx_plantao_neutro: [() => plantaoBadge('neutro'), { ox: 0.5, oy: 1, fps: 2, loop: true, uso: 'crachá DE PLANTÃO de quem ainda não tem margem' }],
+  fx_ponto_esquerda: [() => controlPoint('esquerda'), { ox: 0.5, oy: 0.95, fps: 4, loop: true, uso: 'ponto de controle dominado pela Esquerda' }],
+  fx_ponto_direita: [() => controlPoint('direita'), { ox: 0.5, oy: 0.95, fps: 4, loop: true, uso: 'ponto de controle dominado pela Direita' }],
+  fx_ponto_neutro: [() => controlPoint('neutro'), { ox: 0.5, oy: 0.95, fps: 4, loop: true, uso: 'ponto de controle sem dono' }],
+  fx_ponto_disputa: [() => controlPoint('disputa'), { ox: 0.5, oy: 0.95, fps: 4, loop: true, uso: 'ponto de controle em disputa' }],
 };
+
+/** Fase 5: chave do crachá de plantão pela margem do plantonista. */
+export function plantaoFxKey(side: string | null | undefined): string {
+  return side === 'esquerda' ? 'fx_plantao_esquerda' : side === 'direita' ? 'fx_plantao_direita' : 'fx_plantao_neutro';
+}
+
+/** Fase 5: chave do ícone do ponto de controle pelo dono (null/undefined = sem dono). */
+export function controlPointFxKey(owner: string | null | undefined, disputed = false): string {
+  if (disputed) return 'fx_ponto_disputa';
+  return owner === 'esquerda' ? 'fx_ponto_esquerda' : owner === 'direita' ? 'fx_ponto_direita' : 'fx_ponto_neutro';
+}
 
 export const FX_KEYS = Object.keys(DEFS);
 

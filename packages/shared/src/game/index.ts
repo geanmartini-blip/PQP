@@ -28,3 +28,13 @@ export * from './market';
 export * from './exchange';
 export * from './housing';
 export * from './city';
+// Fase 5: itens (comum, raro e únicos), equipamento, benzimento e calibração
+export * from './items';
+export * from './equipment';
+// Fase 5: influência, pontos de controle e IA de facção
+export * from './influence';
+export * from './faction';
+// Fase 5: masmorra, plantão e encontros com IA
+export * from './dungeon';
+export * from './duty';
+export * from './encounters';

@@ -174,7 +174,70 @@ import {
   type Bem,
   type MercadoId,
 } from '@pqp/shared/game/index';
+import {
+  advanceFloor,
+  atStairs,
+  bankRewards,
+  benzer,
+  buildDungeonFloor,
+  calibrar,
+  chooseDungeonEvent,
+  claimRunRewards,
+  concluirBenzimentos,
+  definirDoutrina,
+  desequipar,
+  DUNGEON_TUNING,
+  equipar,
+  failRun,
+  firstBossClear,
+  isBossFloor,
+  itensView,
+  joinRun,
+  leaveRun,
+  partyWiped,
+  qgDaMargem,
+  rollMapEncounters,
+  setFiltroRaridade,
+  shortcutOf,
+  simEquipOf,
+  spawnEncounter,
+  spawnPlantonista,
+  startDungeonFloor,
+  tickDungeonFloor,
+  tickEncounters,
+  tickPlantao,
+  encounterWindow,
+  filtroRaridadeOf,
+  vendaAutomaticaOf,
+  type DungeonFloorEvent,
+  type DungeonFloorState,
+  type DungeonMember,
+  type DungeonRun,
+  type DutyAssignment,
+  type EventoInfluencia,
+  type WorldEvent,
+} from '@pqp/shared/game/index';
+import { applyEquipment } from '@pqp/shared/sim/stats';
+import { regionAt } from '@pqp/shared/sim/combat';
+import type {
+  C2S_Equipar,
+  C2S_Desequipar,
+  C2S_Melhorar,
+  C2S_FiltroRaridade,
+  C2S_MasmorraEntrar,
+  C2S_MasmorraEscolha,
+  C2S_Plantonista,
+  C2S_PlantaoDefinir,
+  S2C_ItensInfo,
+  S2C_MasmorraInfo,
+  S2C_DoutrinaInfo,
+  S2C_PlantaoInfo,
+  S2C_FaccaoInfo,
+  PlantonistaView,
+} from '@pqp/shared/net';
 import { CityService, type CityCore } from './city_service';
+import { avisoDoEvento } from './faction_service';
+import { DUNGEON_EXIT, dungeonMapId } from './dungeon_service';
 import { houseMapId, houseSide, sideOfMap } from './house';
 import {
   AREA_CHECK_TICKS,
@@ -213,7 +276,12 @@ import {
   DOOR_REACH_TILES,
   MARKET_REACH_TILES,
   SHOP_REACH_TILES,
+  DUNGEON_ENTRY_REACH_TILES,
+  DUNGEON_GROUP_RADIUS_TILES,
+  DUTY_SPAWN_OFFSET_TILES,
+  ENCOUNTER_CHECK_TICKS,
 } from './config';
+import { bal } from '@pqp/shared/sim/constants';
 import { hasArrival, mapAllowed, setArrival, takeArrival } from './handoff';
 import type { Store, StoredPlayer } from './persistence/store';
 import { sanitizeDoctrine } from './doctrine_guard';
@@ -253,6 +321,66 @@ export interface CoreOptions {
   house?: { owner: PlayerRecord };
   /** modo de desenvolvimento: aceita casa_avancar_fila (padrão: PQP_DEV=1) */
   dev?: boolean;
+  // ---- Fase 5 ----
+  /** sala de um andar da masmorra ('masmorra:<runId>:<andar>'); a run vem de city.dungeons */
+  dungeon?: { runId: string; andar: number };
+  /** encontros com IA no mapa (padrão false; o WorldRoom liga nos mapas de ENCOUNTER_MAPS) */
+  encounters?: boolean;
+}
+
+/** Mensagens da Fase 5 (itens, Doutrina, plantão, masmorra e facção). */
+const FASE5_MSGS = new Set<string>([
+  GAME_MSG.equipar,
+  GAME_MSG.desequipar,
+  GAME_MSG.benzer,
+  GAME_MSG.calibrar,
+  GAME_MSG.filtroRaridade,
+  GAME_MSG.itensPedir,
+  GAME_MSG.doutrinaPedir,
+  GAME_MSG.doutrinaDefinir,
+  GAME_MSG.plantaoPedir,
+  GAME_MSG.plantaoLevar,
+  GAME_MSG.plantaoDispensar,
+  GAME_MSG.plantaoDefinir,
+  GAME_MSG.masmorraEntrar,
+  GAME_MSG.masmorraSair,
+  GAME_MSG.masmorraEscolha,
+  GAME_MSG.faccaoPedir,
+]);
+export const FASE5_MESSAGES: readonly string[] = Array.from(FASE5_MSGS);
+
+const numOf = (v: unknown): number | undefined => (typeof v === 'number' && Number.isFinite(v) ? v : undefined);
+/** Valor negociado de cada evento de comércio do log de economia (influência 'comercio'). */
+const COMMERCE_VALUE: Record<string, (d: Record<string, unknown>) => number | undefined> = {
+  loja_compra: (d) => numOf(d['valor']),
+  loja_venda: (d) => numOf(d['valor']),
+  feira_compra: (d) => numOf(d['preco']),
+  app_compra: (d) => numOf(d['preco']),
+  cambio_troca: (d) => numOf(d['quantidade']),
+};
+
+/** Texto curto de um evento do andar (aviso na tela). SUGESTÃO: textos. */
+function textoDoAndar(ev: DungeonFloorEvent): string | undefined {
+  switch (ev.t) {
+    case 'sala_ativa':
+      return ev.tipo === 'entrada' ? undefined : `${ev.nome}.`;
+    case 'chefe':
+      return `${getData().enemiesById.get(ev.inimigo)?.name ?? 'O chefe'} acordou!`;
+    case 'sala_limpa':
+      return 'Sala limpa.';
+    case 'descanso':
+      return 'Descanso: o grupo recuperou o fôlego.';
+    case 'tesouro':
+      return 'Tesouro! Guardado para a saída.';
+    case 'evento':
+      return 'Uma escolha nesta sala.';
+    case 'escada_aberta':
+      return 'A escada abriu. Desça quando quiser.';
+    case 'chefe_vencido':
+      return `${getData().enemiesById.get(ev.inimigo)?.name ?? 'O chefe'} caiu!`;
+    default:
+      return undefined;
+  }
 }
 
 /** Mensagens de economia e moradia da Fase 4 (cliente -> servidor). */
@@ -379,6 +507,9 @@ interface Slot {
   // ---- Fase 4 ----
   /** portas de moradia em que o jogador está (só leva para a casa ao entrar de novo) */
   doors: Set<string>;
+  // ---- Fase 5 ----
+  /** na masmorra: está em cima da saída (só sai ao pisar de novo) */
+  onDungeonExit?: boolean;
 }
 
 const moedaOf = (v: unknown): Moeda | undefined => (v === 'semente' || v === 'credito' ? v : undefined);
@@ -514,15 +645,37 @@ export class GameServerCore implements CityCore {
   private readonly dev: boolean;
   private readonly doorMarkers: MapMarker[];
   private readonly bgTasks = new Set<Promise<void>>();
+  // ---- Fase 5 ----
+  /** sala de um andar da masmorra: a run (compartilhada pela cidade) e o estado do andar */
+  readonly dungeon?: { run: DungeonRun; state: DungeonFloorState };
+  private readonly encountersOn: boolean;
+  private encWindow = -1;
+  private encEnts: number[] = [];
+  /** plantonistas nesta sala: assignment -> entidade */
+  private readonly dutyEnts = new Map<string, { a: DutyAssignment; entityId: number }>();
+  /** influência somada neste tick, agrupada (lado|região|fonte -> qtd) */
+  private infPending = new Map<string, EventoInfluencia>();
 
   constructor(opts: CoreOptions = {}) {
+    this.city = opts.city ?? new CityService({ ...(opts.log ? { log: opts.log } : {}) });
+    // Fase 5: andar da masmorra, com o mapa montado pela semente da run
+    let map = opts.map;
+    let dungeonMap: string | undefined;
+    if (opts.dungeon) {
+      const run = this.city.dungeons.get(opts.dungeon.runId);
+      if (!run) throw new Error(`run não encontrada: ${opts.dungeon.runId}`);
+      const floor = buildDungeonFloor(opts.dungeon.andar, run.seed, run.dungeonId);
+      map = floor.layout.map;
+      dungeonMap = dungeonMapId(run.id, opts.dungeon.andar);
+      this.dungeon = { run, state: startDungeonFloor(floor) };
+    }
     // Fase 3: qg_esquerda e qg_direita são apelidos das margens (registros e salas antigas)
-    this.mapId = opts.map ? opts.map.id : resolveMapId(opts.mapId ?? DEFAULT_MAP_ID);
-    this.world = createWorld(opts.map ?? getMap(this.mapId), opts.seed ?? DEFAULT_WORLD_SEED);
+    this.mapId = dungeonMap ?? (opts.map ? opts.map.id : resolveMapId(opts.mapId ?? DEFAULT_MAP_ID));
+    this.world = createWorld(map ?? getMap(this.mapId), opts.seed ?? DEFAULT_WORLD_SEED);
     if (opts.house) this.house = { ownerId: opts.house.owner.id, owner: clone(opts.house.owner) };
     this.dev = opts.dev ?? (process.env['PQP_DEV'] === '1' || process.env['PQP_DEV'] === 'true');
     this.doorMarkers = this.world.map.markers.filter((m) => m.kind === 'moradia');
-    this.city = opts.city ?? new CityService({ ...(opts.log ? { log: opts.log } : {}) });
+    this.encountersOn = opts.encounters === true && !this.dungeon && !opts.house;
     this.city.register(this);
     this.world.pathfinder = findPath;
     if (opts.store) this.store = opts.store;
@@ -536,10 +689,12 @@ export class GameServerCore implements CityCore {
     this.areas = areaMarkers(this.world.map);
     const sp = this.world.map.markers.find((m) => m.kind === 'spawn_jogador');
     this.spawn = sp ? { x: sp.x, y: sp.y } : { x: this.world.map.width / 2, y: this.world.map.height / 2 };
-    if (opts.content !== false) {
+    if (opts.content !== false && !this.dungeon) {
       this.spawner = new Spawner(this.world, { log: this.log, ...(opts.spawner ?? {}) });
       this.spawner.populate();
     }
+    // Fase 5: o combate lê os medidores da facção (Direita com energia, Esquerda com poluição)
+    if (!this.sandbox) this.world.regionState = this.city.faction.regionState();
   }
 
   // -------------------------------------------------------------------------
@@ -613,6 +768,7 @@ export class GameServerCore implements CityCore {
     if (prevSess && prevSess.token !== token) this.removeClient(sessionId);
 
     let slot = this.slots.get(token);
+    let dutyResult: GameResult | undefined;
     if (slot && !this.world.entities.has(slot.entityId)) {
       this.slots.delete(token);
       slot = undefined;
@@ -639,7 +795,8 @@ export class GameServerCore implements CityCore {
       // Fase 3: fica neste mapa quem é daqui, quem pediu esta sala (trocar_sala) ou quem chegou por
       // uma saída, desde que o estágio deixe estar aqui (handoff.ts mapAllowed)
       // Fase 4: a sala de uma casa confere a permissão do dono
-      const stay = target === this.mapId || ((opts.explicit === true || hasArrival(token, this.mapId)) && mapAllowed(r, this.mapId) && this.canEnterHouse(r));
+      // Fase 5: o andar da masmorra só recebe quem é do grupo da run
+      const stay = target === this.mapId || ((opts.explicit === true || hasArrival(token, this.mapId)) && mapAllowed(r, this.mapId) && this.canEnterHouse(r) && this.canEnterDungeon(r));
       if (!stay) {
         this.redirect(sess, target, 'registro', generated);
         return null;
@@ -653,16 +810,25 @@ export class GameServerCore implements CityCore {
       }
       // Fase 4: ciclos da cidade que o registro não viu, moradia inicial e o que o mercado deve
       const sync = this.syncRecord(r);
+      // Fase 5: voltou do plantão: sai do QG e o relatório entra no registro
+      const duty = this.city.duty.back(r);
+      for (const a of duty.fechados) this.city.dropDuty(a.id);
       const arr = takeArrival(token, this.mapId);
       slot = this.spawnSlot(token, r, false, undefined, this.spawnPointOf(arr?.spawn));
       // chegou pela porta da moradia: só volta para a casa saindo e entrando de novo
       if (arr?.spawn) slot.doors.add(arr.spawn);
       if (sync.mudou) slot.dirty = true;
       for (const t of sync.avisos) this.send(sessionId, GAME_MSG.aviso, { texto: t, tipo: 'info' });
+      if (duty.result.mudou) dutyResult = duty.result;
       if (this.house) this.send(sessionId, GAME_MSG.casaInfo, casaView(this.ownerRecord(), r.id !== this.house.ownerId) satisfies S2C_CasaInfo | null);
+      if (this.dungeon) {
+        slot.onDungeonExit = true;
+        this.send(sessionId, GAME_MSG.masmorraInfo, this.dungeonInfo(r.id));
+      }
     }
     this.comeBack(slot);
     slot.sid = sessionId;
+    if (dutyResult) this.applyResult(slot, dutyResult);
     const sess = this.ensureSession(sessionId, token);
     sess.pending = undefined;
     sess.movedTo = undefined;
@@ -899,7 +1065,53 @@ export class GameServerCore implements CityCore {
     if (!sandbox && this.jaco && rec.stage !== 'margem') this.spawnJaco(slot, e);
     else if (this.companions) this.spawnCompanion(slot, e);
     this.slots.set(token, slot);
+    // Fase 5: os plantonistas levados por este jogador vêm junto para esta sala
+    if (!sandbox) for (const a of this.city.duty.ofTaker(rec.id)) this.spawnDuty(slot, e, a);
     return slot;
+  }
+
+  /** Nasce o plantonista do plantão `a` ao lado de quem levou, no grupo dele. */
+  private spawnDuty(slot: Slot, e: Entity, a: DutyAssignment): Entity | undefined {
+    const rec = this.city.duty.recordOf(a.plantonistaId);
+    if (!rec || this.dutyEnts.has(a.id)) return undefined;
+    e.partyId ??= `grupo_${slot.rec.id}`;
+    try {
+      const p = spawnPlantonista(this.world, rec, e.x + DUTY_SPAWN_OFFSET_TILES, e.y, { partyId: e.partyId, assignment: a });
+      p.spawnX = this.spawn.x;
+      p.spawnY = this.spawn.y;
+      this.dutyEnts.set(a.id, { a, entityId: p.id });
+      return p;
+    } catch (err) {
+      this.log(`[core] plantonista não nasceu: ${String(err)}`);
+      return undefined;
+    }
+  }
+
+  /** Tira os plantonistas de um jogador desta sala (sem fechar o plantão: ele pode ir para outra sala). */
+  private removeDutyOf(takerId: string): void {
+    for (const [id, d] of Array.from(this.dutyEnts)) {
+      if (d.a.levadoPor !== takerId) continue;
+      this.world.entities.delete(d.entityId);
+      this.dutyEnts.delete(id);
+    }
+  }
+
+  /** CityCore: o plantão acabou (dono voltou ou foi dispensado). */
+  dropDuty(assignmentId: string): void {
+    const d = this.dutyEnts.get(assignmentId);
+    if (!d) return;
+    this.world.entities.delete(d.entityId);
+    this.dutyEnts.delete(assignmentId);
+  }
+
+  /** Fecha os plantões levados por este jogador (ele saiu do jogo). */
+  private endDutiesOf(takerId: string): void {
+    for (const a of this.city.duty.ofTaker(takerId)) {
+      const d = this.dutyEnts.get(a.id);
+      if (d) tickPlantao(this.world, a);
+      this.dropDuty(a.id);
+      this.city.duty.end(a);
+    }
   }
 
   /**
@@ -1029,12 +1241,20 @@ export class GameServerCore implements CityCore {
   private removeSlot(slot: Slot): void {
     this.world.entities.delete(slot.entityId);
     if (slot.companionId !== undefined) this.world.entities.delete(slot.companionId);
+    this.removeDutyOf(slot.rec.id);
     this.slots.delete(slot.token);
   }
 
   /** Tira o personagem do mapa (depois do tempo no automático), com o progresso salvo. */
   private despawn(slot: Slot): void {
+    // Fase 5: sai da run com o que já ganhou, devolve os plantonistas e, com on_duty, fica de plantão
+    if (!slot.sandbox) {
+      this.pull(slot);
+      if (this.dungeon) this.claimDungeon(slot);
+      this.endDutiesOf(slot.rec.id);
+    }
     this.persist(slot);
+    if (!slot.sandbox && slot.rec.criado) this.city.duty.offer(slot.rec);
     this.removeSlot(slot);
     if (slot.sid) {
       this.sessions.delete(slot.sid);
@@ -1061,6 +1281,8 @@ export class GameServerCore implements CityCore {
       slot.notify = true;
     }
     for (const a of avisosOf(r)) this.send(slot.sid, GAME_MSG.aviso, a);
+    // Fase 5: missão entregue soma influência da margem na região
+    if (r.concluidas.length > 0 && e) this.influence(slot.rec.side, regionAt(this.world, e.x, e.y), 'missao', r.concluidas.length);
     // Fase 3: o guia fala (missão aceita, bônus)
     for (const f of r.falasGuia ?? []) this.send(slot.sid, GAME_MSG.falaGuia, f satisfies S2C_FalaGuia);
   }
@@ -1115,6 +1337,11 @@ export class GameServerCore implements CityCore {
       // Fase 4: carteira, loja, feira, app, câmbio e casa
       if (ECON_MSGS.has(type)) {
         this.onEconomy(slot, e, type, m);
+        return;
+      }
+      // Fase 5: itens, Doutrina, plantão, masmorra e facção
+      if (FASE5_MSGS.has(type)) {
+        this.onFase5(slot, e, type, m);
         return;
       }
       switch (type) {
@@ -1204,6 +1431,7 @@ export class GameServerCore implements CityCore {
     } catch (err) {
       this.log(`[core] mensagem ${type} falhou: ${err instanceof Error ? err.stack : String(err)}`);
     } finally {
+      this.flushInfluence();
       this.flushNotify();
     }
   }
@@ -1552,6 +1780,13 @@ export class GameServerCore implements CityCore {
           if (!enemy || enemy.kind !== 'enemy') break;
           const parts = killParticipants(w, enemy, ev.by);
           const aoVivo = Math.max(1, parts.filter((p) => p.kind === 'player' && !p.onDuty).length);
+          // Fase 5: abate soma influência para a margem de cada jogador da luta; com plantonista na
+          // luta de elite ou chefe, conta como luta de plantão (SUGESTÃO)
+          const reg = regionAt(w, enemy.x, enemy.y);
+          for (const p of parts) {
+            if (p.kind !== 'player' || !p.side) continue;
+            this.influence(p.side, reg, p.onDuty ? 'plantao' : 'matar', p.onDuty ? (enemy.tier === 'elite' || enemy.tier === 'chefe' ? 1 : 0) : 1);
+          }
           for (const p of parts) {
             const slot = byEnt.get(p.id);
             if (!slot) continue;
@@ -1903,7 +2138,12 @@ export class GameServerCore implements CityCore {
     const res = (ok: boolean, erro?: string, texto?: string, extra: Partial<S2C_EconomiaResultado> = {}) =>
       this.send(sid, GAME_MSG.economiaResultado, { acao: type, ok, ...(erro ? { erro } : {}), ...(texto ? { texto } : {}), ...extra } satisfies S2C_EconomiaResultado);
     const fail = (erro: string) => res(false, erro);
-    const log = (tipo: string, dados: Record<string, unknown>) => city.logEvent(tipo, rec.id, dados, this.mapId);
+    const log = (tipo: string, dados: Record<string, unknown>) => {
+      city.logEvent(tipo, rec.id, dados, this.mapId);
+      // Fase 5: compra e venda (loja, feira, app, câmbio) somam influência: 1 a cada 100 de moeda
+      const valor = COMMERCE_VALUE[tipo]?.(dados);
+      if (valor !== undefined && valor > 0) this.influence(rec.side, regionAt(this.world, e.x, e.y), 'comercio', valor);
+    };
     const market = (mercado: MercadoId) => this.send(sid, GAME_MSG.mercadoInfo, mercadoView(mk, mercado, rec, now) satisfies S2C_MercadoInfo);
     const cambioInfo = (cot?: { de: Moeda; q: number }) => {
       const info: S2C_CambioInfo = { taxa: exchangeRate(cambio, med), usadoCiclo: economiaOf(rec).cambioCiclo, ...(cot ? { cotacao: cotarTroca(cambio, cot.de, cot.q, med) } : {}) };
@@ -2146,6 +2386,487 @@ export class GameServerCore implements CityCore {
       }
       default:
         return;
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Fase 5: itens, Doutrina, plantão, masmorra, encontros e facção
+
+  private onFase5(slot: Slot, e: Entity, type: string, m: Record<string, unknown>): void {
+    const sid = slot.sid!;
+    const rec = slot.rec;
+    const now = this.city.now();
+    switch (type) {
+      // ---- itens ----
+      case GAME_MSG.equipar:
+      case GAME_MSG.desequipar:
+      case GAME_MSG.benzer:
+      case GAME_MSG.calibrar:
+      case GAME_MSG.filtroRaridade: {
+        let c: { ok: true } | { ok: false; erro: string };
+        let texto: string | undefined;
+        if (type === GAME_MSG.equipar) c = equipar(rec, strOf((m as unknown as C2S_Equipar).itemId));
+        else if (type === GAME_MSG.desequipar) c = desequipar(rec, strOf((m as unknown as C2S_Desequipar).slot));
+        else if (type === GAME_MSG.filtroRaridade) {
+          const f = m as unknown as C2S_FiltroRaridade;
+          c = setFiltroRaridade(rec, strOf(f.raridade), typeof f.vendaAutomatica === 'boolean' ? f.vendaAutomatica : undefined);
+        } else {
+          const q = m as unknown as C2S_Melhorar;
+          const onde = typeof q.onde === 'string' ? strOf(q.onde) : undefined;
+          if (type === GAME_MSG.benzer) {
+            const b = benzer(rec, strOf(q.itemId), now, onde);
+            c = b;
+            if (b.ok) texto = b.prontoEm !== undefined && b.prontoEm > now ? `A benzedeira pegou a peça. Fica pronta em ${Math.ceil((b.prontoEm - now) / 1000)} s.` : `Benzido: nível ${b.nivel}.`;
+          } else {
+            const k = calibrar(rec, strOf(q.itemId), onde);
+            c = k;
+            if (k.ok) texto = `Calibrado: nível ${k.nivel} (${k.pago} Cr).`;
+          }
+        }
+        if (!c.ok) this.aviso(sid, c.erro);
+        else {
+          this.afterItems(slot, e);
+          if (texto) this.avisoInfo(sid, texto);
+        }
+        this.send(sid, GAME_MSG.itensInfo, itensView(rec) satisfies S2C_ItensInfo);
+        return;
+      }
+      case GAME_MSG.itensPedir:
+        if (concluirBenzimentos(rec, now).length > 0) this.afterItems(slot, e);
+        this.send(sid, GAME_MSG.itensInfo, itensView(rec) satisfies S2C_ItensInfo);
+        return;
+      // ---- Doutrina ----
+      case GAME_MSG.doutrinaPedir:
+        this.send(sid, GAME_MSG.doutrinaInfo, this.doctrineInfo(e));
+        return;
+      case GAME_MSG.doutrinaDefinir: {
+        const d = definirDoutrina(rec, m['cards'], e.loadout ? { loadout: e.loadout } : {});
+        if (!d.ok) this.aviso(sid, d.erro);
+        else {
+          e.doctrine = clone(rec.doctrine);
+          slot.dirty = true;
+          this.avisoInfo(sid, 'Doutrina gravada.');
+        }
+        this.send(sid, GAME_MSG.doutrinaInfo, this.doctrineInfo(e));
+        return;
+      }
+      // ---- plantão ----
+      case GAME_MSG.plantaoPedir:
+        this.send(sid, GAME_MSG.plantaoInfo, this.dutyInfo(slot));
+        return;
+      case GAME_MSG.plantaoDefinir: {
+        const on = (m as unknown as C2S_PlantaoDefinir).on === true;
+        if (on && (rec.stage !== 'margem' || !rec.side)) this.aviso(sid, 'O plantão é no QG da margem: escolha a margem primeiro.');
+        else {
+          rec.on_duty = on;
+          slot.dirty = true;
+          slot.notify = true;
+          // SUGESTÃO: texto
+          this.avisoInfo(sid, on ? 'Quando você sair, seu personagem fica de plantão no QG.' : 'Plantão desligado.');
+        }
+        this.send(sid, GAME_MSG.plantaoInfo, this.dutyInfo(slot));
+        return;
+      }
+      case GAME_MSG.plantaoLevar:
+        this.takeDuty(slot, e, strOf((m as unknown as C2S_Plantonista).plantonistaId));
+        this.send(sid, GAME_MSG.plantaoInfo, this.dutyInfo(slot));
+        return;
+      case GAME_MSG.plantaoDispensar: {
+        const id = strOf((m as unknown as C2S_Plantonista).plantonistaId);
+        const a = this.city.duty.ofTaker(rec.id).find((x) => x.plantonistaId === id);
+        if (!a) this.aviso(sid, 'Esse plantonista não está com você.');
+        else {
+          this.releaseDuty(a);
+          this.avisoInfo(sid, 'O plantonista voltou para o QG.');
+        }
+        this.send(sid, GAME_MSG.plantaoInfo, this.dutyInfo(slot));
+        return;
+      }
+      // ---- masmorra ----
+      case GAME_MSG.masmorraEntrar:
+        this.enterDungeon(slot, e, m as C2S_MasmorraEntrar);
+        return;
+      case GAME_MSG.masmorraSair:
+        if (!this.dungeon) {
+          this.aviso(sid, 'Você não está numa masmorra.');
+          return;
+        }
+        this.exitDungeon(slot);
+        return;
+      case GAME_MSG.masmorraEscolha: {
+        const d = this.dungeon;
+        const q = m as unknown as C2S_MasmorraEscolha;
+        if (!d || !isInt(q.sala)) {
+          this.aviso(sid, 'Não há escolha aqui.');
+          return;
+        }
+        const live = this.liveSlots();
+        const c = chooseDungeonEvent(this.world, d.state, q.sala, strOf(q.opcao), Math.max(1, live.length));
+        if (!c.ok) {
+          this.aviso(sid, c.erro);
+          return;
+        }
+        bankRewards(d.run, c.recompensas);
+        for (const s of live) {
+          for (const f of c.flags) if (!s.rec.story_flags.includes(f)) s.rec.story_flags.push(f);
+          if (c.flags.length > 0) s.dirty = true;
+        }
+        this.broadcastDungeonInfo();
+        return;
+      }
+      // ---- facção ----
+      case GAME_MSG.faccaoPedir:
+        this.send(sid, GAME_MSG.faccaoInfo, this.city.faction.info(now) satisfies S2C_FaccaoInfo);
+        return;
+      default:
+        return;
+    }
+  }
+
+  /** O equipamento ou o filtro mudou: entidade (mochila, visual, atributos, filtro), gravação e perfil. */
+  private afterItems(slot: Slot, e: Entity): void {
+    this.push(slot);
+    applyEquipment(e, simEquipOf(slot.rec));
+    e.lootFilter = filtroRaridadeOf(slot.rec);
+    e.autoSell = vendaAutomaticaOf(slot.rec);
+    slot.dirty = true;
+    slot.notify = true;
+  }
+
+  private doctrineInfo(e: Entity): S2C_DoutrinaInfo {
+    return { cards: clone(e.doctrine ?? []), max: bal().combate.doutrinaCartasMax };
+  }
+
+  // ---- plantão ----
+
+  private dutyInfo(slot: Slot): S2C_PlantaoInfo {
+    const rec = slot.rec;
+    const duty = this.city.duty;
+    const view = (r: PlayerRecord): PlantonistaView => ({ id: r.id, nome: r.name, nivel: r.level, classe: r.class, ala: r.archetype, cartas: Array.isArray(r.doctrine) ? r.doctrine.length : 0 });
+    const levados = duty
+      .ofTaker(rec.id)
+      .map((a) => duty.recordOf(a.plantonistaId))
+      .filter((r): r is PlayerRecord => r !== undefined)
+      .map(view);
+    return {
+      qg: rec.side ? qgDaMargem(rec.side) : null,
+      disponiveis: rec.side ? duty.list(rec.side).filter((r) => r.id !== rec.id).map(view) : [],
+      levados,
+      grupoMax: bal().combate.grupoMax,
+      emPlantao: rec.on_duty === true,
+    };
+  }
+
+  /** Leva um plantonista: nasce ao lado como aliado com a Doutrina dele; na masmorra, entra na run. */
+  private takeDuty(slot: Slot, e: Entity, plantonistaId: string): void {
+    const sid = slot.sid!;
+    const duty = this.city.duty;
+    const run = this.dungeon?.run;
+    const grupoAtual = run ? run.grupo.filter((x) => !x.saiu).length : 1 + duty.ofTaker(slot.rec.id).length;
+    const t = duty.take(slot.rec, plantonistaId, { destino: run ? 'masmorra' : 'mapa', grupoAtual, ...(run ? { runId: run.id } : {}) });
+    if (!t.ok) {
+      this.aviso(sid, t.erro);
+      return;
+    }
+    if (run) {
+      const j = joinRun(run, { playerId: t.rec.id, papel: 'plantonista', nome: t.rec.name });
+      if (!j.ok) {
+        duty.end(t.assignment);
+        this.aviso(sid, j.erro);
+        return;
+      }
+    }
+    const p = this.spawnDuty(slot, e, t.assignment);
+    if (!p) {
+      duty.end(t.assignment);
+      this.aviso(sid, 'O plantonista não conseguiu chegar.');
+      return;
+    }
+    this.avisoInfo(sid, `${t.rec.name} saiu do plantão e veio com você.`);
+    if (run) this.broadcastDungeonInfo();
+  }
+
+  /**
+   * Plantonistas depois do step: o que a coleta automática pegou para ele (loot_pick) e o que ficou no
+   * chão no nome dele vão para o relatório (tickPlantao soma o XP e recolhe o resto).
+   */
+  private tickDuty(events: CombatEvent[], before: Map<number, Entity>): void {
+    if (this.dutyEnts.size === 0) return;
+    const w = this.world;
+    const byEnt = new Map<number, DutyAssignment>();
+    for (const d of this.dutyEnts.values()) byEnt.set(d.entityId, d.a);
+    for (const ev of events) {
+      if (ev.t !== 'loot_pick') continue;
+      const a = byEnt.get(ev.by);
+      const l = a ? (w.entities.get(ev.id) ?? before.get(ev.id))?.loot : undefined;
+      if (!a || !l) continue;
+      const pe = w.entities.get(ev.by);
+      if (l.itemId) {
+        a.ganhos.itens.push(l.itemId);
+        const i = pe?.inventory?.lastIndexOf(l.itemId) ?? -1;
+        if (i >= 0) pe!.inventory!.splice(i, 1);
+      }
+      if (l.currency) {
+        a.ganhos.semente += l.currency.semente ?? 0;
+        a.ganhos.credito += l.currency.credito ?? 0;
+      }
+    }
+    for (const d of this.dutyEnts.values()) tickPlantao(w, d.a);
+  }
+
+  /** Devolve o plantonista ao QG: o saque dele fica no relatório; na masmorra, a parte da run também. */
+  private releaseDuty(a: DutyAssignment): void {
+    const run = this.dungeon?.run;
+    if (this.dutyEnts.has(a.id)) tickPlantao(this.world, a);
+    if (run && run.grupo.some((x) => x.playerId === a.plantonistaId && !x.saiu)) {
+      this.city.duty.bankRun(a.plantonistaId, run);
+      leaveRun(run, a.plantonistaId, this.city.now());
+    }
+    this.dropDuty(a.id);
+    this.city.duty.end(a);
+  }
+
+  // ---- masmorra ----
+
+  private liveSlots(): Slot[] {
+    return Array.from(this.slots.values()).filter((s) => !s.sandbox);
+  }
+
+  /** Andar da masmorra: só quem é jogador ativo da run. */
+  private canEnterDungeon(r: PlayerRecord): boolean {
+    const run = this.dungeon?.run;
+    if (!run) return true;
+    return run.status === 'ativa' && run.grupo.some((m) => m.playerId === r.id && m.papel === 'jogador' && !m.saiu);
+  }
+
+  /** Tela do andar (S2C_MasmorraInfo) para um jogador. */
+  private dungeonInfo(playerId: string): S2C_MasmorraInfo {
+    const d = this.dungeon!;
+    const { run, state: st } = d;
+    const lay = st.floor.layout;
+    const evRoom = st.rooms.find((r) => r.esperandoEscolha);
+    const evOpts = evRoom ? (st.floor.templates[evRoom.idx]?.evento?.opcoes ?? []) : [];
+    const boss = st.floor.boss;
+    return {
+      ativa: run.status === 'ativa',
+      runId: run.id,
+      dungeonId: run.dungeonId,
+      seed: run.seed,
+      andar: st.floor.andar,
+      nome: st.floor.name,
+      mapId: this.mapId,
+      escadaAberta: st.escadaAberta,
+      escada: { x: lay.stairs.x, y: lay.stairs.y },
+      saida: { x: lay.exit.x, y: lay.exit.y },
+      ...(boss ? { chefe: { inimigo: boss, nome: getData().enemiesById.get(boss)?.name ?? boss, vencido: st.bossVencido } } : {}),
+      salas: st.rooms.map((rs) => {
+        const r = lay.rooms[rs.idx]!;
+        return { idx: rs.idx, tipo: r.tipo, nome: r.name, ativa: rs.ativa, limpa: rs.limpa };
+      }),
+      ...(evRoom ? { evento: { sala: evRoom.idx, opcoes: evOpts.map((o) => ({ id: o.id, texto: o.texto })) } } : {}),
+      grupo: run.grupo.filter((x) => !x.saiu).map((x) => ({ nome: x.nome ?? x.playerId, papel: x.papel })),
+      guardadas: (run.recompensas[playerId] ?? []).length,
+      ...(run.status !== 'ativa' ? { fim: run.status } : {}),
+      andarMaisFundo: run.andarMaisFundo,
+    };
+  }
+
+  private broadcastDungeonInfo(): void {
+    if (!this.dungeon) return;
+    for (const s of this.liveSlots()) if (s.sid) this.send(s.sid, GAME_MSG.masmorraInfo, this.dungeonInfo(s.rec.id));
+  }
+
+  /**
+   * masmorra_entrar perto da entrada: o grupo é quem entrou, os jogadores por perto (até 4) e os
+   * plantonistas levados por eles; abre a run e manda todos para a sala do primeiro andar.
+   */
+  private enterDungeon(slot: Slot, e: Entity, msg: C2S_MasmorraEntrar): void {
+    const sid = slot.sid!;
+    if (this.dungeon) return this.aviso(sid, 'Você já está nas Galerias.');
+    const mk = this.world.map.markers.find((x) => x.kind === 'masmorra' && Math.hypot(x.x - e.x, x.y - e.y) <= DUNGEON_ENTRY_REACH_TILES);
+    if (!mk) return this.aviso(sid, 'Chegue na entrada das Galerias.');
+    if (slot.rec.stage !== 'margem' || !slot.rec.side) return this.aviso(sid, 'As Galerias são para quem já atravessou.');
+    const dungeonId = typeof msg?.dungeonId === 'string' && msg.dungeonId === mk.ref ? msg.dungeonId : (mk.ref ?? undefined);
+    const max = bal().combate.grupoMax;
+    const players: Slot[] = [slot];
+    for (const s of this.liveSlots()) {
+      if (players.length >= max) break;
+      if (s === slot || !s.sid || s.offlineSince !== undefined || s.rec.stage !== 'margem') continue;
+      const o = this.world.entities.get(s.entityId);
+      if (!o || o.dead || Math.hypot(o.x - e.x, o.y - e.y) > DUNGEON_GROUP_RADIUS_TILES) continue;
+      if (this.city.dungeons.runOf(s.rec.id)) continue;
+      players.push(s);
+    }
+    const grupo: DungeonMember[] = players.map((s) => ({ playerId: s.rec.id, papel: 'jogador', nome: s.rec.name }));
+    const sobra: DutyAssignment[] = [];
+    for (const s of players) {
+      for (const a of this.city.duty.ofTaker(s.rec.id)) {
+        const r = this.city.duty.recordOf(a.plantonistaId);
+        if (grupo.length < max && r) grupo.push({ playerId: r.id, papel: 'plantonista', nome: r.name });
+        else sobra.push(a);
+      }
+    }
+    const atalho = msg?.atalho === true ? shortcutOf(slot.rec, dungeonId) : 0;
+    const c = this.city.dungeons.create(grupo, { ...(atalho ? { atalho } : {}), ...(dungeonId ? { dungeonId } : {}) });
+    if (!c.ok) return this.aviso(sid, c.erro);
+    const run = c.run;
+    for (const a of sobra) {
+      this.releaseDuty(a);
+      this.avisoInfo(this.slotOfPlayer(a.levadoPor)?.sid, 'Grupo cheio: um plantonista voltou para o QG.');
+    }
+    for (const s of players) {
+      for (const a of this.city.duty.ofTaker(s.rec.id)) {
+        a.destino = 'masmorra';
+        a.runId = run.id;
+      }
+    }
+    this.city.duty.save();
+    this.city.logEvent('masmorra_entrada', slot.rec.id, { run: run.id, andar: run.andar, grupo: grupo.map((g) => g.playerId) }, this.mapId);
+    const target = dungeonMapId(run.id, run.andar);
+    for (const s of players) {
+      const info: S2C_MasmorraInfo = { ativa: true, runId: run.id, dungeonId: run.dungeonId, seed: run.seed, andar: run.andar, mapId: target, grupo: grupo.map((g) => ({ nome: g.nome ?? g.playerId, papel: g.papel })), guardadas: 0 };
+      this.send(s.sid, GAME_MSG.masmorraInfo, info);
+      this.pull(s);
+      this.leaveTo(s, target, undefined, 'registro');
+    }
+  }
+
+  /** Entrega ao registro o que a run guardou para o jogador (e para os plantonistas dele) e sai da run. */
+  private claimDungeon(slot: Slot): void {
+    const d = this.dungeon;
+    if (!d) return;
+    const run = d.run;
+    const now = this.city.now();
+    for (const a of this.city.duty.ofTaker(slot.rec.id)) {
+      if (!run.grupo.some((x) => x.playerId === a.plantonistaId && !x.saiu)) continue;
+      this.city.duty.bankRun(a.plantonistaId, run);
+      leaveRun(run, a.plantonistaId, now);
+    }
+    const e = this.world.entities.get(slot.entityId);
+    const r = claimRunRewards(slot.rec, run);
+    leaveRun(run, slot.rec.id, now);
+    // itens de tabela: entram direto na mochila (o jogador sai do andar já)
+    if (e) {
+      for (const x of r.itensParaRolar) {
+        const before = new Set(this.world.entities.keys());
+        const ids = rollRewardItems(this.world, e, x.tabela, x.quantidade);
+        for (const id of Array.from(this.world.entities.keys())) if (!before.has(id)) this.world.entities.delete(id);
+        slot.rec.inventory.push(...ids);
+        r.itens.push(...ids);
+      }
+      r.itensParaRolar = [];
+    }
+    r.mudou = true;
+    this.applyResult(slot, r);
+    this.city.logEvent('masmorra_saida', slot.rec.id, { run: run.id, andar: run.andar, maisFundo: run.andarMaisFundo, status: run.status }, this.mapId);
+  }
+
+  /** Sai das Galerias para a Usina da Ponte com as recompensas guardadas. */
+  private exitDungeon(slot: Slot, aviso?: string): void {
+    this.pull(slot);
+    this.claimDungeon(slot);
+    this.avisoInfo(slot.sid, aviso ?? 'Você saiu das Galerias com o que guardou.');
+    this.leaveTo(slot, DUNGEON_EXIT.mapId, DUNGEON_EXIT.spawn, 'registro');
+    const run = this.dungeon!.run;
+    if (run.status !== 'ativa' && this.liveSlots().length === 0) this.city.dungeons.close(run.id);
+  }
+
+  /** Um tick do andar: salas, ondas, chefe, tesouro, escada, saída e grupo caído. */
+  private tickDungeon(): void {
+    const d = this.dungeon!;
+    const run = d.run;
+    const w = this.world;
+    if (run.status !== 'ativa') return;
+    const live = this.liveSlots();
+    const evs = tickDungeonFloor(w, d.state, { players: Math.max(1, live.length) });
+    for (const ev of evs) {
+      if (ev.t === 'tesouro') bankRewards(run, ev.recompensas);
+      const texto = textoDoAndar(ev);
+      if (texto) for (const s of live) this.avisoInfo(s.sid, texto);
+    }
+    if (evs.length > 0) this.broadcastDungeonInfo();
+    if (live.length === 0) return;
+    if (partyWiped(w)) {
+      failRun(run, this.city.now());
+      // SUGESTÃO: texto
+      for (const s of live) this.exitDungeon(s, 'O grupo caiu. As Galerias cospem vocês de volta na Usina, com o que já estava guardado.');
+      return;
+    }
+    if (atStairs(w, d.state) && live.some((s) => w.tick - s.bornTick >= msToTicks(EXIT_GRACE_MS))) {
+      const andar = run.andar;
+      const primeiraVez = isBossFloor(andar) && live.some((s) => firstBossClear(s.rec, andar, run.dungeonId));
+      advanceFloor(run, { primeiraVez });
+      const target = dungeonMapId(run.id, run.andar);
+      for (const s of live) {
+        this.pull(s);
+        this.avisoInfo(s.sid, `Descendo para o ${run.andar}º andar.`);
+        this.leaveTo(s, target, undefined, 'registro');
+      }
+      return;
+    }
+    const ex = d.state.floor.layout.exit;
+    for (const s of live) {
+      const e = w.entities.get(s.entityId);
+      if (!e || e.dead) continue;
+      const on = Math.hypot(e.x - ex.x, e.y - ex.y) <= DUNGEON_TUNING.escadaRaio;
+      if (on && !s.onDungeonExit && w.tick - s.bornTick >= msToTicks(EXIT_GRACE_MS)) this.exitDungeon(s);
+      else s.onDungeonExit = on;
+    }
+  }
+
+  // ---- encontros ----
+
+  /** Encontros com IA da janela de horário: nascem os da janela nova, os da velha saem. */
+  private tickEncountersNow(): void {
+    const w = this.world;
+    tickEncounters(w);
+    if (this.encWindow >= 0 && w.tick % ENCOUNTER_CHECK_TICKS !== 0) return;
+    const now = this.city.now();
+    const win = encounterWindow(now);
+    if (win === this.encWindow) return;
+    this.encWindow = win;
+    for (const id of this.encEnts) w.entities.delete(id);
+    this.encEnts = [];
+    for (const spec of rollMapEncounters(w.map, now, DEFAULT_WORLD_SEED)) {
+      try {
+        for (const x of spawnEncounter(w, spec)) this.encEnts.push(x.id);
+      } catch (err) {
+        this.log(`[core] encontro ${spec.id} falhou: ${String(err)}`);
+      }
+    }
+  }
+
+  /** Ids das entidades dos encontros desta janela (testes). */
+  encounterEntities(): number[] {
+    return [...this.encEnts];
+  }
+
+  // ---- facção ----
+
+  /** Junta a influência deste tick (manda no fim do tick ou da mensagem). */
+  private influence(lado: string | null | undefined, regiao: string | undefined, fonte: EventoInfluencia['fonte'], qtd: number): void {
+    if (this.sandbox || this.house || qtd <= 0 || !regiao || (lado !== 'esquerda' && lado !== 'direita')) return;
+    if (!this.city.faction.state.regioes[regiao]) return;
+    const k = `${lado}|${regiao}|${fonte}`;
+    const cur = this.infPending.get(k);
+    if (cur) cur.qtd = (cur.qtd ?? 0) + qtd;
+    else this.infPending.set(k, { fonte, lado, regiao, qtd });
+  }
+
+  private flushInfluence(): void {
+    if (this.infPending.size === 0) return;
+    const list = Array.from(this.infPending.values());
+    this.infPending.clear();
+    for (const ev of list) this.city.faction.somar(ev);
+  }
+
+  /** CityCore: avisos novos da IA de facção para quem está nesta sala, e os medidores no combate. */
+  factionChanged(evs: WorldEvent[]): void {
+    if (this.sandbox) return;
+    this.world.regionState = this.city.faction.regionState();
+    for (const s of this.slots.values()) {
+      if (!s.sid || s.sandbox) continue;
+      for (const ev of evs) this.send(s.sid, GAME_MSG.avisoMapa, avisoDoEvento(ev));
     }
   }
 
@@ -2405,6 +3126,15 @@ export class GameServerCore implements CityCore {
         if (w.tick % AREA_CHECK_TICKS === 0) this.checkAreas();
       } catch (err) {
         this.log(`[core] regras falharam: ${err instanceof Error ? err.stack : String(err)}`);
+      }
+      // Fase 5: plantonistas (XP e saque para o relatório), encontros com IA e o andar da masmorra
+      try {
+        this.tickDuty(events, before);
+        if (this.encountersOn) this.tickEncountersNow();
+        if (this.dungeon) this.tickDungeon();
+        this.flushInfluence();
+      } catch (err) {
+        this.log(`[core] fase 5 falhou: ${err instanceof Error ? err.stack : String(err)}`);
       }
     }
     // 5. mundo: renascimento, quem caiu da conexão, gravação

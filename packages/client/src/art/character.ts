@@ -71,6 +71,8 @@ interface ResolvedLayer {
   wide: number;
   overflow: number;
   hides: boolean;
+  /** Fase 5: camada que veio de um item equipado (a raridade ganha contorno e brilho) */
+  rarity?: string;
 }
 
 export interface ResolvedLook {
@@ -232,13 +234,17 @@ export function resolveLook(look: ArtLook): ResolvedLook {
       const refs: LayerColorRef[] = cur ? [] : [0, 1];
       const nl = mk(part, it.art, refs);
       if (cur) nl.cols = cur.cols;
+      nl.rarity = it.rarity;
       layers = [...layers.filter((l) => l.part !== part), nl];
       continue;
     }
     if (arch && (look.outfit.tier === 'base' || look.outfit.tier === 'aprendiz' || look.outfit.tier === 'veterano')) {
       const src = d.outfits.tiers.find((t) => t.arquetipo === arch && t.tier === (it.rarity === 'comum' ? 'aprendiz' : 'veterano'));
       const from = (src?.camadas ?? []).filter((l) => l.parte === part);
-      if (from.length > 0) layers = [...layers.filter((l) => l.part !== part), ...from.map((l) => mk(l.parte, l.arte, l.cores, l.texto))];
+      if (from.length > 0) layers = [...layers.filter((l) => l.part !== part), ...from.map((l) => ({ ...mk(l.parte, l.arte, l.cores, l.texto), rarity: it.rarity }))];
+    } else {
+      // Fase 5: sem troca de camada (mestre, Delta, sem ala), a peça do traje no slot ainda mostra a raridade
+      for (const l of layers) if (l.part === part && l.rarity === undefined) l.rarity = it.rarity;
     }
   }
 
@@ -435,6 +441,66 @@ function drawGem(pix: Pix, rig: Rig, part: string, col: Color, slice: Slice): vo
   }
 }
 
+/** Fatias de profundidade por vista (Fase 5: os ícones de item desenham a camada sozinha). */
+export const VIEW_SLICES = SLICES;
+
+/** Marca (ou desmarca, sem cor) os pixels que a camada acabou de pintar. */
+function markRim(rim: Map<number, Color>, B: Pix, before: Pix, col: Color | undefined): void {
+  const a = B.data;
+  const b = before.data;
+  for (let p = 0, i = 0; p < B.w * B.h; p++, i += 4) {
+    if (a[i] === b[i] && a[i + 1] === b[i + 1] && a[i + 2] === b[i + 2] && a[i + 3] === b[i + 3]) continue;
+    if (col !== undefined && a[i + 3]! >= 200) {
+      rim.set(p, col);
+      rimSeen.set(p, B.get(p % B.w, Math.floor(p / B.w)));
+    } else rim.delete(p);
+  }
+}
+
+/** Cor de cada pixel da peça quando foi marcado (o que outra parte cobriu depois sai do contorno). */
+const rimSeen = new Map<number, Color>();
+
+/** Pixels vazios encostados na peça com raridade (viram o contorno colorido). */
+function rimCandidates(rim: Map<number, Color>, B: Pix): Map<number, Color> {
+  const out = new Map<number, Color>();
+  if (rim.size === 0) return out;
+  const w = B.w;
+  for (const p of [...rim.keys()]) if (B.get(p % w, Math.floor(p / w)) !== rimSeen.get(p)) rim.delete(p);
+  for (const [p, col] of rim) {
+    const x = p % w;
+    const y = (p - x) / w;
+    for (const [dx, dy] of [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+    ] as const) {
+      const nx = x + dx;
+      const ny = y + dy;
+      if (!B.inside(nx, ny) || B.alphaAt(nx, ny) !== 0) continue;
+      out.set(ny * w + nx, col);
+    }
+  }
+  return out;
+}
+
+/** Contorno na cor da raridade e um brilho que anda pela peça a cada quadro. */
+function applyRim(B: Pix, rim: Map<number, Color>, cand: Map<number, Color>, frame: number): void {
+  if (rim.size === 0) return;
+  const w = B.w;
+  for (const [p, col] of cand) {
+    const x = p % w;
+    const y = (p - x) / w;
+    B.set(x, y, withAlpha(mix(col, B.get(x, y) || col, 0.3), 255));
+  }
+  const keys = [...rim.keys()].filter((p) => B.alphaAt(p % w, Math.floor(p / w)) === 255);
+  if (keys.length === 0) return;
+  // SUGESTÃO: um ponto de brilho por quadro, andando pela peça
+  const p = keys[(frame * 37 + 11) % keys.length]!;
+  const col = rim.get(p)!;
+  B.set(p % w, Math.floor(p / w), withAlpha(light(col, 0.65), 255));
+}
+
 /** Desenha um quadro do boneco. */
 export function drawCharacterFrame(rl: ResolvedLook, anim: AnimName, dir: Dir, i: number): Pix {
   const viewDir = anim === 'especial' ? ((dir + [0, 1, 2, 3, 0, 0][i]!) % 4) as Dir : dir;
@@ -446,6 +512,8 @@ export function drawCharacterFrame(rl: ResolvedLook, anim: AnimName, dir: Dir, i
   const TF = new Pix(rl.W, rl.H);
 
   const hasPart = (p: string) => rl.layers.some((l) => l.part === p);
+  const rim = new Map<number, Color>();
+  rimSeen.clear();
   const hairHidden = rl.layers.some((l) => l.hides);
   const face = faceWithExpression(rl.face, pose.expression);
   const serviceSmile = rl.layers.some((l) => l.arte === 'sorriso_atendimento');
@@ -541,6 +609,8 @@ export function drawCharacterFrame(rl: ResolvedLook, anim: AnimName, dir: Dir, i
         l.drawer(ctx);
         shadeDiff(B, before);
         drawFolds(B, before, rig, l.part, slice);
+        const rc = l.rarity ? RARITY_GEM[l.rarity] : undefined;
+        if (rc !== undefined || rim.size > 0) markRim(rim, B, before, rc);
       } else l.drawer(ctx);
     }
     if (slice === 'back' && view === 'back' && rl.hair.coversBack && !hairHidden) hairOn((p) => drawHairFront(p, rig, rl.hair, rl.hairTone, rl.skin));
@@ -548,7 +618,10 @@ export function drawCharacterFrame(rl: ResolvedLook, anim: AnimName, dir: Dir, i
     if (slice === 'front') drawHandFx(TF, rig, rl.side, pose.glow, i, rl.accent);
   }
 
+  // Fase 5: a raridade aparece como contorno colorido em volta da peça e um brilho que anda
+  const rimOut = rimCandidates(rim, B);
   B.outlineSelective();
+  applyRim(B, rim, rimOut, i);
   const out = new Pix(rl.W, rl.H);
   out.blit(TB, 0, 0);
   if (rl.hologram !== undefined) {

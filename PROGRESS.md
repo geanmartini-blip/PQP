@@ -16,15 +16,56 @@ Comandos rodam com `. .\scripts\env.ps1` antes (Node e Git portáteis).
 - Contratos da Fase 1: `shared/src/map/types.ts`, `shared/src/sim/types.ts`,
   `shared/src/net/protocol.ts` e `client/src/art/contract.ts`.
 
-## Fase 5: masmorra, plantão e IA de facção — EM ANDAMENTO
-Plano:
+## PILOTO: as 5 fases estão concluídas
+O que falta depende dos autores ou de aparelho: ver PENDENTE.md. Para rodar, ver README.md.
+
+## Fase 5: masmorra, plantão, IA de facção e itens — CONCLUÍDA
+- Galerias da Usina:
+  - andares de 40x40 gerados por semente;
+  - salas com ondas, elite, descanso, tesouro e evento;
+  - chefe no 5º (Bomba Descontrolada), e sem fundo depois;
+  - `dungeon_run` com grupo de até 4;
+  - sala `masmorra:<runId>`.
+- Plantão:
+  - o plantonista é levado do QG e luta pela Doutrina;
+  - editor de até 5 cartas;
+  - relatório de ganhos.
+- Encontros com IA no mapa: patrulhas e treinadores. São co-op na margem dona e contra na rival.
+- IA de facção:
+  - os líderes são Lazzaro Prati (Raízes, Esquerda, agressivo) e Rolf Halvorsen (PM, Direita,
+    defensivo);
+  - pontos de controle por influência, com saque máximo de 20%;
+  - `world_event` com aviso no mapa;
+  - modificadores de margem por energia e poluição.
+- Itens:
+  - 6 slots, comum e raro;
+  - `class_lock`;
+  - visual por ala no `lookOf`;
+  - benzimento e calibração;
+  - 2 únicos funcionando no combate;
+  - filtro de raridade.
+- Verificação:
+  - 771 testes passando;
+  - build ok;
+  - e2e passou com 200 ms e 2% de perda;
+  - `server/test/fase5.test.ts` com o grupo e o plantonista até o chefe;
+  - `pronto.test.ts`, em que os 24 arquétipos acertam tudo sem mira.
+- Fechamento:
+  - README.md;
+  - PENDENTE.md reorganizado;
+  - tabela do escopo, com os 11 itens prontos, em `decisoes/fase5-masmorra.md`.
+- Em aberto:
+  - 60 fps e "entende em 1 minuto" só se medem em aparelho e com pessoas;
+  - a travessia de barco ainda é uma tela de escolha.
+
+Plano original:
 1. Galerias da Usina: masmorra sem fundo, em tempo real, com andares gerados por semente. Este piloto
    tem 5 andares e chefe no 5º. A sala é por grupo, para até 4.
 2. Plantão: offline, o personagem fica no QG e luta pela Doutrina quando outro jogador o leva. Há
    editor de Doutrina com até 5 cartas.
 3. Encontros com IA no mapa: patrulhas e personagens de IA que lutam junto ou contra.
 4. IA de facção:
-   - Lazzaro Prati (Direita) e Rolf Halvorsen (Esquerda) decidem a cada ciclo;
+   - Lazzaro Prati (Esquerda) e Rolf Halvorsen (Direita) decidem a cada ciclo;
    - pontos de controle por influência, com saque máximo de 20%;
    - avisos no mapa.
 5. Itens comum e raro com visual por ala, benzimento e calibração, e 2 únicos.

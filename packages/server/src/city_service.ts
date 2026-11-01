@@ -18,8 +18,12 @@
 import { cicloCidadeMin, migrarCidade, novaCidade, tickCidade, type CidadeState, type TickCidadeResult } from '@pqp/shared/game/city';
 import type { PrecoCtx } from '@pqp/shared/game/shop';
 import type { PlayerRecord } from '@pqp/shared/game/types';
+import type { WorldEvent } from '@pqp/shared/game/influence';
 import { CITY_CYCLE_MIN_DEFAULT, EVENT_LOG_MEMORY } from './config';
 import type { EconomyLogEvent, Store } from './persistence/store';
+import { copiarMedidores, FactionService } from './faction_service';
+import { DutyService } from './duty_service';
+import { DungeonService } from './dungeon_service';
 
 /** O que a cidade pede de cada sala (GameServerCore implementa). */
 export interface CityCore {
@@ -34,6 +38,11 @@ export interface CityCore {
   liveRecordOf(playerId: string): PlayerRecord | undefined;
   /** a casa de alguém mudou (decoração, visitas): a sala da casa avisa quem está dentro */
   houseChanged(owner: PlayerRecord): void;
+  // ---- Fase 5 ----
+  /** avisos novos da IA de facção (aviso_mapa) e o regionState novo do combate */
+  factionChanged?(evs: WorldEvent[]): void;
+  /** o dono de um plantonista voltou: a sala tira o boneco desse plantão */
+  dropDuty?(assignmentId: string): void;
 }
 
 export interface CityServiceOptions {
@@ -43,6 +52,8 @@ export interface CityServiceOptions {
   /** duração do ciclo em minutos (padrão PQP_CICLO_CIDADE_MIN ou CITY_CYCLE_MIN_DEFAULT) */
   cicloMin?: number;
   log?: (m: string) => void;
+  /** Fase 5: duração do tick de facção em minutos (padrão serverFactionTickMin) */
+  faccaoMin?: number;
 }
 
 export const CITY_KEY = 'cidade';
@@ -67,6 +78,10 @@ export class CityService {
   /** passes de visita: quem foi liberado pela sala de origem para entrar na casa (visitante -> dono) */
   private readonly passes = new Map<string, string>();
   private timer: ReturnType<typeof setInterval> | undefined;
+  // ---- Fase 5: IA de facção, plantão e masmorra (um de cada por processo, como a cidade) ----
+  readonly faction: FactionService;
+  readonly duty: DutyService;
+  readonly dungeons: DungeonService;
 
   constructor(opts: CityServiceOptions = {}) {
     if (opts.store) this.store = opts.store;
@@ -74,6 +89,23 @@ export class CityService {
     this.log = opts.log ?? ((m) => console.log(m));
     this.cicloMin = opts.cicloMin ?? serverCycleMin();
     this.state = novaCidade(this.clock(), this.cicloMin);
+    const now = () => this.clock();
+    this.faction = new FactionService({
+      ...(opts.store ? { store: opts.store } : {}),
+      now,
+      log: this.log,
+      ...(opts.faccaoMin !== undefined ? { tickMin: opts.faccaoMin } : {}),
+      onMeters: (e) => {
+        copiarMedidores(this.state, e);
+        this.save();
+      },
+      onEvents: (evs) => {
+        for (const ev of evs) this.logEvent('world_event', undefined, { ...ev });
+        for (const c of this.cores) c.factionChanged?.(evs);
+      },
+    });
+    this.duty = new DutyService({ ...(opts.store ? { store: opts.store } : {}), now, log: this.log });
+    this.dungeons = new DungeonService({ now });
   }
 
   now(): number {
@@ -82,13 +114,22 @@ export class CityService {
 
   /** Lê a cidade salva no Store (sem nada, fica a nova). */
   async load(): Promise<void> {
-    if (!this.store?.loadWorld) return;
-    try {
-      const raw = await this.store.loadWorld(CITY_KEY);
-      if (raw !== undefined) this.state = migrarCidade(raw, this.now(), this.cicloMin);
-    } catch (err) {
-      this.log(`[cidade] não consegui ler a cidade: ${String(err)}`);
+    if (this.store?.loadWorld) {
+      try {
+        const raw = await this.store.loadWorld(CITY_KEY);
+        if (raw !== undefined) this.state = migrarCidade(raw, this.now(), this.cicloMin);
+      } catch (err) {
+        this.log(`[cidade] não consegui ler a cidade: ${String(err)}`);
+      }
     }
+    // Fase 5: facção (os medidores dela entram na cidade) e plantão
+    await this.faction.load();
+    await this.duty.load();
+  }
+
+  /** Fase 5: um plantonista voltou ou foi dispensado: as salas tiram o boneco. */
+  dropDuty(assignmentId: string): void {
+    for (const c of this.cores) c.dropDuty?.(assignmentId);
   }
 
   register(core: CityCore): void {
@@ -208,6 +249,8 @@ export class CityService {
 
   async flush(): Promise<void> {
     this.save();
+    this.faction.save();
+    this.duty.save();
     await this.store?.flush();
   }
 }

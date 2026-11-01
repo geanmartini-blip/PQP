@@ -24,7 +24,9 @@ import { hasMap, resolveMapId, START_MAP } from '@pqp/shared/map';
 import { CLOSE_CODE, GAME_MSG, MSG, type C2S_Hello, type C2S_Input, type C2S_Need, type C2S_Ping, type S2C_TrocarSala } from '@pqp/shared/net';
 import { TICK_MS } from '@pqp/shared/sim';
 import { COLYSEUS_RECONNECT_S, MAX_CATCHUP_TICKS } from '../config';
-import { ECONOMY_MESSAGES, GameServerCore, normalizeToken, type CoreOptions } from '../core';
+import { ECONOMY_MESSAGES, FASE5_MESSAGES, GameServerCore, normalizeToken, type CoreOptions } from '../core';
+import { ENCOUNTER_MAPS } from '../config';
+import { isDungeonMap, parseDungeonMap } from '../dungeon_service';
 import { LinkSim, linkConfigFromEnv, type LinkConfig } from '../netsim';
 import type { Store } from '../persistence/store';
 import { CityService } from '../city_service';
@@ -64,6 +66,8 @@ const GAME_IN = [
   GAME_MSG.emote,
   // Fase 4: carteira, loja, feira, app, câmbio e casa
   ...ECONOMY_MESSAGES,
+  // Fase 5: itens, Doutrina, plantão, masmorra e facção
+  ...FASE5_MESSAGES,
 ] as const;
 
 /** Dependências que não cabem em JSON (Store, log, cidade), postas antes do define. */
@@ -119,13 +123,32 @@ export class WorldRoom extends Room {
       this.setup(options, asked);
       return;
     }
+    // Fase 5: 'masmorra:<runId>:<andar>' é um andar das Galerias, com o mapa da semente da run
+    if (isDungeonMap(asked)) {
+      const p = parseDungeonMap(asked)!;
+      const run = cityOf().dungeons.get(p.runId);
+      if (!run || run.status !== 'ativa' || run.andar !== p.andar) throw new Error(`andar não está aberto: ${asked}`);
+      this.autoDispose = true;
+      // SUGESTÃO: até 8 conexões por andar (o grupo é de até 4; sobra para reconexão)
+      this.maxClients = 8;
+      const coreOpts: CoreOptions = { mapId: asked, dungeon: p, content: false, companions: false, city: cityOf() };
+      if (options.seed !== undefined) coreOpts.seed = options.seed;
+      if (options.offlineAutoMs !== undefined) coreOpts.offlineAutoMs = options.offlineAutoMs;
+      if (deps.store) coreOpts.store = deps.store;
+      if (deps.log) coreOpts.log = deps.log;
+      this.core = new GameServerCore(coreOpts);
+      this.setup(options, asked);
+      return;
+    }
     if (!hasMap(asked)) throw new Error(`mapa desconhecido: ${asked}`);
     const mapId = resolveMapId(asked);
     if (mapId !== asked) {
       this.aliasTo = mapId;
       this.autoDispose = true;
     }
-    const coreOpts: CoreOptions = { mapId, ...(this.aliasTo ? { content: false } : {}), city: cityOf() };
+    // Fase 5: encontros com IA nos mapas abertos (PQP_ENCONTROS=0 desliga)
+    const encounters = !this.aliasTo && ENCOUNTER_MAPS.includes(mapId) && process.env['PQP_ENCONTROS'] !== '0';
+    const coreOpts: CoreOptions = { mapId, ...(this.aliasTo ? { content: false } : {}), city: cityOf(), ...(encounters ? { encounters: true } : {}) };
     if (options.seed !== undefined) coreOpts.seed = options.seed;
     if (options.companions !== undefined) coreOpts.companions = options.companions;
     if (options.jaco !== undefined) coreOpts.jaco = options.jaco;

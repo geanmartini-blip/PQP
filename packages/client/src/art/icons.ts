@@ -16,6 +16,7 @@ import { npcLook } from './npcs';
 import { C, type Color, hex, light, mix, Pix, shade, withAlpha } from './pixel';
 import { frameOf } from './sheet';
 import { buildUiIcon, isUiIcon } from './uiIcons';
+import { buildItemIcon } from './itemArt';
 
 export const ICON_PX = 48;
 export const PORTRAIT_PX = 64;
@@ -427,6 +428,8 @@ export function buildIcon(id: string): Pix {
     if (!m && (ab.slot === 'especial' || ab.slot === 'virada')) m = 'estrela';
     return renderIcon({ bg: shade(bg, 0.85), frame: f.frame, frameInner: ab.slot === 'especial' || ab.slot === 'virada' ? C.warn : f.inner, motif: m, type: ab.type, accent });
   }
+  // Fase 5: itens e únicos mostram a peça desenhada na ala, com moldura e halo da raridade
+  if (d.itemsById.has(id) || d.uniquesById.has(id)) return buildItemIcon(id);
   const item = d.itemsById.get(id) ?? d.uniquesById.get(id);
   if (item) {
     const cls = item.classLock ?? undefined;

@@ -89,6 +89,19 @@ O registro completo está em `decisoes/fase4-sociedade.md`. Os pontos principais
 - **Estado de cidade no servidor:** mercado e câmbio são estado global. O ciclo da cidade fica em
   `PQP_CICLO_CIDADE_MIN`.
 
+## Fase 5: masmorra, plantão, facção e itens
+O registro completo está em `decisoes/fase5-masmorra.md`. Os pontos principais:
+- **Galerias:** o andar é gerado com um gerador de cobra em grade 3x3 (40x40). O chefe do 5º vem de
+  `dungeons.json`. Se o grupo inteiro cair, a run acaba, mas o que já foi guardado fica.
+- **Plantonista:** é um `player` com `onDuty` e `auto`. Ganha metade do XP, sem o bônus de jogador ao
+  vivo.
+- **Encontros:** há uma janela de 10 minutos. O treinador da margem dona é co-op e o da rival é contra.
+  O rival que cai se rende.
+- **Líderes:** seguem a Narrativa. Lazzaro Prati é das Raízes (Esquerda) e Rolf Halvorsen é da PM
+  (Direita).
+- **Balanceamento:** o escudo do Xale de Lã da Babushka caiu de 7,5% para 7%, porque ela estava no
+  limite de 55%.
+
 ## Sugestões (o que não está nos docs)
 Lista mantida por fase. Tudo aqui pode ser trocado pelos autores.
 

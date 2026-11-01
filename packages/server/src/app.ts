@@ -18,7 +18,7 @@ import { listMaps, START_MAP } from '@pqp/shared/map';
 import { SALA_MUNDO } from '@pqp/shared/net';
 import { msAteProximoCiclo } from '@pqp/shared/game/city';
 import { CityService } from './city_service';
-import { CITY_TICK_MS, DEFAULT_PORT } from './config';
+import { CITY_TICK_MS, DEFAULT_PORT, FACTION_CHECK_MS } from './config';
 import { createStore, projectRoot, type Store } from './persistence/store';
 import { liveRooms, setWorldRoomDeps, WorldRoom, type WorldRoomOptions } from './rooms/WorldRoom';
 
@@ -36,6 +36,8 @@ export interface StartOptions {
   /** Fase 4: a cidade (padrão: uma nova, lida do Store) e o intervalo do tick dela */
   city?: CityService;
   cityTickMs?: number;
+  /** Fase 5: a cada quanto conferir o tick de facção */
+  factionCheckMs?: number;
 }
 
 export interface Running {
@@ -74,6 +76,9 @@ export async function startServer(opts: StartOptions = {}): Promise<Running> {
   const city = opts.city ?? new CityService({ store, log });
   await city.load();
   city.start(opts.cityTickMs ?? CITY_TICK_MS);
+  // Fase 5: tick da IA de facção (PQP_TICK_FACCAO_MIN; padrão 5 min fora de produção)
+  city.faction.start(opts.factionCheckMs ?? FACTION_CHECK_MS);
+  log(`[faccao] tick de ${city.faction.tickMin} min (ciclo ${city.faction.state.ciclo})`);
   setWorldRoomDeps({ store, log, city });
   const httpServer = http.createServer();
   const gameServer = new Server({
@@ -83,7 +88,9 @@ export async function startServer(opts: StartOptions = {}): Promise<Running> {
       app.get('/health', (_req, res) => {
         const rooms = Array.from(liveRooms).map((r) => r.core.stats());
         const cidade = { ciclo: city.state.ciclo, cicloMin: city.cicloMin, msAteProximoCiclo: msAteProximoCiclo(city.state, city.now()), anuncios: city.state.mercado.anuncios.length };
-        res.json({ ok: true, store: store.kind, uptimeS: Math.round(process.uptime()), rooms, cidade });
+        const f = city.faction.state;
+        const faccao = { ciclo: f.ciclo, tickMin: city.faction.tickMin, proximoTickEm: f.proximoTickEm, eventos: f.eventos.length, runs: city.dungeons.runs.size, plantonistas: Object.keys(city.duty.state.plantonistas).length };
+        res.json({ ok: true, store: store.kind, uptimeS: Math.round(process.uptime()), rooms, cidade, faccao });
       });
       if (serveClient) {
         // index.html sempre revalida (aponta para os assets do build atual); os assets do Vite
@@ -138,6 +145,7 @@ export async function startServer(opts: StartOptions = {}): Promise<Running> {
     city,
     async close() {
       city.stop();
+      city.faction.stop();
       for (const r of liveRooms) await r.core.saveAll().catch(() => undefined);
       await gameServer.gracefullyShutdown(false).catch(() => undefined);
       city.save();

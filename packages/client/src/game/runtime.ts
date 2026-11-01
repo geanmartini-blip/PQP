@@ -27,6 +27,8 @@ let current: Runtime | undefined;
 export const OFFLINE_RECORD_KEY = 'pqp_offline_';
 /** Fase 4: chave da cidade do modo offline. */
 export const OFFLINE_CITY_KEY = 'pqp_offline_cidade';
+/** Fase 5: chave do estado da IA de facção do modo offline. */
+export const OFFLINE_FACTION_KEY = 'pqp_offline_faccao';
 
 /** ?ciclo=N (minutos) encurta o ciclo da cidade no modo offline, para testar aluguel e lista de espera. */
 export function offlineCycleMin(): number | undefined {
@@ -92,7 +94,15 @@ export async function makeBaseTransport(cfg: ClientConfig, joinOptions: () => Re
         },
         save: (c) => st?.setItem(OFFLINE_CITY_KEY, JSON.stringify(c)),
       },
-      ...(offlineCycleMin() !== undefined ? { cityCycleMin: offlineCycleMin()! } : {}),
+      ...(offlineCycleMin() !== undefined ? { cityCycleMin: offlineCycleMin()!, factionTickMin: offlineCycleMin()! } : {}),
+      // Fase 5: a IA de facção (regiões, pontos, avisos) também fica no aparelho
+      factionStore: {
+        load: () => {
+          const raw = st?.getItem(OFFLINE_FACTION_KEY);
+          return raw ? (JSON.parse(raw) as unknown) : null;
+        },
+        save: (e) => st?.setItem(OFFLINE_FACTION_KEY, JSON.stringify(e)),
+      },
     });
   }
   return new ColyseusTransport(cfg.endpoint, joinOptions);

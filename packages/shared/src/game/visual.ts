@@ -8,6 +8,7 @@
 import { getData } from '../data';
 import type { TileMap } from '../map/types';
 import { validateAppearance } from './appearance';
+import { lookItemOf } from './items';
 import type { Appearance, CharacterLook, Check, PlayerRecord, VisualTierId } from './types';
 
 /** SUGESTÃO: distância máxima (tiles, centro a centro) do marcador da máquina para usar. */
@@ -69,7 +70,6 @@ export function paletteOptions(rec: PlayerRecord, tier: VisualTierId = currentVi
 
 /** Visual que o cliente desenha, com o traje pelo nível e por shown_visual_tier. */
 export function lookOf(rec: PlayerRecord): CharacterLook {
-  const D = getData();
   const tier = currentVisualTier(rec);
   const pals = paletteOptions(rec, tier);
   const idx = Math.max(0, pals.indexOf(rec.appearance.palette));
@@ -77,11 +77,10 @@ export function lookOf(rec: PlayerRecord): CharacterLook {
   if (isAlaTier(tier) && rec.archetype) outfit.archetypeId = rec.archetype;
   if (rec.institution) outfit.institutionId = rec.institution;
   const items: NonNullable<CharacterLook['items']> = [];
+  // Fase 5 (game/items.ts): a camada do slot muda dentro do estilo da ala e a raridade aparece
   for (const [slot, id] of Object.entries(rec.equipment)) {
-    const it = D.itemsById.get(id);
-    const un = it ? undefined : D.uniquesById.get(id);
-    const rarity = (it?.rarity ?? (un ? 'unico' : undefined)) as 'comum' | 'raro' | 'unico' | 'set' | undefined;
-    if (rarity) items.push({ slot, rarity });
+    const li = lookItemOf(rec, slot, id);
+    if (li) items.push(li);
   }
   const look: CharacterLook = {
     body: rec.appearance.body,

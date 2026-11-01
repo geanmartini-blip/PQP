@@ -123,7 +123,70 @@ export const GAME_MSG = {
   casaInfo: 'casa_info',
   /** resultado curto de uma operação de economia (S2C_EconomiaResultado) */
   economiaResultado: 'economia_resultado',
+  // ---- Fase 5: IA de facção ----
+  /** aviso do mapa da IA de facção, troca de dono de ponto, apagão ou saque (S2C_AvisoMapa) */
+  avisoMapa: 'aviso_mapa',
+  // ---- Fase 5: itens (game/equipment.ts) ----
+  /** vestir um item da mochila (C2S_Equipar) */
+  equipar: 'equipar',
+  /** tirar o item de um slot (C2S_Desequipar) */
+  desequipar: 'desequipar',
+  /** benzer um item da Esquerda (C2S_Melhorar); entra na fila da benzedeira */
+  benzer: 'benzer',
+  /** calibrar um item da Direita (C2S_Melhorar); paga em Crédito */
+  calibrar: 'calibrar',
+  /** filtro de raridade da coleta e venda automática (C2S_FiltroRaridade) */
+  filtroRaridade: 'filtro_raridade',
+  /** pedir a tela de itens (sem corpo); responde 'itens_info' */
+  itensPedir: 'itens_pedir',
+  /** servidor -> cliente: equipamento, mochila e melhorias (S2C_ItensInfo) */
+  itensInfo: 'itens_info',
+  // ---- Fase 5: masmorra, Doutrina, plantão e painel da facção (telas do cliente) ----
+  /** entrar nas Galerias perto da entrada (C2S_MasmorraEntrar); responde 'masmorra_info' e o welcome do andar */
+  masmorraEntrar: 'masmorra_entrar',
+  /** sair da masmorra e receber o guardado (sem corpo) */
+  masmorraSair: 'masmorra_sair',
+  /** escolha numa sala de evento (C2S_MasmorraEscolha) */
+  masmorraEscolha: 'masmorra_escolha',
+  /** servidor -> cliente: andar atual, salas, escada e evento (S2C_MasmorraInfo) */
+  masmorraInfo: 'masmorra_info',
+  /** pedir a Doutrina (sem corpo); responde 'doutrina_info' */
+  doutrinaPedir: 'doutrina_pedir',
+  /** gravar a Doutrina, até 5 cartas (C2S_DoutrinaDefinir) */
+  doutrinaDefinir: 'doutrina_definir',
+  /** servidor -> cliente: cartas gravadas (S2C_DoutrinaInfo) */
+  doutrinaInfo: 'doutrina_info',
+  /** quadro do plantão do QG (sem corpo); responde 'plantao_info' */
+  plantaoPedir: 'plantao_pedir',
+  /** levar um plantonista para o grupo (C2S_Plantonista) */
+  plantaoLevar: 'plantao_levar',
+  /** devolver o plantonista ao QG (C2S_Plantonista) */
+  plantaoDispensar: 'plantao_dispensar',
+  /** servidor -> cliente: quadro do plantão (S2C_PlantaoInfo) */
+  plantaoInfo: 'plantao_info',
+  /** painel dos pontos de controle e da influência (sem corpo); responde 'faccao_info' */
+  faccaoPedir: 'faccao_pedir',
+  /** servidor -> cliente: regiões, pontos e avisos recentes (S2C_FaccaoInfo) */
+  faccaoInfo: 'faccao_info',
+  /** ficar (ou não) de plantão no QG quando sair do jogo (C2S_PlantaoDefinir); responde 'plantao_info' */
+  plantaoDefinir: 'plantao_definir',
 } as const;
+
+/** Fase 5 (servidor): liga ou desliga o on_duty do registro. */
+export interface C2S_PlantaoDefinir {
+  on: boolean;
+}
+
+/** Aviso do mapa (game/influence.ts WorldEvent): o servidor manda os eventos novos de tickFaccao. */
+export interface S2C_AvisoMapa {
+  id: string;
+  tipo: 'acao_ia' | 'troca_de_dono' | 'apagao' | 'saque';
+  texto: string;
+  lado?: 'esquerda' | 'direita';
+  lider?: string;
+  regiao?: string;
+  ponto?: string;
+}
 export type GameMsgName = (typeof GAME_MSG)[keyof typeof GAME_MSG];
 
 // ---------------------------------------------------------------------------
@@ -388,4 +451,114 @@ export interface S2C_EconomiaResultado {
   texto?: string;
   /** feira: lugar na fila da compra */
   entrega?: { id: string; prontoEm: number; posicao: number };
+}
+
+// ---------------------------------------------------------------------------
+// Fase 5: itens (game/equipment.ts). A resposta é 'itens_info' (e 'aviso' com o erro).
+
+export interface C2S_Equipar {
+  itemId: string;
+}
+
+export interface C2S_Desequipar {
+  slot: string;
+}
+
+/** benzer ou calibrar; `onde` = id do QG ou da instituição (benzimento.onde / calibracao.onde) */
+export interface C2S_Melhorar {
+  itemId: string;
+  onde?: string;
+}
+
+export interface C2S_FiltroRaridade {
+  raridade: 'comum' | 'raro' | 'unico' | 'set';
+  vendaAutomatica?: boolean;
+}
+
+export type S2C_ItensInfo = import('../game/equipment').ItensView;
+
+// ---------------------------------------------------------------------------
+// Fase 5: masmorra, Doutrina, plantão e painel da facção
+
+export interface C2S_MasmorraEntrar {
+  dungeonId?: string;
+  /** começar do atalho (último andar de chefe vencido), se tiver */
+  atalho?: boolean;
+}
+
+export interface C2S_MasmorraEscolha {
+  sala: number;
+  opcao: string;
+}
+
+/**
+ * Andar atual da run. O mapa do andar não está no registro de mapas: o cliente monta com
+ * buildDungeonFloor(andar, seed, dungeonId).layout.map (o id é `mapId`).
+ */
+export interface S2C_MasmorraInfo {
+  ativa: boolean;
+  runId?: string;
+  dungeonId?: string;
+  /** semente da run (não a do andar) */
+  seed?: number;
+  andar?: number;
+  nome?: string;
+  mapId?: string;
+  escadaAberta?: boolean;
+  escada?: { x: number; y: number };
+  saida?: { x: number; y: number };
+  chefe?: { inimigo: string; nome: string; vencido: boolean };
+  salas?: { idx: number; tipo: string; nome: string; ativa: boolean; limpa: boolean }[];
+  /** sala de evento esperando escolha */
+  evento?: { sala: number; opcoes: { id: string; texto: string }[] };
+  grupo?: { nome: string; papel: 'jogador' | 'plantonista' | 'ia' }[];
+  /** recompensas guardadas para quem pediu */
+  guardadas?: number;
+  /** a run acabou: 'falhou' ou 'saiu' */
+  fim?: 'falhou' | 'saiu';
+  andarMaisFundo?: number;
+}
+
+export interface C2S_DoutrinaDefinir {
+  cards: import('../sim/types').DoctrineCard[];
+}
+
+export interface S2C_DoutrinaInfo {
+  cards: import('../sim/types').DoctrineCard[];
+  max: number;
+}
+
+export interface C2S_Plantonista {
+  plantonistaId: string;
+}
+
+export interface PlantonistaView {
+  id: string;
+  nome: string;
+  nivel: number;
+  classe?: string | null;
+  ala?: string | null;
+  /** cartas da Doutrina dele */
+  cartas: number;
+}
+
+export interface S2C_PlantaoInfo {
+  qg: string | null;
+  disponiveis: PlantonistaView[];
+  levados: PlantonistaView[];
+  grupoMax: number;
+  /** Fase 5 (servidor): você fica de plantão quando sair (on_duty) */
+  emPlantao?: boolean;
+}
+
+export interface S2C_FaccaoInfo {
+  ciclo: number;
+  proximoTickEm: number;
+  agora: number;
+  lideres: { lado: 'esquerda' | 'direita'; id: string; nome: string }[];
+  regioes: { id: string; nome: string; energia: number; poluicao: number; apagao: boolean; influencia: { esquerda: number; direita: number } }[];
+  pontos: { id: string; nome: string; regiao: string; dono: 'esquerda' | 'direita' | 'neutra'; influencia: { esquerda: number; direita: number }; saqueDisponivel: number }[];
+  eventos: S2C_AvisoMapa[];
+  /** influência para virar dono (LIMIAR_DONO) */
+  limiar: number;
 }

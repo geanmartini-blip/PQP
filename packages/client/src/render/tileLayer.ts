@@ -16,7 +16,8 @@
 import * as Phaser from 'phaser';
 import { isSolidTile, type MapMarker, Tile, type TileMap } from '@pqp/shared/map';
 import { createAmbient, type Ambient } from '../art/ambient';
-import { facadeFrame, propForDeco, propFrame, propIsFlat, propsTexture, TILE_ANIM_MS, TILE_KEY, TILE_PX, uploadPix } from '../art/index';
+import { facadeFrame, propForDeco, propFrame, propIsFlat, propsTexture, renderGalerias, TILE_ANIM_MS, TILE_KEY, TILE_PX, uploadPix } from '../art/index';
+import { isDungeonMapId } from '../game/dungeonMap';
 import { MATO_FRAMES, OVERLAY_FRAMES, overlayKind, renderTerrain, styleOfRegion, type Style, type TerrainSource, TREE_BASE_Y, TREE_H } from '../art/terrain';
 import { hashInt } from '../art/noise';
 import { treeFrame } from '../art/tiles';
@@ -123,6 +124,7 @@ interface Chunk {
 export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView {
   const seq = ++layerSeq;
   const src = mapSource(map);
+  const dungeon = isDungeonMapId(map.id);
   const W = map.width;
   const H = map.height;
   const tex = scene.textures.get(TILE_KEY);
@@ -215,7 +217,8 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
     const ty0 = cy * CHUNK_TILES;
     const tw = Math.min(CHUNK_TILES, W - tx0);
     const th = Math.min(CHUNK_TILES, H - ty0);
-    const pix = renderTerrain(src, tx0, ty0, tw, th);
+    // Fase 5: andar das Galerias com o tileset próprio (parede com face, poça de chopindita)
+    const pix = dungeon ? renderGalerias(src, tx0, ty0, tw, th) : renderTerrain(src, tx0, ty0, tw, th);
     const key = `terreno_${seq}_${cx}_${cy}`;
     uploadPix(scene, key, pix);
     const img = scene.add.image(tx0 * TILE_PX, ty0 * TILE_PX, key).setOrigin(0, 0).setDepth(DEPTH.floor);

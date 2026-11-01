@@ -161,3 +161,28 @@ export const HOUSE_MAX_CLIENTS = 20;
 
 // SUGESTÃO: o servidor guarda os últimos 500 eventos de economia na memória (o resto vai para o Store).
 export const EVENT_LOG_MEMORY = 500;
+
+// ---- Fase 5. Tudo SUGESTÃO: os docs não dão esses números. ----
+
+// SUGESTÃO: fora de produção, o tick de facção dura 5 minutos (PQP_TICK_FACCAO_MIN muda; em
+// produção, sem a variável, vale o cicloProducaoMin de faction_ai.json, 60).
+export const FACTION_TICK_MIN_DEV = 5;
+
+// SUGESTÃO: o servidor confere se o tick de facção venceu a cada 10 s.
+export const FACTION_CHECK_MS = 10_000;
+
+// SUGESTÃO: 'masmorra_entrar' pede estar a até 4 tiles da entrada das Galerias, e o grupo é quem
+// está a até 6 tiles de quem entrou (jogadores ao vivo) mais os plantonistas levados, até 4.
+export const DUNGEON_ENTRY_REACH_TILES = 4;
+export const DUNGEON_GROUP_RADIUS_TILES = 6;
+
+// SUGESTÃO: na masmorra, a escada e a saída esperam 2 s depois de nascer (EXIT_GRACE_MS).
+
+// SUGESTÃO: plantonista nasce a 1 tile de quem levou.
+export const DUTY_SPAWN_OFFSET_TILES = 1;
+
+// SUGESTÃO: encontros com IA nas margens, na Usina e no Juncal (o Delta é o tutorial e fica sem).
+export const ENCOUNTER_MAPS: readonly string[] = ['margem_esquerda', 'margem_direita', 'usina_da_ponte', 'juncal'];
+
+// SUGESTÃO: os encontros da janela são conferidos a cada 100 ticks (5 s).
+export const ENCOUNTER_CHECK_TICKS = 100;

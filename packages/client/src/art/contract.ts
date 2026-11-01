@@ -101,4 +101,11 @@ export interface ArtApi {
   furniture(scene: Phaser.Scene, furnitureId: string, rot?: number): FurnitureArt;
   /** Fase 4: interior pelo tipo de moradia (housing.json) ou pelo estilo; tamanho do tipo ou o pedido */
   interior(scene: Phaser.Scene, housingTypeOrStyle: string, tilesW?: number, tilesH?: number): InteriorArt;
+  /**
+   * Fase 5: tileset das Galerias da Usina (chave `tiles_galerias`). O quadro de cada tile do andar sai
+   * de `galeriasFrame(tile, x, y, timeMs, tileDeBaixo)` (art/galerias.ts).
+   */
+  dungeonTileset(scene: Phaser.Scene, dungeonId?: string): string;
+  /** Fase 5: ícone 48x48 do item para o inventário, desenhado na ala de quem veste (ou na ala do item) */
+  itemIcon(scene: Phaser.Scene, itemId: string, archetypeId?: string): string;
 }

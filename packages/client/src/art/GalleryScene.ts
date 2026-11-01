@@ -22,6 +22,9 @@ import { MATO_FRAMES, OVERLAY_FRAMES, overlayKind, renderTerrain, type TerrainSo
 import { TILE_ANIM_MS, TILE_KEY, TILE_VALUES, TILE_VARIANTS, ANIMATED_TILES, tileFrame, treeFrame, TREE_SUBS } from './tiles';
 import { furnitureByStyle, furnitureRots } from './furniture';
 import { UI_ICON_IDS } from './uiIcons';
+import { GALERIAS_ANIMATED, galeriasFrame } from './galerias';
+import { lookItemsFor } from './itemArt';
+import { controlPointFxKey, plantaoFxKey } from './fx';
 
 // SUGESTÃO: tempo de geração por quadro na galeria.
 const BUDGET_MS = 12;
@@ -46,6 +49,7 @@ export class GalleryScene extends Phaser.Scene {
   private tileSprites: { s: Phaser.GameObjects.Image; tile: number; x: number; y: number }[] = [];
   private warnSprites: { s: Phaser.GameObjects.Image; frames: number }[] = [];
   private ovSprites: { s: Phaser.GameObjects.Image; frames: string[]; phase: number }[] = [];
+  private galSprites: { s: Phaser.GameObjects.Image; tile: number; x: number; y: number; below: number }[] = [];
   private demoSeq = 0;
   private tasks: (() => void)[] = [];
   private doneTasks = 0;
@@ -125,6 +129,9 @@ export class GalleryScene extends Phaser.Scene {
     t(() => this.title('PERSONAGENS'));
     for (const id of STORY_NPC_IDS) t(() => this.animated(this.art.npcSheet(this, id), 0));
     t(() => this.newline());
+
+    // ---------------- Fase 5
+    this.fase5(t);
 
     // ---------------- inimigos
     for (const tier of ['normal', 'elite', 'chefe'] as const) {
@@ -349,6 +356,7 @@ export class GalleryScene extends Phaser.Scene {
       callback: () => {
         const now = this.time.now;
         for (const ts of this.tileSprites) ts.s.setFrame(tileFrame(ts.tile, ts.x, ts.y, undefined, now));
+        for (const g of this.galSprites) g.s.setFrame(galeriasFrame(g.tile, g.x, g.y, now, g.below));
         const step = Math.floor(now / TILE_ANIM_MS);
         for (const o of this.ovSprites) o.s.setFrame(o.frames[(step + o.phase) % o.frames.length]!);
         const k = Math.floor(now / 120);
@@ -447,6 +455,135 @@ export class GalleryScene extends Phaser.Scene {
         }
       }
     this.cursorY += pix.h * s + this.GAP;
+  }
+
+  /** Fase 5: Galerias da Usina, chefe com aviso, Lazzaro e Rolf, itens por ala, plantão e pontos. */
+  private fase5(t: (fn: () => void) => void): void {
+    const d = getData();
+    // andar de demonstração das Galerias
+    const ROWS = [
+      '##############',
+      '#....c...|..M#',
+      '#.pp.c...|...#',
+      '#....cc......#',
+      'RR..~~~~..g..#',
+      'R...~ww~.....#',
+      'R.==~~~~..pp.#',
+      'R....c....E..#',
+      'RRRR##########',
+    ];
+    const CH: Record<string, number> = {
+      '#': Tile.Parede,
+      R: Tile.Pedra,
+      '.': Tile.Concreto,
+      c: Tile.Mato,
+      p: Tile.Lama,
+      '~': Tile.AguaRasa,
+      w: Tile.AguaFunda,
+      '|': Tile.Grade,
+      M: Tile.Maquina,
+      E: Tile.Porta,
+      '=': Tile.Madeira,
+      g: Tile.PisoNeon,
+    };
+    const at = (x: number, y: number) => (y < 0 || y >= ROWS.length || x < 0 || x >= ROWS[0]!.length ? Tile.Vazio : CH[ROWS[y]![x]!] ?? Tile.Vazio);
+    t(() => {
+      this.title('FASE 5: GALERIAS DA USINA (CONCRETO, ROCHA, CABOS, CHOPINDITA, GRADE, TURBINA, ESCADA)');
+      const key = this.art.dungeonTileset(this);
+      const s = Math.max(1, Math.min(this.S, Math.floor((this.scale.width - 2 * this.GAP) / (ROWS[0]!.length * 32))));
+      const T = 32 * s;
+      this.place((x0, y0) => {
+        for (let y = 0; y < ROWS.length; y++)
+          for (let x = 0; x < ROWS[0]!.length; x++) {
+            const tile = at(x, y);
+            const below = at(x, y + 1);
+            const img = this.add.image(x0 + x * T, y0 + y * T, key, galeriasFrame(tile, x, y, 0, below)).setOrigin(0).setScale(s);
+            if (GALERIAS_ANIMATED.has(tile)) this.galSprites.push({ s: img, tile, x, y, below });
+          }
+        return null;
+      }, ROWS[0]!.length * T, ROWS.length * T);
+      this.newline();
+      // todos os quadros, um a um
+      const frames = this.textures.get(key).getFrameNames();
+      for (const n of frames.sort()) {
+        const f = this.textures.get(key).get(n);
+        this.place((x, y) => this.add.image(x, y, key, n).setOrigin(0).setScale(this.S / 2), (f.width * this.S) / 2, (f.height * this.S) / 2);
+      }
+      this.newline();
+    });
+    // chefe com o aviso no chão
+    t(() => {
+      this.title('CHEFE DO 5O ANDAR: A BOMBA DESCONTROLADA, COM AVISO NO CHAO');
+      const S = this.S;
+      const boss = this.art.enemySheet(this, 'bomba_descontrolada', 'chefe');
+      const m = sheetMeta(boss);
+      this.place((x, y) => {
+        const aviso = this.add.sprite(x + 48 * S, y + 48 * S, 'fx_aviso_bomba', '0').setScale(S);
+        this.warnSprites.push({ s: aviso, frames: 8 });
+        const b = this.add.sprite(x + 48 * S, y + 60 * S, boss, 'parado_0_0').setOrigin(m?.originX ?? 0.5, m?.originY ?? 1).setScale(S);
+        this.animSprites.push({ sprite: b, key: boss, dir: 0 });
+        return b;
+      }, 96 * S, 96 * S);
+      for (const k of ['fx_succao', 'fx_descarga', 'fx_agua_subindo'])
+        this.place((x, y) => this.add.sprite(x, y, k, '0').setOrigin(0).setScale(S).play(`${k}:play:0`), 64 * S, 64 * S);
+      for (const id of d.dungeons.masmorras[0]?.detalhe?.inimigos.normais ?? []) this.animated(this.art.enemySheet(this, id, 'normal'), 0);
+      this.newline();
+    });
+    // IA de facção
+    t(() => this.title('IA DE FACCAO: LAZZARO PRATI (ESQUERDA) E ROLF HALVORSEN (DIREITA)'));
+    for (const id of ['lazzaro_prati', 'rolf_halvorsen'])
+      t(() => {
+        for (let dir = 0; dir < 4; dir++) this.animated(this.art.npcSheet(this, id), dir);
+        this.place((x, y) => this.add.image(x, y, this.art.portrait(this, id)).setOrigin(0).setScale(this.S / 2), 32 * this.S, 32 * this.S);
+        this.cursorX += this.GAP;
+      });
+    t(() => this.newline());
+    // itens por ala
+    const arcs = d.archetypes.filter((_, i) => i % 6 === 0);
+    for (const a of arcs) {
+      const its = d.items.itens.filter((i) => i.classLock === a.classe && i.margem === a.margem);
+      t(() => this.title(`ITENS NA ALA ${a.id.replace(/_/g, ' ').toUpperCase()}: SEM ITEM, COMUNS, RAROS (CONTORNO), ICONES`));
+      const base = archetypeLook(a.id, 'aprendiz');
+      const comuns = its.filter((i) => i.rarity === 'comum').map((i) => i.id);
+      const raros = its.filter((i) => i.rarity === 'raro').map((i) => i.id);
+      t(() => this.single(this.art.characterSheet(this, base), 'parado_0_0'));
+      t(() => this.character({ ...base, items: lookItemsFor(comuns, a.id) }));
+      t(() => this.character({ ...base, items: lookItemsFor(raros, a.id) }));
+      t(() => {
+        for (const id of [...comuns, ...raros]) this.place((x, y) => this.add.image(x, y, this.art.itemIcon(this, id, a.id)).setOrigin(0).setScale(this.S / 2), 24 * this.S, 24 * this.S);
+        this.newline();
+      });
+    }
+    t(() => {
+      this.title('ICONES DE ITENS SEM CLASSE E UNICOS DO PILOTO');
+      const ids = [...d.items.itens.filter((i) => i.classLock === null).map((i) => i.id), ...d.uniques.unicos.filter((u) => u.piloto).map((u) => u.id)];
+      for (const id of ids) this.place((x, y) => this.add.image(x, y, this.art.itemIcon(this, id)).setOrigin(0).setScale(this.S / 2), 24 * this.S, 24 * this.S);
+      this.newline();
+    });
+    // plantão e pontos de controle
+    t(() => {
+      this.title('PLANTONISTA (CRACHA DE PLANTAO) E PONTOS DE CONTROLE POR MARGEM');
+      const S = this.S;
+      for (const side of ['esquerda', 'direita', 'neutro'] as const) {
+        const look = side === 'neutro' ? defaultLook() : archetypeLook(side === 'esquerda' ? 'peao_brabo' : 'idol', 'aprendiz');
+        const key = this.art.characterSheet(this, look);
+        const m = sheetMeta(key);
+        const w = (m?.frameW ?? 32) * S;
+        const h = (m?.frameH ?? 48) * S;
+        this.place((x, y) => {
+          const s = this.add.sprite(x + w / 2, y + h + 22 * S, key, 'parado_0_0').setOrigin(m?.originX ?? 0.5, m?.originY ?? 1).setScale(S);
+          this.animSprites.push({ sprite: s, key, dir: 0 });
+          const fk = plantaoFxKey(side);
+          this.add.sprite(x + w / 2, y + 24 * S, fk, '0').setOrigin(0.5, 1).setScale(S).play(`${fk}:play:0`);
+          return s;
+        }, Math.max(w, 36 * S), h + 22 * S);
+      }
+      for (const owner of ['esquerda', 'direita', null, 'disputa'] as const) {
+        const k = owner === 'disputa' ? controlPointFxKey(null, true) : controlPointFxKey(owner);
+        this.place((x, y) => this.add.sprite(x, y, k, '0').setOrigin(0).setScale(S).play(`${k}:play:0`), 32 * S, 40 * S);
+      }
+      this.newline();
+    });
   }
 
   private character(look: CharacterLook | ArtLook): void {

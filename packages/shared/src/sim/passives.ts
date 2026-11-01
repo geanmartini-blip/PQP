@@ -20,7 +20,7 @@ import { bal } from './constants';
 import { CC_KINDS, getEnt, hpRatio, isDamageable, isDowned, isFriendly, isHostile, isUp } from './entity';
 import { dist } from './geom';
 import { hasTargetCondition, isFlatNumber, sourcedPassivesOf, type SourcedPassive } from './passiveDefs';
-import { msToTicks, type CombatEvent, type Entity, type World } from './types';
+import { msToTicks, TICK_MS, type CombatEvent, type Entity, type Telegraph, type World } from './types';
 import { emit } from './world';
 
 /** SUGESTÃO: auras e números com condição são renovados a cada 5 ticks (250 ms), com estado de 600 ms. */
@@ -180,7 +180,11 @@ function handleEvent(w: World, ev: CombatEvent, owners: Entity[]): void {
       const atk = src ? getEnt(w, creditId(src)) : undefined;
       const dst = getEnt(w, ev.dst);
       if (atk && isUp(atk) && dst && atk.id !== dst.id) {
-        for (const sp of withTrigger(atk, 'ao_acertar')) fire(w, atk, sp, dst, ev);
+        for (const sp of withTrigger(atk, 'ao_acertar')) {
+          // Fase 5 (Jaqueta do Zé Faísca): params.soCorpoACorpo só vale para quem luta de perto (Alcance 1)
+          if (sp.p.params?.['soCorpoACorpo'] === true && (atk.attr?.alcance ?? 1) !== 1) continue;
+          fire(w, atk, sp, dst, ev);
+        }
         if (ev.crit) for (const sp of withTrigger(atk, 'ao_critar')) fire(w, atk, sp, dst, ev);
         for (const sp of withTrigger(atk, 'primeiro_golpe')) {
           const k = `pg:${sp.key}:${dst.id}`;
@@ -256,8 +260,48 @@ function handleEvent(w: World, ev: CombatEvent, owners: Entity[]): void {
       if (src && dst && isUp(src) && isHostile(src, dst)) for (const sp of withTrigger(src, 'ao_aplicar_controle')) fire(w, src, sp, dst, ev);
       break;
     }
+    case 'telegraph':
+      avisoAntecipado(w, ev.tel, owners);
+      break;
     default:
       break;
+  }
+}
+
+/** SUGESTÃO: teto do reforço de deslocamento do aviso antecipado, em %. */
+const AVISO_MAX_PCT = 60;
+
+/**
+ * Fase 5: gancho aviso_antecipado (Fones de Rosa Tavares; talento Leitura de Jogo). O aviso no chão
+ * vale params.ms a mais para quem usa: o telegraph marca quem recebeu (avisoAntecipadoPara, para o
+ * cliente destacar) e, na simulação, os ms a mais viram tempo para sair da área.
+ * SUGESTÃO: o tempo a mais vira reforço de deslocamento até o impacto, na proporção ms / duração do
+ * aviso (com teto de AVISO_MAX_PCT), para quem está dentro da área (+1 tile). params.alcance 'grupo'
+ * pega os aliados perto de quem tem o passivo.
+ */
+function avisoAntecipado(w: World, tel: Telegraph, owners: Entity[]): void {
+  const src = getEnt(w, tel.sourceId);
+  const team = tel.team ?? src?.team;
+  if (!team || team === 'neutros') return;
+  const totalMs = Math.max(1, (tel.impactTick - tel.startTick) * TICK_MS);
+  const leftMs = Math.max(0, (tel.impactTick - w.tick) * TICK_MS);
+  if (leftMs <= 0) return;
+  for (const o of owners) {
+    if (!isUp(o) || o.team === team || o.team === 'neutros') continue;
+    for (const sp of sourcedPassivesOf(o)) {
+      if (sp.p.gancho !== 'aviso_antecipado') continue;
+      const ms = Number(sp.p.params?.['ms'] ?? 500);
+      const grupo = sp.p.params?.['alcance'] === 'grupo';
+      const pct = Math.min(AVISO_MAX_PCT, Math.round((ms / totalMs) * 100));
+      for (const t of w.entities.values()) {
+        if (!isUp(t) || (t.id !== o.id && (!grupo || !isFriendly(o, t) || t.kind === 'summon' || t.kind === 'loot' || dist(o.x, o.y, t.x, t.y) > (sp.p.raio ?? raioPadrao())))) continue;
+        if (dist(t.x, t.y, tel.x, tel.y) > tel.radius + 1 + t.radius) continue;
+        const k = `aviso:${tel.id}`;
+        if (t.statuses.some((s) => s.kind === 'reforco:moveSpeed' && s.abilityId === k)) continue;
+        applyStatus(w, t, o, { kind: 'reforco:moveSpeed', durationMs: leftMs, value: pct, abilityId: k });
+        (tel.avisoAntecipadoPara ??= []).push(t.id);
+      }
+    }
   }
 }
 
@@ -336,7 +380,7 @@ function strongestNear(w: World, e: Entity, raio: number): Entity | undefined {
 /** Um tick dos passivos de talento e de guia. Chamado pelo step, depois das recompensas. */
 export function tickTalentPassives(w: World): void {
   const owners: Entity[] = [];
-  for (const e of w.entities.values()) if (!e.dead && e.kind !== 'loot' && ((e.talents?.length ?? 0) > 0 || e.guideId)) owners.push(e);
+  for (const e of w.entities.values()) if (!e.dead && e.kind !== 'loot' && ((e.talents?.length ?? 0) > 0 || e.guideId || (e.equipItems?.length ?? 0) > 0)) owners.push(e);
   if (owners.length === 0) return;
   const n = w.events.length;
   for (let i = 0; i < n; i++) handleEvent(w, w.events[i]!, owners);

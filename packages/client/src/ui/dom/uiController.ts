@@ -22,6 +22,8 @@ import { TravessiaScreen } from './travessiaScreen';
 import { Fase3Ui, type Fase3Screen } from './progressScreens';
 import { Fase4Ui, screenOfSpot, type Fase4Screen } from './economyScreens';
 import { npcSpots, spotLabel } from '../economyModel';
+import { Fase5Ui, type Fase5Screen } from './fase5Screens';
+import { BoatScene } from './boatScene';
 
 // SUGESTÃO: avisos ficam 3,2 s; o banner de nível 3 s; no máximo 3 avisos na tela.
 export const TOAST_MS = 3200;
@@ -48,6 +50,10 @@ export class UiController {
   readonly fase3: Fase3Ui;
   /** Fase 4: carteira, loja, feira/app, câmbio, casa e os botões de perto */
   readonly fase4: Fase4Ui;
+  /** Fase 5: mochila, Doutrina, plantão, masmorra, avisos do mapa e pontos de controle */
+  readonly fase5: Fase5Ui;
+  /** Fase 5: cena do barco da travessia */
+  readonly boat: BoatScene;
   private tracker: HTMLDivElement;
   private trackerSig = '';
   private hint: HTMLDivElement;
@@ -130,11 +136,23 @@ export class UiController {
     this.fase3 = new Fase3Ui(this.root, gc, art, scene);
     this.fase4 = new Fase4Ui(this.root, gc, art, scene);
     this.fase3.rowPrefix = this.fase4.walletChip;
+    this.fase5 = new Fase5Ui(this.root, gc, art, scene);
+    this.boat = new BoatScene(this.root);
   }
 
-  /** Tela que tapa o mundo aberta (criação, máquina, travessia, telas da Fase 3 e 4): o HUD do Phaser não recebe toque nem tecla. */
+  /** Tela que tapa o mundo aberta (criação, máquina, travessia, telas da Fase 3, 4 e 5): o HUD do Phaser não recebe toque nem tecla. */
   get modalOpen(): boolean {
-    return this.editor.isOpen || this.travessia.isOpen || this.fase3.isOpen || this.fase4.isOpen;
+    return this.editor.isOpen || this.travessia.isOpen || this.fase3.isOpen || this.fase4.isOpen || this.fase5.isOpen || this.boat.isOpen;
+  }
+
+  /** Abre uma tela da Fase 5 (mochila, Doutrina, plantão, pontos de controle). */
+  openFase5(s: Fase5Screen): void {
+    const p = this.gc.game.profile;
+    if (!p || !p.criado || this.editor.isOpen || this.travessia.isOpen) return;
+    this.closeDialog();
+    this.fase3.close();
+    this.fase4.close();
+    this.fase5.open(s);
   }
 
   /** Abre uma tela da Fase 4 (carteira, loja, feira/app, câmbio, casa). */
@@ -143,6 +161,7 @@ export class UiController {
     if (!p || !p.criado || this.editor.isOpen || this.travessia.isOpen) return;
     this.closeDialog();
     this.fase3.close();
+    this.fase5.close();
     this.fase4.open(s);
   }
 
@@ -152,6 +171,7 @@ export class UiController {
     if (!p || !p.criado || this.editor.isOpen || this.travessia.isOpen) return;
     this.closeDialog();
     this.fase4.close();
+    this.fase5.close();
     this.fase3.open(kind);
   }
 
@@ -228,11 +248,14 @@ export class UiController {
   update(now: number, f: UiFrame): void {
     const game = this.gc.game;
     const p = game.profile;
+    // Fase 5: o barco da travessia anda por cima de tudo (o mapa da margem carrega por trás)
+    this.boat.update(now);
     if (!p || !this.gc.welcomed) {
       this.hideHud();
       // a transição de mapa continua na tela enquanto a sala nova não responde
       this.fase3.update(now, { rowTopCss: f.rowTopCss ?? f.topCss, free: false });
       this.fase4.update(now, { selfTile: null, free: false });
+      this.fase5.update(now, { rowTopCss: f.rowTopCss ?? f.topCss, selfTile: null, free: false });
       return;
     }
     // criação: abre sozinha enquanto não tiver cadastro
@@ -265,9 +288,10 @@ export class UiController {
     this.editor.update(now);
     this.dialog.update(now);
     this.travessia.update();
-    const free = !this.editor.isOpen && !this.travessia.isOpen && !this.dialog.isOpen;
-    this.fase3.update(now, { rowTopCss: f.rowTopCss ?? f.topCss, free: free && !this.fase4.isOpen });
-    this.fase4.update(now, { selfTile: f.selfTile, free: free && !this.fase3.isOpen });
+    const free = !this.editor.isOpen && !this.travessia.isOpen && !this.dialog.isOpen && !this.boat.isOpen;
+    this.fase3.update(now, { rowTopCss: f.rowTopCss ?? f.topCss, free: free && !this.fase4.isOpen && !this.fase5.isOpen });
+    this.fase4.update(now, { selfTile: f.selfTile, free: free && !this.fase3.isOpen && !this.fase5.isOpen });
+    this.fase5.update(now, { rowTopCss: f.rowTopCss ?? f.topCss, selfTile: f.selfTile, free: free && !this.fase3.isOpen && !this.fase4.isOpen });
     if (this.modalOpen) {
       this.hideHud();
       return;
@@ -296,8 +320,11 @@ export class UiController {
       const ok = pd.kind === 'criacao' ? p.criado : pd.kind === 'travessia' ? p.stage === 'margem' : true;
       if (!ok) return;
       this.pending = null;
-      if (pd.kind === 'travessia') this.travessia.close();
-      else this.editor.close();
+      if (pd.kind === 'travessia') {
+        this.travessia.close();
+        // Fase 5: a travessia de barco (cena curta com o guia falando)
+        this.boat.play(p.side, p.guide_id, now);
+      } else this.editor.close();
       // SUGESTÃO: aviso de visual salvo
       if (pd.kind === 'maquina') game.pushToast('Visual novo salvo!', 'info', now);
     }

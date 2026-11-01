@@ -26,9 +26,9 @@ import type { Entity, Loadout } from './types';
 /** Passivo com a origem (chave estável para recargas e estados): 'talento:<id>:<i>' ou 'guia:<id>:<i>'. */
 export interface SourcedPassive {
   key: string;
-  /** 'talento' ou 'guia' */
-  fonte: 'talento' | 'guia';
-  /** id do talento ou do guia */
+  /** 'talento', 'guia' ou (Fase 5) 'item': único ou adorno equipado */
+  fonte: 'talento' | 'guia' | 'item';
+  /** id do talento, do guia ou do item */
   id: string;
   p: Passive;
 }
@@ -42,11 +42,11 @@ export function talentEffectFor(t: Talent, archetypeId?: string): TalentEffect |
 
 const cache = new WeakMap<Entity, { sig: string; list: SourcedPassive[] }>();
 
-const sigOf = (e: Entity) => `${(e.talents ?? []).join('+')}|${e.guideId ?? ''}|${e.archetypeId ?? ''}`;
+const sigOf = (e: Entity) => `${(e.talents ?? []).join('+')}|${e.guideId ?? ''}|${e.archetypeId ?? ''}|${(e.equipItems ?? []).join('+')}`;
 
-/** Passivos de talento e de guia da entidade (vazio para quem não tem nenhum). */
+/** Passivos de talento, de guia e (Fase 5) de item equipado da entidade (vazio para quem não tem nenhum). */
 export function sourcedPassivesOf(e: Entity): SourcedPassive[] {
-  if ((!e.talents || e.talents.length === 0) && !e.guideId) return [];
+  if ((!e.talents || e.talents.length === 0) && !e.guideId && !e.equipItems?.length) return [];
   const sig = sigOf(e);
   const c = cache.get(e);
   if (c && c.sig === sig) return c.list;
@@ -61,6 +61,13 @@ export function sourcedPassivesOf(e: Entity): SourcedPassive[] {
   if (e.guideId) {
     const g = D.guidesById.get(e.guideId);
     (g?.bonus ?? []).forEach((p, i) => list.push({ key: `guia:${g!.id}:${i}`, fonte: 'guia', id: g!.id, p }));
+  }
+  // Fase 5: únicos (passivos) e adornos (efeito); os números fixos já vieram somados em equipPct
+  for (const iid of e.equipItems ?? []) {
+    const ps = D.uniquesById.get(iid)?.passivos ?? (D.itemsById.get(iid)?.efeito ? [D.itemsById.get(iid)!.efeito!] : []);
+    ps.forEach((p, i) => {
+      if (!isFlatNumber(p)) list.push({ key: `item:${iid}:${i}`, fonte: 'item', id: iid, p });
+    });
   }
   cache.set(e, { sig, list });
   return list;

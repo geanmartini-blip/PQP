@@ -22,7 +22,16 @@ import {
   type S2C_CambioInfo,
   type S2C_CasaInfo,
   type S2C_EconomiaResultado,
+  type S2C_AvisoMapa,
+  type S2C_ItensInfo,
+  type S2C_MasmorraInfo,
+  type S2C_DoutrinaInfo,
+  type S2C_PlantaoInfo,
+  type S2C_FaccaoInfo,
 } from '@pqp/shared/net';
+
+// SUGESTÃO: no máximo 6 avisos do mapa esperando a faixa do topo.
+export const MAX_MAP_ALERTS = 6;
 
 /**
  * Carteira da Fase 4. `inventario` é um campo a mais (o servidor local manda; o online, quando
@@ -99,6 +108,19 @@ export class GameState {
   house: S2C_CasaInfo | null = null;
   /** último resultado de operação de economia (com a hora de chegada) */
   econ: (S2C_EconomiaResultado & { at: number }) | null = null;
+  // ---- Fase 5 ----
+  /** equipamento, mochila, melhorias e filtro de raridade */
+  itens: S2C_ItensInfo | null = null;
+  /** masmorra em andamento (ativa) ou a última que acabou */
+  dungeon: S2C_MasmorraInfo | null = null;
+  /** cartas da Doutrina gravadas */
+  doctrine: S2C_DoutrinaInfo | null = null;
+  /** quadro do plantão */
+  duty: S2C_PlantaoInfo | null = null;
+  /** painel dos pontos de controle */
+  faction: S2C_FaccaoInfo | null = null;
+  /** avisos do mapa (world_event) ainda não mostrados na faixa do topo */
+  readonly mapAlerts: (S2C_AvisoMapa & { at: number })[] = [];
   private toastSeq = 0;
   private pendingUnlocks: Unlock[] = [];
 
@@ -173,6 +195,30 @@ export class GameState {
         } else if (r.texto) this.pushToast(r.texto, 'info', now);
         break;
       }
+      // Fase 5
+      case GAME_MSG.itensInfo:
+        this.itens = msg as S2C_ItensInfo;
+        break;
+      case GAME_MSG.masmorraInfo:
+        this.dungeon = msg as S2C_MasmorraInfo;
+        break;
+      case GAME_MSG.doutrinaInfo:
+        this.doctrine = msg as S2C_DoutrinaInfo;
+        break;
+      case GAME_MSG.plantaoInfo:
+        this.duty = msg as S2C_PlantaoInfo;
+        break;
+      case GAME_MSG.faccaoInfo:
+        this.faction = msg as S2C_FaccaoInfo;
+        break;
+      case GAME_MSG.avisoMapa: {
+        const a = msg as S2C_AvisoMapa;
+        if (!a || typeof a.texto !== 'string' || !a.texto) break;
+        if (this.mapAlerts.some((x) => x.id === a.id)) break;
+        this.mapAlerts.push({ ...a, at: now });
+        if (this.mapAlerts.length > MAX_MAP_ALERTS) this.mapAlerts.shift();
+        break;
+      }
       default:
         return false;
     }
@@ -234,6 +280,16 @@ export class GameState {
     // SUGESTÃO: textos do aviso de XP em grupo
     const sub = this.profile?.stage === 'delta' ? 'Luta em grupo: o Seu Jacó está junto' : 'Luta em grupo (+15% por jogador a mais)';
     this.pushToast(`+${Math.round(amount)} XP`, 'xp', now, sub);
+  }
+
+  /** Próximo aviso do mapa para a faixa do topo (sai da fila). */
+  takeMapAlert(): (S2C_AvisoMapa & { at: number }) | undefined {
+    return this.mapAlerts.shift();
+  }
+
+  /** Dentro de uma masmorra agora. */
+  get inDungeon(): boolean {
+    return this.dungeon?.ativa === true;
   }
 
   /** Próxima fala do guia (sai da fila). */

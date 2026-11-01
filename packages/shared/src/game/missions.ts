@@ -189,6 +189,11 @@ function matchObjective(rec: PlayerRecord, o: Objective, prog: number[], ev: Gam
       return ev.t === 'interact' && ev.alvo === o.alvo && ev.acao === o.acao ? one() : null;
     case 'escolher':
       return ev.t === 'choose' && o.opcoes.some((x) => x.id === ev.opcao) ? one() : null;
+    // Fase 5: expedição nas Galerias
+    case 'entrar_masmorra':
+      return ev.t === 'dungeon' && ev.masmorra === o.masmorra ? one() : null;
+    case 'vencer_andar':
+      return ev.t === 'dungeon' && ev.masmorra === o.masmorra && ev.andar >= o.andar ? one() : null;
     default:
       return null;
   }

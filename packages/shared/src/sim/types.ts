@@ -212,6 +212,11 @@ export interface Entity {
   guideId?: string;
   /** estado dos passivos de talento e guia: chave -> tick (recargas, intervalos, marcas de "já disparou") */
   passiveState?: Record<string, number>;
+  // ---- Adições da Fase 5 (itens; game/items.ts, sim/stats.ts applyEquipment). Todas opcionais. ----
+  /** itens equipados com efeito (únicos e adornos): os passivos deles entram como os de talento */
+  equipItems?: string[];
+  /** bônus dos itens equipados em pontos percentuais por StatKey (hp entra na vida máxima) */
+  equipPct?: Record<string, number>;
 }
 
 /** Carga curta de uma habilidade (castMs). */
@@ -251,6 +256,9 @@ export interface Telegraph {
   team?: Team;
   /** força guardada quando a fonte some antes do impacto (afixo explode_ao_morrer) */
   power?: { attack: number; level: number; mult: number };
+  // ---- Adição da Fase 5 ----
+  /** quem recebeu o aviso antecipado (gancho aviso_antecipado: Fones de Rosa Tavares, Leitura de Jogo) */
+  avisoAntecipadoPara?: number[];
 }
 
 /** Área que fica no chão (campo, chuva de chumbo, poça, tempestade). */

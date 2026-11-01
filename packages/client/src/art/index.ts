@@ -21,6 +21,8 @@ import { drawPending, isPendingSheet, pendingProgress, type SheetData, TOTAL_FRA
 import { buildTileset, TILE_KEY } from './tiles';
 import { buildFurniture, buildFurnitureSheet, FURNITURE_KEY, furnitureInfo } from './furniture';
 import { buildInterior, INTERIOR_FRONT, INTERIOR_SIDE, INTERIOR_WALL_H, interiorStyleFor, interiorTiles } from './interiors';
+import { buildGaleriasTileset, GALERIAS_KEY } from './galerias';
+import { buildItemIcon, itemArchetype } from './itemArt';
 
 export type { ArtApi, CharacterLook } from './contract';
 export { ANIMS, SPRITE_H, SPRITE_W, TILE_PX } from './contract';
@@ -36,6 +38,11 @@ export { INTERIOR_FRONT, INTERIOR_SIDE, INTERIOR_WALL_H, interiorStyleFor, inter
 export type { InteriorStyle } from './interiors';
 export { UI_ICON_IDS } from './uiIcons';
 export type { UiIconId } from './uiIcons';
+// Fase 5: Galerias, itens por ala, plantão e pontos de controle
+export { GALERIAS_ANIM_MS, GALERIAS_ANIMATED, GALERIAS_KEY, galeriasFrame, renderGalerias } from './galerias';
+export type { GaleriasSource } from './galerias';
+export { ITEM_SLOT_PART, itemArchetype, itemArtKey, itemVisualText, lookItemsFor, rarityColor } from './itemArt';
+export { controlPointFxKey, plantaoFxKey } from './fx';
 
 /** Metadados de uma textura gerada (tamanho do quadro e origem sugerida). */
 export interface SheetMeta {
@@ -344,6 +351,20 @@ export function createArt(): ArtApi {
       const key = `interior_${style}_${tw}x${th}`;
       if (!scene.textures.exists(key)) upload(scene, key, buildInterior(style, tw, th).pix);
       return { key, style, tilesW: tw, tilesH: th, floorX: INTERIOR_SIDE, floorY: INTERIOR_WALL_H, w: tw * 32 + 2 * INTERIOR_SIDE, h: th * 32 + INTERIOR_WALL_H + INTERIOR_FRONT };
+    },
+    dungeonTileset(scene) {
+      // SUGESTÃO: só as Galerias da Usina estão no piloto; outra masmorra usa o mesmo tileset
+      if (!scene.textures.exists(GALERIAS_KEY)) uploadSheet(scene, buildGaleriasTileset());
+      return GALERIAS_KEY;
+    },
+    itemIcon(scene, itemId, archetypeId) {
+      const arch = itemArchetype(itemId, archetypeId) ?? 'delta';
+      const key = `icon_item_${itemId}_${arch}`;
+      if (!scene.textures.exists(key)) {
+        upload(scene, key, buildItemIcon(itemId, archetypeId));
+        metas.set(key, { key, frameW: 48, frameH: 48, originX: 0.5, originY: 0.5 });
+      }
+      return key;
     },
   };
   return api;

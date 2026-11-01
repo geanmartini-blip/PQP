@@ -133,6 +133,42 @@ export function cooldownRate(e: Entity): number {
   return speedFactor(e.stats.speed) * axisBonus(e, 'cooldownSpeed');
 }
 
+// ---------- itens equipados (Fase 5) ----------
+
+/** O que o equipamento leva para a simulação (game/equipment.ts simEquipOf). */
+export interface EquipStats {
+  /** pontos percentuais por StatKey (5 = +5%), já com benzimento, calibração e outra margem */
+  pct: Record<string, number>;
+  /** itens equipados com passivo (únicos e adornos): entram em passiveDefs como os de talento */
+  items: string[];
+}
+
+/**
+ * Troca o equipamento de uma entidade: tira o bônus anterior e põe o novo. Os StatKeys entram em
+ * stats.pct (fração); 'hp' multiplica a vida máxima (applyKit refaz no nível novo). Mantém a fração
+ * de vida. Serve no nascimento (spawnPlayer) e para equipar no meio do mapa.
+ */
+export function applyEquipment(e: Entity, eq: EquipStats | undefined): void {
+  const prev = e.equipPct ?? {};
+  for (const [k, v] of Object.entries(prev)) {
+    if (k === 'hp') continue;
+    const n = (e.stats.pct[k] ?? 0) - v / 100;
+    if (Math.abs(n) < 1e-9) delete e.stats.pct[k];
+    else e.stats.pct[k] = n;
+  }
+  const hpFrac = e.stats.hpMax > 0 ? e.hp / e.stats.hpMax : 1;
+  e.stats.hpMax /= 1 + (prev['hp'] ?? 0) / 100;
+  const next: Record<string, number> = {};
+  for (const [k, v] of Object.entries(eq?.pct ?? {})) if (v) next[k] = v;
+  for (const [k, v] of Object.entries(next)) if (k !== 'hp') e.stats.pct[k] = (e.stats.pct[k] ?? 0) + v / 100;
+  e.stats.hpMax *= 1 + (next['hp'] ?? 0) / 100;
+  e.hp = e.stats.hpMax * hpFrac;
+  if (Object.keys(next).length > 0) e.equipPct = next;
+  else delete e.equipPct;
+  if (eq?.items.length) e.equipItems = [...eq.items];
+  else delete e.equipItems;
+}
+
 // ---------- XP ----------
 
 /** XP para sair do nível n: round(50 × n^1.6), sem teto (progression.json). */

@@ -51,6 +51,8 @@ export function mapAllowed(rec: PlayerRecord, mapId: string): boolean {
   const id = resolveMapId(mapId);
   if (!rec.criado || rec.stage !== 'margem' || !rec.side) return id === START_MAP;
   // Fase 4: a sala de uma casa ('casa:<id>'); a permissão do dono é conferida pela sala
+  // Fase 5: andar da masmorra ('masmorra:<run>:<andar>'); quem é do grupo é conferido pela sala
+  if (id.startsWith('masmorra:')) return true;
   if (isHouseMap(id)) return true;
   return MARGEM_MAPS.includes(id);
 }

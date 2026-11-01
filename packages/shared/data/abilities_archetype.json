@@ -140,7 +140,7 @@
         "tickMs": 500,
         "segueLancador": true,
         "efeitos": [
-          { "kind": "escudo", "pctVidaMax": 7.5, "duracaoMs": 1000, "seguraProjeteis": true, "target": "aliados_area" }
+          { "kind": "escudo", "pctVidaMax": 7, "duracaoMs": 1000, "seguraProjeteis": true, "target": "aliados_area" }
         ]
       }
     ],

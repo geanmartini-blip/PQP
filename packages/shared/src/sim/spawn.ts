@@ -14,7 +14,7 @@ import {
 } from './constants';
 import { passivesOf, recomputeShield, resourceMaxOf } from './combat';
 import { applyFlatPassiveNumbers, applyTalentLoadout, baseAbilityId } from './passiveDefs';
-import { alcanceTiles, combatStatsFrom, resolveKit, speedFactor, statRowAt, type Kit } from './stats';
+import { alcanceTiles, applyEquipment, combatStatsFrom, resolveKit, speedFactor, statRowAt, type EquipStats, type Kit } from './stats';
 import { msToTicks, type EnemyTier, type Entity, type Loadout, type Team, type World } from './types';
 import type { CharacterLook } from '../game/types';
 import { addEntity, blankStats, emit } from './world';
@@ -46,6 +46,12 @@ export interface SpawnPlayerOpts {
   talents?: string[];
   /** guia da travessia (guides.json): bônus pequeno */
   guideId?: string;
+  // ---- Fase 5 (game/equipment.ts simEquipOf, via simSpawnExtrasOf) ----
+  /** bônus e passivos dos itens equipados */
+  equipment?: EquipStats;
+  /** filtro de raridade da coleta automática e venda automática, do registro */
+  lootFilter?: 'comum' | 'raro' | 'unico' | 'set';
+  autoSell?: boolean;
 }
 
 /** Nível padrão de cada etapa quando não vem nível: Delta 1, classe 8, arquétipo 12 (aprendiz). */
@@ -102,6 +108,8 @@ function applyKit(e: Entity, kit: Kit, level: number, slot3?: string): void {
   const prevPct = { ...e.stats.pct };
   e.stats = combatStatsFrom(row, basic?.cooldownS ?? bal().combate.intervaloAtaqueBasicoBaseS, resMax, resRegen);
   e.stats.pct = prevPct;
+  // Fase 5: a vida dos itens equipados vale no nível novo (stats.applyEquipment)
+  if (e.equipPct?.['hp']) e.stats.hpMax *= 1 + e.equipPct['hp'] / 100;
   // reforços de vida ativos: refaz o acréscimo sobre a vida máxima nova (o fim do reforço tira o mesmo valor)
   const base = e.stats.hpMax;
   for (const s of e.statuses) {
@@ -158,6 +166,10 @@ export function spawnPlayer(w: World, opts: SpawnPlayerOpts): Entity {
   applyKit(e, kit, level, opts.slot3);
   // Fase 3: números fixos de talento e guia (os condicionais e os gatilhos são de sim/passives.ts)
   applyFlatPassiveNumbers(e);
+  // Fase 5: itens equipados (stats; os números fixos dos passivos de item já vêm somados em pct)
+  if (opts.equipment) applyEquipment(e, opts.equipment);
+  if (opts.lootFilter) e.lootFilter = opts.lootFilter;
+  if (opts.autoSell !== undefined) e.autoSell = opts.autoSell;
   e.hp = e.stats.hpMax;
   e.resource = e.stats.resourceMax;
   e.xp = opts.xp ?? 0;

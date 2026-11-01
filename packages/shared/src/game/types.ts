@@ -207,7 +207,10 @@ export type GameEvent =
   /** segundos aguentados num objetivo 'sobreviver' (o servidor manda enquanto o jogador está no lugar da missão) */
   | { t: 'survive'; segundos: number }
   /** pagamento feito (game/institutions.ts payObjective já tirou a moeda) */
-  | { t: 'pay'; moeda: 'semente' | 'credito'; quantidade: number };
+  | { t: 'pay'; moeda: 'semente' | 'credito'; quantidade: number }
+  // ---- Fase 5 ----
+  /** masmorra: andar 0 = entrou; andar N = venceu até o andar N (claimRunRewards manda os dois) */
+  | { t: 'dungeon'; masmorra: string; andar: number };
 
 export interface Unlock {
   nivel: number;

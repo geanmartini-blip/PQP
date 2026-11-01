@@ -21,6 +21,7 @@ import type { GameClient } from '../../game/GameClient';
 import { ABILITY_TYPE_LABEL, emoteText, PAPEL_LABEL } from '../progressModel';
 import { button, el } from './styles';
 import { drawFrame, idleFrame } from './sprite';
+import { isDungeonMapId } from '../../game/dungeonMap';
 
 // SUGESTÃO: a fala do guia fica 5,5 s no balão; a transição de mapa dura 1,5 s.
 export const GUIDE_BUBBLE_MS = 5500;
@@ -274,7 +275,9 @@ export class Fase3Ui {
       this.fadeAt = mc.at;
       this.fadeBox?.remove();
       const box = el('div', 'f3-troca');
-      const name = getData().regionsById.get(resolveMapId(mc.to))?.name ?? mc.to;
+      // Fase 5: andar da masmorra (o nome vem em 'masmorra_info')
+      const dg = isDungeonMapId(mc.to) ? this.gc.game.dungeon : null;
+      const name = dg ? `${dg.nome ?? 'Galerias'} · ${dg.andar ?? 1}º andar` : (getData().regionsById.get(resolveMapId(mc.to))?.name ?? mc.to);
       box.appendChild(el('div', 'n', name));
       // SUGESTÃO: subtítulo da transição
       box.appendChild(el('div', 's', 'Chegando...'));

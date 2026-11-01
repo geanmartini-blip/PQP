@@ -28,6 +28,7 @@ import { RttMeter } from '../net/rtt';
 import type { NetStatus, Transport } from '../net/transport';
 import { ClientWorld, FL } from './clientWorld';
 import { GameState } from './gameState';
+import { dungeonMapFor } from './dungeonMap';
 import {
   GAME_MSG,
   type C2S_CriarPersonagem,
@@ -61,6 +62,15 @@ import {
   type C2S_CasaVisitas,
   type C2S_CasaAlugar,
   type C2S_CasaAvancarFila,
+  type C2S_Equipar,
+  type C2S_Desequipar,
+  type C2S_Melhorar,
+  type C2S_FiltroRaridade,
+  type C2S_DoutrinaDefinir,
+  type C2S_Plantonista,
+  type C2S_PlantaoDefinir,
+  type C2S_MasmorraEntrar,
+  type C2S_MasmorraEscolha,
 } from '@pqp/shared/net';
 import type { Bem, MercadoId, Moeda, PermissaoVisita, Rotacao } from '@pqp/shared/game/index';
 
@@ -305,7 +315,8 @@ export class GameClient {
       this.token = w.token;
       safeSet(this.opts.storage, TOKEN_KEY, w.token);
     }
-    const map = this.opts.resolveMap?.(w.mapId) ?? (hasMap(w.mapId) ? getMap(w.mapId) : undefined);
+    // Fase 5: andar de masmorra (mapa gerado pela semente da run de 'masmorra_info')
+    const map = this.opts.resolveMap?.(w.mapId) ?? (hasMap(w.mapId) ? getMap(w.mapId) : dungeonMapFor(w.mapId, this.game.dungeon));
     if (!map) {
       this.status = 'desconectado';
       this.statusInfo = `mapa desconhecido: ${w.mapId}`;
@@ -806,6 +817,79 @@ export class GameClient {
   advanceWaitingList(ciclos?: number): boolean {
     const m: C2S_CasaAvancarFila = ciclos !== undefined ? { ciclos } : {};
     return this.sendGame(GAME_MSG.casaAvancarFila, m);
+  }
+
+  // ---- Fase 5: itens, Doutrina, plantão, masmorra e facção ----
+
+  requestItems(): boolean {
+    return this.sendGame(GAME_MSG.itensPedir, {});
+  }
+
+  equip(itemId: string): boolean {
+    const m: C2S_Equipar = { itemId };
+    return this.sendGame(GAME_MSG.equipar, m);
+  }
+
+  unequip(slot: string): boolean {
+    const m: C2S_Desequipar = { slot };
+    return this.sendGame(GAME_MSG.desequipar, m);
+  }
+
+  /** benzer (Esquerda) ou calibrar (Direita) */
+  improveItem(processo: 'benzimento' | 'calibracao', itemId: string, onde?: string): boolean {
+    const m: C2S_Melhorar = { itemId, ...(onde ? { onde } : {}) };
+    return this.sendGame(processo === 'benzimento' ? GAME_MSG.benzer : GAME_MSG.calibrar, m);
+  }
+
+  setLootFilter(raridade: C2S_FiltroRaridade['raridade'], vendaAutomatica?: boolean): boolean {
+    const m: C2S_FiltroRaridade = { raridade, ...(vendaAutomatica !== undefined ? { vendaAutomatica } : {}) };
+    return this.sendGame(GAME_MSG.filtroRaridade, m);
+  }
+
+  requestDoctrine(): boolean {
+    return this.sendGame(GAME_MSG.doutrinaPedir, {});
+  }
+
+  setDoctrine(cards: C2S_DoutrinaDefinir['cards']): boolean {
+    const m: C2S_DoutrinaDefinir = { cards };
+    return this.sendGame(GAME_MSG.doutrinaDefinir, m);
+  }
+
+  requestDuty(): boolean {
+    return this.sendGame(GAME_MSG.plantaoPedir, {});
+  }
+
+  takeOnDuty(plantonistaId: string): boolean {
+    const m: C2S_Plantonista = { plantonistaId };
+    return this.sendGame(GAME_MSG.plantaoLevar, m);
+  }
+
+  releaseOnDuty(plantonistaId: string): boolean {
+    const m: C2S_Plantonista = { plantonistaId };
+    return this.sendGame(GAME_MSG.plantaoDispensar, m);
+  }
+
+  setOwnDuty(on: boolean): boolean {
+    const m: C2S_PlantaoDefinir = { on };
+    return this.sendGame(GAME_MSG.plantaoDefinir, m);
+  }
+
+  enterDungeon(atalho?: boolean): boolean {
+    const m: C2S_MasmorraEntrar = atalho ? { atalho } : {};
+    return this.sendGame(GAME_MSG.masmorraEntrar, m);
+  }
+
+  leaveDungeon(): boolean {
+    return this.sendGame(GAME_MSG.masmorraSair, {});
+  }
+
+  dungeonChoice(sala: number, opcao: string): boolean {
+    const m: C2S_MasmorraEscolha = { sala, opcao };
+    return this.sendGame(GAME_MSG.masmorraEscolha, m);
+  }
+
+  requestFaction(): boolean {
+    return this.sendGame(GAME_MSG.faccaoPedir, {});
   }
 
   close(): void {
