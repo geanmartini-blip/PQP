@@ -61,13 +61,20 @@ export class ExitGuard {
   }
 }
 
+let leaving = false;
+
+/** A própria página vai recarregar (versão nova do app): o beforeunload não pergunta. */
+export function allowLeave(): void {
+  leaving = true;
+}
+
 /** Liga a trava no navegador; `connected` diz se vale perguntar antes de fechar. */
 export function installExitGuard(warn: (text: string) => void, connected: () => boolean): ExitGuard | undefined {
   try {
     const g = new ExitGuard(window.history, warn);
     window.addEventListener('popstate', () => g.onPop(performance.now()));
     window.addEventListener('beforeunload', (ev) => {
-      if (!connected()) return;
+      if (leaving || !connected()) return;
       ev.preventDefault();
       // navegadores antigos pedem o returnValue
       (ev as BeforeUnloadEvent).returnValue = '';

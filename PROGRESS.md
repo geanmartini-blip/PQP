@@ -19,6 +19,16 @@ Comandos rodam com `. .\scripts\env.ps1` antes (Node e Git portáteis).
 ## PILOTO: as 5 fases estão concluídas
 O que falta depende dos autores ou de aparelho: ver PENDENTE.md. Para rodar, ver README.md.
 
+### v0.1: app instalável offline (PWA) no GitHub Pages — CONCLUÍDA
+- `npm run build:app` (base `VITE_BASE`, `/PQP/` no Pages): offline e solo por padrão, manifest,
+  ícones em pixel art (`scripts/gerar-icones.mjs`), service worker escrito à mão com pré-cache de
+  todo o build e cache versionado (`packages/client/vite.pwa.ts`), faixa "Versão nova".
+- Versão 0.1.0 na engrenagem e no MENU; "Novidades da v0.1" uma vez por versão (NOVIDADES.md);
+  "Mandar opinião" no MENU; atalhos `?dev_nivel=` e `?dev_mapa=` no dev offline.
+- Publicação: `.github/workflows/pages.yml`. Conferência: `npm run check`.
+- Verificação: 832 testes passando, build e build:app ok; Chrome headless com SW ativo, 14 arquivos no cache,
+  abre sem o servidor e atualiza pela faixa. Falta aparelho de verdade (PENDENTE.md).
+
 ### Depois do piloto: travessia de barco jogável — CONCLUÍDA
 - No nível 8, depois do Bruno Ferro, o Seu Jacó leva o jogador num mapa jogável, `barco_travessia`,
   com uma sala por jogador (`barco:<id>`). As margens passam rolando pelos lados.

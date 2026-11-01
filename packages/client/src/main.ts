@@ -8,15 +8,29 @@
  * que tremiam nos Android de dpr 2,625 ou 2,75; os textos do sistema também saem nítidos.
  *
  * O fps tem teto de ~60 em telas de 120/144 Hz (medido antes de abrir o jogo, ver fpsLimitFor).
+ *
+ * Build "app" (npm run build:app, o do GitHub Pages): offline por padrão, service worker com o
+ * pré-cache do build e a faixa de versão nova (app/appUi.ts).
  */
 import * as Phaser from 'phaser';
+import { APP_BUILD, APP_VERSION, NOVIDADES_MD, parseNovidades } from './app/appInfo';
+import { registerServiceWorker, requestPersistentStorage, showNewsOnce } from './app/appUi';
 import { parseConfig } from './config';
+import { browserStorage } from './game/runtime';
 import { BootScene } from './scenes/BootScene';
 import { HudScene } from './scenes/HudScene';
 import { WorldScene } from './scenes/WorldScene';
 import { fpsLimitFor, pickDpr } from './ui/layout';
 
-const cfg = parseConfig(location.search, location);
+// build "app" (GitHub Pages, PWA): offline e solo por padrão, sem procurar servidor
+const cfg = parseConfig(location.search, location, { offline: APP_BUILD });
+
+// app instalável: o service worker guarda os arquivos para abrir sem internet (só no build "app";
+// no dev e no build servido pelo servidor de jogo não há SW)
+if (APP_BUILD && !import.meta.env.DEV) {
+  registerServiceWorker(import.meta.env.BASE_URL);
+  requestPersistentStorage();
+}
 let dpr = pickDpr(window.devicePixelRatio, cfg.dpr);
 const canvasSize = () => ({ w: Math.max(1, Math.round(window.innerWidth * dpr)), h: Math.max(1, Math.round(window.innerHeight * dpr)) });
 
@@ -66,6 +80,8 @@ function start(scenes: Phaser.Scene[], fpsLimit: number): Phaser.Game {
       postBoot: () => {
         // o "Carregando..." do index.html sai quando o Phaser abre
         document.getElementById('carregando')?.remove();
+        // "Novidades da vX.Y", uma vez por versão (do NOVIDADES.md, lido no build)
+        if (!cfg.gallery) showNewsOnce(browserStorage(), APP_VERSION, parseNovidades(NOVIDADES_MD, APP_VERSION));
       },
     },
   });

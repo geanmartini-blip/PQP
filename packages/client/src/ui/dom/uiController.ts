@@ -38,6 +38,8 @@ import { MenuUi, type MenuItem } from './menu';
 import { AbilityCard, type CardButton } from './abilityCard';
 import type { CardSlot } from '../abilityIntro';
 import { LEVEL_BANNER_MS, TOAST_STALE_MS, toastDuration, trackedMission } from '../zonesModel';
+import { APP_VERSION, feedbackText } from '../../app/appInfo';
+import { isStandalone, shareFeedback } from '../../app/appUi';
 
 // SUGESTÃO: até 10 s andando até a Máquina de Visual depois do "Pronto" longe dela.
 export const MACHINE_WALK_MS = 10000;
@@ -256,7 +258,22 @@ export class UiController {
       out.push({ label: 'Mapa', onTap: () => this.openFase5('faccao') });
     }
     if ((p.emotes ?? []).length > 0) out.push({ label: 'Bordão', onTap: () => this.openScreen('emotes') });
+    out.push({ label: 'Mandar opinião', onTap: () => this.sendFeedback() });
     return out;
+  }
+
+  /** "Mandar opinião": texto pronto com versão, nível, mapa, margem e aparelho (nada pessoal). */
+  private sendFeedback(): void {
+    const p = this.gc.game.profile;
+    const text = feedbackText({
+      version: APP_VERSION,
+      level: p?.level,
+      mapId: this.gc.welcomed ? this.gc.world.mapId : null,
+      side: p?.side ?? null,
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
+      standalone: isStandalone(),
+    });
+    void shareFeedback(text, (msg, erro) => this.gc.game.pushToast(msg, erro ? 'erro' : 'info', performance.now()));
   }
 
   private closeDialog(): void {

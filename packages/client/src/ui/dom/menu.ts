@@ -4,6 +4,7 @@
  * botões grandes. Pendência (ala, talento, novidade, dívida) acende um selo no MENU em vez de virar
  * botão extra na tela.
  */
+import { versionLabel } from '../../app/appInfo';
 import { button, el } from './styles';
 
 export interface MenuItem {
@@ -74,6 +75,7 @@ export class MenuUi {
     const sp = el('div', '');
     sp.style.flex = '1';
     g.appendChild(sp);
+    g.appendChild(el('div', 'versao', `Ponte que Partiu ${versionLabel()}`));
     g.appendChild(button('Fechar', 'sec', () => this.close()));
     fundo.appendChild(g);
     this.root.appendChild(fundo);

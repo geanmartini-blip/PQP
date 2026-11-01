@@ -49,6 +49,10 @@ falta e onde a integração já está pronta.
   HTTPS.
 - **Uma instância só.** As salas, as runs da masmorra e o estado da cidade vivem na memória de um
   processo. Para mais de uma instância, falta o `presence` e o `driver` do Colyseus (Redis).
+- **App solo (v0.1) no GitHub Pages.** Pronto em `.github/workflows/pages.yml`. Falta, uma vez só:
+  Settings → Pages → Source: **GitHub Actions**, e depois o Push. Falta também conferir num iPhone
+  e num Android de verdade: instalar pelo ícone, notch e barra de início, abrir sem internet e a faixa
+  de versão nova (no PC foi conferido num Chrome headless).
 
 ## 4. Capacitor e lojas (depois do piloto)
 - Nada de Capacitor foi instalado ainda. Os passos:

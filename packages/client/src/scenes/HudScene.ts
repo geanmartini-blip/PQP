@@ -10,7 +10,7 @@
  * - botões: habilidade dispara ao encostar; área no alvo (e campo lançado longe) dispara ao soltar,
  *   e arrastar posiciona a área com a guia de alcance; soltar de volta em cima do botão cancela;
  * - seta do rumo: leva até o bando mais perto (auto-caminho);
- * - engrenagem: modo de ajuste (arrastar os botões; OK guarda no aparelho);
+ * - engrenagem: modo de ajuste (arrastar os botões; OK guarda no aparelho), com a versão do app;
  * - resto da tela: toque no mundo (inimigo troca o alvo, NPC conversa, chão leva até lá).
  *
  * Nada de Graphics: fundos, pizzas e anéis são texturas geradas uma vez (ui/hudTextures.ts) e as
@@ -19,6 +19,7 @@
 import * as Phaser from 'phaser';
 import { getData, type Ability } from '@pqp/shared';
 import { MAX_REWIND_MS } from '@pqp/shared/net';
+import { versionLabel } from '../app/appInfo';
 import { FONT_KEY } from '../art/index';
 import { fontText } from '../art/fx';
 import { FL } from '../game/clientWorld';
@@ -152,6 +153,7 @@ export class HudScene extends Phaser.Scene {
   private editTitle!: Phaser.GameObjects.Text;
   private editOk!: Phaser.GameObjects.Text;
   private editReset!: Phaser.GameObjects.Text;
+  private editVersion!: Phaser.GameObjects.Text;
   // Fase 2: interface em DOM (criação, máquina, diálogo, travessia, rastreador)
   private ui!: UiController;
   private wasModal = false;
@@ -377,6 +379,12 @@ export class HudScene extends Phaser.Scene {
     this.editTitle = this.add.text(W / 2, H * 0.2, EDIT_TEXT, this.textStyle(15, { color: '#fff6e0', backgroundColor: '#140c16dd', padding: { x: 10 * px, y: 6 * px }, align: 'center', wordWrap: { width: W * 0.86 } })).setOrigin(0.5).setDepth(95).setVisible(false);
     this.editOk = this.add.text(W * 0.36, H * 0.2 + 52 * L.ui * px, EDIT_OK, btnStyle).setOrigin(0.5).setDepth(95).setVisible(false);
     this.editReset = this.add.text(W * 0.64, H * 0.2 + 52 * L.ui * px, EDIT_RESET, { ...btnStyle, backgroundColor: '#c8c0d0' }).setOrigin(0.5).setDepth(95).setVisible(false);
+    // a versão do app, embaixo do OK (quem manda print do bug já manda a versão junto)
+    this.editVersion = this.add
+      .text(W / 2, H * 0.2 + 96 * L.ui * px, `Ponte que Partiu ${versionLabel()}`, this.textStyle(13, { color: '#c8c0d0', backgroundColor: '#140c16cc', padding: { x: 8 * px, y: 3 * px } }))
+      .setOrigin(0.5, 0)
+      .setDepth(95)
+      .setVisible(false);
   }
 
   private setupKeyboard(): void {
@@ -676,6 +684,7 @@ export class HudScene extends Phaser.Scene {
     this.editTitle.setVisible(true);
     this.editOk.setVisible(true);
     this.editReset.setVisible(true);
+    this.editVersion.setVisible(true);
   }
 
   private onEditDown(p: Phaser.Input.Pointer, now: number): void {
@@ -1251,12 +1260,23 @@ function goOffline(): void {
   location.search = q.toString();
 }
 
-/** Área segura do aparelho (env(safe-area-inset-*)) em px de CSS, lida das variáveis do index.html. */
+/**
+ * Área segura do aparelho (env(safe-area-inset-*)) em px de CSS: o notch e a barra de início do
+ * iPhone (o index.html usa viewport-fit=cover e a barra de status translúcida, então o canvas vai até
+ * a borda). Lê as variáveis do index.html; se o navegador devolver o env() sem resolver, mede num
+ * elemento de teste com o padding da área segura.
+ */
 function safeArea(side: 'top' | 'bottom'): number {
   try {
     const v = getComputedStyle(document.documentElement).getPropertyValue(`--safe-${side}`);
     const n = parseFloat(v);
-    return Number.isFinite(n) ? n : 0;
+    if (Number.isFinite(n)) return Math.max(0, n);
+    const probe = document.createElement('div');
+    probe.style.cssText = `position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;padding-${side}:env(safe-area-inset-${side}, 0px)`;
+    document.body.appendChild(probe);
+    const m = parseFloat(getComputedStyle(probe).getPropertyValue(`padding-${side}`));
+    probe.remove();
+    return Number.isFinite(m) ? Math.max(0, m) : 0;
   } catch {
     return 0;
   }

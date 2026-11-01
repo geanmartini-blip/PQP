@@ -145,6 +145,9 @@ import {
   guideOf,
   isOwnGuide,
   emptyResult,
+  mergeResult,
+  TRAVESSIA_LEVEL,
+  type SideId,
   type BotaoId,
   type GameEvent,
   type GameResult,
@@ -434,7 +437,15 @@ export interface LocalServerOpts {
    * o barco (Bruno Ferro derrotado e nível 8). O embarque continua pelo Seu Jacó, como no jogo.
    */
   devTravessia?: boolean;
+  /**
+   * Só de desenvolvimento (?dev_nivel=N e ?dev_mapa=<mapId> no offline): o personagem criado sobe ao
+   * nível, atravessa pelas regras de shared quando o nível ou o mapa pedem a margem, e nasce no mapa.
+   */
+  devPrep?: { level?: number; mapId?: string };
 }
+
+/** Mapas aceitos pelo ?dev_mapa= (o barco e o protótipo têm entrada própria). */
+export const DEV_MAPS: readonly string[] = ['delta', 'margem_esquerda', 'margem_direita', 'usina_da_ponte', 'juncal'];
 
 export class LocalServer {
   w!: World;
@@ -679,6 +690,7 @@ export class LocalServer {
     }
     const rec = this.rec;
     this.devPrepTravessia();
+    this.applyDevPrep();
     const want = this.mapFor(rec);
     if (!this.player || want !== this.mapId) {
       if (want !== this.mapId) this.loadMap(want);
@@ -1304,6 +1316,19 @@ export class LocalServer {
         const r = createCharacter(rec, c.name, c.appearance);
         if (!r.ok) return this.aviso(r.erro, 'erro');
         this.devPrepTravessia();
+        const dev = this.applyDevPrep();
+        if (dev) {
+          // dev: personagem pronto (nível, margem): nasce de novo no mapa pedido
+          const to = this.mapFor(rec);
+          this.loadMap(to);
+          this.player = undefined;
+          this.spawnFromRecord();
+          this.sendWelcome();
+          mergeResult(r.resultado, dev);
+          this.flush(r.resultado, { always: true });
+          this.syncCity();
+          break;
+        }
         this.flush(r.resultado, { always: true });
         break;
       }
@@ -1472,6 +1497,43 @@ export class LocalServer {
     if (!this.opts.devTravessia || !rec || !rec.criado || rec.stage === 'margem') return;
     if (!rec.story_flags.includes(FLAG_BRUNO)) rec.story_flags.push(FLAG_BRUNO);
     raiseToLevel(rec, 8);
+  }
+
+  private devPrepDone = false;
+
+  /**
+   * Dev (?dev_nivel= e ?dev_mapa=): uma vez por sessão, com o personagem já criado. Do nível 8 em
+   * diante, ou com um mapa fora do Delta, faz a travessia pelas regras de shared (Bruno derrotado,
+   * nível 8, applyTravessia com a margem do mapa, a 1ª instituição e o 1º guia dela). Depois sobe ao
+   * nível pedido e marca o mapa de nascimento. Devolve o resultado (undefined se não fez nada).
+   */
+  private applyDevPrep(): GameResult | undefined {
+    const d = this.opts.devPrep;
+    const rec = this.rec;
+    if (!d || this.devPrepDone || !rec || !rec.criado || this.fixedMap || this.floorSt) return undefined;
+    this.devPrepDone = true;
+    const r = emptyResult();
+    const mapa = d.mapId && DEV_MAPS.includes(d.mapId) ? d.mapId : undefined;
+    const nivel = d.level !== undefined && Number.isFinite(d.level) ? Math.max(1, Math.min(60, Math.round(d.level))) : undefined;
+    const sideOfMap: SideId | undefined = mapa === 'margem_direita' ? 'direita' : mapa === 'margem_esquerda' ? 'esquerda' : undefined;
+    const precisaMargem = (nivel ?? 0) >= TRAVESSIA_LEVEL || (mapa !== undefined && mapa !== 'delta');
+    if (precisaMargem && rec.stage !== 'margem') {
+      if (!rec.story_flags.includes(FLAG_BRUNO)) rec.story_flags.push(FLAG_BRUNO);
+      mergeResult(r, raiseToLevel(rec, TRAVESSIA_LEVEL));
+      const side = sideOfMap ?? 'esquerda';
+      const m = travessiaOptions(rec).margens.find((x) => x.side === side);
+      const inst = m?.instituicoes[0];
+      const guide = m?.guias[0];
+      if (inst && guide) {
+        const t = applyTravessia(rec, { side, institution: inst.id, guide: guide.id });
+        if (t.ok) mergeResult(r, t.resultado);
+      }
+    }
+    if (nivel !== undefined && nivel > rec.level) mergeResult(r, raiseToLevel(rec, nivel));
+    // o mapa: na margem, qualquer um (o Delta também, como na volta de barco); no Delta, só o Delta
+    if (mapa && rec.stage === 'margem') this.mapOverride = mapa;
+    r.mudou = true;
+    return r;
   }
 
   /** Fase do barco para o cliente. */

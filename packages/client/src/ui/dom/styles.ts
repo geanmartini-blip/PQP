@@ -117,6 +117,7 @@ const CSS = `
 #pqp-ui .gaveta .btn.pisca { background: #ffd060; animation: pqpPisca 0.9s ease-in-out infinite alternate; }
 #pqp-ui .gaveta .btn .selo { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 0 6px; background: #d84a3a; color: #fff; font-size: 12px; }
 #pqp-ui .gaveta .btn.alerta { background: #ffb0a0; }
+#pqp-ui .gaveta .versao { font-size: 12px; color: #9a90a8; text-align: center; }
 @keyframes pqpGaveta { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 
 /* cartão de habilidade da primeira vez (ao lado do arco, sem pegar toque) */

@@ -81,10 +81,20 @@ export function browserStorage(): StorageLike | undefined {
   }
 }
 
+/**
+ * ?dev_nivel=N e ?dev_mapa=<mapId> (config.ts): só no build de desenvolvimento e no modo offline.
+ * O build de produção e o app (GitHub Pages) ignoram.
+ */
+export function devPrepOf(cfg: ClientConfig, dev: boolean): { level?: number; mapId?: string } | undefined {
+  if (!dev || !cfg.offline || (cfg.devNivel === undefined && cfg.devMapa === undefined)) return undefined;
+  return { ...(cfg.devNivel !== undefined ? { level: cfg.devNivel } : {}), ...(cfg.devMapa !== undefined ? { mapId: cfg.devMapa } : {}) };
+}
+
 /** Transporte de base: Colyseus, ou o servidor local (carregado só no modo offline). */
 export async function makeBaseTransport(cfg: ClientConfig, joinOptions: () => Record<string, unknown>): Promise<Transport> {
   if (cfg.offline) {
     const m = await import('../net/localTransport');
+    const devPrep = devPrepOf(cfg, import.meta.env.DEV === true);
     // o registro do jogador do modo offline fica no aparelho (o mesmo token do online)
     const st = browserStorage();
     return new m.LocalTransport({
@@ -107,6 +117,8 @@ export async function makeBaseTransport(cfg: ClientConfig, joinOptions: () => Re
       ...(offlineCycleMin() !== undefined ? { cityCycleMin: offlineCycleMin()!, factionTickMin: offlineCycleMin()! } : {}),
       // dev: ?dev_travessia=1 deixa quem está no Delta pronto para o barco do Seu Jacó
       ...(devTravessia() ? { devTravessia: true } : {}),
+      // dev: ?dev_nivel= e ?dev_mapa= preparam o personagem e nascem no mapa
+      ...(devPrep ? { devPrep } : {}),
       // Fase 5: a IA de facção (regiões, pontos, avisos) também fica no aparelho
       factionStore: {
         load: () => {

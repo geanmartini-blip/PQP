@@ -1,0 +1,52 @@
+# Publica o app (PWA, offline e solo) no GitHub Pages: https://geanmartini-blip.github.io/PQP/
+# Roda a cada push na main e também à mão (aba Actions → "Publicar no GitHub Pages" → Run workflow).
+# Na 1ª vez: Settings → Pages → Source: GitHub Actions.
+name: Publicar no GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# um deploy por vez; um push novo cancela o que ainda estava montando
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Montar o app (base /PQP/)
+        run: npm run build:app
+        env:
+          VITE_BASE: /PQP/
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: packages/client/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

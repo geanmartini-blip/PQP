@@ -50,7 +50,32 @@ npm start                # compila o cliente e serve jogo + WebSocket em http://
 ## Modo offline
 
 `http://localhost:5173/?offline=1` roda o servidor dentro do navegador, com as mesmas regras de
-`shared` e sem rede. Serve para jogar e testar sem subir o servidor.
+`shared` e sem rede. Serve para jogar e testar sem subir o servidor. No `npm run dev`, com o offline,
+`?dev_nivel=12&dev_mapa=margem_direita` já prepara o personagem e nasce no mapa (ver
+`packages/client/src/config.ts`).
+
+## Publicar uma versão e instalar no celular
+
+O app do celular é o build "app": offline e solo, instalável (PWA), com o save no próprio aparelho.
+Ele fica em **https://geanmartini-blip.github.io/PQP/**.
+
+1. **Publicar:** faça o commit e clique em **Push origin** no GitHub Desktop. O GitHub Actions
+   (`.github/workflows/pages.yml`) monta o app e publica em uns 2 minutos; o andamento aparece na aba
+   **Actions** do repositório.
+2. **Só na 1ª vez:** no GitHub, em **Settings → Pages → Source**, escolha **GitHub Actions**. Se o
+   primeiro push foi antes disso, rode de novo em **Actions → Publicar no GitHub Pages → Run workflow**.
+3. **iPhone:** abra o link no **Safari** → **Compartilhar** → **Adicionar à Tela de Início**. Jogue
+   **sempre pelo ícone**: o save do ícone é separado do save do Safari.
+4. **Android:** abra o link no **Chrome** → menu (⋮) → **Instalar app** (ou "Adicionar à tela inicial").
+5. **Atualizar:** depois de publicar uma versão nova, abra o app com internet. Quando aparecer a faixa
+   **"Versão nova: toque para atualizar"**, toque nela. As novidades da versão aparecem uma vez, e
+   vêm do `NOVIDADES.md` (suba a versão em `packages/client/package.json` e escreva a seção `## vX.Y`).
+6. **Saves:** ficam no aparelho (no navegador ou no ícone). Apagar os dados do site, ou desinstalar o
+   ícone, apaga o save. Depois da 1ª abertura o jogo abre sem internet.
+
+No PC, para conferir antes de publicar: `npm run check` (typecheck, testes e build) e
+`$env:VITE_BASE='/PQP/'; npm run build:app` (o app vai para `packages/client/dist`). Os ícones saem de
+`npm run icones` (`scripts/gerar-icones.mjs`, pixel art desenhada por código).
 
 ## Lag simulado
 
@@ -62,6 +87,7 @@ npm start                # compila o cliente e serve jogo + WebSocket em http://
 ## Testes e simulador
 
 ```powershell
+npm run check            # typecheck + testes + build, antes de publicar
 npm test                 # Vitest: regras, simulação, rede com atraso, servidor e cliente
 npm run typecheck        # tsc nos 4 pacotes
 npm run e2e              # robô contra um servidor real, com 200 ms e 2% de perda (cerca de 1 min)
