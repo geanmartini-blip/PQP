@@ -21,7 +21,7 @@ import { isDungeonMapId } from '../game/dungeonMap';
 import { MATO_FRAMES, OVERLAY_FRAMES, overlayKind, renderTerrain, styleOfRegion, type Style, type TerrainSource, TREE_BASE_Y, TREE_H } from '../art/terrain';
 import { hashInt } from '../art/noise';
 import { treeFrame } from '../art/tiles';
-import { desenhaPlChao, PL_POR_CIMA, plArvoreFrame, plArvores, usaPlChao } from '../art/plChao';
+import { desenhaPlChao, PL_POR_CIMA, PL_PROP_ESCALA, plArvoreFrame, plArvores, plMatoKey, plPropKey, temPlMato, usaPlChao } from '../art/plChao';
 import { DEPTH } from './depth';
 
 export const GRID_KEY = 'tiles_grid';
@@ -82,11 +82,31 @@ export function facadeIdOf(m: MapMarker): string | undefined {
 }
 
 /** Props da camada de decoração, das regiões e as fachadas das sedes, como imagens com profundidade. */
-function buildProps(scene: Phaser.Scene, map: TileMap): Phaser.GameObjects.Image[] {
+function buildProps(scene: Phaser.Scene, map: TileMap, plChao: boolean): Phaser.GameObjects.Image[] {
   const key = propsTexture(scene);
   const tex = scene.textures.get(key);
   const out: Phaser.GameObjects.Image[] = [];
   const add = (prop: string, x: number, y: number) => {
+    // v0.3: enfeite do PixelLab, quando o mapa já tem o chão novo
+    if (plChao && scene.textures.exists(plPropKey(prop))) {
+      // os grandes (toldo, barco) ocupam mais de um tile: um a cada dois na fileira, um só na coluna
+      const dv = (xx: number, yy: number) => (xx < 0 || yy < 0 ? 0 : (map.deco?.[yy * map.width + xx] ?? 0));
+      const aqui = dv(x, y);
+      if (aqui && (prop === 'toldo' || prop === 'barco')) {
+        if (dv(x, y - 1) === aqui) return;
+        let n = 0;
+        for (let xx = x - 1; dv(xx, y) === aqui; xx--) n++;
+        if (n % 2 === 1) return;
+      }
+      const flat = propIsFlat(prop);
+      const fh = scene.textures.get(plPropKey(prop)).getSourceImage().height * PL_PROP_ESCALA;
+      const bx = x * TILE_PX + 16;
+      const by = flat ? y * TILE_PX + 16 + Math.ceil(fh / 2) : y * TILE_PX + 30;
+      const img = scene.add.image(bx, by, plPropKey(prop)).setOrigin(0.5, 1).setScale(PL_PROP_ESCALA);
+      img.setDepth(flat ? DEPTH.deco : DEPTH.entity + by);
+      out.push(img);
+      return;
+    }
     const frame = propFrame(prop, x, y);
     if (!tex.has(frame)) return;
     const fh = tex.get(frame).height;
@@ -100,6 +120,14 @@ function buildProps(scene: Phaser.Scene, map: TileMap): Phaser.GameObjects.Image
   };
   for (let y = 0; y < map.height; y++)
     for (let x = 0; x < map.width; x++) {
+      // v0.3: tufos de mato do PixelLab, com profundidade (quem passa atrás fica escondido)
+      const mato = plChao && map.tiles[y * map.width + x] === Tile.Mato ? plMatoKey(scene, x, y) : undefined;
+      if (mato) {
+        const by = y * TILE_PX + 28 + (hashInt(x, y, 97) & 3);
+        const img = scene.add.image(x * TILE_PX + 16 + ((hashInt(x, y, 91) & 7) - 3), by, mato).setOrigin(0.5, 1).setScale(PL_PROP_ESCALA);
+        img.setFlipX((hashInt(x, y, 89) & 1) === 1).setDepth(DEPTH.entity + by);
+        out.push(img);
+      }
       const dv = map.deco?.[y * map.width + x] ?? 0;
       const prop = (dv > 0 ? propForDeco(dv) : undefined) ?? regionProp(map, x, y);
       if (prop) add(prop, x, y);
@@ -132,6 +160,7 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
   const srcImg = tex.getSourceImage() as HTMLCanvasElement | HTMLImageElement;
   // v0.3: chão do PixelLab (a água já vem desenhada, sem o brilho procedural por cima)
   const plChao = !dungeon && usaPlChao(scene, map);
+  const plMato = plChao && temPlMato(scene);
 
   // ---------------- camada animada
   interface Cell {
@@ -156,7 +185,7 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
     for (let x = 0; x < W; x++) {
       const t = map.tiles[y * W + x]!;
       const kind = overlayKind(t);
-      if (!kind || (plChao && (kind === 'rasa' || kind === 'funda'))) {
+      if (!kind || (plChao && (kind === 'rasa' || kind === 'funda' || (kind === 'mato' && plMato)))) {
         row.push(-1);
         continue;
       }
@@ -295,7 +324,7 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
   const bPx = CANOPY_CHUNK * TILE_PX;
 
   // ---------------- props das margens e fachadas (Fase 3, art/landmarks.ts)
-  const props = buildProps(scene, map);
+  const props = buildProps(scene, map, plChao);
 
   // ---------------- clima
   const ambient: Ambient = createAmbient(scene, src);

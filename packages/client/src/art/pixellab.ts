@@ -61,7 +61,13 @@ export function pixellabSheet(scene: Phaser.Scene, look: CharacterLook): string 
  * v0.3: NPCs e inimigos do Delta com boneco do PixelLab (pasta em public/pl/). Os bichos (siri e
  * mosquito) são um desenho só, sem direção: a folha repete o quadro e o EntityView dá o bote.
  */
-export const PL_NPCS: Record<string, string> = { seu_jaco: 'jaco', bruno_ferro: 'bruno' };
+export const PL_NPCS: Record<string, string> = {
+  seu_jaco: 'jaco',
+  bruno_ferro: 'bruno',
+  toninho_do_barco: 'toninho',
+  vendedor_do_delta: 'vendedor',
+  vendedor_de_chopindita_barata: 'chopindita',
+};
 export const PL_INIMIGOS: Record<string, string> = {
   bruno_ferro_chefe: 'bruno',
   capanga_do_capataz: 'capanga',
@@ -71,7 +77,7 @@ export const PL_INIMIGOS: Record<string, string> = {
 };
 const PL_BICHOS: ReadonlySet<string> = new Set(['siri', 'mosquito']);
 /** NPCs que não lutam: só o andar */
-const PL_SEM_GOLPE: ReadonlySet<string> = new Set(['jaco']);
+const PL_SEM_GOLPE: ReadonlySet<string> = new Set(['jaco', 'toninho', 'vendedor', 'chopindita']);
 
 /** Folha do PixelLab de um NPC ou inimigo, ou undefined se ele não tem (ou ainda não carregou). */
 export function pixellabEntSheet(scene: Phaser.Scene, kind: 'npc' | 'inimigo', id: string): string | undefined {

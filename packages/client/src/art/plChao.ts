@@ -57,12 +57,35 @@ for (const p of man.pares) {
 const ARVORES = 2;
 export const PL_ARVORES_KEY = 'pl_arvores';
 
-/** Põe as folhas de chão e as árvores na fila de carga (chamar no preload). */
+/**
+ * Enfeites do PixelLab (public/pl/props/<prop>.png), desenhados no dobro da resolução do mundo: no
+ * lugar do prop procedural de mesmo nome (art/landmarks.ts), com escala 0,5.
+ */
+export const PL_PROPS: readonly string[] = ['barco', 'rede', 'caixote', 'toldo', 'lanterna', 'junco'];
+export const PL_PROP_ESCALA = 0.5;
+export const plPropKey = (prop: string) => `pl_prop_${prop}`;
+
+/** Põe as folhas de chão, as árvores e os enfeites na fila de carga (chamar no preload). */
 export function preloadPlChao(scene: Phaser.Scene): void {
   const base = import.meta.env.BASE_URL;
   for (const p of man.pares) scene.load.image(`plchao_${p.lower}_${p.upper}`, `${base}pl/chao/${p.img}`);
   for (let i = 0; i < ARVORES; i++) scene.load.image(`pl_arvore_${i}`, `${base}pl/arvores/arvore_${i}.png`);
+  for (const p of PL_PROPS) scene.load.image(plPropKey(p), `${base}pl/props/${p}.png`);
+  for (let i = 0; i < MATO; i++) scene.load.image(`pl_mato_${i}`, `${base}pl/mato/mato_${i}.png`);
 }
+
+/** tufos de mato do PixelLab (public/pl/mato/), no lugar do mato procedural que balança */
+const MATO = 2;
+
+/** Tufo de mato do PixelLab para um tile de Mato (só em parte deles, pela posição), ou undefined. */
+export function plMatoKey(scene: Phaser.Scene, x: number, y: number): string | undefined {
+  const h = ((x * 73856093) ^ (y * 19349663)) >>> 0;
+  if (h % 3 !== 0) return undefined;
+  const k = `pl_mato_${(h >>> 3) % MATO}`;
+  return scene.textures.exists(k) ? k : scene.textures.exists('pl_mato_0') ? 'pl_mato_0' : undefined;
+}
+
+export const temPlMato = (scene: Phaser.Scene) => scene.textures.exists('pl_mato_0');
 
 /** Textura com as árvores do PixelLab lado a lado (quadros a0, a1...), para o Blitter da mata. */
 export function plArvores(scene: Phaser.Scene): string | undefined {

@@ -11,7 +11,7 @@ falta e onde a integração já está pronta.
   mundo que não completou o conjunto usa o mesmo boneco. Para mostrar a criação, faltam variações do
   boneco base (estados do PixelLab por corpo e tom de pele) ou camadas por cima dele.
 - As alas sem boneco do PixelLab (22 de 24) mostram o boneco base mesmo com o conjunto completo.
-- Falta gerar: props do Delta, Toninho e vendedores, as margens, a Usina e o Juncal. O Bruno Ferro
+- Até o fechamento do Delta, 573 gerações. Falta gerar as margens, a Usina e o Juncal. O Bruno Ferro
   chefe usa o mesmo tamanho do NPC (sem a escala maior do chefe antigo).
 - A troca de lado em si (mudar de margem, instituição e ala) fica para a v0.4. A missão da cabeceira já
   libera `troca_de_lado`.

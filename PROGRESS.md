@@ -47,9 +47,10 @@ Plano:
      (`look.outfit.conjunto`), quando a ala já tem boneco do PixelLab;
    - pronto: paredes das palafitas (tileset baixo de tábua e zinco), Seu Jacó, Bruno Ferro, capanga e
      cobrador (andar e golpe), siri e mosquito (desenho único, sem direção);
-   - falta: props (barco, rede, caixote, toldo), Toninho e vendedores, as margens e os estágios do
-     conjunto por ala.
-   Gasto até aqui: 476 gerações (tileset "pro" custa 15, boneco "pro" 25). A lista está abaixo.
+   - pronto: enfeites do Delta (barco, rede, caixote, toldo, lanterna, junco), tufos de mato no
+     lugar do mato procedural, Toninho e os dois vendedores. O Delta está fechado;
+   - falta: as margens, a Usina, o Juncal e os estágios do conjunto por ala.
+   Gasto até aqui: 573 gerações (tileset "pro" custa 15, boneco "pro" 25). A lista está abaixo.
 5. Testes, build, NOVIDADES da v0.3, versão 0.3.0 e commit, sem push.
 
 Visual dos itens:
