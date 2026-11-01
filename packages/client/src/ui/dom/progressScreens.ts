@@ -106,6 +106,8 @@ export class Fase3Ui {
   private fadeAt = -1;
   private fadeBox: HTMLDivElement | null = null;
   private waiting = false;
+  /** Fase 4: elemento que entra no começo da linha do topo (o botão da carteira) */
+  rowPrefix: HTMLElement | null = null;
 
   constructor(
     private readonly root: HTMLElement,
@@ -238,10 +240,11 @@ export class Fase3Ui {
     this.row.style.top = `${Math.round(f.rowTopCss)}px`;
     const p = this.gc.game.profile!;
     const pend = this.gc.game.pendingChoice;
-    const sig = `${pend}|${(p.emotes ?? []).length}`;
+    const sig = `${pend}|${(p.emotes ?? []).length}|${this.rowPrefix ? 1 : 0}`;
     if (sig === this.rowSig) return;
     this.rowSig = sig;
     this.row.innerHTML = '';
+    if (this.rowPrefix) this.row.appendChild(this.rowPrefix);
     // SUGESTÃO: textos dos botões do topo
     if (pend === 'ala') this.row.appendChild(button('Escolher ala!', 'pisca', () => this.open('ala')));
     else if (pend === 'talento') this.row.appendChild(button('Talento!', 'pisca', () => this.open('talento')));

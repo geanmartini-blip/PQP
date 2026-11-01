@@ -10,7 +10,8 @@ import { lookOf } from './visual';
 import { canChooseArchetype, loadoutOf, type LoadoutView } from './ala';
 import { pendingTalentLevels } from './talents';
 import { unlockedEmotes } from './trainers';
-import type { Appearance, CharacterLook, PlayerRecord, PlayerStage, SideId, VisualTierId } from './types';
+import { faixaScore } from './economy';
+import type { Appearance, CharacterLook, HomeState, PlayerRecord, PlayerStage, Rotacao, SideId, VisualTierId } from './types';
 
 export const RECORD_VERSION = 2;
 
@@ -56,6 +57,8 @@ export function newPlayerRecord(id: string, name: string): PlayerRecord {
     unlocks: [],
     counters: {},
     lugar_atual: null,
+    home: null,
+    economia: { ciclo: 0, divida: 0, scoreCiclo: {}, cambioCiclo: 0, moradiaDada: false },
   };
 }
 
@@ -127,6 +130,16 @@ export function migratePlayerRecord(raw: unknown, fallbackId = 'jogador'): Playe
     rec.counters = isObj(r['counters']) ? (r['counters'] as Record<string, number>) : {};
     rec.equipment = isObj(r['equipment']) ? (r['equipment'] as Record<string, string>) : {};
     rec.resources = isObj(r['resources']) ? (r['resources'] as Partial<Record<Resource, number>>) : {};
+    // Fase 4: casa e carteira (registro sem esses campos ganha os padrões)
+    rec.home = isObj(r['home']) && typeof r['home']['tipo'] === 'string' ? migrateHome(r['home']) : null;
+    const ec = isObj(r['economia']) ? r['economia'] : {};
+    rec.economia = {
+      ciclo: num(ec['ciclo']) ?? 0,
+      divida: Math.max(0, num(ec['divida']) ?? 0),
+      scoreCiclo: isObj(ec['scoreCiclo']) ? (ec['scoreCiclo'] as Record<string, number>) : {},
+      cambioCiclo: Math.max(0, num(ec['cambioCiclo']) ?? 0),
+      moradiaDada: ec['moradiaDada'] === true || rec.home !== null,
+    };
     return rec;
   }
 
@@ -174,6 +187,26 @@ export function migratePlayerRecord(raw: unknown, fallbackId = 'jogador'): Playe
   if (palN !== undefined && pals[palN] !== undefined) appRaw['palette'] = pals[palN];
   rec.appearance = migrateAppearance(appRaw, defaultAppearance(), pals);
   return rec;
+}
+
+/** Casa salva (Fase 4): confere os campos e descarta móvel malformado. */
+function migrateHome(h: Record<string, unknown>): HomeState {
+  const moveis = (Array.isArray(h['moveis']) ? h['moveis'] : [])
+    .filter(isObj)
+    .filter((m) => typeof m['id'] === 'string' && num(m['uid']) !== undefined && num(m['x']) !== undefined && num(m['y']) !== undefined)
+    .map((m) => ({ uid: m['uid'] as number, id: m['id'] as string, x: m['x'] as number, y: m['y'] as number, rot: (((num(m['rot']) ?? 0) % 4) as Rotacao) }));
+  const vis = str(h['visitas']);
+  const esp = isObj(h['espera']) && typeof h['espera']['final'] === 'string' ? { ciclosRestantes: Math.max(0, num(h['espera']['ciclosRestantes']) ?? 0), final: h['espera']['final'] as string } : null;
+  return {
+    tipo: h['tipo'] as string,
+    moveis,
+    seq: Math.max(num(h['seq']) ?? 1, ...moveis.map((m) => m.uid + 1)),
+    visitas: vis === 'so_eu' || vis === 'grupo' || vis === 'margem' || vis === 'todos' ? vis : 'margem',
+    convidados: strArr(h['convidados']),
+    ...(num(h['atraso']) !== undefined ? { atraso: num(h['atraso'])! } : {}),
+    ...(num(h['aluguelUltimo']) !== undefined ? { aluguelUltimo: num(h['aluguelUltimo'])! } : {}),
+    espera: esp,
+  };
 }
 
 /** Todas as paletas conhecidas (Delta, bases e alas). */
@@ -232,6 +265,14 @@ export interface PlayerProfile {
   loadout?: LoadoutView | null;
   /** pode escolher a ala agora */
   podeEscolherAla?: boolean;
+  // ---- Fase 4 ----
+  /** faixa do score de Crédito (economy.json score.faixas) */
+  faixaScore?: { id: string; name: string };
+  /** Crédito devido (aluguel atrasado) */
+  divida?: number;
+  home_id?: string | null;
+  /** tipo da moradia (housing.json) e ciclos que faltam na lista de espera */
+  casa?: { tipo: string; espera: number | null; atraso: number } | null;
 }
 
 export function xpForLevel(level: number): number {
@@ -271,6 +312,10 @@ export function profileOf(rec: PlayerRecord, controlesLiberados: string[] = []):
     talentosPendentes: pendingTalentLevels(rec),
     loadout: loadoutOf(rec),
     podeEscolherAla: canChooseArchetype(rec).ok,
+    faixaScore: (({ id, name }) => ({ id, name }))(faixaScore(rec)),
+    divida: rec.economia?.divida ?? 0,
+    home_id: rec.home_id,
+    casa: rec.home ? { tipo: rec.home.tipo, espera: rec.home.espera?.ciclosRestantes ?? null, atraso: rec.home.atraso ?? 0 } : null,
   };
 }
 

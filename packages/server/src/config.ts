@@ -135,3 +135,29 @@ export const INTERACT_REPEAT_MS = 2000;
 // SUGESTÃO: no objetivo 'sobreviver', as ondas da missão nascem a 5 tiles do jogador, espalhadas
 // pela duração (a onda i em i × duração / ondas); fora do raio (naoSairDoRaio) o tempo não conta.
 export const SURVIVE_SPAWN_TILES = 5;
+
+// ---- Fase 4. Tudo SUGESTÃO: os docs não dão esses números. ----
+
+// SUGESTÃO: o ciclo da cidade do servidor dura 10 minutos (PQP_CICLO_CIDADE_MIN muda); o doc fala
+// em semana, e o housing.json diz que no piloto a duração vem da configuração.
+export const CITY_CYCLE_MIN_DEFAULT = 10;
+
+// SUGESTÃO: o servidor confere a cidade (anúncios vencidos, virada do ciclo) a cada 5 s.
+export const CITY_TICK_MS = 5000;
+
+// SUGESTÃO: comprar e vender na loja de NPC pede estar a até 5 tiles do balcão (marcador 'loja').
+export const SHOP_REACH_TILES = 5;
+
+// SUGESTÃO: feira e câmbio pedem estar a até 8 tiles do lugar (marcador 'lugar' da feira ou do câmbio).
+export const MARKET_REACH_TILES = 8;
+
+// SUGESTÃO: a porta da moradia (marcador 'moradia') leva para a casa a até 1,2 tile; visitar pela
+// mensagem casa_visitar entra na casa a até 4 tiles da porta (mais longe, só mostra a casa).
+export const DOOR_RADIUS_TILES = 1.2;
+export const DOOR_REACH_TILES = 4;
+
+// SUGESTÃO: até 20 pessoas na sala de uma casa.
+export const HOUSE_MAX_CLIENTS = 20;
+
+// SUGESTÃO: o servidor guarda os últimos 500 eventos de economia na memória (o resto vai para o Store).
+export const EVENT_LOG_MEMORY = 500;

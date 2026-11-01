@@ -80,6 +80,15 @@ O registro completo está em `decisoes/fase3-margens.md`. Os pontos principais:
 - **Orçamento de poder:** o dos arquétipos ficou entre 43 e 60,5, fora da faixa de 52,5 a 56 de
   Sistemas.md. O ajuste está em `balance.json`. É preciso decidir se o doc muda.
 
+## Fase 4: sociedade e economia
+O registro completo está em `decisoes/fase4-sociedade.md`. Os pontos principais:
+- **Saldo nunca negativo.** O aluguel que não se paga vira dívida, e o score do Crédito cai. Só a
+  Direita tem score.
+- **Ganho em moeda da outra margem** entra pela cotação base, de 2 Créditos por Semente.
+- **Anúncios:** só a Esquerda anuncia na feira, e só a Direita anuncia no app.
+- **Estado de cidade no servidor:** mercado e câmbio são estado global. O ciclo da cidade fica em
+  `PQP_CICLO_CIDADE_MIN`.
+
 ## Sugestões (o que não está nos docs)
 Lista mantida por fase. Tudo aqui pode ser trocado pelos autores.
 

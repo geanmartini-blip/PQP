@@ -14,6 +14,11 @@ import type { AlaOption, LoadoutView } from '../game/ala';
 import type { GuideLineOut } from '../game/guides';
 import type { InstitutionInfo } from '../game/institutions';
 import type { TalentOption } from '../game/talents';
+import type { Bem, CarteiraView } from '../game/economy';
+import type { MercadoId, MercadoView } from '../game/market';
+import type { CotacaoTroca, ExchangeRate } from '../game/exchange';
+import type { CasaView } from '../game/housing';
+import type { Moeda, PermissaoVisita, Rotacao } from '../game/types';
 
 export const GAME_MSG = {
   // cliente -> servidor
@@ -55,6 +60,69 @@ export const GAME_MSG = {
   instituicaoInfo: 'instituicao_info',
   /** fala do guia (S2C_FalaGuia): missão aceita, bônus */
   falaGuia: 'fala_guia',
+  // ---- Fase 4 ----
+  // cliente -> servidor
+  /** pedir a carteira (sem corpo); responde 'carteira' */
+  carteiraPedir: 'carteira_pedir',
+  /** quitar a dívida (sem corpo) */
+  dividaPagar: 'divida_pagar',
+  /** comprar na loja de NPC (C2S_LojaComprar) */
+  lojaComprar: 'loja_comprar',
+  /** vender para a loja de NPC (C2S_LojaVender) */
+  lojaVender: 'loja_vender',
+  /** listar a feira ou o app (C2S_MercadoListar); responde 'mercado_info' */
+  mercadoListar: 'mercado_listar',
+  /** anunciar na feira (C2S_FeiraAnunciar) */
+  feiraAnunciar: 'feira_anunciar',
+  /** comprar ou trocar na feira (C2S_MercadoComprar) */
+  feiraComprar: 'feira_comprar',
+  /** retirar as compras prontas da fila da feira (sem corpo) */
+  feiraRetirar: 'feira_retirar',
+  /** anunciar no app (C2S_AppAnunciar) */
+  appAnunciar: 'app_anunciar',
+  /** comprar no app (C2S_MercadoComprar) */
+  appComprar: 'app_comprar',
+  /** cancelar um anúncio próprio, da feira ou do app (C2S_MercadoCancelar) */
+  mercadoCancelar: 'mercado_cancelar',
+  /** receber o que ficou pendente no mercado (vendas, trocas, vencidos) (sem corpo) */
+  mercadoReceber: 'mercado_receber',
+  /** pedir a cotação da ponte (C2S_CambioCotar); responde 'cambio_info' */
+  cambioCotar: 'cambio_cotar',
+  /** trocar moeda na ponte (C2S_CambioTrocar) */
+  cambioTrocar: 'cambio_trocar',
+  /** pedir a própria casa (sem corpo); responde 'casa_info' */
+  casaVer: 'casa_ver',
+  /** visitar a casa de outro jogador (C2S_CasaVisitar); responde 'casa_info' só leitura */
+  casaVisitar: 'casa_visitar',
+  /** comprar móvel do catálogo (C2S_CasaComprarMovel) */
+  casaComprarMovel: 'casa_comprar_movel',
+  /** colocar móvel guardado (C2S_CasaColocar) */
+  casaColocar: 'casa_colocar',
+  /** mover móvel colocado (C2S_CasaMover) */
+  casaMover: 'casa_mover',
+  /** girar móvel 90 graus (C2S_CasaMovel) */
+  casaGirar: 'casa_girar',
+  /** tirar móvel e guardar no inventário (C2S_CasaMovel) */
+  casaTirar: 'casa_tirar',
+  /** quem pode visitar e convites (C2S_CasaVisitas) */
+  casaVisitas: 'casa_visitas',
+  /** alugar cápsula (C2S_CasaAlugar) */
+  casaAlugar: 'casa_alugar',
+  /** entrar na lista de espera da Assembleia (sem corpo) */
+  casaListaEspera: 'casa_lista_espera',
+  /** atalho de teste (só com o modo de desenvolvimento do servidor): anda a lista de espera */
+  casaAvancarFila: 'casa_avancar_fila',
+  // servidor -> cliente
+  /** carteira (S2C_Carteira) */
+  carteira: 'carteira',
+  /** feira ou app (S2C_MercadoInfo) */
+  mercadoInfo: 'mercado_info',
+  /** cotação da ponte (S2C_CambioInfo) */
+  cambioInfo: 'cambio_info',
+  /** casa própria ou visitada (S2C_CasaInfo) */
+  casaInfo: 'casa_info',
+  /** resultado curto de uma operação de economia (S2C_EconomiaResultado) */
+  economiaResultado: 'economia_resultado',
 } as const;
 export type GameMsgName = (typeof GAME_MSG)[keyof typeof GAME_MSG];
 
@@ -203,3 +271,121 @@ export interface S2C_ProgressoOpcoes {
 export type S2C_InstituicaoInfo = InstitutionInfo;
 
 export type S2C_FalaGuia = GuideLineOut;
+
+// ---------------------------------------------------------------------------
+// Fase 4: carteira, loja, feira, app, câmbio e casa
+// Toda operação responde 'economia_resultado' (ok ou erro), 'perfil' quando o saldo mudou e a
+// tela da operação ('mercado_info', 'cambio_info', 'casa_info').
+
+export interface C2S_LojaComprar {
+  loja: string;
+  item: string;
+  moeda?: Moeda;
+}
+
+export interface C2S_LojaVender {
+  loja: string;
+  /** id do inventário (item, 'movel:<id>' ou recurso) */
+  item: string;
+  moeda?: Moeda;
+}
+
+export interface C2S_MercadoListar {
+  mercado: MercadoId;
+}
+
+export interface C2S_FeiraAnunciar {
+  bem: Bem;
+  /** preço em Semente (item da tabela usa a tabela) */
+  preco?: number;
+  /** troca direta: o que pede em troca */
+  trocaPor?: Bem[];
+}
+
+export interface C2S_AppAnunciar {
+  bem: Bem;
+  preco: number;
+}
+
+export interface C2S_MercadoComprar {
+  anuncio: string;
+}
+
+export interface C2S_MercadoCancelar {
+  anuncio: string;
+}
+
+export interface C2S_CambioCotar {
+  de?: Moeda;
+  quantidade?: number;
+}
+
+export interface C2S_CambioTrocar {
+  de: Moeda;
+  quantidade: number;
+}
+
+export interface C2S_CasaVisitar {
+  playerId: string;
+}
+
+export interface C2S_CasaComprarMovel {
+  movel: string;
+  moeda?: Moeda;
+  /** já colocar na casa depois de comprar */
+  colocar?: { x: number; y: number; rot?: Rotacao };
+}
+
+export interface C2S_CasaColocar {
+  movel: string;
+  x: number;
+  y: number;
+  rot?: Rotacao;
+}
+
+export interface C2S_CasaMover {
+  uid: number;
+  x: number;
+  y: number;
+  rot?: Rotacao;
+}
+
+export interface C2S_CasaMovel {
+  uid: number;
+}
+
+export interface C2S_CasaVisitas {
+  permissao?: PermissaoVisita;
+  convidar?: string;
+  desconvidar?: string;
+}
+
+export interface C2S_CasaAlugar {
+  tipo?: string;
+}
+
+export interface C2S_CasaAvancarFila {
+  ciclos?: number;
+}
+
+export type S2C_Carteira = CarteiraView;
+export type S2C_MercadoInfo = MercadoView;
+
+export interface S2C_CambioInfo {
+  taxa: ExchangeRate;
+  /** cotação pedida (C2S_CambioCotar com quantidade) */
+  cotacao?: CotacaoTroca;
+  usadoCiclo: number;
+}
+
+export type S2C_CasaInfo = CasaView;
+
+export interface S2C_EconomiaResultado {
+  /** nome da mensagem que pediu (GAME_MSG) */
+  acao: string;
+  ok: boolean;
+  erro?: string;
+  texto?: string;
+  /** feira: lugar na fila da compra */
+  entrega?: { id: string; prontoEm: number; posicao: number };
+}

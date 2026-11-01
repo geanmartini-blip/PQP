@@ -40,6 +40,15 @@
  * se mesmo assim faltar.
  * Queda de conexão: o personagem fica no modo automático (Doutrina) por OFFLINE_AUTO_MS e depois sai;
  * o mesmo token retoma o mesmo personagem.
+ *
+ * Fase 4 (economia e moradia, regras de shared/game): as mensagens de ECON_MSGS (carteira, loja,
+ * feira, app, câmbio, casa) respondem 'economia_resultado' e a tela da operação; o saldo vai em
+ * 'carteira' e 'perfil'. Mercado e câmbio são da cidade (CityService), compartilhada pelas salas.
+ * Loja pede o balcão por perto, feira e câmbio pedem o lugar; app, carteira e decoração valem de
+ * qualquer lugar. // SUGESTÃO. Ao entrar na margem, o registro acerta os ciclos da cidade e
+ * recebe o que o mercado deve. A porta 'moradia' leva o jogador para a sala da casa dele
+ * ('casa:<id>', house.ts); casa_visitar perto da porta leva para a casa de outro, se o dono deixar.
+ * Na sala de uma casa (opts.house), quem entra recebe 'casa_info' e vê as mudanças ao vivo.
  */
 import { randomUUID } from 'node:crypto';
 import { getData } from '@pqp/shared/data';
@@ -125,8 +134,48 @@ import { acceptMission, currentObjectives, missionStatus, onGameEvent } from '@p
 import { controlesLiberados, TUTORIAL_STEPS } from '@pqp/shared/game/tutorial';
 import { dialogOption, dialogOptions, talkTo, type Dialog } from '@pqp/shared/game/dialog';
 import { applyTravessia, createCharacter } from '@pqp/shared/game/travessia';
-import type { GameEvent, GameResult, PlayerRecord } from '@pqp/shared/game/types';
+import type { GameEvent, GameResult, Moeda, PermissaoVisita, PlayerRecord, Rotacao } from '@pqp/shared/game/types';
 import { TutorialControl } from '@pqp/shared/schema/mission';
+import type { TileMap } from '@pqp/shared/map';
+import type { S2C_CambioInfo, S2C_CasaInfo, S2C_Carteira, S2C_EconomiaResultado, S2C_MercadoInfo } from '@pqp/shared/net';
+import {
+  alugarCapsula,
+  anunciarApp,
+  anunciarFeira,
+  avancarListaDeEspera,
+  cancelarAnuncio,
+  carteiraView,
+  casaView,
+  colocarMovel,
+  comprarApp,
+  comprarFeira,
+  comprarMovel,
+  comprarNaLoja,
+  convidar,
+  cotarTroca,
+  definirVisitas,
+  economiaOf,
+  entrarNaListaDeEspera,
+  exchangeRate,
+  girarMovel,
+  isResource as isEconResource,
+  mercadoView,
+  moverMovel,
+  nomeDoBem,
+  nomeMoeda,
+  pagarDivida,
+  receberPendencias,
+  retirarEntregas,
+  sincronizarComCidade,
+  tirarMovel,
+  trocarMoeda,
+  venderNaLoja,
+  visitarCasa,
+  type Bem,
+  type MercadoId,
+} from '@pqp/shared/game/index';
+import { CityService, type CityCore } from './city_service';
+import { houseMapId, houseSide, sideOfMap } from './house';
 import {
   AREA_CHECK_TICKS,
   CMD_HOLD_MAX_TICKS,
@@ -160,6 +209,10 @@ import {
   EXIT_RADIUS_TILES,
   INTERACT_REPEAT_MS,
   SURVIVE_SPAWN_TILES,
+  DOOR_RADIUS_TILES,
+  DOOR_REACH_TILES,
+  MARKET_REACH_TILES,
+  SHOP_REACH_TILES,
 } from './config';
 import { hasArrival, mapAllowed, setArrival, takeArrival } from './handoff';
 import type { Store, StoredPlayer } from './persistence/store';
@@ -191,7 +244,46 @@ export interface CoreOptions {
   interestRadius?: number;
   spawner?: SpawnerOptions;
   log?: (msg: string) => void;
+  // ---- Fase 4 ----
+  /** a cidade (mercado, câmbio, ciclo) compartilhada pelas salas; sem ela, uma só desta sala */
+  city?: CityService;
+  /** mapa pronto (a sala de uma casa); sem ele, getMap(mapId) */
+  map?: TileMap;
+  /** sala da casa: o registro do dono (a sala mostra a casa e confere quem entra) */
+  house?: { owner: PlayerRecord };
+  /** modo de desenvolvimento: aceita casa_avancar_fila (padrão: PQP_DEV=1) */
+  dev?: boolean;
 }
+
+/** Mensagens de economia e moradia da Fase 4 (cliente -> servidor). */
+const ECON_MSGS = new Set<string>([
+  GAME_MSG.carteiraPedir,
+  GAME_MSG.dividaPagar,
+  GAME_MSG.lojaComprar,
+  GAME_MSG.lojaVender,
+  GAME_MSG.mercadoListar,
+  GAME_MSG.feiraAnunciar,
+  GAME_MSG.feiraComprar,
+  GAME_MSG.feiraRetirar,
+  GAME_MSG.appAnunciar,
+  GAME_MSG.appComprar,
+  GAME_MSG.mercadoCancelar,
+  GAME_MSG.mercadoReceber,
+  GAME_MSG.cambioCotar,
+  GAME_MSG.cambioTrocar,
+  GAME_MSG.casaVer,
+  GAME_MSG.casaVisitar,
+  GAME_MSG.casaComprarMovel,
+  GAME_MSG.casaColocar,
+  GAME_MSG.casaMover,
+  GAME_MSG.casaGirar,
+  GAME_MSG.casaTirar,
+  GAME_MSG.casaVisitas,
+  GAME_MSG.casaAlugar,
+  GAME_MSG.casaListaEspera,
+  GAME_MSG.casaAvancarFila,
+]);
+export const ECONOMY_MESSAGES: readonly string[] = Array.from(ECON_MSGS);
 
 /** Mensagem que o adaptador manda para uma sessão (na ordem da caixa). */
 export interface OutMsg {
@@ -284,6 +376,28 @@ interface Slot {
   lastEmoteTick?: number;
   /** objetivo 'sobreviver' em andamento */
   survive?: { key: string; startTick: number; x: number; y: number; waves: number; lastSecond: number };
+  // ---- Fase 4 ----
+  /** portas de moradia em que o jogador está (só leva para a casa ao entrar de novo) */
+  doors: Set<string>;
+}
+
+const moedaOf = (v: unknown): Moeda | undefined => (v === 'semente' || v === 'credito' ? v : undefined);
+const rotOf = (v: unknown): Rotacao | undefined => (v === 0 || v === 1 || v === 2 || v === 3 ? v : undefined);
+const strOf = (v: unknown): string => (typeof v === 'string' ? v.slice(0, 128) : '');
+
+/** Bem vindo do cliente (C2S_FeiraAnunciar, C2S_AppAnunciar), validado; null se inválido. */
+export function bemOf(v: unknown): Bem | null {
+  if (!isObj(v)) return null;
+  const id = v['id'];
+  if (typeof id !== 'string' || id.length === 0 || id.length > 64) return null;
+  if (v['tipo'] === 'item') return { tipo: 'item', id };
+  if (v['tipo'] === 'movel') return { tipo: 'movel', id };
+  if (v['tipo'] === 'recurso') {
+    const q = v['quantidade'];
+    if (!isInt(q) || q <= 0 || q > 99_999 || !isEconResource(id)) return null;
+    return { tipo: 'recurso', id, quantidade: q };
+  }
+  return null;
 }
 
 // SUGESTÃO: 'need' responde no máximo 64 ids por pedido.
@@ -366,7 +480,7 @@ function sanitizeCmd(raw: unknown): PlayerCommand | null {
   }
 }
 
-export class GameServerCore {
+export class GameServerCore implements CityCore {
   readonly world: World;
   readonly mapId: string;
   readonly spawn: Vec;
@@ -393,11 +507,23 @@ export class GameServerCore {
   private baseCache = new Map<number, EntSnap>();
   private infoCache = new Map<number, { d: string; n: string; lv: number; lk: unknown; lkJson: string | undefined }>();
   private evCache = new Map<CombatEvent, CombatEvent>();
+  // ---- Fase 4 ----
+  readonly city: CityService;
+  /** sala de uma casa: o dono e a última versão do registro dele (quando ele não está aqui) */
+  readonly house?: { ownerId: string; owner: PlayerRecord };
+  private readonly dev: boolean;
+  private readonly doorMarkers: MapMarker[];
+  private readonly bgTasks = new Set<Promise<void>>();
 
   constructor(opts: CoreOptions = {}) {
     // Fase 3: qg_esquerda e qg_direita são apelidos das margens (registros e salas antigas)
-    this.mapId = resolveMapId(opts.mapId ?? DEFAULT_MAP_ID);
-    this.world = createWorld(getMap(this.mapId), opts.seed ?? DEFAULT_WORLD_SEED);
+    this.mapId = opts.map ? opts.map.id : resolveMapId(opts.mapId ?? DEFAULT_MAP_ID);
+    this.world = createWorld(opts.map ?? getMap(this.mapId), opts.seed ?? DEFAULT_WORLD_SEED);
+    if (opts.house) this.house = { ownerId: opts.house.owner.id, owner: clone(opts.house.owner) };
+    this.dev = opts.dev ?? (process.env['PQP_DEV'] === '1' || process.env['PQP_DEV'] === 'true');
+    this.doorMarkers = this.world.map.markers.filter((m) => m.kind === 'moradia');
+    this.city = opts.city ?? new CityService({ ...(opts.log ? { log: opts.log } : {}) });
+    this.city.register(this);
     this.world.pathfinder = findPath;
     if (opts.store) this.store = opts.store;
     this.sandbox = opts.sandbox ?? SANDBOX_MAPS.includes(this.mapId);
@@ -467,7 +593,8 @@ export class GameServerCore {
   /** Ponto de um marcador spawn_jogador pelo id (as entradas do mapa); undefined = o padrão. */
   spawnPointOf(markerId: string | undefined): Vec | undefined {
     if (!markerId) return undefined;
-    const m = this.world.map.markers.find((x) => x.kind === 'spawn_jogador' && x.id === markerId);
+    // Fase 4: a saída da casa aponta para o marcador 'moradia' (a porta), que não é spawn_jogador
+    const m = this.world.map.markers.find((x) => x.kind === 'spawn_jogador' && x.id === markerId) ?? this.world.map.markers.find((x) => x.id === markerId);
     return m ? { x: m.x, y: m.y } : undefined;
   }
 
@@ -511,7 +638,8 @@ export class GameServerCore {
       const target = mapForRecord(r);
       // Fase 3: fica neste mapa quem é daqui, quem pediu esta sala (trocar_sala) ou quem chegou por
       // uma saída, desde que o estágio deixe estar aqui (handoff.ts mapAllowed)
-      const stay = target === this.mapId || ((opts.explicit === true || hasArrival(token, this.mapId)) && mapAllowed(r, this.mapId));
+      // Fase 4: a sala de uma casa confere a permissão do dono
+      const stay = target === this.mapId || ((opts.explicit === true || hasArrival(token, this.mapId)) && mapAllowed(r, this.mapId) && this.canEnterHouse(r));
       if (!stay) {
         this.redirect(sess, target, 'registro', generated);
         return null;
@@ -523,8 +651,15 @@ export class GameServerCore {
         this.send(sessionId, GAME_MSG.perfil, profileOf(r, controlesLiberados(r)));
         return null;
       }
+      // Fase 4: ciclos da cidade que o registro não viu, moradia inicial e o que o mercado deve
+      const sync = this.syncRecord(r);
       const arr = takeArrival(token, this.mapId);
       slot = this.spawnSlot(token, r, false, undefined, this.spawnPointOf(arr?.spawn));
+      // chegou pela porta da moradia: só volta para a casa saindo e entrando de novo
+      if (arr?.spawn) slot.doors.add(arr.spawn);
+      if (sync.mudou) slot.dirty = true;
+      for (const t of sync.avisos) this.send(sessionId, GAME_MSG.aviso, { texto: t, tipo: 'info' });
+      if (this.house) this.send(sessionId, GAME_MSG.casaInfo, casaView(this.ownerRecord(), r.id !== this.house.ownerId) satisfies S2C_CasaInfo | null);
     }
     this.comeBack(slot);
     slot.sid = sessionId;
@@ -759,6 +894,7 @@ export class GameServerCore {
       bornTick: this.world.tick,
       exitWarned: new Set(),
       interactAt: new Map(),
+      doors: new Set(),
     };
     if (!sandbox && this.jaco && rec.stage !== 'margem') this.spawnJaco(slot, e);
     else if (this.companions) this.spawnCompanion(slot, e);
@@ -976,6 +1112,11 @@ export class GameServerCore {
       if (!slot || !e || slot.sandbox) return;
       this.pull(slot);
       const m = isObj(raw) ? raw : {};
+      // Fase 4: carteira, loja, feira, app, câmbio e casa
+      if (ECON_MSGS.has(type)) {
+        this.onEconomy(slot, e, type, m);
+        return;
+      }
       switch (type) {
         case GAME_MSG.maquinaVisual:
           this.onVisual(slot, e, m as unknown as C2S_MaquinaVisual);
@@ -1459,7 +1600,9 @@ export class GameServerCore {
       if (!e || e.dead) continue;
       // Fase 3: saídas do mapa (troca de sala) e o objetivo 'sobreviver'
       if (this.checkExits(slot, e)) continue;
-      this.tickSurvive(slot, e);
+      // Fase 4: a porta da moradia leva para a casa; dentro de uma casa não nasce onda de inimigo
+      if (this.checkDoors(slot, e)) continue;
+      if (!this.house) this.tickSurvive(slot, e);
       // lugar
       let best: string | null = null;
       let bd = Infinity;
@@ -1512,6 +1655,497 @@ export class GameServerCore {
           slot.jacoDownAt = w.tick;
         }
       }
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Fase 4: economia, moradia e a cidade
+
+  /** Espera as tarefas assíncronas das mensagens (visitar casa). Testes. */
+  async idle(): Promise<void> {
+    while (this.bgTasks.size > 0) await Promise.all(Array.from(this.bgTasks));
+  }
+
+  private bg(p: Promise<void>): void {
+    const t = p
+      .catch((err) => this.log(`[core] tarefa falhou: ${err instanceof Error ? err.stack : String(err)}`))
+      .finally(() => {
+        this.bgTasks.delete(t);
+        this.flushNotify();
+      });
+    this.bgTasks.add(t);
+  }
+
+  /** A sala saiu do ar: a cidade esquece dela. */
+  dispose(): void {
+    this.city.unregister(this);
+  }
+
+  /** Ciclos da cidade, moradia inicial e pendências do mercado no registro que entra (só na margem). */
+  private syncRecord(rec: PlayerRecord): { mudou: boolean; avisos: string[] } {
+    if (!rec.criado || rec.stage !== 'margem') return { mudou: false, avisos: [] };
+    const s = sincronizarComCidade(rec, this.city.state);
+    const out = { mudou: s.mudou, avisos: [...s.avisos] };
+    const p = receberPendencias(this.city.state.mercado, rec);
+    if (p) {
+      out.mudou = true;
+      out.avisos.push(...p.avisos);
+      this.city.save();
+    }
+    return out;
+  }
+
+  /** O registro mudou por uma regra de economia: entidade, gravação, perfil e carteira. */
+  private changed(slot: Slot): void {
+    this.push(slot);
+    slot.dirty = true;
+    slot.notify = true;
+    this.send(slot.sid, GAME_MSG.carteira, carteiraView(slot.rec) satisfies S2C_Carteira);
+  }
+
+  private avisoInfo(sid: string | undefined, texto: string): void {
+    this.send(sid, GAME_MSG.aviso, { texto, tipo: 'info' });
+  }
+
+  private slotOfPlayer(playerId: string): Slot | undefined {
+    for (const s of this.slots.values()) if (!s.sandbox && s.rec.id === playerId) return s;
+    return undefined;
+  }
+
+  // ---- CityCore ----
+
+  cityRecords(): PlayerRecord[] {
+    const out: PlayerRecord[] = [];
+    for (const s of this.slots.values()) {
+      if (s.sandbox || !s.rec.criado || s.rec.stage !== 'margem') continue;
+      this.pull(s);
+      out.push(s.rec);
+    }
+    return out;
+  }
+
+  afterCityTick(r: { mudaram: string[]; porJogador: Record<string, string[]> }): void {
+    for (const s of this.slots.values()) {
+      if (s.sandbox) continue;
+      if (r.mudaram.includes(s.rec.id)) {
+        this.changed(s);
+        if (s.rec.home !== undefined) this.city.houseChanged(clone(s.rec));
+      }
+      for (const t of r.porJogador[s.rec.id] ?? []) this.avisoInfo(s.sid, t);
+    }
+    this.flushNotify();
+  }
+
+  receivePendingAll(): void {
+    const mk = this.city.state.mercado;
+    let any = false;
+    for (const s of this.slots.values()) {
+      if (s.sandbox || !mk.pendencias[s.rec.id]) continue;
+      this.pull(s);
+      const p = receberPendencias(mk, s.rec);
+      if (!p) continue;
+      any = true;
+      this.changed(s);
+      for (const t of p.avisos) this.avisoInfo(s.sid, t);
+      this.city.logEvent('mercado_recebido', s.rec.id, { semente: p.semente, credito: p.credito, bens: p.bens }, this.mapId);
+    }
+    if (any) {
+      this.city.save();
+      this.flushNotify();
+    }
+  }
+
+  liveRecordOf(playerId: string): PlayerRecord | undefined {
+    const s = this.slotOfPlayer(playerId);
+    if (!s) return undefined;
+    this.pull(s);
+    return s.rec;
+  }
+
+  houseChanged(owner: PlayerRecord): void {
+    if (!this.house || owner.id !== this.house.ownerId) return;
+    if (!this.slotOfPlayer(owner.id)) this.house.owner = clone(owner);
+    this.broadcastHouse();
+  }
+
+  // ---- casa ----
+
+  /** Dono da casa desta sala: o registro vivo, se ele estiver aqui, ou a última versão. */
+  private ownerRecord(): PlayerRecord {
+    const h = this.house!;
+    return this.slotOfPlayer(h.ownerId)?.rec ?? h.owner;
+  }
+
+  /** Quem pode entrar nesta sala (fora de uma casa, todo mundo). */
+  private canEnterHouse(r: PlayerRecord): boolean {
+    if (!this.house) return true;
+    if (r.id === this.house.ownerId) return true;
+    if (this.city.takePass(r.id, this.house.ownerId)) return true;
+    return visitarCasa(this.ownerRecord(), r).ok;
+  }
+
+  /** Manda a casa (casa_info) a todos desta sala: o dono vê tudo, a visita só lê. */
+  private broadcastHouse(): void {
+    if (!this.house) return;
+    const owner = this.ownerRecord();
+    for (const s of this.slots.values()) {
+      if (!s.sid) continue;
+      const v = casaView(owner, s.rec.id !== owner.id);
+      if (v) this.send(s.sid, GAME_MSG.casaInfo, v satisfies S2C_CasaInfo);
+    }
+  }
+
+  /** A casa do jogador mudou: a tela dele e a sala da casa (onde quer que ela esteja). */
+  private houseUpdated(slot: Slot): void {
+    const v = casaView(slot.rec, false);
+    if (v) this.send(slot.sid, GAME_MSG.casaInfo, v satisfies S2C_CasaInfo);
+    this.city.houseChanged(clone(slot.rec));
+  }
+
+  /** Vai para a sala da casa do dono ('casa:<id>'). */
+  private enterHouse(slot: Slot, owner: PlayerRecord): void {
+    this.city.rememberHouse(owner);
+    if (owner.id !== slot.rec.id) this.city.grantPass(slot.rec.id, owner.id);
+    this.city.logEvent('casa_entrada', slot.rec.id, { dono: owner.id }, this.mapId);
+    this.leaveTo(slot, houseMapId(owner.id), undefined, 'registro');
+  }
+
+  private nearDoor(e: Entity, reach: number): boolean {
+    return this.doorMarkers.some((mk) => Math.hypot(mk.x - e.x, mk.y - e.y) <= reach);
+  }
+
+  /** Porta da moradia por perto: leva o jogador para a casa dele. Devolve true quando ele saiu do mapa. */
+  private checkDoors(slot: Slot, e: Entity): boolean {
+    if (this.doorMarkers.length === 0) return false;
+    if (this.world.tick - slot.bornTick < msToTicks(EXIT_GRACE_MS)) return false;
+    for (const mk of this.doorMarkers) {
+      const d = Math.hypot(mk.x - e.x, mk.y - e.y);
+      if (d > DOOR_RADIUS_TILES) {
+        if (d > DOOR_RADIUS_TILES + 1) slot.doors.delete(mk.id);
+        continue;
+      }
+      if (slot.doors.has(mk.id)) continue;
+      slot.doors.add(mk.id);
+      this.pull(slot);
+      const rec = slot.rec;
+      if (!rec.home) {
+        // SUGESTÃO: texto de quem chega na porta sem casa.
+        this.avisoInfo(slot.sid, rec.side === 'direita' ? 'Sem cápsula, sem porta. Alugue uma no app.' : 'Você ainda não tem casa. A Assembleia tem uma lista para isso.');
+        continue;
+      }
+      const side = sideOfMap(this.mapId);
+      if (side && houseSide(rec) !== side) {
+        this.avisoInfo(slot.sid, 'Sua casa fica na outra margem.');
+        continue;
+      }
+      this.enterHouse(slot, rec);
+      return true;
+    }
+    return false;
+  }
+
+  /** casa_visitar: confere a permissão do dono, mostra a casa e, perto da porta, entra. */
+  private async onVisitHouse(slot: Slot, ownerId: string): Promise<void> {
+    const acao = GAME_MSG.casaVisitar;
+    const sid = slot.sid;
+    const reply = (ok: boolean, erro?: string, texto?: string) =>
+      this.send(sid, GAME_MSG.economiaResultado, { acao, ok, ...(erro ? { erro } : {}), ...(texto ? { texto } : {}) } satisfies S2C_EconomiaResultado);
+    if (!ownerId) return reply(false, 'Diga de quem é a casa.');
+    const owner = ownerId === slot.rec.id ? slot.rec : await this.city.findRecord(ownerId);
+    if (this.slots.get(slot.token) !== slot || slot.sid !== sid) return; // saiu enquanto procurava
+    if (!owner) return reply(false, 'Não achei esse morador.');
+    this.pull(slot);
+    const e = this.world.entities.get(slot.entityId);
+    const os = this.slotOfPlayer(ownerId);
+    const oe = os ? this.world.entities.get(os.entityId) : undefined;
+    const mesmoGrupo = !!(e?.partyId && oe?.partyId && e.partyId === oe.partyId);
+    const v = visitarCasa(owner, slot.rec, { mesmoGrupo });
+    if (!v.ok) return reply(false, v.erro);
+    if (v.casa) this.send(sid, GAME_MSG.casaInfo, v.casa satisfies S2C_CasaInfo);
+    if (this.house?.ownerId === ownerId) return reply(true, undefined, 'Você já está nessa casa.');
+    if (e && (this.house || this.nearDoor(e, DOOR_REACH_TILES))) {
+      this.enterHouse(slot, owner);
+      return reply(true, undefined, `Entrando na casa de ${owner.name}.`);
+    }
+    // SUGESTÃO: longe da porta, a visita só mostra a casa (o cliente pode levar até a porta).
+    reply(true, undefined, 'Chegue na porta das moradias para entrar.');
+  }
+
+  // ---- lugares ----
+
+  /** Erro de distância da loja de NPC, ou undefined quando está no balcão. */
+  private shopReachError(e: Entity, shopId: string): string | undefined {
+    const ms = this.world.map.markers.filter((m) => m.kind === 'loja' && m.ref === shopId);
+    if (ms.length === 0) {
+      // a loja do Delta não tem balcão no mapa: vale em todo o Delta. // SUGESTÃO
+      if (shopId === 'loja_delta' && this.mapId === START_MAP) return undefined;
+      return 'Essa loja não fica neste mapa.';
+    }
+    return ms.some((m) => Math.hypot(m.x - e.x, m.y - e.y) <= SHOP_REACH_TILES) ? undefined : 'Chegue no balcão da loja.';
+  }
+
+  /** Erro de distância de um lugar (feira, câmbio), ou undefined quando está lá. */
+  private placeReachError(e: Entity, placeRef: string, erro: string): string | undefined {
+    const ms = this.world.map.markers.filter((m) => m.kind === 'lugar' && m.ref === placeRef);
+    return ms.some((m) => Math.hypot(m.x - e.x, m.y - e.y) <= MARKET_REACH_TILES) ? undefined : erro;
+  }
+
+  // ---- mensagens ----
+
+  private onEconomy(slot: Slot, e: Entity, type: string, m: Record<string, unknown>): void {
+    const sid = slot.sid!;
+    const rec = slot.rec;
+    const city = this.city;
+    const mk = city.state.mercado;
+    const cambio = city.state.cambio;
+    const med = city.state.medidores;
+    const now = city.now();
+    const res = (ok: boolean, erro?: string, texto?: string, extra: Partial<S2C_EconomiaResultado> = {}) =>
+      this.send(sid, GAME_MSG.economiaResultado, { acao: type, ok, ...(erro ? { erro } : {}), ...(texto ? { texto } : {}), ...extra } satisfies S2C_EconomiaResultado);
+    const fail = (erro: string) => res(false, erro);
+    const log = (tipo: string, dados: Record<string, unknown>) => city.logEvent(tipo, rec.id, dados, this.mapId);
+    const market = (mercado: MercadoId) => this.send(sid, GAME_MSG.mercadoInfo, mercadoView(mk, mercado, rec, now) satisfies S2C_MercadoInfo);
+    const cambioInfo = (cot?: { de: Moeda; q: number }) => {
+      const info: S2C_CambioInfo = { taxa: exchangeRate(cambio, med), usadoCiclo: economiaOf(rec).cambioCiclo, ...(cot ? { cotacao: cotarTroca(cambio, cot.de, cot.q, med) } : {}) };
+      this.send(sid, GAME_MSG.cambioInfo, info);
+    };
+    const moeda = moedaOf(m['moeda']);
+    const FEIRA = 'feira_da_esquerda';
+    const CAMBIO = 'cambio_da_ponte';
+
+    switch (type) {
+      case GAME_MSG.carteiraPedir:
+        this.send(sid, GAME_MSG.carteira, carteiraView(rec) satisfies S2C_Carteira);
+        return;
+      case GAME_MSG.dividaPagar: {
+        const p = pagarDivida(rec);
+        if (!p.ok) return fail(p.erro);
+        this.changed(slot);
+        log('divida_paga', { pago: p.pago, resta: p.resta });
+        return res(true, undefined, `Pagou ${p.pago} Créditos de dívida. Resta ${p.resta}.`);
+      }
+      // ---- loja de NPC ----
+      case GAME_MSG.lojaComprar:
+      case GAME_MSG.lojaVender: {
+        const loja = strOf(m['loja']);
+        const item = strOf(m['item']);
+        const far = this.shopReachError(e, loja);
+        if (far) return fail(far);
+        const compra = type === GAME_MSG.lojaComprar;
+        const c = compra
+          ? comprarNaLoja(rec, loja, item, { mercado: mk, ctx: city.precoCtx(), ...(moeda ? { moeda } : {}) })
+          : venderNaLoja(rec, loja, item, { mercado: mk, ...(moeda ? { moeda } : {}) });
+        if (!c.ok) return fail(c.erro);
+        this.changed(slot);
+        city.save();
+        log(compra ? 'loja_compra' : 'loja_venda', { loja, item, moeda: c.moeda, valor: c.valor });
+        return res(true, undefined, c.resultado.avisos.join(' '));
+      }
+      // ---- feira e app ----
+      case GAME_MSG.mercadoListar:
+        market(m['mercado'] === 'app' ? 'app' : 'feira');
+        return;
+      case GAME_MSG.feiraAnunciar: {
+        const far = this.placeReachError(e, FEIRA, 'Anúncio da feira é na feira.');
+        if (far) return fail(far);
+        const bem = bemOf(m['bem']);
+        if (!bem) return fail('Bem inválido.');
+        let trocaPor: Bem[] | undefined;
+        if (Array.isArray(m['trocaPor']) && m['trocaPor'].length > 0) {
+          const t = m['trocaPor'].slice(0, 8).map(bemOf);
+          if (t.some((x) => x === null)) return fail('Troca inválida.');
+          trocaPor = t as Bem[];
+        }
+        const preco = isNum(m['preco']) ? m['preco'] : undefined;
+        const a = anunciarFeira(mk, rec, { bem, ...(preco !== undefined ? { preco } : {}), ...(trocaPor ? { trocaPor } : {}) }, now);
+        if (!a.ok) return fail(a.erro);
+        this.changed(slot);
+        city.save();
+        log('feira_anuncio', { anuncio: a.anuncio?.id, bem, preco: a.anuncio?.preco ?? null, trocaPor: trocaPor ?? null });
+        market('feira');
+        return res(true, undefined, `${nomeDoBem(bem)} na barraca.`);
+      }
+      case GAME_MSG.feiraComprar: {
+        const far = this.placeReachError(e, FEIRA, 'Compra da feira é na feira.');
+        if (far) return fail(far);
+        const id = strOf(m['anuncio']);
+        const c = comprarFeira(mk, rec, id, now);
+        if (!c.ok) return fail(c.erro);
+        this.changed(slot);
+        city.save();
+        log('feira_compra', { anuncio: id, vendedor: c.anuncio?.vendedor, bem: c.anuncio?.bem, preco: c.anuncio?.preco ?? null, troca: c.anuncio?.trocaPor ?? null });
+        city.deliverPending();
+        market('feira');
+        const nome = c.anuncio ? nomeDoBem(c.anuncio.bem) : 'o item';
+        if (c.entrega) {
+          const s = Math.max(0, Math.ceil((c.entrega.prontoEm - now) / 1000));
+          return res(true, undefined, `Comprou ${nome}. Lugar ${c.entrega.posicao} na fila: fica pronto em ${s} s.`, { entrega: c.entrega });
+        }
+        return res(true, undefined, `Comprou ${nome} na feira.`);
+      }
+      case GAME_MSG.feiraRetirar: {
+        const far = this.placeReachError(e, FEIRA, 'A retirada é na feira.');
+        if (far) return fail(far);
+        const r = retirarEntregas(mk, rec, now);
+        market('feira');
+        if (r.bens.length === 0) return res(true, undefined, r.aguardando.length > 0 ? `Ainda na fila: ${r.aguardando.length}.` : 'Nada para retirar.');
+        this.changed(slot);
+        city.save();
+        log('feira_retirada', { bens: r.bens });
+        return res(true, undefined, `Retirou: ${r.bens.map(nomeDoBem).join(', ')}.`);
+      }
+      case GAME_MSG.appAnunciar: {
+        const bem = bemOf(m['bem']);
+        if (!bem) return fail('Bem inválido.');
+        const a = anunciarApp(mk, rec, { bem, preco: isNum(m['preco']) ? m['preco'] : 0 }, now);
+        if (!a.ok) return fail(a.erro);
+        this.changed(slot);
+        city.save();
+        log('app_anuncio', { anuncio: a.anuncio?.id, bem, preco: a.anuncio?.preco ?? null, taxaPct: a.anuncio?.taxaPct });
+        market('app');
+        return res(true, undefined, `${nomeDoBem(bem)} anunciado no app.`);
+      }
+      case GAME_MSG.appComprar: {
+        const id = strOf(m['anuncio']);
+        const c = comprarApp(mk, rec, id, now);
+        if (!c.ok) return fail(c.erro);
+        this.changed(slot);
+        city.save();
+        log('app_compra', { anuncio: id, vendedor: c.anuncio?.vendedor, bem: c.anuncio?.bem, preco: c.anuncio?.preco ?? null, taxa: c.taxa });
+        city.deliverPending();
+        market('app');
+        return res(true, undefined, `Comprou ${c.anuncio ? nomeDoBem(c.anuncio.bem) : 'o item'} por ${c.anuncio?.preco ?? 0} Cr. Avalie o vendedor!`);
+      }
+      case GAME_MSG.mercadoCancelar: {
+        const id = strOf(m['anuncio']);
+        const qual = mk.anuncios.find((a) => a.id === id)?.mercado ?? 'feira';
+        const c = cancelarAnuncio(mk, rec, id);
+        if (!c.ok) return fail(c.erro);
+        this.changed(slot);
+        city.save();
+        log('mercado_cancelado', { anuncio: id });
+        market(qual);
+        return res(true, undefined, 'Anúncio cancelado. O item voltou.');
+      }
+      case GAME_MSG.mercadoReceber: {
+        const p = receberPendencias(mk, rec);
+        if (!p) return res(true, undefined, 'Nada a receber.');
+        this.changed(slot);
+        city.save();
+        log('mercado_recebido', { semente: p.semente, credito: p.credito, bens: p.bens });
+        return res(true, undefined, p.avisos.join(' ') || 'Recebido.');
+      }
+      // ---- câmbio ----
+      case GAME_MSG.cambioCotar: {
+        const de = moedaOf(m['de']);
+        const q = isNum(m['quantidade']) ? m['quantidade'] : undefined;
+        cambioInfo(de && q !== undefined ? { de, q } : undefined);
+        return;
+      }
+      case GAME_MSG.cambioTrocar: {
+        const far = this.placeReachError(e, CAMBIO, 'O câmbio é na ponte.');
+        if (far) return fail(far);
+        const de = moedaOf(m['de']);
+        if (!de) return fail('Moeda inválida.');
+        const t = trocarMoeda(cambio, rec, de, isNum(m['quantidade']) ? m['quantidade'] : 0, med);
+        if (!t.ok) return fail(t.erro);
+        this.changed(slot);
+        city.save();
+        log('cambio_troca', { ...(t.troca ?? {}) });
+        cambioInfo();
+        const tr = t.troca!;
+        return res(true, undefined, `Trocou ${tr.quantidade} ${nomeMoeda(tr.de)} por ${tr.recebe} ${nomeMoeda(tr.para)}.`);
+      }
+      // ---- casa ----
+      case GAME_MSG.casaVer: {
+        const v = casaView(rec, false);
+        if (!v) return fail('Você ainda não tem casa.');
+        this.send(sid, GAME_MSG.casaInfo, v satisfies S2C_CasaInfo);
+        return;
+      }
+      case GAME_MSG.casaVisitar:
+        this.bg(this.onVisitHouse(slot, strOf(m['playerId'])));
+        return;
+      case GAME_MSG.casaComprarMovel: {
+        const movel = strOf(m['movel']);
+        const c = comprarMovel(rec, movel, moeda);
+        if (!c.ok) return fail(c.erro);
+        let texto = `Comprou ${nomeDoBem({ tipo: 'movel', id: movel })}.`;
+        const col = m['colocar'];
+        if (isObj(col) && isInt(col['x']) && isInt(col['y'])) {
+          const p = colocarMovel(rec, movel, col['x'], col['y'], rotOf(col['rot']) ?? 0);
+          texto += p.ok ? ' Já está na casa.' : ` Ficou guardado: ${p.erro}`;
+        }
+        this.changed(slot);
+        log('movel_compra', { movel, moeda: c.moeda, valor: c.valor });
+        this.houseUpdated(slot);
+        return res(true, undefined, texto);
+      }
+      case GAME_MSG.casaColocar:
+      case GAME_MSG.casaMover:
+      case GAME_MSG.casaGirar:
+      case GAME_MSG.casaTirar: {
+        const x = m['x'];
+        const y = m['y'];
+        const uid = m['uid'];
+        let c: { ok: true } | { ok: false; erro: string };
+        if (type === GAME_MSG.casaColocar) c = isInt(x) && isInt(y) ? colocarMovel(rec, strOf(m['movel']), x, y, rotOf(m['rot']) ?? 0) : { ok: false, erro: 'Posição inválida.' };
+        else if (!isInt(uid)) c = { ok: false, erro: 'Móvel não encontrado.' };
+        else if (type === GAME_MSG.casaMover) {
+          const rot = rotOf(m['rot']);
+          c = !isInt(x) || !isInt(y) ? { ok: false, erro: 'Posição inválida.' } : rot !== undefined ? moverMovel(rec, uid, x, y, rot) : moverMovel(rec, uid, x, y);
+        } else if (type === GAME_MSG.casaGirar) c = girarMovel(rec, uid);
+        else c = tirarMovel(rec, uid);
+        if (!c.ok) return fail(c.erro);
+        this.changed(slot);
+        this.houseUpdated(slot);
+        return res(true);
+      }
+      case GAME_MSG.casaVisitas: {
+        const erros: string[] = [];
+        const perm = m['permissao'];
+        if (typeof perm === 'string') {
+          const d = definirVisitas(rec, perm as PermissaoVisita);
+          if (!d.ok) erros.push(d.erro);
+        }
+        if (typeof m['convidar'] === 'string') {
+          const d = convidar(rec, strOf(m['convidar']), true);
+          if (!d.ok) erros.push(d.erro);
+        }
+        if (typeof m['desconvidar'] === 'string') {
+          const d = convidar(rec, strOf(m['desconvidar']), false);
+          if (!d.ok) erros.push(d.erro);
+        }
+        if (erros.length > 0) return fail(erros.join(' '));
+        this.changed(slot);
+        this.houseUpdated(slot);
+        return res(true, undefined, 'Visitas atualizadas.');
+      }
+      case GAME_MSG.casaAlugar: {
+        const a = alugarCapsula(rec, strOf(m['tipo']) || 'capsula', med.precoDeVidaDir);
+        if (!a.ok) return fail(a.erro);
+        this.changed(slot);
+        log('aluguel_inicio', { tipo: rec.home?.tipo, valor: rec.home?.aluguelUltimo });
+        this.houseUpdated(slot);
+        return res(true, undefined, (a.avisos ?? []).join(' '));
+      }
+      case GAME_MSG.casaListaEspera: {
+        const l = entrarNaListaDeEspera(rec);
+        if (!l.ok) return fail(l.erro);
+        this.changed(slot);
+        this.houseUpdated(slot);
+        return res(true, undefined, `Você entrou na lista da Assembleia: ${l.ciclos} ciclos.`);
+      }
+      case GAME_MSG.casaAvancarFila: {
+        if (!this.dev) return fail('Só no modo de desenvolvimento do servidor (PQP_DEV=1).');
+        const n = m['ciclos'];
+        const avs = avancarListaDeEspera(rec, isInt(n) && n > 0 ? n : Number.POSITIVE_INFINITY);
+        this.changed(slot);
+        this.houseUpdated(slot);
+        return res(true, undefined, avs.join(' ') || 'Você não está na lista.');
+      }
+      default:
+        return;
     }
   }
 

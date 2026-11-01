@@ -15,6 +15,7 @@ import { MARK_ABILITY_MOTIF, MARK_MOTIFS } from './markIcons';
 import { npcLook } from './npcs';
 import { C, type Color, hex, light, mix, Pix, shade, withAlpha } from './pixel';
 import { frameOf } from './sheet';
+import { buildUiIcon, isUiIcon } from './uiIcons';
 
 export const ICON_PX = 48;
 export const PORTRAIT_PX = 64;
@@ -410,6 +411,8 @@ export function abilityMotif(id: string): string | undefined {
 
 /** Ícone 48x48 (puro). Aceita id de habilidade, item, único ou consumível. */
 export function buildIcon(id: string): Pix {
+  // Fase 4: ícones de interface (moedas, câmbio, feira, app, casa, decorar, girar, tirar)
+  if (isUiIcon(id)) return buildUiIcon(id);
   const d = getData();
   const ab = d.abilities.get(id);
   if (ab) {

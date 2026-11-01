@@ -141,6 +141,7 @@ export async function runE2E(opts: E2EOptions): Promise<E2EReport> {
   const enemyDeaths: number[] = [];
   const goneAfterHit: number[] = [];
   let bossTel: Telegraph | undefined;
+  let myDowns = 0;
   let lastSnapAt = 0;
   let maxGap = 0;
   let firstSnapAt = 0;
@@ -171,6 +172,7 @@ export async function runE2E(opts: E2EOptions): Promise<E2EReport> {
       if (ev.t === 'hit' && ev.src === robot.you && ev.ability && buttons.has(ev.ability) && kindOf.get(ev.dst) === 'e') hitByButtons.add(ev.dst);
       if (ev.t === 'death' && kindOf.get(ev.dst) === 'e') enemyDeaths.push(ev.dst);
       if (ev.t === 'telegraph' && isBoss(ev.tel.sourceId)) bossTel ??= ev.tel;
+      if (ev.t === 'down' && ev.dst === robot.you) myDowns++;
     }
     for (const t of s.tel) if (isBoss(t.sourceId)) bossTel ??= t;
   });
@@ -219,7 +221,7 @@ export async function runE2E(opts: E2EOptions): Promise<E2EReport> {
   };
 
   /** Vai até (x, y) pelo auto-caminho; luta com quem o alvo automático travar no caminho. */
-  const travel = (x: number, y: number, fightNear = 5) => {
+  const travel = (x: number, y: number, fightNear = 5, fightOk: (id: number) => boolean = () => true) => {
     let lastGo = -100;
     // preso brigando com um alvo do outro lado da água (o joystick vai reto): depois de 3 s sem
     // sair do lugar, ignora a briga por 3 s e volta ao auto-caminho
@@ -228,7 +230,7 @@ export async function runE2E(opts: E2EOptions): Promise<E2EReport> {
     return () => {
       const me = robot.pos(robot.you);
       const tgt = targetEnemy();
-      if (tgt !== undefined && dist(me, robot.pos(tgt)) <= fightNear && robot.lastTick >= ignoreUntil) {
+      if (tgt !== undefined && fightOk(tgt) && dist(me, robot.pos(tgt)) <= fightNear && robot.lastTick >= ignoreUntil) {
         if (me && (anchor.t < 0 || dist(me, anchor) > 0.5)) anchor = { x: me.x, y: me.y, t: robot.lastTick };
         else if (robot.lastTick - anchor.t > 60 && (robot.hud?.hp ?? 0) >= (robot.hud?.hpMax ?? 1)) {
           ignoreUntil = robot.lastTick + 60;
@@ -297,8 +299,12 @@ export async function runE2E(opts: E2EOptions): Promise<E2EReport> {
     if (!opts.skipBoss) {
       const bm = map.markers.find((m) => m.kind === 'chefe');
       if (!bm) throw new Error('mapa sem chefe');
-      // chega pela frente da clareira (3 tiles ao sul do marcador) e luta quando o chefe vira o alvo
-      brain = travel(bm.x, bm.y + 3, 6);
+      // chega pela frente da clareira (3 tiles ao sul do marcador) e luta quando o chefe vira o alvo.
+      // No caminho não para para brigar com capangas e o Cobrador (o ataque básico segue sozinho):
+      // parar em cada bando levava ~45 s e, quando o robô caía, os 30 s no chão mais a volta do
+      // spawn estouravam o tempo (a falha da Fase 3, robô parado em (30.5, 67.2) voltando do spawn).
+      const nearBoss = (id: number) => isBoss(id) || dist(robot.pos(robot.you), bm) <= 10;
+      brain = travel(bm.x, bm.y + 3, 6, nearBoss);
       const telSeen = await waitFor(() => bossTel !== undefined, stepTimeout * 2);
       const tel = bossTel;
       const warnMs = tel ? (tel.impactTick - tel.startTick) * TICK_MS : 0;
@@ -307,8 +313,8 @@ export async function runE2E(opts: E2EOptions): Promise<E2EReport> {
         'chefe solta aviso no chão',
         telOk,
         tel
-          ? `${tel.abilityId} (${tel.shape}, raio ${tel.radius}) em (${tel.x}, ${tel.y}), aviso de ${warnMs} ms; robô nível ${robot.hud?.level}, vida ${robot.hud?.hp}/${robot.hud?.hpMax}`
-          : `nenhum aviso do chefe; robô em (${robot.pos(robot.you)?.x.toFixed(1)}, ${robot.pos(robot.you)?.y.toFixed(1)}), vida ${robot.hud?.hp}/${robot.hud?.hpMax}`,
+          ? `${tel.abilityId} (${tel.shape}, raio ${tel.radius}) em (${tel.x}, ${tel.y}), aviso de ${warnMs} ms; robô nível ${robot.hud?.level}, vida ${robot.hud?.hp}/${robot.hud?.hpMax}, caiu ${myDowns}x`
+          : `nenhum aviso do chefe; robô em (${robot.pos(robot.you)?.x.toFixed(1)}, ${robot.pos(robot.you)?.y.toFixed(1)}), vida ${robot.hud?.hp}/${robot.hud?.hpMax}, caiu ${myDowns}x`,
       );
       ok &&= telOk;
     }

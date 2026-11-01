@@ -20,6 +20,8 @@ import { hashInt } from './noise';
 import { STORY_NPC_IDS } from './npcs';
 import { MATO_FRAMES, OVERLAY_FRAMES, overlayKind, renderTerrain, type TerrainSource, TREE_BASE_Y, TREE_H, TREE_W } from './terrain';
 import { TILE_ANIM_MS, TILE_KEY, TILE_VALUES, TILE_VARIANTS, ANIMATED_TILES, tileFrame, treeFrame, TREE_SUBS } from './tiles';
+import { furnitureByStyle, furnitureRots } from './furniture';
+import { UI_ICON_IDS } from './uiIcons';
 
 // SUGESTÃO: tempo de geração por quadro na galeria.
 const BUDGET_MS = 12;
@@ -185,6 +187,80 @@ export class GalleryScene extends Phaser.Scene {
       const key = propsTexture(this);
       this.title('FACHADAS DAS SEDES E DOS QGS');
       for (const id of facadeIds()) this.place((x, y) => this.add.image(x, y, key, facadeFrame(id)).setOrigin(0).setScale(this.S), 64 * this.S, 64 * this.S);
+      this.newline();
+    });
+
+    // ---------------- Fase 4: móveis em todas as rotações, interiores e ícones de UI
+    const STYLE_TITLE = { esquerda: 'MOVEIS DA ESQUERDA (ROTACOES)', direita: 'MOVEIS DA DIREITA (ROTACOES)', delta: 'MOVEIS DO DELTA' } as const;
+    for (const [style, ids] of Object.entries(furnitureByStyle()) as [keyof typeof STYLE_TITLE, string[]][]) {
+      t(() => this.title(STYLE_TITLE[style]));
+      for (const id of ids)
+        t(() => {
+          for (let r = 0; r < furnitureRots(id); r++) {
+            const f = this.art.furniture(this, id, r);
+            this.place((x, y) => this.add.image(x, y, f.key, f.frame).setOrigin(0).setScale(this.S), f.w * this.S, f.h * this.S);
+          }
+          this.cursorX += this.GAP;
+        });
+      t(() => this.newline());
+    }
+    const demo: Record<'mutirao' | 'capsula', [string, number, number, number][]> = {
+      mutirao: [
+        ['quadro_de_cotas', 1, 0, 0],
+        ['retrato_da_nayra', 5, 0, 0],
+        ['bandeira_do_raiz_fc', 6, 0, 0],
+        ['estante_de_atas', 0, 0, 0],
+        ['fogao_a_lenha', 3, 0, 0],
+        ['altar_dos_espiritos', 6, 0, 0],
+        ['tapete_de_retalhos', 3, 3, 0],
+        ['mesa_da_roda', 3, 3, 0],
+        ['cama_de_palha', 0, 2, 0],
+        ['rede_de_varanda', 6, 6, 0],
+        ['cadeira_de_balanco', 7, 3, 1],
+        ['horta_em_vaso', 8, 1, 0],
+        ['filtro_de_barro', 2, 1, 0],
+        ['lamparina_benzida', 7, 2, 0],
+        ['banco_de_madeira', 0, 6, 0],
+        ['tambor_da_roda', 2, 7, 0],
+        ['bau_entalhado', 0, 7, 0],
+      ],
+      capsula: [
+        ['letreiro_neon_gratidao', 0, 0, 0],
+        ['capsula_de_sono', 0, 0, 0],
+        ['geladeira_inteligente', 2, 0, 0],
+        ['planta_de_plastico_neon', 1, 1, 0],
+        ['poltrona_ergonomica_led', 1, 3, 1],
+        ['tapete_de_led', 0, 2, 1],
+        ['robo_aspirador', 2, 3, 0],
+        ['ring_light', 2, 4, 0],
+        ['cafeteira_por_assinatura', 0, 4, 0],
+      ],
+    };
+    for (const [style, title] of [
+      ['mutirao', 'INTERIOR: CASA DE MUTIRAO (9X8)'],
+      ['capsula', 'INTERIOR: CAPSULA (3X5)'],
+    ] as const)
+      t(() => {
+        this.title(title);
+        const room = this.art.interior(this, style === 'mutirao' ? 'casa_de_mutirao' : 'capsula');
+        const S = Math.max(1, Math.min(this.S, Math.floor((this.scale.width - 2 * this.GAP) / room.w)));
+        this.place((x, y) => {
+          this.add.image(x, y, room.key).setOrigin(0).setScale(S);
+          for (const [id, tx, ty, rot] of demo[style]) {
+            const f = this.art.furniture(this, id, rot);
+            this.add
+              .image(x + (room.floorX + tx * 32) * S, y + (room.floorY + ty * 32 - f.up) * S, f.key, f.frame)
+              .setOrigin(0)
+              .setScale(S)
+              .setDepth(f.flat ? 0.5 : 1 + (ty + f.footH) / 100);
+          }
+          return room;
+        }, room.w * S, room.h * S);
+        this.newline();
+      });
+    t(() => {
+      this.title('ICONES DE UI: SEMENTE, CREDITO, CAMBIO, FEIRA, APP, CASA, DECORAR, GIRAR, TIRAR');
+      for (const id of UI_ICON_IDS) this.place((x, y) => this.add.image(x, y, this.art.icon(this, id)).setOrigin(0).setScale(this.S / 2), 24 * this.S, 24 * this.S);
       this.newline();
     });
 

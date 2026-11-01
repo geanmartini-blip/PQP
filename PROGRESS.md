@@ -16,8 +16,41 @@ Comandos rodam com `. .\scripts\env.ps1` antes (Node e Git portáteis).
 - Contratos da Fase 1: `shared/src/map/types.ts`, `shared/src/sim/types.ts`,
   `shared/src/net/protocol.ts` e `client/src/art/contract.ts`.
 
-## Fase 4: sociedade, moradia e economia básica — EM ANDAMENTO
+## Fase 5: masmorra, plantão e IA de facção — EM ANDAMENTO
 Plano:
+1. Galerias da Usina: masmorra sem fundo, em tempo real, com andares gerados por semente. Este piloto
+   tem 5 andares e chefe no 5º. A sala é por grupo, para até 4.
+2. Plantão: offline, o personagem fica no QG e luta pela Doutrina quando outro jogador o leva. Há
+   editor de Doutrina com até 5 cartas.
+3. Encontros com IA no mapa: patrulhas e personagens de IA que lutam junto ou contra.
+4. IA de facção:
+   - Lazzaro Prati (Direita) e Rolf Halvorsen (Esquerda) decidem a cada ciclo;
+   - pontos de controle por influência, com saque máximo de 20%;
+   - avisos no mapa.
+5. Itens comum e raro com visual por ala, benzimento e calibração, e 2 únicos.
+6. SQL do pg_cron e workers. Testes, build e commit. Por fim, README e PENDENTE.
+
+## Fase 4: sociedade, moradia e economia básica — CONCLUÍDA
+- Regras:
+  - carteira com Semente, Crédito, score e dívida;
+  - loja de NPC com preço dinâmico;
+  - feira sem taxa e app com taxa;
+  - câmbio com cotação por volume;
+  - mutirão por lista de espera;
+  - cápsula com aluguel e despejo;
+  - móveis em grade;
+  - visitas;
+  - ciclo da cidade.
+- O servidor guarda mercado e câmbio. A casa tem sala própria (`casa:<id>`). Há SQL do Supabase.
+- Cliente: telas de loja, feira e app, câmbio e casa com modo decorar. Há 30 móveis em pixel.
+- Verificação:
+  - 658 testes passando;
+  - build ok;
+  - e2e consertado: 3 rodadas seguidas passaram em cerca de 28 s;
+  - fluxo completo em `server/test/fase4.test.ts`.
+- Detalhe em `decisoes/fase4-sociedade.md`.
+
+Plano original:
 1. Regras em `shared/src/game`: carteira com Semente e Crédito; score do Crédito; patentes iniciais
    já existem e só ganham ligação com a economia.
 2. Feira de troca da Esquerda (anúncios entre jogadores, sem taxa) e app do Consórcio (taxa e preço

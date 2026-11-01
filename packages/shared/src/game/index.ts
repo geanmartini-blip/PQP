@@ -21,3 +21,10 @@ export * from './ala';
 export * from './talents';
 export * from './institutions';
 export * from './combatKit';
+// Fase 4: carteira, lojas, feira e app, câmbio, moradia e ciclo da cidade
+export * from './economy';
+export * from './shop';
+export * from './market';
+export * from './exchange';
+export * from './housing';
+export * from './city';

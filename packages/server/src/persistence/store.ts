@@ -14,6 +14,11 @@
  * aceita a linha da Fase 1 ({ id, token, name, data: { archetypeId, level, xp, ... } }) e a da Fase 2.
  *
  * O token é o login de convidado: gerado no aparelho (ou pelo servidor) até o Supabase Auth entrar.
+ *
+ * Fase 4 (métodos opcionais da interface): findPlayerById (visitas de casa), loadWorld/saveWorld
+ * (a cidade: mercado e câmbio; FileStore em .data/world.json, Supabase na tabela world_state) e
+ * logEvents (log de economia; FileStore em .data/events.jsonl, Supabase na tabela event_log, ver
+ * supabase/migrations/0003_economia.sql).
  */
 import { randomUUID } from 'node:crypto';
 import { promises as fsp } from 'node:fs';
@@ -31,6 +36,15 @@ export interface StoredPlayer {
   data: GameRecord;
 }
 
+/** Fase 4: evento do log de economia (event_log). `at` em ms. */
+export interface EconomyLogEvent {
+  at: number;
+  tipo: string;
+  jogador?: string;
+  mapa?: string;
+  dados?: Record<string, unknown>;
+}
+
 export interface Store {
   readonly kind: 'memoria' | 'arquivo' | 'supabase';
   /** jogador do token; cria um novo (com `name`, ainda sem personagem: criado=false) se não existir */
@@ -39,6 +53,14 @@ export interface Store {
   savePlayer(rec: StoredPlayer): Promise<void>;
   /** grava o que estiver pendente agora */
   flush(): Promise<void>;
+  // ---- Fase 4 (opcionais: um Store antigo continua valendo) ----
+  /** jogador pelo id do registro (visitas de casa); undefined se não existir */
+  findPlayerById?(id: string): Promise<StoredPlayer | undefined>;
+  /** estado global (a cidade: mercado e câmbio) por chave */
+  loadWorld?(key: string): Promise<unknown>;
+  saveWorld?(key: string, data: unknown): Promise<void>;
+  /** acrescenta eventos ao log de economia */
+  logEvents?(events: EconomyLogEvent[]): Promise<void>;
 }
 
 const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
@@ -102,6 +124,27 @@ export class MemoryStore implements Store {
   }
 
   async flush(): Promise<void> {}
+
+  readonly world = new Map<string, unknown>();
+  readonly events: EconomyLogEvent[] = [];
+
+  async findPlayerById(id: string): Promise<StoredPlayer | undefined> {
+    for (const r of this.byToken.values()) if (r.id === id) return clone(r);
+    return undefined;
+  }
+
+  async loadWorld(key: string): Promise<unknown> {
+    const v = this.world.get(key);
+    return v === undefined ? undefined : clone(v);
+  }
+
+  async saveWorld(key: string, data: unknown): Promise<void> {
+    this.world.set(key, clone(data));
+  }
+
+  async logEvents(events: EconomyLogEvent[]): Promise<void> {
+    this.events.push(...clone(events));
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -206,27 +249,26 @@ export class FileStore implements Store {
   /** Grava agora (em fila: uma gravação de cada vez). */
   private writeNow(): Promise<void> {
     this.writing = this.writing.then(async () => {
-      if (!this.dirty) return;
-      this.dirty = false;
-      const body: FileShape = { version: FILE_VERSION, players: Array.from(this.byToken.values()) };
-      const json = JSON.stringify(body, null, 1);
-      await fsp.mkdir(path.dirname(this.file), { recursive: true });
-      const tmp = `${this.file}.${process.pid}.tmp`;
-      await fsp.writeFile(tmp, json, 'utf8');
-      for (let attempt = 0; ; attempt++) {
+      if (this.dirty) {
+        this.dirty = false;
+        const body: FileShape = { version: FILE_VERSION, players: Array.from(this.byToken.values()) };
         try {
-          await fsp.rename(tmp, this.file);
-          break;
+          await atomicWrite(this.file, JSON.stringify(body, null, 1));
         } catch (err) {
-          const code = (err as NodeJS.ErrnoException).code;
-          if (attempt >= 5 || (code !== 'EPERM' && code !== 'EBUSY' && code !== 'EACCES')) {
-            this.dirty = true; // tenta de novo na próxima
-            throw err;
-          }
-          await sleep(50 * (attempt + 1));
+          this.dirty = true; // tenta de novo na próxima
+          throw err;
+        }
+        this.writes++;
+      }
+      if (this.worldDirty) {
+        this.worldDirty = false;
+        try {
+          await atomicWrite(this.worldFile, JSON.stringify({ version: 1, world: Object.fromEntries(this.world) }));
+        } catch (err) {
+          this.worldDirty = true;
+          throw err;
         }
       }
-      this.writes++;
     }).catch((err) => {
       console.warn(`[store] falha ao gravar ${this.file}: ${String(err)}`);
     });
@@ -235,11 +277,93 @@ export class FileStore implements Store {
 
   async flush(): Promise<void> {
     await this.load();
+    await this.loadWorldFile();
     if (this.timer) {
       clearTimeout(this.timer);
       this.timer = undefined;
     }
     await this.writeNow();
+    await this.appending;
+  }
+
+  // ---- Fase 4: estado global (world.json) e log de economia (events.jsonl), na mesma pasta ----
+
+  private world = new Map<string, unknown>();
+  private worldLoaded: Promise<void> | undefined;
+  private worldDirty = false;
+  private appending: Promise<void> = Promise.resolve();
+
+  get worldFile(): string {
+    return path.join(path.dirname(this.file), 'world.json');
+  }
+
+  get eventsFile(): string {
+    return path.join(path.dirname(this.file), 'events.jsonl');
+  }
+
+  private loadWorldFile(): Promise<void> {
+    this.worldLoaded ??= (async () => {
+      try {
+        const parsed = JSON.parse(await fsp.readFile(this.worldFile, 'utf8')) as { world?: Record<string, unknown> };
+        for (const [k, v] of Object.entries(parsed.world ?? {})) this.world.set(k, v);
+      } catch (err) {
+        const code = (err as NodeJS.ErrnoException).code;
+        if (code !== 'ENOENT') {
+          const bak = `${this.worldFile}.corrompido-${process.pid}`;
+          await fsp.copyFile(this.worldFile, bak).catch(() => undefined);
+          console.warn(`[store] não consegui ler ${this.worldFile} (${String(err)}); cópia em ${bak}`);
+        }
+      }
+    })();
+    return this.worldLoaded;
+  }
+
+  async findPlayerById(id: string): Promise<StoredPlayer | undefined> {
+    await this.load();
+    for (const r of this.byToken.values()) if (r.id === id) return clone(r);
+    return undefined;
+  }
+
+  async loadWorld(key: string): Promise<unknown> {
+    await this.loadWorldFile();
+    const v = this.world.get(key);
+    return v === undefined ? undefined : clone(v);
+  }
+
+  async saveWorld(key: string, data: unknown): Promise<void> {
+    await this.loadWorldFile();
+    this.world.set(key, clone(data));
+    this.worldDirty = true;
+    this.schedule();
+  }
+
+  async logEvents(events: EconomyLogEvent[]): Promise<void> {
+    if (events.length === 0) return;
+    const lines = events.map((e) => JSON.stringify(e)).join('\n') + '\n';
+    this.appending = this.appending
+      .then(async () => {
+        await fsp.mkdir(path.dirname(this.eventsFile), { recursive: true });
+        await fsp.appendFile(this.eventsFile, lines, 'utf8');
+      })
+      .catch((err) => console.warn(`[store] falha ao gravar ${this.eventsFile}: ${String(err)}`));
+    return this.appending;
+  }
+}
+
+/** Escreve num temporário e troca pelo rename, com novas tentativas (Windows e OneDrive seguram o arquivo). */
+async function atomicWrite(file: string, json: string): Promise<void> {
+  await fsp.mkdir(path.dirname(file), { recursive: true });
+  const tmp = `${file}.${process.pid}.tmp`;
+  await fsp.writeFile(tmp, json, 'utf8');
+  for (let attempt = 0; ; attempt++) {
+    try {
+      await fsp.rename(tmp, file);
+      return;
+    } catch (err) {
+      const code = (err as NodeJS.ErrnoException).code;
+      if (attempt >= 5 || (code !== 'EPERM' && code !== 'EBUSY' && code !== 'EACCES')) throw err;
+      await sleep(50 * (attempt + 1));
+    }
   }
 }
 
@@ -286,6 +410,41 @@ export class SupabaseStore implements Store {
 
   async savePlayer(rec: StoredPlayer): Promise<void> {
     this.pending.set(rec.token, normalizeRow(rec));
+    this.scheduleFlush();
+  }
+
+  async flush(): Promise<void> {
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = undefined;
+    }
+    const sb = await this.client;
+    if (this.pending.size > 0) {
+      const rows = Array.from(this.pending.values()).map((r) => ({ id: r.id, token: r.token, name: r.name, data: r.data, updated_at: new Date().toISOString() }));
+      this.pending.clear();
+      const res = await sb.from(this.table).upsert(rows, { onConflict: 'id' });
+      if (res.error) console.warn(`[store] supabase upsert falhou: ${res.error.message}`);
+    }
+    // Fase 4: estado global e log de economia
+    if (this.worldPending.size > 0) {
+      const rows = Array.from(this.worldPending, ([key, data]) => ({ key, data, updated_at: new Date().toISOString() }));
+      this.worldPending.clear();
+      const res = await sb.from('world_state').upsert(rows, { onConflict: 'key' });
+      if (res.error) console.warn(`[store] supabase world_state falhou: ${res.error.message}`);
+    }
+    if (this.eventsPending.length > 0) {
+      const rows = this.eventsPending.splice(0).map((e) => ({ at: new Date(e.at).toISOString(), tipo: e.tipo, player_id: e.jogador ?? null, map_id: e.mapa ?? null, data: e.dados ?? {} }));
+      const res = await sb.from('event_log').insert(rows);
+      if (res.error) console.warn(`[store] supabase event_log falhou: ${res.error.message}`);
+    }
+  }
+
+  // ---- Fase 4 ----
+
+  private worldPending = new Map<string, unknown>();
+  private eventsPending: EconomyLogEvent[] = [];
+
+  private scheduleFlush(): void {
     if (this.timer) return;
     this.timer = setTimeout(() => {
       this.timer = undefined;
@@ -294,25 +453,40 @@ export class SupabaseStore implements Store {
     this.timer.unref?.();
   }
 
-  async flush(): Promise<void> {
-    if (this.timer) {
-      clearTimeout(this.timer);
-      this.timer = undefined;
-    }
-    if (this.pending.size === 0) return;
-    const rows = Array.from(this.pending.values()).map((r) => ({ id: r.id, token: r.token, name: r.name, data: r.data, updated_at: new Date().toISOString() }));
-    this.pending.clear();
+  async findPlayerById(id: string): Promise<StoredPlayer | undefined> {
+    for (const r of this.pending.values()) if (r.id === id) return clone(r);
     const sb = await this.client;
-    const res = await sb.from(this.table).upsert(rows, { onConflict: 'id' });
-    if (res.error) console.warn(`[store] supabase upsert falhou: ${res.error.message}`);
+    const found = await sb.from(this.table).select('id, token, name, data').eq('id', id).maybeSingle();
+    if (found.error) throw new Error(`supabase: ${found.error.message}`);
+    return found.data ? migrateRow(found.data) : undefined;
+  }
+
+  async loadWorld(key: string): Promise<unknown> {
+    if (this.worldPending.has(key)) return clone(this.worldPending.get(key));
+    const sb = await this.client;
+    const found = await sb.from('world_state').select('data').eq('key', key).maybeSingle();
+    if (found.error) throw new Error(`supabase: ${found.error.message}`);
+    return isObj(found.data) ? found.data['data'] : undefined;
+  }
+
+  async saveWorld(key: string, data: unknown): Promise<void> {
+    this.worldPending.set(key, clone(data));
+    this.scheduleFlush();
+  }
+
+  async logEvents(events: EconomyLogEvent[]): Promise<void> {
+    this.eventsPending.push(...clone(events));
+    this.scheduleFlush();
   }
 }
+
+type SbResult = Promise<{ data: unknown; error: { message: string } | null }>;
 
 /** O pedaço do cliente do supabase-js que usamos (evita depender dos tipos genéricos dele). */
 interface SupabaseLike {
   from(table: string): {
-    select(cols: string): { eq(col: string, v: string): { maybeSingle(): Promise<{ data: unknown; error: { message: string } | null }> } };
-    insert(row: unknown): { select(cols: string): { single(): Promise<{ data: unknown; error: { message: string } | null }> } };
+    select(cols: string): { eq(col: string, v: string): { maybeSingle(): SbResult } };
+    insert(row: unknown): PromiseLike<{ error: { message: string } | null }> & { select(cols: string): { single(): SbResult } };
     upsert(rows: unknown, opts: { onConflict: string }): Promise<{ error: { message: string } | null }>;
   };
 }

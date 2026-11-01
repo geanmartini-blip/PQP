@@ -43,6 +43,41 @@ export interface CharacterLook {
   items?: { slot: string; rarity: 'comum' | 'raro' | 'unico' | 'set'; art?: string }[];
 }
 
+/**
+ * Móvel da moradia (Fase 4) numa textura: quadro `frame` da folha `key`. Para pôr na grade da casa,
+ * imagem com origem (0, 0) em (floorX + tx × 32, floorY + ty × 32 − up) e profundidade ty + footH.
+ */
+export interface FurnitureArt {
+  key: string;
+  frame: string;
+  /** rotação efetiva (0 frente, 1 esquerda, 2 costas, 3 direita) e quantas o móvel tem */
+  rot: number;
+  rots: number;
+  /** pegada em tiles já girada */
+  footW: number;
+  footH: number;
+  /** px que o desenho sobe acima da pegada */
+  up: number;
+  w: number;
+  h: number;
+  /** rente ao chão (tapete, esteira): fica abaixo dos outros móveis e dos bonecos */
+  flat: boolean;
+  /** vai na parede (não ocupa chão nem gira) */
+  wall: boolean;
+}
+
+/** Interior de moradia (Fase 4): o quarto inteiro numa textura, com o piso a partir de (floorX, floorY). */
+export interface InteriorArt {
+  key: string;
+  style: 'mutirao' | 'capsula';
+  tilesW: number;
+  tilesH: number;
+  floorX: number;
+  floorY: number;
+  w: number;
+  h: number;
+}
+
 export interface ArtApi {
   /** gera (uma vez, com cache por hash) a folha do personagem e as animações; devolve a chave da textura */
   characterSheet(scene: Phaser.Scene, look: CharacterLook): string;
@@ -62,4 +97,8 @@ export interface ArtApi {
   emblem(scene: Phaser.Scene, institutionId: string): string;
   /** cria os Phaser.Animations para uma folha: chaves `${sheetKey}:${anim}:${dir}` */
   registerAnims(scene: Phaser.Scene, sheetKey: string): void;
+  /** Fase 4: móvel do catálogo (data/furniture.json) numa rotação; ícones de UI saem de icon(scene, 'ui_semente') etc. */
+  furniture(scene: Phaser.Scene, furnitureId: string, rot?: number): FurnitureArt;
+  /** Fase 4: interior pelo tipo de moradia (housing.json) ou pelo estilo; tamanho do tipo ou o pedido */
+  interior(scene: Phaser.Scene, housingTypeOrStyle: string, tilesW?: number, tilesH?: number): InteriorArt;
 }

@@ -44,7 +44,25 @@ import {
   type C2S_MissaoPagar,
   type C2S_Emote,
   type S2C_TrocarSala,
+  type C2S_LojaComprar,
+  type C2S_LojaVender,
+  type C2S_MercadoListar,
+  type C2S_FeiraAnunciar,
+  type C2S_AppAnunciar,
+  type C2S_MercadoComprar,
+  type C2S_MercadoCancelar,
+  type C2S_CambioCotar,
+  type C2S_CambioTrocar,
+  type C2S_CasaVisitar,
+  type C2S_CasaComprarMovel,
+  type C2S_CasaColocar,
+  type C2S_CasaMover,
+  type C2S_CasaMovel,
+  type C2S_CasaVisitas,
+  type C2S_CasaAlugar,
+  type C2S_CasaAvancarFila,
 } from '@pqp/shared/net';
+import type { Bem, MercadoId, Moeda, PermissaoVisita, Rotacao } from '@pqp/shared/game/index';
 
 export interface StorageLike {
   getItem(k: string): string | null;
@@ -668,6 +686,126 @@ export class GameClient {
   talkToGuide(): boolean {
     const m: C2S_Falar = { npcId: 'guia' };
     return this.sendGame(GAME_MSG.falar, m);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Fase 4: carteira, loja, feira, app, câmbio e casa (respostas: game.wallet, market, exchange, house, econ)
+
+  requestWallet(): boolean {
+    return this.sendGame(GAME_MSG.carteiraPedir, {});
+  }
+
+  payDebt(): boolean {
+    return this.sendGame(GAME_MSG.dividaPagar, {});
+  }
+
+  shopBuy(loja: string, item: string, moeda?: Moeda): boolean {
+    const m: C2S_LojaComprar = { loja, item, ...(moeda ? { moeda } : {}) };
+    return this.sendGame(GAME_MSG.lojaComprar, m);
+  }
+
+  shopSell(loja: string, item: string, moeda?: Moeda): boolean {
+    const m: C2S_LojaVender = { loja, item, ...(moeda ? { moeda } : {}) };
+    return this.sendGame(GAME_MSG.lojaVender, m);
+  }
+
+  listMarket(mercado: MercadoId): boolean {
+    const m: C2S_MercadoListar = { mercado };
+    return this.sendGame(GAME_MSG.mercadoListar, m);
+  }
+
+  /** Anuncia na feira (Semente; item da tabela usa o preço da tabela) ou no app (Crédito). */
+  announce(mercado: MercadoId, bem: Bem, preco: number): boolean {
+    if (mercado === 'feira') {
+      const m: C2S_FeiraAnunciar = { bem, preco };
+      return this.sendGame(GAME_MSG.feiraAnunciar, m);
+    }
+    const m: C2S_AppAnunciar = { bem, preco };
+    return this.sendGame(GAME_MSG.appAnunciar, m);
+  }
+
+  buyListing(mercado: MercadoId, anuncio: string): boolean {
+    const m: C2S_MercadoComprar = { anuncio };
+    return this.sendGame(mercado === 'feira' ? GAME_MSG.feiraComprar : GAME_MSG.appComprar, m);
+  }
+
+  cancelListing(anuncio: string): boolean {
+    const m: C2S_MercadoCancelar = { anuncio };
+    return this.sendGame(GAME_MSG.mercadoCancelar, m);
+  }
+
+  /** Retira as compras prontas da fila da feira. */
+  pickUpFair(): boolean {
+    return this.sendGame(GAME_MSG.feiraRetirar, {});
+  }
+
+  /** Recebe vendas, trocas e itens de anúncios vencidos. */
+  collectMarket(): boolean {
+    return this.sendGame(GAME_MSG.mercadoReceber, {});
+  }
+
+  quoteExchange(de?: Moeda, quantidade?: number): boolean {
+    const m: C2S_CambioCotar = { ...(de ? { de } : {}), ...(quantidade !== undefined ? { quantidade } : {}) };
+    return this.sendGame(GAME_MSG.cambioCotar, m);
+  }
+
+  exchangeMoney(de: Moeda, quantidade: number): boolean {
+    const m: C2S_CambioTrocar = { de, quantidade };
+    return this.sendGame(GAME_MSG.cambioTrocar, m);
+  }
+
+  requestHouse(): boolean {
+    return this.sendGame(GAME_MSG.casaVer, {});
+  }
+
+  visitHouse(playerId: string): boolean {
+    const m: C2S_CasaVisitar = { playerId };
+    return this.sendGame(GAME_MSG.casaVisitar, m);
+  }
+
+  buyFurniture(movel: string, moeda?: Moeda): boolean {
+    const m: C2S_CasaComprarMovel = { movel, ...(moeda ? { moeda } : {}) };
+    return this.sendGame(GAME_MSG.casaComprarMovel, m);
+  }
+
+  placeFurniture(movel: string, x: number, y: number, rot?: Rotacao): boolean {
+    const m: C2S_CasaColocar = { movel, x, y, ...(rot !== undefined ? { rot } : {}) };
+    return this.sendGame(GAME_MSG.casaColocar, m);
+  }
+
+  moveFurniture(uid: number, x: number, y: number, rot?: Rotacao): boolean {
+    const m: C2S_CasaMover = { uid, x, y, ...(rot !== undefined ? { rot } : {}) };
+    return this.sendGame(GAME_MSG.casaMover, m);
+  }
+
+  rotateFurniture(uid: number): boolean {
+    const m: C2S_CasaMovel = { uid };
+    return this.sendGame(GAME_MSG.casaGirar, m);
+  }
+
+  removeFurniture(uid: number): boolean {
+    const m: C2S_CasaMovel = { uid };
+    return this.sendGame(GAME_MSG.casaTirar, m);
+  }
+
+  setVisits(permissao: PermissaoVisita): boolean {
+    const m: C2S_CasaVisitas = { permissao };
+    return this.sendGame(GAME_MSG.casaVisitas, m);
+  }
+
+  rentCapsule(tipo?: string): boolean {
+    const m: C2S_CasaAlugar = tipo ? { tipo } : {};
+    return this.sendGame(GAME_MSG.casaAlugar, m);
+  }
+
+  joinWaitingList(): boolean {
+    return this.sendGame(GAME_MSG.casaListaEspera, {});
+  }
+
+  /** Atalho de teste (o servidor só aceita no modo de desenvolvimento). */
+  advanceWaitingList(ciclos?: number): boolean {
+    const m: C2S_CasaAvancarFila = ciclos !== undefined ? { ciclos } : {};
+    return this.sendGame(GAME_MSG.casaAvancarFila, m);
   }
 
   close(): void {

@@ -130,7 +130,70 @@ import {
   type GameEvent,
   type GameResult,
   type PlayerRecord,
+  // Fase 4
+  alugarCapsula,
+  anunciarApp,
+  anunciarFeira,
+  avancarListaDeEspera,
+  cancelarAnuncio,
+  carteiraView,
+  casaView,
+  cicloCidadeMin,
+  colocarMovel,
+  comprarApp,
+  comprarFeira,
+  comprarMovel,
+  comprarNaLoja,
+  convidar,
+  cotarTroca,
+  darBem,
+  definirVisitas,
+  economiaOf,
+  entrarNaListaDeEspera,
+  exchangeRate,
+  girarMovel,
+  mercadoView,
+  migrarCidade,
+  moverMovel,
+  nomeDoBem,
+  pagarDivida,
+  receberPendencias,
+  retirarEntregas,
+  saqueNaMoedaDaMargem,
+  sincronizarComCidade,
+  tickCidade,
+  tirarMovel,
+  trocarMoeda,
+  venderNaLoja,
+  type Bem,
+  type CidadeState,
+  type MercadoId,
+  type Moeda,
+  type PermissaoVisita,
+  type PrecoCtx,
+  type Rotacao,
 } from '@pqp/shared/game/index';
+import type {
+  C2S_AppAnunciar,
+  C2S_CambioCotar,
+  C2S_CambioTrocar,
+  C2S_CasaAlugar,
+  C2S_CasaAvancarFila,
+  C2S_CasaColocar,
+  C2S_CasaComprarMovel,
+  C2S_CasaMover,
+  C2S_CasaMovel,
+  C2S_CasaVisitar,
+  C2S_CasaVisitas,
+  C2S_FeiraAnunciar,
+  C2S_LojaComprar,
+  C2S_LojaVender,
+  C2S_MercadoCancelar,
+  C2S_MercadoComprar,
+  C2S_MercadoListar,
+  S2C_CambioInfo,
+  S2C_EconomiaResultado,
+} from '@pqp/shared/net';
 import { archetypeLook, defaultLook } from '../art/character';
 
 // SUGESTÃO: bando morto volta em 30 s; o chefe em 60 s.
@@ -160,6 +223,33 @@ export const REVIVE_TUTORIAL_RADIUS = 1.8;
 // SUGESTÃO (Fase 3, só no servidor local): chegar a 2 tiles de uma saída troca de mapa; depois de
 // chegar num mapa, a saída só vale de novo quando o jogador se afasta dela (sem ir e voltar na hora).
 export const EXIT_RADIUS = 2;
+// SUGESTÃO (Fase 4, só no servidor local): a cidade anda a cada 1 s; a feira e o app sempre têm
+// pelo menos 3 anúncios de vizinhos NPC (para dar o que comprar jogando sozinho).
+export const CITY_TICK_TICKS = 20;
+export const NPC_LISTINGS_MIN = 3;
+/** SUGESTÃO: vizinhos NPC que anunciam na feira e no app do servidor local (sem fala nova). */
+export const NPC_SELLERS: Record<'feira' | 'app', { id: string; name: string; side: 'esquerda' | 'direita'; bens: { bem: Bem; preco: number }[] }> = {
+  feira: {
+    id: 'npc_vizinha_da_bracadeira',
+    name: 'Vizinha da Braçadeira',
+    side: 'esquerda',
+    bens: [
+      { bem: { tipo: 'recurso', id: 'comida', quantidade: 3 }, preco: 0 },
+      { bem: { tipo: 'item', id: 'pao_da_feira' }, preco: 0 },
+      { bem: { tipo: 'movel', id: 'banco_de_madeira' }, preco: 12 },
+    ],
+  },
+  app: {
+    id: 'npc_entregador_de_app',
+    name: 'Entregador de App',
+    side: 'direita',
+    bens: [
+      { bem: { tipo: 'recurso', id: 'energia', quantidade: 2 }, preco: 40 },
+      { bem: { tipo: 'item', id: 'cha_de_ervas' }, preco: 30 },
+      { bem: { tipo: 'recurso', id: 'pecas', quantidade: 2 }, preco: 28 },
+    ],
+  },
+};
 
 export type Outgoing = [string, unknown];
 
@@ -167,6 +257,12 @@ export type Outgoing = [string, unknown];
 export interface RecordStore {
   load(id: string): unknown;
   save(id: string, rec: PlayerRecord): void;
+}
+
+/** Fase 4: onde o servidor local guarda a cidade (mercado, câmbio, ciclo). */
+export interface CityStore {
+  load(): unknown;
+  save(c: CidadeState): void;
 }
 
 interface Group {
@@ -194,6 +290,14 @@ export interface LocalServerOpts {
   store?: RecordStore;
   /** força as regras da Fase 2 mesmo com mapa passado (testes) */
   fase2?: boolean;
+  /** Fase 4: relógio em ms da cidade (anúncios, fila, ciclo); padrão: ticks × 50 ms */
+  clock?: () => number;
+  /** Fase 4: cidade salva (padrão: só na memória) */
+  cityStore?: CityStore;
+  /** Fase 4: duração do ciclo da cidade em minutos (padrão: housing.json) */
+  cityCycleMin?: number;
+  /** Fase 4: atalhos de teste (andar a lista de espera); padrão: ligados no servidor local */
+  devTools?: boolean;
 }
 
 export class LocalServer {
@@ -240,6 +344,11 @@ export class LocalServer {
   private surviveTicks = 0;
   /** controles de 'uma vez só' já mandados nesta sessão */
   private onceSent = new Set<string>();
+  // Fase 4
+  /** cidade: mercado, câmbio e ciclo */
+  city: CidadeState;
+  /** ticks desde que o servidor nasceu (o relógio padrão da cidade) */
+  private ticksTotal = 0;
 
   constructor(private readonly opts: LocalServerOpts = {}) {
     this.seed = opts.seed ?? 7;
@@ -248,6 +357,18 @@ export class LocalServer {
     this.prototype = !opts.fase2 && (opts.map !== undefined || opts.mapId !== undefined);
     const first = opts.map?.id ?? opts.mapId ?? (this.prototype ? 'prototipo_delta' : START_MAP);
     this.loadMap(first);
+    let raw: unknown = null;
+    try {
+      raw = opts.cityStore?.load() ?? null;
+    } catch {
+      raw = null;
+    }
+    this.city = migrarCidade(raw, this.nowMs(), cicloCidadeMin(opts.cityCycleMin));
+  }
+
+  /** Hora da cidade em ms (relógio passado ou os ticks). */
+  nowMs(): number {
+    return this.opts.clock ? this.opts.clock() : this.ticksTotal * TICK_MS;
   }
 
   /** Monta o mundo de um mapa (no começo e na troca de mapa); `spawnId` = entrada pedida pela saída. */
@@ -373,6 +494,7 @@ export class LocalServer {
     this.sendWelcome();
     const r = refreshMissions(rec);
     this.flush(r, { always: true });
+    this.syncCity();
   }
 
   /** Mapa do registro: Delta até a travessia; depois o QG da margem. */
@@ -517,6 +639,8 @@ export class LocalServer {
   /** Um tick do servidor: entrada e comandos, simulação e snapshot. */
   tick(): void {
     const p = this.player;
+    this.ticksTotal++;
+    if (this.ticksTotal % CITY_TICK_TICKS === 0) this.cityTick();
     this.w.events = [];
     if (p) {
       this.consumeInputs(p);
@@ -623,6 +747,13 @@ export class LocalServer {
           break;
         case 'revive':
           if (e.by === p.id) this.gameEvent({ t: 'control', controle: 'reanimar' }, true);
+          break;
+        // Fase 4: dinheiro do saque vai para a moeda da margem
+        case 'currency':
+          if (e.dst === p.id && rec.criado) {
+            saqueNaMoedaDaMargem(rec, { ...(e.semente ? { semente: e.semente } : {}), ...(e.credito ? { credito: e.credito } : {}) });
+            this.flush({ ...emptyResult(), mudou: true });
+          }
           break;
         default:
           break;
@@ -846,6 +977,8 @@ export class LocalServer {
         this.spawnFromRecord();
         this.sendWelcome();
         this.flush(r.resultado, { always: true });
+        // Fase 4: a moradia inicial da margem
+        this.syncCity();
         break;
       }
       case GAME_MSG.tutorialPasso: {
@@ -905,6 +1038,312 @@ export class LocalServer {
         if (!r.emote) return this.aviso('Emote indisponível.', 'erro');
         const e: S2C_Emote = { entity: p.id, playerId: this.token, nome: rec.name, emote: r.emote.id, texto: r.emote.texto, animacao: r.emote.animacao, quadros: r.emote.quadros };
         this.outbox.push([GAME_MSG.emote, e]);
+        break;
+      }
+      default:
+        this.onEconomyMsg(type, m);
+        break;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Fase 4: cidade, carteira, loja, feira, app, câmbio e casa (as regras de shared/game)
+
+  /** Medidores da cidade para o preço dinâmico. */
+  private priceCtx(): PrecoCtx {
+    const md = this.city.medidores;
+    return {
+      ...(md.precoDeVidaDir !== undefined ? { precoDeVida: md.precoDeVidaDir } : {}),
+      ...(md.apagaoDir !== undefined ? { apagao: md.apagaoDir } : {}),
+      ...(md.chovendo !== undefined ? { chovendo: md.chovendo } : {}),
+    };
+  }
+
+  private saveCity(): void {
+    try {
+      this.opts.cityStore?.save(this.city);
+    } catch {
+      // armazenamento cheio: a cidade vale só nesta aba
+    }
+  }
+
+  /** Ciclos perdidos, moradia inicial e casa do mutirão (ao entrar e depois da travessia). */
+  private syncCity(): void {
+    const rec = this.rec;
+    if (!rec || !rec.criado) return;
+    const s = sincronizarComCidade(rec, this.city);
+    if (!s.mudou) return;
+    this.flush({ ...emptyResult(), mudou: true, avisos: s.avisos });
+    this.sendWallet();
+  }
+
+  /** A cada segundo: vence anúncios, vira o ciclo (aluguel, lista de espera) e repõe os anúncios dos NPC. */
+  private cityTick(): void {
+    const rec = this.rec;
+    const now = this.nowMs();
+    const t = tickCidade(this.city, now, rec && rec.criado ? [rec] : []);
+    if (rec && t.mudaram.includes(rec.id)) {
+      this.flush({ ...emptyResult(), mudou: true, avisos: t.porJogador[rec.id] ?? [] });
+      this.sendWallet();
+    }
+    const seeded = this.seedMarket(now);
+    if (t.ciclosNovos > 0 || t.anunciosVencidos > 0 || seeded) this.saveCity();
+  }
+
+  /** Repõe os anúncios dos vizinhos NPC na feira e no app. Devolve true se anunciou. */
+  seedMarket(now = this.nowMs()): boolean {
+    const m = this.city.mercado;
+    let any = false;
+    for (const mercado of ['feira', 'app'] as const) {
+      const v = NPC_SELLERS[mercado];
+      const ativos = m.anuncios.filter((a) => a.mercado === mercado && a.vendedor === v.id && a.expiraEm > now).length;
+      if (ativos >= NPC_LISTINGS_MIN) continue;
+      // o que o vizinho ganhou fica com ele (ninguém recebe)
+      delete m.pendencias[v.id];
+      const seller = newPlayerRecord(v.id, v.name);
+      seller.criado = true;
+      seller.stage = 'margem';
+      seller.side = v.side;
+      for (const g of v.bens.slice(0, NPC_LISTINGS_MIN - ativos)) {
+        darBem(seller, g.bem);
+        const r = mercado === 'feira' ? anunciarFeira(m, seller, { bem: g.bem, preco: g.preco }, now) : anunciarApp(m, seller, { bem: g.bem, preco: g.preco }, now);
+        if (r.ok) any = true;
+      }
+    }
+    return any;
+  }
+
+  private sendWallet(): void {
+    const rec = this.rec;
+    if (!rec) return;
+    this.outbox.push([GAME_MSG.carteira, { ...carteiraView(rec), inventario: [...rec.inventory] }]);
+  }
+
+  private sendMarket(mercado: MercadoId): void {
+    const rec = this.rec;
+    if (rec) this.outbox.push([GAME_MSG.mercadoInfo, mercadoView(this.city.mercado, mercado, rec, this.nowMs())]);
+  }
+
+  private sendExchange(q?: { de: Moeda; quantidade: number }): void {
+    const rec = this.rec;
+    if (!rec) return;
+    const ctx = this.city.medidores;
+    const info: S2C_CambioInfo = { taxa: exchangeRate(this.city.cambio, ctx), usadoCiclo: economiaOf(rec).cambioCiclo, ...(q && q.quantidade > 0 ? { cotacao: cotarTroca(this.city.cambio, q.de, q.quantidade, ctx) } : {}) };
+    this.outbox.push([GAME_MSG.cambioInfo, info]);
+  }
+
+  private sendHouse(): void {
+    const rec = this.rec;
+    if (rec) this.outbox.push([GAME_MSG.casaInfo, casaView(rec, false)]);
+  }
+
+  /** Fim de uma operação: resultado curto; se deu certo, salva e manda perfil e carteira. */
+  private econDone(acao: string, r: { ok: boolean; erro?: string }, texto?: string, extra: Partial<S2C_EconomiaResultado> = {}): boolean {
+    const out: S2C_EconomiaResultado = { acao, ok: r.ok, ...(r.ok ? {} : { erro: r.erro ?? 'Não deu.' }), ...(r.ok && texto ? { texto } : {}), ...extra };
+    this.outbox.push([GAME_MSG.economiaResultado, out]);
+    if (r.ok) {
+      this.flush({ ...emptyResult(), mudou: true });
+      this.sendWallet();
+      this.saveCity();
+    }
+    return r.ok;
+  }
+
+  private onEconomyMsg(type: string, m: Record<string, unknown>): void {
+    const rec = this.rec!;
+    const c = this.city;
+    const now = this.nowMs();
+    const str = (v: unknown): string => (typeof v === 'string' ? v : '');
+    const moeda = (v: unknown): Moeda | undefined => (v === 'semente' || v === 'credito' ? v : undefined);
+    const rot = (v: unknown): Rotacao | undefined => (v === 0 || v === 1 || v === 2 || v === 3 ? v : undefined);
+    switch (type) {
+      case GAME_MSG.carteiraPedir:
+        this.sendWallet();
+        break;
+      case GAME_MSG.dividaPagar: {
+        const r = pagarDivida(rec);
+        this.econDone(type, r, r.ok ? (r.resta > 0 ? `Pagou ${r.pago} Créditos. Ainda faltam ${r.resta}.` : `Dívida quitada: ${r.pago} Créditos.`) : undefined);
+        if (r.ok) this.sendHouse();
+        break;
+      }
+      case GAME_MSG.lojaComprar: {
+        const q = m as unknown as C2S_LojaComprar;
+        const mo = moeda(q.moeda);
+        const r = comprarNaLoja(rec, str(q.loja), str(q.item), { mercado: c.mercado, ctx: this.priceCtx(), ...(mo ? { moeda: mo } : {}) });
+        this.econDone(type, r, r.resultado.avisos.join(' '));
+        break;
+      }
+      case GAME_MSG.lojaVender: {
+        const q = m as unknown as C2S_LojaVender;
+        const mo = moeda(q.moeda);
+        const r = venderNaLoja(rec, str(q.loja), str(q.item), { mercado: c.mercado, ...(mo ? { moeda: mo } : {}) });
+        this.econDone(type, r, r.resultado.avisos.join(' '));
+        break;
+      }
+      case GAME_MSG.mercadoListar: {
+        const q = m as unknown as C2S_MercadoListar;
+        this.sendMarket(q.mercado === 'app' ? 'app' : 'feira');
+        break;
+      }
+      case GAME_MSG.feiraAnunciar: {
+        const q = m as unknown as C2S_FeiraAnunciar;
+        const r = anunciarFeira(c.mercado, rec, { bem: q.bem, ...(typeof q.preco === 'number' ? { preco: q.preco } : {}), ...(Array.isArray(q.trocaPor) ? { trocaPor: q.trocaPor } : {}) }, now);
+        this.econDone(type, r, r.ok && r.anuncio ? `Anunciado na feira: ${nomeDoBem(r.anuncio.bem)}${r.anuncio.preco !== null ? ` por ${r.anuncio.preco} Sementes` : ' (troca)'}.` : undefined);
+        this.sendMarket('feira');
+        break;
+      }
+      case GAME_MSG.feiraComprar: {
+        const q = m as unknown as C2S_MercadoComprar;
+        const r = comprarFeira(c.mercado, rec, str(q.anuncio), now);
+        const nome = r.ok && r.anuncio ? nomeDoBem(r.anuncio.bem) : '';
+        // SUGESTÃO: texto da compra com fila
+        const texto = r.ok ? (r.entrega ? `${nome} na fila: você é o ${r.entrega.posicao}º. Retire quando ficar pronto.` : `Levou ${nome}.`) : undefined;
+        this.econDone(type, r, texto, r.ok && r.entrega ? { entrega: r.entrega } : {});
+        this.sendMarket('feira');
+        break;
+      }
+      case GAME_MSG.feiraRetirar: {
+        const r = retirarEntregas(c.mercado, rec, now);
+        const ok = r.bens.length > 0;
+        // SUGESTÃO: textos da retirada
+        const texto = ok ? `Retirou: ${r.bens.map(nomeDoBem).join(', ')}.` : undefined;
+        this.econDone(type, ok ? { ok: true } : { ok: false, erro: r.aguardando.length > 0 ? 'Ainda não ficou pronto. A fila anda.' : 'Nada para retirar.' }, texto);
+        this.sendMarket('feira');
+        break;
+      }
+      case GAME_MSG.appAnunciar: {
+        const q = m as unknown as C2S_AppAnunciar;
+        const r = anunciarApp(c.mercado, rec, { bem: q.bem, preco: Number(q.preco) }, now);
+        this.econDone(type, r, r.ok && r.anuncio ? `Anunciado no app: ${nomeDoBem(r.anuncio.bem)} por ${r.anuncio.preco} Créditos.` : undefined);
+        this.sendMarket('app');
+        break;
+      }
+      case GAME_MSG.appComprar: {
+        const q = m as unknown as C2S_MercadoComprar;
+        const r = comprarApp(c.mercado, rec, str(q.anuncio), now);
+        this.econDone(type, r, r.ok && r.anuncio ? `Comprou ${nomeDoBem(r.anuncio.bem)} por ${r.anuncio.preco} Créditos. Avalie com 5 estrelas!` : undefined);
+        this.sendMarket('app');
+        break;
+      }
+      case GAME_MSG.mercadoCancelar: {
+        const q = m as unknown as C2S_MercadoCancelar;
+        const a = c.mercado.anuncios.find((x) => x.id === str(q.anuncio));
+        const r = cancelarAnuncio(c.mercado, rec, str(q.anuncio));
+        this.econDone(type, r, a ? `Anúncio cancelado: ${nomeDoBem(a.bem)} voltou.` : undefined);
+        this.sendMarket(a?.mercado ?? (rec.side === 'direita' ? 'app' : 'feira'));
+        break;
+      }
+      case GAME_MSG.mercadoReceber: {
+        const p = receberPendencias(c.mercado, rec);
+        const partes: string[] = [];
+        if (p) {
+          if (p.semente > 0) partes.push(`${p.semente} Sementes`);
+          if (p.credito > 0) partes.push(`${p.credito} Créditos`);
+          if (p.bens.length > 0) partes.push(p.bens.map(nomeDoBem).join(', '));
+        }
+        this.econDone(type, p ? { ok: true } : { ok: false, erro: 'Nada a receber.' }, p ? `Recebeu: ${partes.join(', ') || 'avisos'}.` : undefined);
+        if (p) for (const t of p.avisos) this.aviso(t);
+        this.sendMarket(rec.side === 'direita' ? 'app' : 'feira');
+        break;
+      }
+      case GAME_MSG.cambioCotar: {
+        const q = m as unknown as C2S_CambioCotar;
+        const de = moeda(q.de) ?? (rec.side === 'direita' ? 'credito' : 'semente');
+        this.sendExchange({ de, quantidade: Number(q.quantidade ?? 0) || 0 });
+        break;
+      }
+      case GAME_MSG.cambioTrocar: {
+        const q = m as unknown as C2S_CambioTrocar;
+        const de = moeda(q.de);
+        const r = de ? trocarMoeda(c.cambio, rec, de, Number(q.quantidade), c.medidores) : { ok: false as const, erro: 'Moeda inválida.' };
+        const t = r.ok && 'troca' in r ? r.troca : undefined;
+        this.econDone(type, r, t ? `Trocou ${t.quantidade} ${t.de === 'semente' ? 'Sementes' : 'Créditos'} por ${t.recebe} ${t.para === 'semente' ? 'Sementes' : 'Créditos'}.` : undefined);
+        this.sendExchange();
+        break;
+      }
+      case GAME_MSG.casaVer:
+        this.sendHouse();
+        break;
+      case GAME_MSG.casaVisitar: {
+        const q = m as unknown as C2S_CasaVisitar;
+        // SUGESTÃO: no servidor local só existe a sua casa
+        if (str(q.playerId) === rec.id) this.sendHouse();
+        else this.econDone(type, { ok: false, erro: 'Ninguém em casa.' });
+        break;
+      }
+      case GAME_MSG.casaComprarMovel: {
+        const q = m as unknown as C2S_CasaComprarMovel;
+        const mo = moeda(q.moeda);
+        const r = comprarMovel(rec, str(q.movel), mo);
+        let texto = r.ok ? `Comprou ${nomeDoBem({ tipo: 'movel', id: str(q.movel) })} por ${r.valor} ${r.moeda === 'semente' ? 'Sementes' : 'Créditos'}.` : undefined;
+        if (r.ok && q.colocar) {
+          const pc = colocarMovel(rec, str(q.movel), Number(q.colocar.x), Number(q.colocar.y), rot(q.colocar.rot) ?? 0);
+          if (!pc.ok) texto += ` Ficou guardado: ${pc.erro}`;
+        }
+        this.econDone(type, r, texto);
+        this.sendHouse();
+        break;
+      }
+      case GAME_MSG.casaColocar: {
+        const q = m as unknown as C2S_CasaColocar;
+        this.econDone(type, colocarMovel(rec, str(q.movel), Number(q.x), Number(q.y), rot(q.rot) ?? 0));
+        this.sendHouse();
+        break;
+      }
+      case GAME_MSG.casaMover: {
+        const q = m as unknown as C2S_CasaMover;
+        this.econDone(type, moverMovel(rec, Number(q.uid), Number(q.x), Number(q.y), rot(q.rot)));
+        this.sendHouse();
+        break;
+      }
+      case GAME_MSG.casaGirar: {
+        const q = m as unknown as C2S_CasaMovel;
+        this.econDone(type, girarMovel(rec, Number(q.uid)));
+        this.sendHouse();
+        break;
+      }
+      case GAME_MSG.casaTirar: {
+        const q = m as unknown as C2S_CasaMovel;
+        this.econDone(type, tirarMovel(rec, Number(q.uid)), 'Guardado no inventário.');
+        this.sendHouse();
+        break;
+      }
+      case GAME_MSG.casaVisitas: {
+        const q = m as unknown as C2S_CasaVisitas;
+        let r: { ok: boolean; erro?: string } = { ok: true };
+        if (q.permissao) r = definirVisitas(rec, q.permissao as PermissaoVisita);
+        if (r.ok && typeof q.convidar === 'string') r = convidar(rec, q.convidar, true);
+        if (r.ok && typeof q.desconvidar === 'string') r = convidar(rec, q.desconvidar, false);
+        this.econDone(type, r);
+        this.sendHouse();
+        break;
+      }
+      case GAME_MSG.casaAlugar: {
+        const q = m as unknown as C2S_CasaAlugar;
+        const r = alugarCapsula(rec, typeof q.tipo === 'string' ? q.tipo : 'capsula', c.medidores.precoDeVidaDir);
+        this.econDone(type, r, r.ok ? (r.avisos ?? []).join(' ') : undefined);
+        this.sendHouse();
+        break;
+      }
+      case GAME_MSG.casaListaEspera: {
+        const r = entrarNaListaDeEspera(rec);
+        this.econDone(type, r, r.ok ? `Você entrou na lista de espera: ${r.ciclos} ciclos. A Assembleia agradece a paciência.` : undefined);
+        this.sendHouse();
+        break;
+      }
+      case GAME_MSG.casaAvancarFila: {
+        if (this.opts.devTools === false) {
+          this.econDone(type, { ok: false, erro: 'Atalho de teste desligado.' });
+          break;
+        }
+        const q = m as unknown as C2S_CasaAvancarFila;
+        if (!rec.home?.espera) {
+          this.econDone(type, { ok: false, erro: 'Você não está na lista de espera.' });
+          break;
+        }
+        const av = avancarListaDeEspera(rec, typeof q.ciclos === 'number' && q.ciclos > 0 ? q.ciclos : Number.POSITIVE_INFINITY);
+        this.econDone(type, { ok: true }, av.join(' '));
+        this.sendHouse();
         break;
       }
       default:

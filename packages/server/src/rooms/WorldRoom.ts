@@ -14,15 +14,22 @@
  * TCP, ou descarte), PQP_STALL_MS, PQP_JITTER_MS (variação, sem embaralhar) e PQP_NET_SEED.
  * hello, welcome, ping, pong, need, info e as mensagens de jogo sofrem o atraso e esperam na mesma
  * fila em ordem do cliente, mas não sorteiam perda.
+ *
+ * Fase 4: mapId 'casa:<id do dono>' cria a sala da casa (house.ts: mapa pelo tipo da moradia, sem
+ * conteúdo, desfeita quando esvazia). Todas as salas usam a mesma cidade (CityService: mercado,
+ * câmbio e ciclo), posta pelo app.ts em setWorldRoomDeps.
  */
 import { Room, type Client } from 'colyseus';
 import { hasMap, resolveMapId, START_MAP } from '@pqp/shared/map';
 import { CLOSE_CODE, GAME_MSG, MSG, type C2S_Hello, type C2S_Input, type C2S_Need, type C2S_Ping, type S2C_TrocarSala } from '@pqp/shared/net';
 import { TICK_MS } from '@pqp/shared/sim';
 import { COLYSEUS_RECONNECT_S, MAX_CATCHUP_TICKS } from '../config';
-import { GameServerCore, normalizeToken, type CoreOptions } from '../core';
+import { ECONOMY_MESSAGES, GameServerCore, normalizeToken, type CoreOptions } from '../core';
 import { LinkSim, linkConfigFromEnv, type LinkConfig } from '../netsim';
 import type { Store } from '../persistence/store';
+import { CityService } from '../city_service';
+import { HOUSE_MAX_CLIENTS } from '../config';
+import { buildHouseMap, isHouseMap, ownerOfHouseMap } from '../house';
 
 /** Opções simples (JSON) passadas ao define da sala (e o mapId de cada sala). */
 export interface WorldRoomOptions {
@@ -55,13 +62,22 @@ const GAME_IN = [
   GAME_MSG.missaoPagar,
   GAME_MSG.progressoOpcoes,
   GAME_MSG.emote,
+  // Fase 4: carteira, loja, feira, app, câmbio e casa
+  ...ECONOMY_MESSAGES,
 ] as const;
 
-/** Dependências que não cabem em JSON (Store, log), postas antes do define. */
-const deps: { store?: Store; log?: (m: string) => void } = {};
-export function setWorldRoomDeps(d: { store?: Store; log?: (m: string) => void }): void {
+/** Dependências que não cabem em JSON (Store, log, cidade), postas antes do define. */
+const deps: { store?: Store; log?: (m: string) => void; city?: CityService } = {};
+export function setWorldRoomDeps(d: { store?: Store; log?: (m: string) => void; city?: CityService }): void {
   if (d.store) deps.store = d.store;
   if (d.log) deps.log = d.log;
+  if (d.city) deps.city = d.city;
+}
+
+/** A cidade das salas (a do app.ts; sem ela, uma na memória criada na primeira sala). */
+function cityOf(): CityService {
+  deps.city ??= new CityService({ ...(deps.store ? { store: deps.store } : {}), ...(deps.log ? { log: deps.log } : {}) });
+  return deps.city;
 }
 
 /** Salas vivas (para o /health e para desligar salvando). */
@@ -86,15 +102,30 @@ export class WorldRoom extends Room {
    */
   aliasTo?: string;
 
-  override onCreate(options: WorldRoomOptions = {}): void {
+  override async onCreate(options: WorldRoomOptions = {}): Promise<void> {
     const asked = typeof options.mapId === 'string' ? options.mapId : START_MAP;
+    // Fase 4: 'casa:<id do dono>' é a sala da casa, com o mapa montado pelo tipo da moradia
+    if (isHouseMap(asked)) {
+      const owner = await cityOf().findRecord(ownerOfHouseMap(asked));
+      if (!owner?.home) throw new Error(`casa não encontrada: ${asked}`);
+      this.autoDispose = true;
+      this.maxClients = HOUSE_MAX_CLIENTS;
+      const coreOpts: CoreOptions = { mapId: asked, map: buildHouseMap(owner), house: { owner }, content: false, companions: false, city: cityOf() };
+      if (options.seed !== undefined) coreOpts.seed = options.seed;
+      if (options.offlineAutoMs !== undefined) coreOpts.offlineAutoMs = options.offlineAutoMs;
+      if (deps.store) coreOpts.store = deps.store;
+      if (deps.log) coreOpts.log = deps.log;
+      this.core = new GameServerCore(coreOpts);
+      this.setup(options, asked);
+      return;
+    }
     if (!hasMap(asked)) throw new Error(`mapa desconhecido: ${asked}`);
     const mapId = resolveMapId(asked);
     if (mapId !== asked) {
       this.aliasTo = mapId;
       this.autoDispose = true;
     }
-    const coreOpts: CoreOptions = { mapId, ...(this.aliasTo ? { content: false } : {}) };
+    const coreOpts: CoreOptions = { mapId, ...(this.aliasTo ? { content: false } : {}), city: cityOf() };
     if (options.seed !== undefined) coreOpts.seed = options.seed;
     if (options.companions !== undefined) coreOpts.companions = options.companions;
     if (options.jaco !== undefined) coreOpts.jaco = options.jaco;
@@ -103,6 +134,11 @@ export class WorldRoom extends Room {
     if (deps.store) coreOpts.store = deps.store;
     if (deps.log) coreOpts.log = deps.log;
     this.core = new GameServerCore(coreOpts);
+    this.setup(options, mapId);
+  }
+
+  /** Rede simulada, mensagens e o laço de 20 Hz (mapa ou casa). */
+  private setup(options: WorldRoomOptions, mapId: string): void {
     const link: LinkConfig = { ...linkConfigFromEnv(), ...(options.link ?? {}) };
     this.inLink = new LinkSim(link, 1);
     this.outLink = new LinkSim(link, 2);
@@ -269,8 +305,10 @@ export class WorldRoom extends Room {
 
   override async onDispose(): Promise<void> {
     liveRooms.delete(this);
-    this.inLink.dispose();
-    this.outLink.dispose();
+    this.inLink?.dispose();
+    this.outLink?.dispose();
+    if (!this.core) return;
+    this.core.dispose();
     await this.core.saveAll().catch(() => undefined);
   }
 }

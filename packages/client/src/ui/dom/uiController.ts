@@ -20,6 +20,8 @@ import { EditorScreen } from './editorScreen';
 import { button, el, uiRoot } from './styles';
 import { TravessiaScreen } from './travessiaScreen';
 import { Fase3Ui, type Fase3Screen } from './progressScreens';
+import { Fase4Ui, screenOfSpot, type Fase4Screen } from './economyScreens';
+import { npcSpots, spotLabel } from '../economyModel';
 
 // SUGESTÃO: avisos ficam 3,2 s; o banner de nível 3 s; no máximo 3 avisos na tela.
 export const TOAST_MS = 3200;
@@ -44,6 +46,8 @@ export class UiController {
   readonly travessia: TravessiaScreen;
   /** Fase 3: ala, talentos, botão 3, bordões, painel, balão do guia e troca de mapa */
   readonly fase3: Fase3Ui;
+  /** Fase 4: carteira, loja, feira/app, câmbio, casa e os botões de perto */
+  readonly fase4: Fase4Ui;
   private tracker: HTMLDivElement;
   private trackerSig = '';
   private hint: HTMLDivElement;
@@ -79,6 +83,21 @@ export class UiController {
         if (d && d.opcoes.some((o) => o.id === 'tchau')) this.gc.dialogOption(d.npc, 'tchau');
         this.closeDialog();
       },
+      // Fase 4: o NPC da loja, o cambista, o entregador e a vizinha da feira abrem as telas
+      extras: (npc) => {
+        const p = this.gc.game.profile;
+        const me = this.gc.pred;
+        if (!p || p.stage !== 'margem' || !me) return [];
+        return npcSpots(npc, this.gc.map, me.x, me.y, p.side).map((s) => ({
+          texto: spotLabel(s),
+          onTap: () => {
+            const d = this.dialog.current;
+            if (d && d.opcoes.some((o) => o.id === 'tchau')) this.gc.dialogOption(d.npc, 'tchau');
+            this.closeDialog();
+            this.openEconomy(screenOfSpot(s));
+          },
+        }));
+      },
     });
     this.travessia = new TravessiaScreen(this.root, {
       scene,
@@ -109,11 +128,22 @@ export class UiController {
     this.machineBtn.style.display = 'none';
     this.root.appendChild(this.machineBtn);
     this.fase3 = new Fase3Ui(this.root, gc, art, scene);
+    this.fase4 = new Fase4Ui(this.root, gc, art, scene);
+    this.fase3.rowPrefix = this.fase4.walletChip;
   }
 
-  /** Tela que tapa o mundo aberta (criação, máquina, travessia, telas da Fase 3): o HUD do Phaser não recebe toque nem tecla. */
+  /** Tela que tapa o mundo aberta (criação, máquina, travessia, telas da Fase 3 e 4): o HUD do Phaser não recebe toque nem tecla. */
   get modalOpen(): boolean {
-    return this.editor.isOpen || this.travessia.isOpen || this.fase3.isOpen;
+    return this.editor.isOpen || this.travessia.isOpen || this.fase3.isOpen || this.fase4.isOpen;
+  }
+
+  /** Abre uma tela da Fase 4 (carteira, loja, feira/app, câmbio, casa). */
+  openEconomy(s: Fase4Screen): void {
+    const p = this.gc.game.profile;
+    if (!p || !p.criado || this.editor.isOpen || this.travessia.isOpen) return;
+    this.closeDialog();
+    this.fase3.close();
+    this.fase4.open(s);
   }
 
   /** Abre uma tela da Fase 3 (o toque no quadro do jogador abre o painel). */
@@ -121,6 +151,7 @@ export class UiController {
     const p = this.gc.game.profile;
     if (!p || !p.criado || this.editor.isOpen || this.travessia.isOpen) return;
     this.closeDialog();
+    this.fase4.close();
     this.fase3.open(kind);
   }
 
@@ -201,6 +232,7 @@ export class UiController {
       this.hideHud();
       // a transição de mapa continua na tela enquanto a sala nova não responde
       this.fase3.update(now, { rowTopCss: f.rowTopCss ?? f.topCss, free: false });
+      this.fase4.update(now, { selfTile: null, free: false });
       return;
     }
     // criação: abre sozinha enquanto não tiver cadastro
@@ -233,7 +265,9 @@ export class UiController {
     this.editor.update(now);
     this.dialog.update(now);
     this.travessia.update();
-    this.fase3.update(now, { rowTopCss: f.rowTopCss ?? f.topCss, free: !this.editor.isOpen && !this.travessia.isOpen && !this.dialog.isOpen });
+    const free = !this.editor.isOpen && !this.travessia.isOpen && !this.dialog.isOpen;
+    this.fase3.update(now, { rowTopCss: f.rowTopCss ?? f.topCss, free: free && !this.fase4.isOpen });
+    this.fase4.update(now, { selfTile: f.selfTile, free: free && !this.fase3.isOpen });
     if (this.modalOpen) {
       this.hideHud();
       return;

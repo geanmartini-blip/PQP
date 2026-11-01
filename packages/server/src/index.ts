@@ -10,6 +10,9 @@
  * - SUPABASE_URL e SUPABASE_SERVICE_KEY: usa o Supabase; senão grava em .data/players.json;
  * - PQP_DATA_DIR: outra pasta para o players.json;
  * - PQP_SERVE_CLIENT=0: não serve o build do cliente (o npm run dev liga isso; o jogo vem do Vite).
+ * - Fase 4: PQP_CICLO_CIDADE_MIN (duração do ciclo da cidade em minutos, padrão 10) e PQP_DEV=1
+ *   (aceita o atalho casa_avancar_fila). A cidade fica em .data/world.json e o log de economia em
+ *   .data/events.jsonl (ou nas tabelas world_state e event_log do Supabase).
  */
 import { lanAddresses, startServer } from './app';
 import type { WorldRoomOptions } from './rooms/WorldRoom';

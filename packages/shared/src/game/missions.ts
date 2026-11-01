@@ -24,6 +24,7 @@ import { guideLine } from './guides';
 import { alaTrainerOf, npcMatches, resolveNpc } from './people';
 import { updateRanks } from './ranks';
 import { unlockTrainerEmote } from './trainers';
+import { creditarGanho } from './economy';
 
 /** SUGESTÃO: quantos níveis abaixo do nível da missão ainda dá para aceitar (fora do Delta). */
 export const NIVEL_TOLERANCIA = 2;
@@ -215,9 +216,14 @@ export function applyRewards(rec: PlayerRecord, rewards: readonly Reward[], g?: 
         break;
       }
       case 'recurso': {
-        if (w.recurso === 'semente') rec.semente += w.quantidade;
-        else if (w.recurso === 'credito') rec.credito += w.quantidade;
-        else rec.resources[w.recurso] = (rec.resources[w.recurso] ?? 0) + w.quantidade;
+        if (w.recurso === 'semente' || w.recurso === 'credito') {
+          // Fase 4: moeda entra na moeda da margem do jogador (economy.ts creditarGanho)
+          const g = creditarGanho(rec, w.recurso, w.quantidade);
+          r.recursos[g.moeda] = (r.recursos[g.moeda] ?? 0) + g.quantidade;
+          r.mudou = true;
+          break;
+        }
+        rec.resources[w.recurso] = (rec.resources[w.recurso] ?? 0) + w.quantidade;
         r.recursos[w.recurso] = (r.recursos[w.recurso] ?? 0) + w.quantidade;
         r.mudou = true;
         break;

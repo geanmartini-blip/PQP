@@ -16,7 +16,9 @@ import express from 'express';
 import { matchMaker, Server, WebSocketTransport } from 'colyseus';
 import { listMaps, START_MAP } from '@pqp/shared/map';
 import { SALA_MUNDO } from '@pqp/shared/net';
-import { DEFAULT_PORT } from './config';
+import { msAteProximoCiclo } from '@pqp/shared/game/city';
+import { CityService } from './city_service';
+import { CITY_TICK_MS, DEFAULT_PORT } from './config';
 import { createStore, projectRoot, type Store } from './persistence/store';
 import { liveRooms, setWorldRoomDeps, WorldRoom, type WorldRoomOptions } from './rooms/WorldRoom';
 
@@ -31,12 +33,16 @@ export interface StartOptions {
   serveClient?: boolean;
   clientDist?: string;
   log?: (m: string) => void;
+  /** Fase 4: a cidade (padrão: uma nova, lida do Store) e o intervalo do tick dela */
+  city?: CityService;
+  cityTickMs?: number;
 }
 
 export interface Running {
   port: number;
   host: string;
   store: Store;
+  city: CityService;
   gameServer: Server;
   http: http.Server;
   clientDist?: string;
@@ -64,7 +70,11 @@ export async function startServer(opts: StartOptions = {}): Promise<Running> {
   const dist = opts.clientDist ?? defaultClientDist();
   const serveClient = (opts.serveClient ?? true) && existsSync(path.join(dist, 'index.html'));
 
-  setWorldRoomDeps({ store, log });
+  // Fase 4: a cidade (mercado, câmbio e ciclo) é uma só para todas as salas, salva no Store
+  const city = opts.city ?? new CityService({ store, log });
+  await city.load();
+  city.start(opts.cityTickMs ?? CITY_TICK_MS);
+  setWorldRoomDeps({ store, log, city });
   const httpServer = http.createServer();
   const gameServer = new Server({
     transport: new WebSocketTransport({ server: httpServer }),
@@ -72,7 +82,8 @@ export async function startServer(opts: StartOptions = {}): Promise<Running> {
     express: (app: express.Application) => {
       app.get('/health', (_req, res) => {
         const rooms = Array.from(liveRooms).map((r) => r.core.stats());
-        res.json({ ok: true, store: store.kind, uptimeS: Math.round(process.uptime()), rooms });
+        const cidade = { ciclo: city.state.ciclo, cicloMin: city.cicloMin, msAteProximoCiclo: msAteProximoCiclo(city.state, city.now()), anuncios: city.state.mercado.anuncios.length };
+        res.json({ ok: true, store: store.kind, uptimeS: Math.round(process.uptime()), rooms, cidade });
       });
       if (serveClient) {
         // index.html sempre revalida (aponta para os assets do build atual); os assets do Vite
@@ -124,9 +135,12 @@ export async function startServer(opts: StartOptions = {}): Promise<Running> {
     gameServer,
     http: httpServer,
     ...(serveClient ? { clientDist: dist } : {}),
+    city,
     async close() {
+      city.stop();
       for (const r of liveRooms) await r.core.saveAll().catch(() => undefined);
       await gameServer.gracefullyShutdown(false).catch(() => undefined);
+      city.save();
       await store.flush().catch(() => undefined);
       if (httpServer.listening) await new Promise<void>((res) => httpServer.close(() => res()));
     },

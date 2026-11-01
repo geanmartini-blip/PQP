@@ -16,6 +16,8 @@ export interface DialogDeps {
   art: ArtApi;
   onOption: (npcId: string, opcao: string) => void;
   onClose: () => void;
+  /** Fase 4: botões a mais do cliente (abrir a loja, o câmbio, a feira...) para este NPC */
+  extras?: (npcId: string) => { texto: string; onTap: () => void }[];
 }
 
 export class DialogBox {
@@ -96,6 +98,7 @@ export class DialogBox {
     const d = this.d!;
     const ops = this.opsBox!;
     ops.innerHTML = '';
+    for (const x of this.deps.extras?.(d.npc) ?? []) ops.appendChild(button(x.texto, 'ok', x.onTap));
     for (const o of d.opcoes) {
       ops.appendChild(
         button(o.texto, o.tipo === 'tchau' ? 'sec' : o.tipo === 'travessia' || o.tipo === 'escolher_ala' ? 'ok' : '', () => {
@@ -133,6 +136,6 @@ export class DialogBox {
     if (n >= d.fala.length) this.full = true;
     const txt = d.fala.slice(0, n);
     if (this.fala.textContent !== txt) this.fala.textContent = txt;
-    if (this.full && this.opsBox && this.opsBox.childElementCount === 0 && d.opcoes.length > 0) this.renderOptions();
+    if (this.full && this.opsBox && this.opsBox.childElementCount === 0 && (d.opcoes.length > 0 || (this.deps.extras?.(d.npc).length ?? 0) > 0)) this.renderOptions();
   }
 }

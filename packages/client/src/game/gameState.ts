@@ -17,7 +17,18 @@ import {
   type S2C_ProgressoOpcoes,
   type S2C_TravessiaOpcoes,
   type S2C_TrocarSala,
+  type S2C_Carteira,
+  type S2C_MercadoInfo,
+  type S2C_CambioInfo,
+  type S2C_CasaInfo,
+  type S2C_EconomiaResultado,
 } from '@pqp/shared/net';
+
+/**
+ * Carteira da Fase 4. `inventario` é um campo a mais (o servidor local manda; o online, quando
+ * mandar): ids do inventário para vender e anunciar.
+ */
+export type CarteiraInfo = S2C_Carteira & { inventario?: string[] };
 import { TUTORIAL_STEPS, type TutorialStep } from '@pqp/shared/game/tutorial';
 import type { Unlock } from '@pqp/shared/game/types';
 
@@ -77,6 +88,17 @@ export class GameState {
   readonly emotes: S2C_Emote[] = [];
   /** troca de sala pedida pelo servidor online (o GameClient refaz a entrada) */
   roomChange: S2C_TrocarSala | null = null;
+  // ---- Fase 4 ----
+  /** carteira (resposta de 'carteira_pedir' e de toda operação de economia) */
+  wallet: CarteiraInfo | null = null;
+  /** feira ou app aberto */
+  market: S2C_MercadoInfo | null = null;
+  /** cotação da ponte */
+  exchange: S2C_CambioInfo | null = null;
+  /** casa própria ou visitada */
+  house: S2C_CasaInfo | null = null;
+  /** último resultado de operação de economia (com a hora de chegada) */
+  econ: (S2C_EconomiaResultado & { at: number }) | null = null;
   private toastSeq = 0;
   private pendingUnlocks: Unlock[] = [];
 
@@ -127,6 +149,30 @@ export class GameState {
       case GAME_MSG.trocarSala:
         this.roomChange = msg as S2C_TrocarSala;
         break;
+      // Fase 4
+      case GAME_MSG.carteira:
+        this.wallet = msg as CarteiraInfo;
+        break;
+      case GAME_MSG.mercadoInfo:
+        this.market = msg as S2C_MercadoInfo;
+        break;
+      case GAME_MSG.cambioInfo:
+        this.exchange = msg as S2C_CambioInfo;
+        break;
+      case GAME_MSG.casaInfo:
+        this.house = msg as S2C_CasaInfo;
+        break;
+      case GAME_MSG.economiaResultado: {
+        const r = msg as S2C_EconomiaResultado;
+        if (!r || typeof r.ok !== 'boolean') break;
+        this.econ = { ...r, at: now };
+        if (!r.ok) {
+          const texto = r.erro ?? 'Não deu.';
+          this.lastError = { texto, at: now };
+          this.pushToast(texto, 'erro', now);
+        } else if (r.texto) this.pushToast(r.texto, 'info', now);
+        break;
+      }
       default:
         return false;
     }

@@ -25,6 +25,18 @@ let current: Runtime | undefined;
 
 /** Chave do registro do jogador no modo offline (mais o token). */
 export const OFFLINE_RECORD_KEY = 'pqp_offline_';
+/** Fase 4: chave da cidade do modo offline. */
+export const OFFLINE_CITY_KEY = 'pqp_offline_cidade';
+
+/** ?ciclo=N (minutos) encurta o ciclo da cidade no modo offline, para testar aluguel e lista de espera. */
+export function offlineCycleMin(): number | undefined {
+  try {
+    const v = Number(new URLSearchParams(globalThis.location?.search ?? '').get('ciclo'));
+    return Number.isFinite(v) && v > 0 ? v : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 export function getRuntime(): Runtime {
   if (!current) throw new Error('runtime ainda não criado (BootScene)');
@@ -71,6 +83,16 @@ export async function makeBaseTransport(cfg: ClientConfig, joinOptions: () => Re
         },
         save: (id, rec) => st?.setItem(OFFLINE_RECORD_KEY + id, JSON.stringify(rec)),
       },
+      // Fase 4: a cidade (mercado, câmbio, ciclo) também fica no aparelho, no relógio de verdade
+      clock: () => Date.now(),
+      cityStore: {
+        load: () => {
+          const raw = st?.getItem(OFFLINE_CITY_KEY);
+          return raw ? (JSON.parse(raw) as unknown) : null;
+        },
+        save: (c) => st?.setItem(OFFLINE_CITY_KEY, JSON.stringify(c)),
+      },
+      ...(offlineCycleMin() !== undefined ? { cityCycleMin: offlineCycleMin()! } : {}),
     });
   }
   return new ColyseusTransport(cfg.endpoint, joinOptions);

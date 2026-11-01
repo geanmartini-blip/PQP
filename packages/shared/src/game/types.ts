@@ -122,6 +122,57 @@ export interface PlayerRecord {
   counters: Record<string, number>;
   /** lugar onde o jogador está agora (último 'arrive'), para objetivos de ir até lá */
   lugar_atual: string | null;
+  // ---- Fase 4 ----
+  /** moradia (casa da lista, mutirão, cápsula), com os móveis; null = sem casa */
+  home?: HomeState | null;
+  /** estado da carteira: ciclo da cidade já processado, dívida, limites do ciclo */
+  economia?: EconomiaState;
+}
+
+/** Fase 4: o que a carteira guarda além dos saldos (semente, credito e score ficam no registro). */
+export interface EconomiaState {
+  /** último ciclo da cidade aplicado neste registro (aluguel, fila do mutirão) */
+  ciclo: number;
+  /** Crédito devido (aluguel não pago); dívida > 0 é ficar no negativo */
+  divida: number;
+  /** pontos de score já somados ou tirados por evento neste ciclo (limitePorCiclo) */
+  scoreCiclo: Record<string, number>;
+  /** Semente equivalente trocada no câmbio neste ciclo (limitePorCicloSemente) */
+  cambioCiclo: number;
+  /** a moradia inicial da margem já foi dada (rede no galpão ou cápsula) */
+  moradiaDada: boolean;
+}
+
+/** Rotação de um móvel: 0, 90, 180 e 270 graus. Em 1 e 3 a largura e a altura trocam. */
+export type Rotacao = 0 | 1 | 2 | 3;
+
+export interface MovelColocado {
+  /** id do móvel nesta casa */
+  uid: number;
+  /** id do catálogo (furniture.json) */
+  id: string;
+  x: number;
+  y: number;
+  rot: Rotacao;
+}
+
+export type PermissaoVisita = 'so_eu' | 'grupo' | 'margem' | 'todos';
+
+/** Fase 4: a casa do jogador (housing.json tipos[].id), com o interior em grade. */
+export interface HomeState {
+  tipo: string;
+  moveis: MovelColocado[];
+  /** próximo uid de móvel */
+  seq: number;
+  visitas: PermissaoVisita;
+  /** ids de jogadores convidados (a outra margem só entra a convite) */
+  convidados: string[];
+  /** cápsula: ciclos seguidos de atraso */
+  atraso?: number;
+  /** cápsula: valor do último aluguel cobrado */
+  aluguelUltimo?: number;
+  /** lista de espera da Assembleia: ciclos até sair a casa e o tipo que vem */
+  espera?: { ciclosRestantes: number; final: string } | null;
 }
 
 /** Contexto de grupo de uma luta: quem estava junto, do mesmo lado. */
@@ -247,3 +298,6 @@ export interface Fail {
   erro: string;
 }
 export type Check = Ok | Fail;
+
+/** Moeda das duas margens. */
+export type Moeda = 'semente' | 'credito';

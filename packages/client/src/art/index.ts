@@ -19,6 +19,8 @@ import { npcLook } from './npcs';
 import { hashString, type Pix, stableStringify } from './pixel';
 import { drawPending, isPendingSheet, pendingProgress, type SheetData, TOTAL_FRAMES_PER_DIR, withDeferredDraw } from './sheet';
 import { buildTileset, TILE_KEY } from './tiles';
+import { buildFurniture, buildFurnitureSheet, FURNITURE_KEY, furnitureInfo } from './furniture';
+import { buildInterior, INTERIOR_FRONT, INTERIOR_SIDE, INTERIOR_WALL_H, interiorStyleFor, interiorTiles } from './interiors';
 
 export type { ArtApi, CharacterLook } from './contract';
 export { ANIMS, SPRITE_H, SPRITE_W, TILE_PX } from './contract';
@@ -28,6 +30,12 @@ export type { FxInfo } from './fx';
 export { facadeFrame, propForDeco, propFrame, propIsFlat, PROP_KEY, PROPS } from './landmarks';
 export { defaultLook, archetypeLook } from './character';
 export type { ArtLook } from './character';
+export type { FurnitureArt, InteriorArt } from './contract';
+export { FURNITURE_KEY, furnitureByStyle, furnitureFootprint, furnitureFrame, furnitureInfo, furnitureRot, furnitureRots } from './furniture';
+export { INTERIOR_FRONT, INTERIOR_SIDE, INTERIOR_WALL_H, interiorStyleFor, interiorTiles } from './interiors';
+export type { InteriorStyle } from './interiors';
+export { UI_ICON_IDS } from './uiIcons';
+export type { UiIconId } from './uiIcons';
 
 /** Metadados de uma textura gerada (tamanho do quadro e origem sugerida). */
 export interface SheetMeta {
@@ -317,10 +325,29 @@ export function createArt(): ArtApi {
       return key;
     },
     registerAnims,
+    furniture(scene, furnitureId, rot = 0) {
+      const info = furnitureInfo(furnitureId, rot);
+      if (getData().furnitureById.has(furnitureId)) {
+        if (!scene.textures.exists(FURNITURE_KEY)) uploadSheet(scene, buildFurnitureSheet());
+        return { key: FURNITURE_KEY, ...info };
+      }
+      // fora do catálogo: textura própria com o desenho reserva
+      const key = `mov_x_${furnitureId}_${info.rot}`;
+      if (!scene.textures.exists(key)) upload(scene, key, buildFurniture(furnitureId, info.rot), [{ name: info.frame, x: 0, y: 0, w: info.w, h: info.h }]);
+      return { key, ...info };
+    },
+    interior(scene, housingTypeOrStyle, tilesW, tilesH) {
+      const style = interiorStyleFor(housingTypeOrStyle);
+      const t = interiorTiles(housingTypeOrStyle);
+      const tw = Math.max(1, Math.round(tilesW ?? t.w));
+      const th = Math.max(1, Math.round(tilesH ?? t.h));
+      const key = `interior_${style}_${tw}x${th}`;
+      if (!scene.textures.exists(key)) upload(scene, key, buildInterior(style, tw, th).pix);
+      return { key, style, tilesW: tw, tilesH: th, floorX: INTERIOR_SIDE, floorY: INTERIOR_WALL_H, w: tw * 32 + 2 * INTERIOR_SIDE, h: th * 32 + INTERIOR_WALL_H + INTERIOR_FRONT };
+    },
   };
   return api;
 }
-
 /** Normaliza o visual que vem do servidor (EntSnap.lk) para CharacterLook; undefined se não servir. */
 export function asCharacterLook(lk: unknown): CharacterLook | undefined {
   if (!lk || typeof lk !== 'object') return undefined;

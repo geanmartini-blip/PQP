@@ -11,6 +11,7 @@
 import { getData } from '@pqp/shared/data';
 import { resolveMapId, START_MAP } from '@pqp/shared/map';
 import type { PlayerRecord } from '@pqp/shared/game/types';
+import { isHouseMap } from './house';
 
 export interface Arrival {
   mapId: string;
@@ -49,6 +50,8 @@ export const MARGEM_MAPS: readonly string[] = ['margem_esquerda', 'margem_direit
 export function mapAllowed(rec: PlayerRecord, mapId: string): boolean {
   const id = resolveMapId(mapId);
   if (!rec.criado || rec.stage !== 'margem' || !rec.side) return id === START_MAP;
+  // Fase 4: a sala de uma casa ('casa:<id>'); a permissão do dono é conferida pela sala
+  if (isHouseMap(id)) return true;
   return MARGEM_MAPS.includes(id);
 }
 
