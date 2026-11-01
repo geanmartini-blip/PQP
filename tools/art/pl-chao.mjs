@@ -24,6 +24,16 @@ const PARES = [
   ['66daec64-86f5-41c6-9349-bd52c0b944b2', 'madeira', 'parede'],
   ['5fe3ab74-5bac-4d6d-aadd-8c4564bc59fd', 'grama', 'parede'],
   ['564f4d00-ee0d-4dea-a33a-19fcf8286ce4', 'terra', 'parede'],
+  // margens
+  ['d804bfe7-27d0-44c1-9888-e8ff3b9e26d4', 'rasa', 'concreto'],
+  ['181c2fd1-1b88-411d-b708-6d0716264be7', 'grama', 'parede_esq'],
+  ['9ea5e511-01f5-4bc5-9b45-18b5461fbe74', 'asfalto', 'concreto'],
+  ['310ecc07-49cd-4d9b-a843-0514e4f787f0', 'concreto', 'pisoneon'],
+  ['c61d7d65-0c30-4234-a327-b154494ba6e5', 'concreto', 'parede_dir'],
+  ['1d46afab-9e66-4fbb-a8a7-a57b1d982e73', 'pisoneon', 'parede_dir'],
+  ['5b423d31-9530-480d-a5b1-9b49e568e9c9', 'madeira', 'parede_esq'],
+  ['a21970e3-f3c1-4d66-b39a-eac5a266e38a', 'terra', 'parede_esq'],
+  ['7df543fd-006e-4290-bedc-9f0eac61b0cd', 'funda', 'concreto'],
 ];
 const API = 'https://api.pixellab.ai/mcp/tilesets';
 const OUT_IMG = 'packages/client/public/pl/chao';

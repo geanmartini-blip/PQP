@@ -11,10 +11,13 @@ import * as Phaser from 'phaser';
 import { Tile, type TileMap } from '@pqp/shared/map';
 import man from './plChao.json';
 
-export const PL_CHAO_MAPS: ReadonlySet<string> = new Set(['delta', 'barco_travessia']);
+export const PL_CHAO_MAPS: ReadonlySet<string> = new Set(['delta', 'barco_travessia', 'margem_esquerda', 'margem_direita']);
 
-/** terrenos do PixelLab, do mais baixo ao mais alto (a ordem decide quem é "upper" num vértice) */
-const ORDEM = ['funda', 'rasa', 'lama', 'areia', 'grama', 'terra', 'madeira', 'parede'] as const;
+/**
+ * terrenos do PixelLab, do mais baixo ao mais alto (a ordem decide quem é "upper" num vértice; em
+ * cada tileset, o lower vem antes do upper nesta lista)
+ */
+const ORDEM = ['funda', 'rasa', 'lama', 'areia', 'grama', 'terra', 'asfalto', 'concreto', 'pisoneon', 'madeira', 'parede', 'parede_esq', 'parede_dir'] as const;
 type Terreno = (typeof ORDEM)[number];
 const NIVEL: Record<string, number> = Object.fromEntries(ORDEM.map((t, i) => [t, i]));
 
@@ -34,8 +37,25 @@ const CHAO_DE: Partial<Record<number, Terreno>> = {
   [Tile.Cerca]: 'madeira',
   [Tile.Porta]: 'madeira',
 };
+/** o que muda por mapa: a parede de cada margem e o chão da cidade na Direita */
+const CHAO_DO_MAPA: Record<string, Partial<Record<number, Terreno>>> = {
+  margem_esquerda: { [Tile.Parede]: 'parede_esq', [Tile.Maquina]: 'grama' },
+  margem_direita: {
+    [Tile.Parede]: 'parede_dir',
+    [Tile.Concreto]: 'concreto',
+    [Tile.Asfalto]: 'asfalto',
+    [Tile.PisoNeon]: 'pisoneon',
+    [Tile.Grade]: 'concreto',
+    [Tile.Maquina]: 'concreto',
+    [Tile.Pedra]: 'concreto',
+    [Tile.Porta]: 'concreto',
+    [Tile.Mato]: 'concreto',
+    [Tile.Grama]: 'concreto',
+  },
+};
+
 /** tiles com chão do PixelLab embaixo, mas o desenho procedural (objeto) por cima */
-export const PL_POR_CIMA: ReadonlySet<number> = new Set([Tile.Cerca, Tile.Porta, Tile.Pedra]);
+export const PL_POR_CIMA: ReadonlySet<number> = new Set([Tile.Cerca, Tile.Porta, Tile.Pedra, Tile.Grade, Tile.Maquina]);
 
 interface Par {
   lower: Terreno;
@@ -61,7 +81,20 @@ export const PL_ARVORES_KEY = 'pl_arvores';
  * Enfeites do PixelLab (public/pl/props/<prop>.png), desenhados no dobro da resolução do mundo: no
  * lugar do prop procedural de mesmo nome (art/landmarks.ts), com escala 0,5.
  */
-export const PL_PROPS: readonly string[] = ['barco', 'rede', 'caixote', 'toldo', 'lanterna', 'junco'];
+export const PL_PROPS: readonly string[] = [
+  'barco',
+  'rede',
+  'caixote',
+  'toldo',
+  'lanterna',
+  'junco',
+  // margens
+  'horta',
+  'totem',
+  'lixo',
+  'letreiro',
+  'holograma',
+];
 export const PL_PROP_ESCALA = 0.5;
 export const plPropKey = (prop: string) => `pl_prop_${prop}`;
 
@@ -72,7 +105,23 @@ export function preloadPlChao(scene: Phaser.Scene): void {
   for (let i = 0; i < ARVORES; i++) scene.load.image(`pl_arvore_${i}`, `${base}pl/arvores/arvore_${i}.png`);
   for (const p of PL_PROPS) scene.load.image(plPropKey(p), `${base}pl/props/${p}.png`);
   for (let i = 0; i < MATO; i++) scene.load.image(`pl_mato_${i}`, `${base}pl/mato/mato_${i}.png`);
+  for (const f of PL_FACHADAS) scene.load.image(plFachadaKey(f), `${base}pl/fachadas/${f}.png`);
 }
+
+/** fachadas do PixelLab (public/pl/fachadas/<id>.png, 128x128, escala 0,5): as 8 sedes e os 2 QGs */
+export const PL_FACHADAS: readonly string[] = [
+  'casa_da_assembleia',
+  'brigada_popular',
+  'guarda_comunitaria',
+  'escola_dos_saberes',
+  'trupe_do_povo',
+  'torre_do_consorcio',
+  'torcida_furia_neon',
+  'pm_do_consorcio',
+  'universidade_neon',
+  'agencia_neon',
+];
+export const plFachadaKey = (id: string) => `pl_fachada_${id}`;
 
 /** tufos de mato do PixelLab (public/pl/mato/), no lugar do mato procedural que balança */
 const MATO = 2;
@@ -169,7 +218,9 @@ export function desenhaPlChao(
   const pctx = proc.getContext('2d')!;
   pctx.drawImage(ctx.canvas, 0, 0);
   const tile = (x: number, y: number) => map.tiles[Math.min(H - 1, Math.max(0, y)) * W + Math.min(W - 1, Math.max(0, x))]!;
-  const chao = (x: number, y: number) => CHAO_DE[tile(x, y)];
+  const doMapa = CHAO_DO_MAPA[map.id] ?? {};
+  const chaoDe = (t: number) => doMapa[t] ?? CHAO_DE[t];
+  const chao = (x: number, y: number) => chaoDe(tile(x, y));
   ctx.imageSmoothingEnabled = false;
   for (let vy = ty0; vy <= ty0 + th; vy++)
     for (let vx = tx0; vx <= tx0 + tw; vx++) {
@@ -193,7 +244,7 @@ export function desenhaPlChao(
   // células sem chão do PixelLab: volta o desenho procedural da célula
   for (let y = ty0; y < ty0 + th; y++)
     for (let x = tx0; x < tx0 + tw; x++) {
-      if (CHAO_DE[tile(x, y)] !== undefined) continue;
+      if (chaoDe(tile(x, y)) !== undefined) continue;
       const sx = (x - tx0) * T;
       const sy = (y - ty0) * T;
       ctx.clearRect(sx, sy, T, T);

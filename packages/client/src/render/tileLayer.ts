@@ -21,7 +21,7 @@ import { isDungeonMapId } from '../game/dungeonMap';
 import { MATO_FRAMES, OVERLAY_FRAMES, overlayKind, renderTerrain, styleOfRegion, type Style, type TerrainSource, TREE_BASE_Y, TREE_H } from '../art/terrain';
 import { hashInt } from '../art/noise';
 import { treeFrame } from '../art/tiles';
-import { desenhaPlChao, PL_POR_CIMA, PL_PROP_ESCALA, plArvoreFrame, plArvores, plMatoKey, plPropKey, temPlMato, usaPlChao } from '../art/plChao';
+import { desenhaPlChao, PL_POR_CIMA, PL_PROP_ESCALA, plArvoreFrame, plArvores, plFachadaKey, plMatoKey, plPropKey, temPlMato, usaPlChao } from '../art/plChao';
 import { DEPTH } from './depth';
 
 export const GRID_KEY = 'tiles_grid';
@@ -134,9 +134,14 @@ function buildProps(scene: Phaser.Scene, map: TileMap, plChao: boolean): Phaser.
     }
   for (const m of map.markers) {
     const id = facadeIdOf(m);
-    if (!id || !tex.has(facadeFrame(id))) continue;
+    if (!id) continue;
     const bx = Math.round(m.x * TILE_PX);
     const by = Math.round(m.y * TILE_PX) + 12;
+    if (plChao && scene.textures.exists(plFachadaKey(id))) {
+      out.push(scene.add.image(bx, by, plFachadaKey(id)).setOrigin(0.5, 1).setScale(PL_PROP_ESCALA).setDepth(DEPTH.entity + by));
+      continue;
+    }
+    if (!tex.has(facadeFrame(id))) continue;
     out.push(scene.add.image(bx, by, key, facadeFrame(id)).setOrigin(0.5, 1).setDepth(DEPTH.entity + by));
   }
   return out;
@@ -185,7 +190,7 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
     for (let x = 0; x < W; x++) {
       const t = map.tiles[y * W + x]!;
       const kind = overlayKind(t);
-      if (!kind || (plChao && (kind === 'rasa' || kind === 'funda' || (kind === 'mato' && plMato)))) {
+      if (!kind || (plChao && (kind === 'rasa' || kind === 'funda' || kind === 'neon' || (kind === 'mato' && plMato)))) {
         row.push(-1);
         continue;
       }

@@ -11,7 +11,9 @@ falta e onde a integração já está pronta.
   mundo que não completou o conjunto usa o mesmo boneco. Para mostrar a criação, faltam variações do
   boneco base (estados do PixelLab por corpo e tom de pele) ou camadas por cima dele.
 - As alas sem boneco do PixelLab (22 de 24) mostram o boneco base mesmo com o conjunto completo.
-- Até o fechamento do Delta, 573 gerações. Falta gerar as margens, a Usina e o Juncal. O Bruno Ferro
+- Até as margens, 800 gerações. Falta gerar os ~40 NPCs das margens (cerca de 33 gerações cada, com
+  o andar), a Usina e o Juncal. O cache offline do app passou de 980 arquivos com os quadros dos
+  bonecos; juntar os quadros numa folha por boneco deixaria a instalação mais leve. O Bruno Ferro
   chefe usa o mesmo tamanho do NPC (sem a escala maior do chefe antigo).
 - A troca de lado em si (mudar de margem, instituição e ala) fica para a v0.4. A missão da cabeceira já
   libera `troca_de_lado`.

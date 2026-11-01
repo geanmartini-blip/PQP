@@ -74,8 +74,11 @@ export const PL_INIMIGOS: Record<string, string> = {
   cobrador_do_capataz: 'cobrador',
   siri_do_mangue: 'siri',
   mosquito_do_delta: 'mosquito',
+  fiscal_da_comissao: 'fiscal',
+  contrabandista: 'contrabandista',
+  drone_de_cobranca: 'drone',
 };
-const PL_BICHOS: ReadonlySet<string> = new Set(['siri', 'mosquito']);
+const PL_BICHOS: ReadonlySet<string> = new Set(['siri', 'mosquito', 'drone']);
 /** NPCs que não lutam: só o andar */
 const PL_SEM_GOLPE: ReadonlySet<string> = new Set(['jaco', 'toninho', 'vendedor', 'chopindita']);
 

@@ -49,8 +49,12 @@ Plano:
      cobrador (andar e golpe), siri e mosquito (desenho único, sem direção);
    - pronto: enfeites do Delta (barco, rede, caixote, toldo, lanterna, junco), tufos de mato no
      lugar do mato procedural, Toninho e os dois vendedores. O Delta está fechado;
-   - falta: as margens, a Usina, o Juncal e os estágios do conjunto por ala.
-   Gasto até aqui: 573 gerações (tileset "pro" custa 15, boneco "pro" 25). A lista está abaixo.
+   - pronto: as duas margens. Chão da Direita (concreto, asfalto, piso neon), parede de cada margem
+     (taipa com trepadeira na Esquerda, concreto com neon na Direita), as 10 fachadas, enfeites
+     (horta, totem, lixo, letreiro, holograma), fiscal, contrabandista e drone de cobrança;
+   - falta: os ~40 NPCs das margens (treinadores, líderes, Wesley e Li Wei), a Usina, o Juncal e os
+     estágios do conjunto por ala.
+   Gasto até aqui: 800 gerações (tileset "pro" custa 15, boneco "pro" 25). A lista está abaixo.
 5. Testes, build, NOVIDADES da v0.3, versão 0.3.0 e commit, sem push.
 
 Visual dos itens:
