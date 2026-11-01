@@ -12,6 +12,8 @@ export * from './tutorial';
 export * from './missions';
 export * from './travessia';
 export * from './dialog';
+// travessia de barco jogável (nível 8)
+export * from './barco';
 // Fase 3: instituições, ala, talentos, guias, treinadores e patentes
 export * from './people';
 export * from './ranks';

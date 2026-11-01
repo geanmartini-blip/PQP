@@ -9,7 +9,7 @@
  */
 import * as Phaser from 'phaser';
 import { getData } from '@pqp/shared';
-import { hasLineOfSight } from '@pqp/shared/map';
+import { hasLineOfSight, isBoatRoom } from '@pqp/shared/map';
 import { SIM_TUNING, type CombatEvent, type Vec } from '@pqp/shared/sim';
 import { archetypeLook, asCharacterLook, coneKeyFor, defaultLook, sheetMeta, TILE_PX } from '../art/index';
 import { lookKey, type ArtLook } from '../art/character';
@@ -21,11 +21,14 @@ import { DEPTH } from '../render/depth';
 import { Balloons, FloatTextPool, FxPool, ImagePool } from '../render/effects';
 import { EntityView, shouldRevive } from '../render/entityView';
 import { buildTileLayer, type TileLayerView } from '../render/tileLayer';
+import { BOAT_SCROLL_SLOW_TILES_S, BOAT_SCROLL_TILES_S, buildBoatScroll, type BoatScrollView } from '../render/boatScroll';
 import { computeZoom, worldTextScale } from '../ui/layout';
 
 const T = TILE_PX;
 // SUGESTÃO: cores dos números.
 const NUM = { selfHurt: 0xff5a4a, dealt: 0xffffff, crit: 0xffe23a, other: 0xc8c0d0, heal: 0x6aff6a, xp: 0xc890ff, info: 0x9ad0ff, gold: 0xffd060 };
+// SUGESTÃO: no barco da travessia, a câmera mostra cerca de 17 tiles de largura (o convés e as margens).
+const BOAT_VIEW_TILES = 17;
 // SUGESTÃO: margem de culling (px) em volta da câmera.
 const CULL_MARGIN = 96;
 // SUGESTÃO: inimigos "à vista" para as dicas e o Tab: até 8 tiles com linha de visão.
@@ -56,6 +59,8 @@ interface TelView {
 export class WorldScene extends Phaser.Scene {
   rt!: Runtime;
   private tiles: TileLayerView | undefined;
+  /** travessia: margens e espuma rolando no mapa do barco */
+  private boatScroll: BoatScrollView | undefined;
   private mapId = '';
   readonly views = new Map<number, EntityView>();
   private lookSig = new Map<number, string>();
@@ -109,7 +114,10 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private applyZoom(): void {
-    this.zoom = computeZoom(this.scale.width, this.scale.height);
+    // travessia: no barco a câmera abre um pouco, para as margens aparecerem passando dos lados
+    // (meio passo de zoom: com zoom inteiro, numa tela de 750 px o casco de 12 tiles enche a tela)
+    const boat = isBoatRoom(this.mapId);
+    this.zoom = computeZoom(this.scale.width, this.scale.height, boat ? BOAT_VIEW_TILES : undefined, boat ? 0.5 : 1);
     this.cameras.main.setZoom(this.zoom);
     this.cameras.main.setSize(this.scale.width, this.scale.height);
     const ts = worldTextScale(this.px, this.zoom);
@@ -133,6 +141,10 @@ export class WorldScene extends Phaser.Scene {
     if (!gc.welcomed || !gc.map) return;
     if (gc.world.mapId !== this.mapId) this.buildMap();
     this.tiles?.update(now);
+    if (this.boatScroll) {
+      const fase = gc.game.boat?.fase;
+      this.boatScroll.update(delta, fase === 'escolha' || fase === 'chegada' || fase === 'fim' ? BOAT_SCROLL_SLOW_TILES_S : BOAT_SCROLL_TILES_S);
+    }
 
     // próprio personagem (previsto)
     const sp = gc.selfRender(this.selfPos);
@@ -190,6 +202,10 @@ export class WorldScene extends Phaser.Scene {
     this.tiles = buildTileLayer(this, map);
     this.mapId = gc.world.mapId;
     this.cameras.main.setBounds(0, 0, map.width * T, map.height * T);
+    // travessia: as margens rolando pelos lados do barco
+    this.boatScroll?.destroy();
+    this.boatScroll = isBoatRoom(this.mapId) ? buildBoatScroll(this, map) : undefined;
+    this.applyZoom();
   }
 
   // ---------------------------------------------------------------------------

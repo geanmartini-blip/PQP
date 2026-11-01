@@ -4,12 +4,12 @@
  * salas rodam no mesmo processo, então a chegada fica aqui, por token, até a sala de destino ler.
  *
  * Também diz em que mapas o registro pode estar (o mapa "de casa" é o de mapForRecord):
- * - Delta e travessia: só o Delta;
+ * - Delta e travessia: só o Delta (e o próprio barco, 'barco:<id>', até escolher a margem);
  * - margem: as duas margens, a Usina da Ponte, o Juncal e o Delta (de barco).
  *   SUGESTÃO: visitar a outra margem é livre no piloto (a troca de lado é que fica fora).
  */
 import { getData } from '@pqp/shared/data';
-import { resolveMapId, START_MAP } from '@pqp/shared/map';
+import { boatOwnerOf, isBoatRoom, resolveMapId, START_MAP } from '@pqp/shared/map';
 import type { PlayerRecord } from '@pqp/shared/game/types';
 import { isHouseMap } from './house';
 
@@ -49,6 +49,8 @@ export const MARGEM_MAPS: readonly string[] = ['margem_esquerda', 'margem_direit
 /** O personagem do registro pode estar neste mapa? */
 export function mapAllowed(rec: PlayerRecord, mapId: string): boolean {
   const id = resolveMapId(mapId);
+  // travessia: o barco ('barco:<id>') é só do dono e só até escolher a margem
+  if (isBoatRoom(id)) return rec.criado && boatOwnerOf(id) === rec.id && rec.stage !== 'margem';
   if (!rec.criado || rec.stage !== 'margem' || !rec.side) return id === START_MAP;
   // Fase 4: a sala de uma casa ('casa:<id>'); a permissão do dono é conferida pela sala
   // Fase 5: andar da masmorra ('masmorra:<run>:<andar>'); quem é do grupo é conferido pela sala

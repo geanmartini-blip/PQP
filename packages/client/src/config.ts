@@ -9,6 +9,8 @@
  * - ?offline=1           servidor local no próprio navegador (a simulação de shared), sem rede
  * - ?nome=Fulano&ala=idol   nome e ala de entrada (protótipo)
  * - ?dpr=2               densidade do canvas (padrão: a do aparelho, até 3; 1 = mais leve)
+ * - ?dev_travessia=1     (com ?offline=1) Bruno derrotado e nível 8 no Delta: testar o barco
+ *                        (lido em game/runtime.ts)
  */
 
 export interface LocationLike {

@@ -4,6 +4,7 @@
  * Toda mensagem do cliente é um pedido: o servidor confere com as regras de shared/game e
  * responde com 'perfil', 'missao_estado' e 'aviso' (e 'dialogo' ou 'travessia_opcoes').
  */
+import type { BoatInfo } from '../game/barco';
 import type { Dialog, DialogOpen } from '../game/dialog';
 import type { ObjectiveTarget } from '../game/missions';
 import type { PlayerProfile } from '../game/record';
@@ -37,6 +38,8 @@ export const GAME_MSG = {
   travessiaOpcoes: 'travessia_opcoes',
   /** adição do servidor da Fase 2: o personagem é de outro mapa (ou acabou de atravessar); troque de sala */
   trocarSala: 'trocar_sala',
+  /** travessia de barco: fase da viagem, dica da aula e passos feitos (S2C_BarcoInfo) */
+  barcoInfo: 'barco_info',
   // ---- Fase 3 ----
   // cliente -> servidor
   /** escolher a ala no nível 12 (C2S_EscolherAla) */
@@ -334,6 +337,9 @@ export interface S2C_ProgressoOpcoes {
 export type S2C_InstituicaoInfo = InstitutionInfo;
 
 export type S2C_FalaGuia = GuideLineOut;
+
+/** Travessia de barco: fase, dica da aula e passos (game/barco.ts boatInfo). */
+export type S2C_BarcoInfo = BoatInfo;
 
 // ---------------------------------------------------------------------------
 // Fase 4: carteira, loja, feira, app, câmbio e casa

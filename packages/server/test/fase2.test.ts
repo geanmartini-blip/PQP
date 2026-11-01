@@ -20,6 +20,7 @@ import { fightBrain, steerTo } from '../src/bot/robot';
 import { GameServerCore } from '../src/core';
 import { MemoryStore } from '../src/persistence/store';
 import { Harness, type Bot } from './harness';
+import { boardRoom, doAula, embark, sailToBridge } from './boat';
 
 const DELTA = getMap('delta');
 const marker = (id: string) => {
@@ -207,7 +208,7 @@ function readyToCross(id: string) {
 }
 
 describe('travessia', () => {
-  it('troca o registro (margem, instituição, classe, guia) e o mapa: trocar_sala e o personagem nasce no QG', async () => {
+  it('embarca no Delta, escolhe no barco e chega no QG: o registro troca (margem, instituição, classe, guia)', async () => {
     const store = new MemoryStore();
     const token = 'tok-travessia-0001';
     const rec = readyToCross('11111111-2222-4333-8444-555555555555');
@@ -220,27 +221,39 @@ describe('travessia', () => {
     const D = getData();
     const inst = D.institutions.instituicoes.find((i) => i.margem === 'esquerda')!;
     const guide = D.guides.guias.find((g) => g.margem === 'esquerda')!;
-    // longe do cais e do Seu Jacó: recusa
+    // no Delta, a escolha direta é recusada: ela é no barco, na altura da ponte
+    h.game(bot, GAME_MSG.travessia, { side: 'esquerda', institution: inst.id, guide: guide.id });
+    expect(bot.robot.avisos.at(-1)?.tipo).toBe('erro');
+    expect(h.core.recordOf(bot.sid)!.stage).toBe('travessia');
+    // longe do Seu Jacó e do cais: embarcar é recusado
     const comp = h.core.companionOf(bot.sid)!;
     h.world.entities.delete(comp.id);
-    const cais = marker('saida_travessia');
-    teleport(h, bot, cais.x + 30, cais.y + 30);
-    h.game(bot, GAME_MSG.travessia, { side: 'esquerda', institution: inst.id, guide: guide.id });
+    const jacoCais = marker('npc_seu_jaco_cais');
+    teleport(h, bot, jacoCais.x + 30, jacoCais.y + 30);
+    h.game(bot, GAME_MSG.dialogoOpcao, { npcId: 'seu_jaco', opcao: 'travessia' });
     expect(bot.robot.avisos.at(-1)?.tipo).toBe('erro');
-    // no cais: escolhe errado (guia da outra margem) e depois certo
-    teleport(h, bot, cais.x, cais.y);
-    const guideDir = D.guides.guias.find((g) => g.margem === 'direita')!;
-    h.game(bot, GAME_MSG.travessia, { side: 'esquerda', institution: inst.id, guide: guideDir.id });
-    expect(bot.robot.avisos.at(-1)?.tipo).toBe('erro');
+    expect(bot.robot.trocarSala).toBeUndefined();
+    // no cais, com o Seu Jacó: embarca e vai para o barco dele
+    teleport(h, bot, jacoCais.x + 0.9, jacoCais.y);
     const eid = bot.robot.you!;
-    h.game(bot, GAME_MSG.travessia, { side: 'esquerda', institution: inst.id, guide: guide.id });
-    await new Promise((r) => setTimeout(r, 0));
-    h.tick(2);
-    // Fase 3: a chegada é a Margem Esquerda (qg_esquerda virou apelido dela)
-    expect(bot.robot.trocarSala).toEqual({ mapId: 'margem_esquerda', motivo: 'travessia' });
+    const room = await embark(h, bot);
+    expect(room).toBe(`barco:${rec.id}`);
     expect(h.world.entities.has(eid)).toBe(false);
     expect(h.core.entityOf(bot.sid)).toBeUndefined();
-    expect(bot.robot.perfil?.stage).toBe('margem');
+    // no barco: viaja até a ponte, escolhe errado (guia da outra margem) e depois certo
+    const { h: hb, bot: bb } = await boardRoom(room!, store, token, 214);
+    expect(bb.robot.welcome?.mapId).toBe(room);
+    expect(sailToBridge(hb, bb)).toBeGreaterThan(0);
+    expect(bb.robot.travessia?.pode).toBe(true);
+    const guideDir = D.guides.guias.find((g) => g.margem === 'direita')!;
+    hb.game(bb, GAME_MSG.travessia, { side: 'esquerda', institution: inst.id, guide: guideDir.id });
+    expect(bb.robot.avisos.at(-1)?.tipo).toBe('erro');
+    hb.game(bb, GAME_MSG.travessia, { side: 'esquerda', institution: inst.id, guide: guide.id });
+    expect(bb.robot.perfil?.stage).toBe('margem');
+    // a aula e a chegada: Fase 3, a chegada é a Margem Esquerda (qg_esquerda virou apelido dela)
+    expect(await doAula(hb, bb)).toBeGreaterThanOrEqual(0);
+    expect(bb.robot.trocarSala).toEqual({ mapId: 'margem_esquerda', motivo: 'travessia' });
+    expect(hb.core.entityOf(bb.sid)).toBeUndefined();
     // o registro gravado já é da margem
     const saved = (await store.getOrCreatePlayer(token)).data;
     expect(saved.stage).toBe('margem');
@@ -496,23 +509,24 @@ describe('fluxo completo da Fase 2', () => {
     expect(rec().missions.ativas).toContain('travessia_08');
     for (const m of deltaChainMissions().filter((x) => x !== 'travessia_08')) expect(rec().missions.concluidas).toContain(m);
 
-    // --- travessia: falar com o Seu Jacó no cais, embarcar e escolher
+    // --- travessia: falar com o Seu Jacó no cais, embarcar, viajar até a ponte e escolher no barco
     h.game(bot, GAME_MSG.falar, { npcId: 'seu_jaco' });
     expect(bot.robot.dialogo?.opcoes.map((o) => o.id)).toContain('travessia');
-    h.game(bot, GAME_MSG.dialogoOpcao, { npcId: 'seu_jaco', opcao: 'travessia' });
-    expect(bot.robot.travessia?.pode).toBe(true);
-    const esq = bot.robot.travessia!.margens.find((m) => m.side === 'esquerda')!;
+    const pid = rec().id;
+    const room = await embark(h, bot);
+    expect(room).toBe(`barco:${pid}`);
+    expect(h.core.entityOf(bot.sid)).toBeUndefined();
+    const { h: hb, bot: bb } = await boardRoom(room!, store, token, 303);
+    expect(sailToBridge(hb, bb)).toBeGreaterThan(0);
+    expect(bb.robot.travessia?.pode).toBe(true);
+    const esq = bb.robot.travessia!.margens.find((m) => m.side === 'esquerda')!;
     expect(esq.instituicoes.length).toBe(4);
     const inst = esq.instituicoes[0]!;
     const guia = esq.guias[0]!;
-    const cross = marker('saida_travessia');
-    moveParty(h, bot, cross.x, cross.y);
-    h.tick(2);
-    h.game(bot, GAME_MSG.travessia, { side: 'esquerda', institution: inst.id, guide: guia.id });
-    await new Promise((r) => setTimeout(r, 0));
-    h.tick(2);
-    expect(bot.robot.trocarSala).toEqual({ mapId: 'margem_esquerda', motivo: 'travessia' });
-    expect(h.core.entityOf(bot.sid)).toBeUndefined();
+    hb.game(bb, GAME_MSG.travessia, { side: 'esquerda', institution: inst.id, guide: guia.id });
+    expect(bb.robot.perfil?.stage).toBe('margem');
+    expect(await doAula(hb, bb)).toBeGreaterThanOrEqual(0);
+    expect(bb.robot.trocarSala).toEqual({ mapId: 'margem_esquerda', motivo: 'travessia' });
 
     // --- chega no QG da Esquerda com tudo gravado
     await store.flush();

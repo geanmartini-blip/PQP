@@ -18,9 +18,12 @@
  * Fase 4: mapId 'casa:<id do dono>' cria a sala da casa (house.ts: mapa pelo tipo da moradia, sem
  * conteúdo, desfeita quando esvazia). Todas as salas usam a mesma cidade (CityService: mercado,
  * câmbio e ciclo), posta pelo app.ts em setWorldRoomDeps.
+ *
+ * Travessia: mapId 'barco:<id do jogador>' cria o barco do Seu Jacó (mapa barco_travessia, uma sala
+ * por jogador, desfeita quando esvazia). O núcleo roda a viagem, a escolha e a aula (game/barco.ts).
  */
 import { Room, type Client } from 'colyseus';
-import { hasMap, resolveMapId, START_MAP } from '@pqp/shared/map';
+import { hasMap, isBoatRoom, resolveMapId, START_MAP } from '@pqp/shared/map';
 import { CLOSE_CODE, GAME_MSG, MSG, type C2S_Hello, type C2S_Input, type C2S_Need, type C2S_Ping, type S2C_TrocarSala } from '@pqp/shared/net';
 import { TICK_MS } from '@pqp/shared/sim';
 import { COLYSEUS_RECONNECT_S, MAX_CATCHUP_TICKS } from '../config';
@@ -132,6 +135,20 @@ export class WorldRoom extends Room {
       // SUGESTÃO: até 8 conexões por andar (o grupo é de até 4; sobra para reconexão)
       this.maxClients = 8;
       const coreOpts: CoreOptions = { mapId: asked, dungeon: p, content: false, companions: false, city: cityOf() };
+      if (options.seed !== undefined) coreOpts.seed = options.seed;
+      if (options.offlineAutoMs !== undefined) coreOpts.offlineAutoMs = options.offlineAutoMs;
+      if (deps.store) coreOpts.store = deps.store;
+      if (deps.log) coreOpts.log = deps.log;
+      this.core = new GameServerCore(coreOpts);
+      this.setup(options, asked);
+      return;
+    }
+    // travessia: 'barco:<id do jogador>' é o barco do Seu Jacó, uma sala por jogador, desfeita vazia
+    if (isBoatRoom(asked)) {
+      this.autoDispose = true;
+      // SUGESTÃO: até 2 conexões no barco (o dono e uma reconexão)
+      this.maxClients = 2;
+      const coreOpts: CoreOptions = { mapId: asked, companions: false, jaco: false, city: cityOf() };
       if (options.seed !== undefined) coreOpts.seed = options.seed;
       if (options.offlineAutoMs !== undefined) coreOpts.offlineAutoMs = options.offlineAutoMs;
       if (deps.store) coreOpts.store = deps.store;

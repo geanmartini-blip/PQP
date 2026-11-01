@@ -40,6 +40,8 @@ function onMargin(side: 'esquerda' | 'direita', clock = { t: 0 }) {
   const s = new LocalServer({
     store: memStore(),
     noEnemies: true,
+    // atalho de teste: a travessia direta do Delta (o barco tem o teste dele em barco.test.ts)
+    atalhoTravessia: true,
     encounters: false,
     clock: () => clock.t,
     cityStore: { load: () => city, save: (c: CidadeState) => void (city = JSON.parse(JSON.stringify(c))) },

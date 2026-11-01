@@ -8,7 +8,7 @@
  * guarda o estado para o desenho.
  */
 import { getData } from '@pqp/shared';
-import { circleFree, findPath, getMap, hasMap, type TileMap } from '@pqp/shared/map';
+import { boatRoomMap, circleFree, findPath, getMap, hasMap, isBoatRoom, type TileMap } from '@pqp/shared/map';
 import {
   dequantize,
   MSG,
@@ -316,7 +316,10 @@ export class GameClient {
       safeSet(this.opts.storage, TOKEN_KEY, w.token);
     }
     // Fase 5: andar de masmorra (mapa gerado pela semente da run de 'masmorra_info')
-    const map = this.opts.resolveMap?.(w.mapId) ?? (hasMap(w.mapId) ? getMap(w.mapId) : dungeonMapFor(w.mapId, this.game.dungeon));
+    // travessia: o barco do Seu Jacó ('barco:<id>') é o mapa barco_travessia com o id da sala
+    const map =
+      this.opts.resolveMap?.(w.mapId) ?? (hasMap(w.mapId) ? getMap(w.mapId) : isBoatRoom(w.mapId) ? boatRoomMap(w.mapId) : dungeonMapFor(w.mapId, this.game.dungeon));
+    if (!isBoatRoom(w.mapId)) this.game.boat = null;
     if (!map) {
       this.status = 'desconectado';
       this.statusInfo = `mapa desconhecido: ${w.mapId}`;

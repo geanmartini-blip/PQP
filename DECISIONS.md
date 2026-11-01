@@ -102,6 +102,23 @@ O registro completo está em `decisoes/fase5-masmorra.md`. Os pontos principais:
 - **Balanceamento:** o escudo do Xale de Lã da Babushka caiu de 7,5% para 7%, porque ela estava no
   limite de 55%.
 
+## Travessia de barco
+- **Barco solo:** cada jogador tem a sua sala `barco:<playerId>`; o grupo ficou de fora.
+- **Ponte:** chega por tempo, aos 12 s. Quem fecha a escolha reabre falando com o Seu Jacó. A mensagem
+  `travessia` só vale no barco, na fase de escolha.
+- **Aula:**
+  - o Especial começa cheio e só vale no barco: ao chegar à margem ele volta a 0;
+  - o automático fica desligado;
+  - as ondas nascem no convés, de 4 a 7 tiles à frente do jogador;
+  - a aula tem teto de 90 s;
+  - solo não dá XP.
+- **Reconexão:** antes da escolha, o jogador volta ao barco, e a viagem recomeça. Depois da escolha,
+  vai direto para o cais e pula a aula.
+- **Câmera:** no barco o zoom aceita meio passo, para mostrar cerca de 16 tiles e as margens caberem
+  num celular de 750 px. O mapa tem rio a mais atrás da popa, para o rodapé não ficar preto.
+- Os números e as falas novas estão marcados como sugestão (`BOAT_TUNING`, dicas da aula, falas do
+  guia).
+
 ## Sugestões (o que não está nos docs)
 Lista mantida por fase. Tudo aqui pode ser trocado pelos autores.
 

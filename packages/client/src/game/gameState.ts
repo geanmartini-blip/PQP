@@ -8,6 +8,7 @@
 import {
   GAME_MSG,
   type S2C_Aviso,
+  type S2C_BarcoInfo,
   type S2C_Dialogo,
   type S2C_Emote,
   type S2C_FalaGuia,
@@ -42,6 +43,9 @@ import { TUTORIAL_STEPS, type TutorialStep } from '@pqp/shared/game/tutorial';
 import type { Unlock } from '@pqp/shared/game/types';
 
 export type ToastKind = 'info' | 'missao' | 'nivel' | 'erro' | 'xp';
+
+/** Dica curta da tela: um passo do tutorial do Delta ou a dica do barco da travessia. */
+export type HintStep = Pick<TutorialStep, 'texto' | 'destaca'> & { id: string };
 
 export interface Toast {
   id: number;
@@ -121,6 +125,9 @@ export class GameState {
   faction: S2C_FaccaoInfo | null = null;
   /** avisos do mapa (world_event) ainda não mostrados na faixa do topo */
   readonly mapAlerts: (S2C_AvisoMapa & { at: number })[] = [];
+  // ---- travessia de barco ----
+  /** fase do barco e a dica da aula (null fora do barco; o GameClient limpa no welcome de outro mapa) */
+  boat: S2C_BarcoInfo | null = null;
   private toastSeq = 0;
   private pendingUnlocks: Unlock[] = [];
 
@@ -171,6 +178,11 @@ export class GameState {
       case GAME_MSG.trocarSala:
         this.roomChange = msg as S2C_TrocarSala;
         break;
+      case GAME_MSG.barcoInfo: {
+        const b = msg as S2C_BarcoInfo;
+        if (b && typeof b.fase === 'string') this.boat = b;
+        break;
+      }
       // Fase 4
       case GAME_MSG.carteira:
         this.wallet = msg as CarteiraInfo;
@@ -337,8 +349,12 @@ export class GameState {
     return this.profile.controlesLiberados.includes(controle);
   }
 
-  /** Dica do primeiro minuto: o primeiro passo ainda não feito (só no Delta, depois do cadastro). */
-  tutorialStep(): TutorialStep | undefined {
+  /**
+   * Dica do primeiro minuto: o primeiro passo ainda não feito (só no Delta, depois do cadastro). No
+   * barco da travessia, a dica é a do barco (a fase da viagem ou o botão da aula).
+   */
+  tutorialStep(): HintStep | undefined {
+    if (this.boat?.dica) return this.boat.dica;
     const p = this.profile;
     if (!p || !p.criado || p.stage !== 'delta') return undefined;
     return TUTORIAL_STEPS.find((s) => !p.tutorial.feitos.includes(s.id) && !this.localSteps.has(s.id));

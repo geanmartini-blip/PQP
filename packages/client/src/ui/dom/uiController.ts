@@ -9,6 +9,7 @@
  */
 import type * as Phaser from 'phaser';
 import { getData } from '@pqp/shared';
+import { isBoatRoom } from '@pqp/shared/map';
 import { canUseMachine, nearVisualMachine } from '@pqp/shared/game/visual';
 import type { PlayerRecord } from '@pqp/shared/game/types';
 import type { Vec } from '@pqp/shared/sim';
@@ -67,6 +68,8 @@ export class UiController {
   private pending: { kind: 'maquina' | 'travessia' | 'criacao'; at: number; profile: unknown } | null = null;
   private dialogShown: unknown = null;
   private queuedMachine: { change: Parameters<GameClient['visualMachine']>[0]; id: string; until: number } | null = null;
+  /** mapa do último quadro (a chegada do barco no cais toca a transição curta) */
+  private lastMapId = '';
 
   constructor(
     private readonly gc: GameClient,
@@ -248,7 +251,12 @@ export class UiController {
   update(now: number, f: UiFrame): void {
     const game = this.gc.game;
     const p = game.profile;
-    // Fase 5: o barco da travessia anda por cima de tudo (o mapa da margem carrega por trás)
+    // travessia: o barco encostou no cais (saiu da sala do barco para a margem): transição curta
+    const mapNow = this.gc.welcomed ? this.gc.world.mapId : this.lastMapId;
+    if (mapNow !== this.lastMapId) {
+      if (isBoatRoom(this.lastMapId) && !isBoatRoom(mapNow) && p?.stage === 'margem') this.boat.play(p.side, p.guide_id, now);
+      this.lastMapId = mapNow;
+    }
     this.boat.update(now);
     if (!p || !this.gc.welcomed) {
       this.hideHud();
@@ -320,11 +328,9 @@ export class UiController {
       const ok = pd.kind === 'criacao' ? p.criado : pd.kind === 'travessia' ? p.stage === 'margem' : true;
       if (!ok) return;
       this.pending = null;
-      if (pd.kind === 'travessia') {
-        this.travessia.close();
-        // Fase 5: a travessia de barco (cena curta com o guia falando)
-        this.boat.play(p.side, p.guide_id, now);
-      } else this.editor.close();
+      // a escolha foi no barco: a aula começa ali mesmo (a chegada no cais tem a transição curta)
+      if (pd.kind === 'travessia') this.travessia.close();
+      else this.editor.close();
       // SUGESTÃO: aviso de visual salvo
       if (pd.kind === 'maquina') game.pushToast('Visual novo salvo!', 'info', now);
     }
@@ -348,7 +354,8 @@ export class UiController {
   private updateTracker(f: UiFrame): void {
     const ms = this.gc.game.missions;
     const a = ms?.ativas[0];
-    if (!ms || !a) {
+    // no barco quem guia é o Seu Jacó e a dica do convés; a missão do Delta não aponta para nada
+    if (!ms || !a || isBoatRoom(this.lastMapId)) {
       this.tracker.style.display = 'none';
       this.trackerSig = '';
       return;

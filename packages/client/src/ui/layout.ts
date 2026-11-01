@@ -47,11 +47,14 @@ export function fpsLimitFor(hz: number): number {
   return n > 1 ? Math.ceil(hz / n) + 1 : 0;
 }
 
-/** Zoom inteiro da câmera do mundo para uma tela de `screenW`×`screenH` pixels de canvas. */
-export function computeZoom(screenW: number, screenH = Infinity, target = ZOOM_TARGET_TILES): number {
+/**
+ * Zoom da câmera do mundo para uma tela de `screenW`×`screenH` pixels de canvas: inteiro por padrão;
+ * `step` 0,5 aceita meio passo (o barco da travessia, para as margens caberem na tela).
+ */
+export function computeZoom(screenW: number, screenH = Infinity, target = ZOOM_TARGET_TILES, step = 1): number {
   let best = 1;
   let bestScore = Infinity;
-  for (let z = 1; z <= ZOOM_MAX; z++) {
+  for (let z = 1; z <= ZOOM_MAX; z += step) {
     const tw = screenW / (TILE_PX * z);
     const th = screenH / (TILE_PX * z);
     // zoom maior só mostra menos: passou do mínimo, para

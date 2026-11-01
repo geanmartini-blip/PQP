@@ -19,7 +19,10 @@
  * (guardado no aparelho pelo `store`), começa no Delta sem cadastro, e as mensagens de GAME_MSG
  * (criação, Máquina de Visual, falar, diálogo, missões, tutorial e travessia) chamam as mesmas
  * funções. Eventos da simulação viram eventos de jogo (XP, inimigo derrotado, saque, lugar, botão).
- * A travessia troca de mapa (welcome novo com o mapa da margem).
+ * A travessia é jogável (game/barco.ts, as mesmas regras do servidor): "Embarcar" com o Seu Jacó
+ * monta o mapa 'barco:<id>'; na altura da ponte abre a escolha; depois vêm a aula (ondas, Especial
+ * cheio, falas do guia) e a chegada no cais da margem (welcome novo). `atalhoTravessia` (testes)
+ * deixa a 'travessia' valer direto do Delta.
  *
  * Fase 3 (as mesmas regras): ala no 12, talentos 10/15/20, botão 3, tela da instituição, pagar
  * objetivo, emote (volta para o próprio cliente), conversa com o guia ('falar' com npcId 'guia'),
@@ -30,7 +33,7 @@
  * Modo protótipo (o da Fase 1): mapa passado nas opções (testes) ou ?ala= no hello. Sem perfil,
  * sem missões; o 'interagir' da simulação troca a ala com Wesley e Li Wei.
  */
-import { ARRIVAL_MAP_BY_SIDE, findPath, getMap, hasMap, START_MAP, type TileMap } from '@pqp/shared/map';
+import { ARRIVAL_MAP_BY_SIDE, boatRoomId, boatRoomMap, findPath, getMap, hasMap, isBoatRoom, START_MAP, type TileMap } from '@pqp/shared/map';
 import {
   GAME_MSG,
   INTEREST_RADIUS,
@@ -57,6 +60,7 @@ import {
   type C2S_Emote,
   type EntSnap,
   type S2C_Aviso,
+  type S2C_BarcoInfo,
   type S2C_Dialogo,
   type S2C_Emote,
   type S2C_FalaGuia,
@@ -96,7 +100,21 @@ import {
   acceptMission,
   applyTravessia,
   applyVisualMachine,
-  canCross,
+  // travessia de barco
+  boardBoat,
+  boatButtonOf,
+  boatInfo,
+  boatOnCast,
+  boatOnChosen,
+  boatRoomOf,
+  boatTick,
+  boatWaveSpot,
+  canBoard,
+  FLAG_BRUNO,
+  raiseToLevel,
+  newBoatState,
+  type BoatAction,
+  type BoatState,
   controlesLiberados,
   createCharacter,
   currentObjectives,
@@ -405,6 +423,16 @@ export interface LocalServerOpts {
   factionTickMin?: number;
   /** Fase 5: encontros com IA nas margens (padrão: ligados) */
   encounters?: boolean;
+  /**
+   * Atalho de teste: 'travessia' vale direto do Delta, sem o barco (leva para a margem na hora).
+   * Padrão: desligado (a travessia é no barco do Seu Jacó, como no servidor).
+   */
+  atalhoTravessia?: boolean;
+  /**
+   * Só de desenvolvimento (?dev_travessia=1 no offline): quem ainda está no Delta fica pronto para
+   * o barco (Bruno Ferro derrotado e nível 8). O embarque continua pelo Seu Jacó, como no jogo.
+   */
+  devTravessia?: boolean;
 }
 
 export class LocalServer {
@@ -475,6 +503,9 @@ export class LocalServer {
   private lootInfo = new Map<number, { itemId?: string; currency: boolean }>();
   /** assinatura do equipamento aplicado na entidade */
   private equipSig = '';
+  // travessia de barco
+  /** viagem, escolha e aula no barco (só no mapa 'barco:<id>') */
+  boat: BoatState | null = null;
 
   constructor(private readonly opts: LocalServerOpts = {}) {
     this.seed = opts.seed ?? 7;
@@ -509,9 +540,18 @@ export class LocalServer {
 
   /** Monta o mundo de um mapa (no começo e na troca de mapa); `spawnId` = entrada pedida pela saída. */
   private loadMap(mapId: string | TileMap, spawnId?: string, at?: { x: number; y: number }): void {
-    const map = typeof mapId !== 'string' ? mapId : this.fixedMap && this.fixedMap.id === mapId ? this.fixedMap : getMap(hasMap(mapId) ? mapId : START_MAP);
+    const map =
+      typeof mapId !== 'string'
+        ? mapId
+        : this.fixedMap && this.fixedMap.id === mapId
+          ? this.fixedMap
+          : isBoatRoom(mapId)
+            ? boatRoomMap(mapId)
+            : getMap(hasMap(mapId) ? mapId : START_MAP);
     this.mapId = map.id;
     this.w = createWorld(map, this.seed);
+    // travessia: o barco parte quando o mapa dele monta (uma viagem nova a cada entrada)
+    this.boat = isBoatRoom(map.id) ? newBoatState(this.w.tick) : null;
     this.w.pathfinder = (m, from, to, r) => findPath(m, from, to, r);
     // Fase 5: energia, apagão e poluição das regiões valem no combate (sim/combat.ts marginPct)
     if (this.faccao) this.w.regionState = regionStateParaCombate(this.faccao);
@@ -634,6 +674,7 @@ export class LocalServer {
       this.rec.id = this.token;
     }
     const rec = this.rec;
+    this.devPrepTravessia();
     const want = this.mapFor(rec);
     if (!this.player || want !== this.mapId) {
       if (want !== this.mapId) this.loadMap(want);
@@ -645,6 +686,7 @@ export class LocalServer {
     const r = refreshMissions(rec);
     this.flush(r, { always: true });
     this.syncCity();
+    this.sendBoat();
   }
 
   /** Mapa do registro: Delta até a travessia; depois o QG da margem. */
@@ -652,6 +694,9 @@ export class LocalServer {
     if (this.fixedMap) return this.fixedMap.id;
     // Fase 5: dentro da masmorra, o andar atual
     if (this.floorSt) return this.mapId;
+    // travessia: embarcou e ainda não escolheu a margem: o barco
+    const barco = boatRoomOf(rec);
+    if (barco) return barco;
     if (rec.stage === 'margem' && rec.side) return this.mapOverride && hasMap(this.mapOverride) ? this.mapOverride : ARRIVAL_MAP_BY_SIDE[rec.side];
     return START_MAP;
   }
@@ -930,6 +975,8 @@ export class LocalServer {
     }
     if (p && this.rec) this.afterStep(p, ev);
     if (this.player && this.rec && this.floorSt && this.player === p) this.dungeonTick(this.player);
+    // travessia: o barco do Seu Jacó (falas, ponte, aula, ondas e chegada)
+    if (this.player && this.rec && this.boat && this.player === p) this.boatTickNow(this.player, ev);
     // a travessia pode ter trocado de mapa: o snapshot é do jogador novo
     const cur = this.player;
     if (cur) this.outbox.push([MSG.snap, this.snapshot(cur, cur === p ? ev : [])]);
@@ -1095,16 +1142,14 @@ export class LocalServer {
       if (near) this.nearInteract.add(m.id);
       else this.nearInteract.delete(m.id);
     }
-    // saída da travessia: chegar de barco na ponte abre a escolha da margem
+    // saída da travessia no cais: o barco sai com o Seu Jacó (a escolha é no barco, na altura da ponte)
     let exitNear = false;
     for (const m of map.markers) {
       if (m.kind !== 'saida' || m.params?.['travessia'] !== true) continue;
       if (Math.hypot(m.x - p.x, m.y - p.y) <= INTERACT_MARK_RADIUS) {
         exitNear = true;
-        if (!this.nearExit && canCross(rec).ok) {
-          this.gameEvent({ t: 'arrive', regionId: m.ref ?? 'usina_da_ponte', deBarco: true });
-          this.outbox.push([GAME_MSG.travessiaOpcoes, travessiaOptions(rec)]);
-        }
+        // SUGESTÃO: aviso de quem chega no barco sem falar com o Seu Jacó.
+        if (!this.nearExit && canBoard(rec).ok) this.aviso('Fale com o Seu Jacó para embarcar.');
       }
     }
     this.nearExit = exitNear;
@@ -1194,6 +1239,7 @@ export class LocalServer {
         const c = m as unknown as C2S_CriarPersonagem;
         const r = createCharacter(rec, c.name, c.appearance);
         if (!r.ok) return this.aviso(r.erro, 'erro');
+        this.devPrepTravessia();
         this.flush(r.resultado, { always: true });
         break;
       }
@@ -1226,6 +1272,18 @@ export class LocalServer {
       }
       case GAME_MSG.dialogoOpcao: {
         const c = m as unknown as C2S_DialogoOpcao;
+        // travessia: no Delta, "Embarcar" leva para o barco; no barco, abre a escolha na altura da ponte
+        if (String(c.npcId) === 'seu_jaco' && String(c.opcao) === 'travessia' && canBoard(rec).ok) {
+          if (this.boat) {
+            // SUGESTÃO: texto do Seu Jacó antes da ponte.
+            if (this.boat.fase === 'escolha') this.outbox.push([GAME_MSG.travessiaOpcoes, travessiaOptions(rec)]);
+            else if (this.boat.fase === 'viagem') this.aviso('Calma, que a ponte já vem. Aproveita a vista.');
+            break;
+          }
+          if (!npcInReach(this.w, p, { npcId: 'seu_jaco' })) return this.aviso('Vá até o cais: o Seu Jacó leva no barco.', 'erro');
+          this.embark();
+          break;
+        }
         const r = dialogOption(rec, String(c.npcId), String(c.opcao));
         if (!r.ok) return this.aviso(r.erro ?? 'Opção indisponível.', 'erro');
         if (r.abrir?.tela === 'travessia') this.outbox.push([GAME_MSG.travessiaOpcoes, r.abrir.opcoes]);
@@ -1245,7 +1303,23 @@ export class LocalServer {
       }
       case GAME_MSG.travessia: {
         const c = m as unknown as C2S_Travessia;
-        const r = applyTravessia(rec, { side: String(c.side), institution: String(c.institution), guide: String(c.guide) });
+        const choice = { side: String(c.side), institution: String(c.institution), guide: String(c.guide) };
+        if (this.boat) {
+          // no barco: só na altura da ponte; depois vem a aula e o barco chega no cais (boatTickNow)
+          if (this.boat.fase !== 'escolha') return this.aviso('A escolha é na altura da ponte.', 'erro');
+          const r = applyTravessia(rec, choice);
+          if (!r.ok) return this.aviso(r.erro, 'erro');
+          // o kit da classe entra na entidade (os botões 1 a 3 e o Especial)
+          this.flush(r.resultado, { always: true });
+          this.applyBoat(boatOnChosen(this.boat, rec, this.w.tick));
+          break;
+        }
+        if (!this.opts.atalhoTravessia) {
+          const cb = canBoard(rec);
+          return this.aviso(cb.ok ? 'Fale com o Seu Jacó para embarcar.' : cb.erro, 'erro');
+        }
+        // atalho de teste: a travessia direta, sem o barco
+        const r = applyTravessia(rec, choice);
         if (!r.ok) return this.aviso(r.erro, 'erro');
         // troca de mapa: o QG da margem escolhida
         this.mapOverride = undefined;
@@ -1323,6 +1397,125 @@ export class LocalServer {
         this.onEconomyMsg(type, m);
         break;
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // travessia de barco (game/barco.ts, as mesmas regras do servidor)
+
+  /** Dev (?dev_travessia=1): personagem criado no Delta fica com o Bruno derrotado e no nível 8. */
+  private devPrepTravessia(): void {
+    const rec = this.rec;
+    if (!this.opts.devTravessia || !rec || !rec.criado || rec.stage === 'margem') return;
+    if (!rec.story_flags.includes(FLAG_BRUNO)) rec.story_flags.push(FLAG_BRUNO);
+    raiseToLevel(rec, 8);
+  }
+
+  /** Fase do barco para o cliente. */
+  private sendBoat(): void {
+    if (!this.boat) return;
+    const info: S2C_BarcoInfo = boatInfo(this.boat, { tick: this.w.tick, tickRate: TICK_RATE });
+    this.outbox.push([GAME_MSG.barcoInfo, info]);
+  }
+
+  /** Embarca no barco do Seu Jacó: o mapa 'barco:<id>' com o personagem no convés. */
+  private embark(): void {
+    const rec = this.rec!;
+    const b = boardBoat(rec);
+    if (!b.ok) return this.aviso(b.erro, 'erro');
+    this.changeRoom(boatRoomId(rec.id), undefined);
+    this.flush(b.resultado, { always: true });
+    this.sendBoat();
+  }
+
+  /** Troca de mapa sem 'saida' (o barco e a chegada no cais), com welcome novo. */
+  private changeRoom(to: string, spawnId: string | undefined): void {
+    const rec = this.rec!;
+    const auto = this.player?.auto ?? rec.auto;
+    this.mapOverride = undefined;
+    this.loadMap(to, spawnId);
+    this.player = undefined;
+    this.spawnFromRecord();
+    this.player!.auto = auto;
+    this.sendWelcome();
+  }
+
+  /** Um tick do barco, depois do step: botões usados na aula e o passo da viagem. */
+  private boatTickNow(p: Entity, ev: CombatEvent[]): void {
+    const st = this.boat!;
+    const rec = this.rec!;
+    for (const e of ev) {
+      if (e.t !== 'cast' || e.src !== p.id) continue;
+      const b = boatButtonOf(p, e.ability);
+      if (b) this.applyBoat(boatOnCast(st, rec, b));
+    }
+    if (this.boat !== st) return;
+    const w = this.w;
+    this.applyBoat(
+      boatTick(st, rec, {
+        tick: w.tick,
+        tickRate: TICK_RATE,
+        vivo: (id) => {
+          const x = w.entities.get(id);
+          return x !== undefined && !x.dead;
+        },
+      }),
+    );
+    // a contagem até a ponte, de segundo em segundo
+    if (this.boat === st && st.fase === 'viagem' && (w.tick - st.inicio) % TICK_RATE === 0) this.sendBoat();
+  }
+
+  /** Faz o que o passo do barco pediu. */
+  private applyBoat(actions: BoatAction[]): void {
+    const st = this.boat;
+    const rec = this.rec;
+    if (!st || !rec || actions.length === 0) return;
+    let save = false;
+    for (const a of actions) {
+      const p = this.player;
+      if (!p) return;
+      switch (a.t) {
+        case 'fala':
+          this.outbox.push([GAME_MSG.falaGuia, a.fala]);
+          save = true;
+          break;
+        case 'escolha':
+          this.outbox.push([GAME_MSG.travessiaOpcoes, a.opcoes]);
+          break;
+        case 'evento':
+          this.gameEvent(a.ev);
+          break;
+        case 'onda': {
+          let k = 0;
+          for (const g of a.inimigos) {
+            if (!getData().enemiesById.has(g.inimigo)) continue;
+            for (let i = 0; i < g.quantidade; i++, k++) {
+              const pt = boatWaveSpot(this.w.map, st.ondas * 2 + k, p);
+              st.inimigos.push(spawnEnemy(this.w, g.inimigo, pt.x, pt.y, { tier: 'normal', level: g.nivel }).id);
+            }
+          }
+          break;
+        }
+        case 'especial':
+          // a aula começa com o Especial cheio (só no barco) e sem o automático: é com o polegar
+          p.special = 1;
+          p.auto = false;
+          rec.auto = false;
+          save = true;
+          break;
+        case 'chegar':
+          // o barco encosta no cais da margem escolhida
+          this.changeRoom(a.mapId, a.spawn);
+          this.flush(refreshMissions(rec), { always: true });
+          this.syncCity();
+          return;
+        case 'info':
+          this.sendBoat();
+          break;
+        default:
+          break;
+      }
+    }
+    if (save) this.saveRecord();
   }
 
   // ---------------------------------------------------------------------------

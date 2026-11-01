@@ -13,7 +13,7 @@
  */
 import type * as Phaser from 'phaser';
 import { getData } from '@pqp/shared';
-import { resolveMapId } from '@pqp/shared/map';
+import { isBoatRoom, resolveMapId } from '@pqp/shared/map';
 import type { S2C_ProgressoOpcoes } from '@pqp/shared/net';
 import type { ArtApi, CharacterLook } from '../../art/contract';
 import { archetypeLook, asCharacterLook, whenSheetReady } from '../../art/index';
@@ -277,7 +277,12 @@ export class Fase3Ui {
       const box = el('div', 'f3-troca');
       // Fase 5: andar da masmorra (o nome vem em 'masmorra_info')
       const dg = isDungeonMapId(mc.to) ? this.gc.game.dungeon : null;
-      const name = dg ? `${dg.nome ?? 'Galerias'} · ${dg.andar ?? 1}º andar` : (getData().regionsById.get(resolveMapId(mc.to))?.name ?? mc.to);
+      // travessia: o barco do Seu Jacó ('barco:<id>'). SUGESTÃO: nome na transição.
+      const name = dg
+        ? `${dg.nome ?? 'Galerias'} · ${dg.andar ?? 1}º andar`
+        : isBoatRoom(mc.to)
+          ? 'Barco do Seu Jacó'
+          : (getData().regionsById.get(resolveMapId(mc.to))?.name ?? mc.to);
       box.appendChild(el('div', 'n', name));
       // SUGESTÃO: subtítulo da transição
       box.appendChild(el('div', 's', 'Chegando...'));

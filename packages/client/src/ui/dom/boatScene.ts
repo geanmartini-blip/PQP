@@ -1,7 +1,7 @@
 /**
- * Travessia de barco do nível 8 (cena curta em DOM, por cima do mundo): o barco atravessa o Rio
- * Claro do Delta até a margem escolhida enquanto o guia fala; depois some e o jogador já está no
- * cais da margem (o servidor trocou o mapa por trás). Tocar pula.
+ * Chegada do barco no cais (cena curta em DOM, por cima do mundo). A travessia de verdade é jogável
+ * no mapa do barco (game/barco.ts); esta cena só fecha a viagem: o barco encosta na margem escolhida
+ * com a fala de chegada do Seu Jacó, enquanto o mapa da margem carrega por trás. Tocar pula.
  *
  * Desenho em pixel num canvas pequeno escalado sem suavizar: rio com brilho, as duas margens nas
  * paletas dos docs (Esquerda verde, terra e madeira; Direita neon sobre concreto), o barco com o
@@ -10,8 +10,8 @@
 import { getData } from '@pqp/shared';
 import { el } from './styles';
 
-// SUGESTÃO: a travessia dura 7 s; cada fala do guia fica 2,3 s.
-export const BOAT_MS = 7000;
+// SUGESTÃO: a chegada dura 2,5 s (a viagem já foi jogada no barco); cada fala fica 2,3 s.
+export const BOAT_MS = 2500;
 export const BOAT_LINE_MS = 2300;
 const W = 96;
 const H = 128;
@@ -44,8 +44,8 @@ export function boatLines(guideId: string | null, side: string | null): { nome: 
   if (a) out.push({ nome, texto: a });
   const b = of('aleatoria') ?? of('dica_combate');
   if (b) out.push({ nome, texto: b });
-  // SUGESTÃO: fala de chegada do barqueiro
-  out.push({ nome: 'Barqueiro', texto: side === 'direita' ? 'Torre do Consórcio à vista. A passagem foi cortesia; o resto é por assinatura.' : 'Casa da Assembleia à vista. Desce devagar que o cais é de mutirão.' });
+  // SUGESTÃO: fala de chegada do Seu Jacó
+  out.push({ nome: 'Seu Jacó', texto: side === 'direita' ? 'Torre do Consórcio à vista. A passagem foi cortesia; o resto é por assinatura.' : 'Casa da Assembleia à vista. Desce devagar que o cais é de mutirão.' });
   return out;
 }
 
@@ -69,7 +69,8 @@ export class BoatScene {
   play(side: string | null, guideId: string | null, now: number): void {
     this.close();
     this.side = side === 'direita' ? 'direita' : 'esquerda';
-    this.lines = boatLines(guideId, side);
+    // só a fala de chegada: o guia já falou no barco
+    this.lines = boatLines(guideId, side).slice(-1);
     this.lineIdx = -1;
     this.start = now;
     const box = el('div', 'f5-barco');
@@ -114,7 +115,8 @@ export class BoatScene {
         this.fala.appendChild(el('span', '', l.texto));
       }
     }
-    this.draw(t / BOAT_MS, t);
+    // começa no fim da viagem: o barco já vem perto da margem e encosta
+    this.draw(0.6 + (0.4 * t) / BOAT_MS, t);
   }
 
   /** Um quadro: k = 0 (saindo do Delta, embaixo) a 1 (chegando na margem). */

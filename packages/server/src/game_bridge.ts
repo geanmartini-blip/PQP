@@ -8,16 +8,21 @@ import { getData } from '@pqp/shared/data';
 import { ARRIVAL_MAP_BY_SIDE, START_MAP, type MapMarker, type TileMap } from '@pqp/shared/map';
 import { isPartyMember, SIM_TUNING, spawnLoot, type Entity, type World } from '@pqp/shared/sim';
 import { currentObjectives } from '@pqp/shared/game/missions';
+import { boatRoomOf } from '@pqp/shared/game/barco';
 import type { BotaoId, GameResult, PlayerRecord } from '@pqp/shared/game/types';
 import type { S2C_Aviso } from '@pqp/shared/net';
 import { Resource } from '@pqp/shared/schema/world';
 
 /**
- * Mapa "de casa" do registro: Delta até a travessia; depois, a margem (o QG fica nela). Quem anda
+ * Mapa "de casa" do registro: Delta até a travessia (ou o barco, 'barco:<id>', para quem embarcou e
+ * ainda não escolheu a margem); depois, a margem (o QG fica nela). Quem anda
  * pelas saídas para a Usina, o Juncal ou a outra margem fica lá enquanto estiver conectado
  * (handoff.ts); ao voltar sem pedir sala, volta para casa.
  */
 export function mapForRecord(rec: PlayerRecord): string {
+  // travessia: quem embarcou e ainda não escolheu a margem volta ao barco (a sala dele)
+  const barco = boatRoomOf(rec);
+  if (barco) return barco;
   if (!rec.criado || rec.stage !== 'margem' || !rec.side) return START_MAP;
   return ARRIVAL_MAP_BY_SIDE[rec.side];
 }

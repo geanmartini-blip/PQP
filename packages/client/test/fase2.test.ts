@@ -32,7 +32,8 @@ function msgs(s: LocalServer, type: string): unknown[] {
 }
 
 function helloFase2(store = memStore(), token = 'tok_fase2_teste') {
-  const s = new LocalServer({ store, noEnemies: true });
+  // atalho de teste: a travessia direta do Delta (o barco tem o teste dele em barco.test.ts)
+  const s = new LocalServer({ store, noEnemies: true, atalhoTravessia: true });
   s.receive(MSG.hello, { token, name: 'Zé' });
   return { s, store, token };
 }

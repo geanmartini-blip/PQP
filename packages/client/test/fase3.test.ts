@@ -30,7 +30,8 @@ const last = <T>(s: LocalServer, type: string): T | undefined =>
 
 /** Personagem já atravessado, na margem, com a instituição escolhida. */
 function onMargin(side: 'esquerda' | 'direita' = 'direita') {
-  const s = new LocalServer({ store: memStore(), noEnemies: true });
+  // atalho de teste: a travessia direta do Delta (o barco tem o teste dele em barco.test.ts)
+  const s = new LocalServer({ store: memStore(), noEnemies: true, atalhoTravessia: true });
   s.receive(MSG.hello, { token: `tok_f3_${side}`, name: 'Zé' });
   s.receive(GAME_MSG.criarPersonagem, { name: 'Zé da Silva', appearance: okLook() });
   const rec = s.rec!;

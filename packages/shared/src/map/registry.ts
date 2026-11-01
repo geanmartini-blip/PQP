@@ -10,7 +10,9 @@
  * - margem_esquerda e margem_direita: as duas margens, com o QG, as 4 instituições e os treinadores
  *   (Fase 3); a travessia chega no cais de cada uma;
  * - usina_da_ponte: a ponte entre as margens, a barragem e a entrada das Galerias (Fase 3);
- * - juncal: a mata do Curupira e a trilha dos contrabandistas do Capataz (Fase 3).
+ * - juncal: a mata do Curupira e a trilha dos contrabandistas do Capataz (Fase 3);
+ * - barco_travessia: o barco do Seu Jacó no nível 8. Roda numa sala por jogador ('barco:<id>'):
+ *   boatRoomMap(id) devolve o mesmo mapa com o id da sala.
  *
  * Apelidos: qg_esquerda e qg_direita eram as chegadas da Fase 2. Viraram apelidos das margens, para
  * registros salvos e salas antigas continuarem abrindo: getMap('qg_esquerda') devolve margem_esquerda
@@ -18,6 +20,7 @@
  */
 import type { TileMap } from './types';
 import { buildAsciiMap } from './maps/ascii';
+import { BARCO_TRAVESSIA } from './maps/barco_travessia';
 import { DELTA } from './maps/delta';
 import { JUNCAL } from './maps/juncal';
 import { MARGEM_DIREITA } from './maps/margem_direita';
@@ -32,7 +35,22 @@ const BUILDERS: Readonly<Record<string, () => TileMap>> = {
   margem_direita: () => buildAsciiMap(MARGEM_DIREITA),
   usina_da_ponte: () => buildAsciiMap(USINA_DA_PONTE),
   juncal: () => buildAsciiMap(JUNCAL),
+  barco_travessia: () => buildAsciiMap(BARCO_TRAVESSIA),
 };
+
+/** Mapa do barco da travessia (nível 8). */
+export const BOAT_MAP = 'barco_travessia';
+/** Prefixo da sala do barco, uma por jogador: 'barco:<id do jogador>'. */
+export const BOAT_ROOM_PREFIX = 'barco:';
+export const boatRoomId = (playerId: string): string => `${BOAT_ROOM_PREFIX}${playerId}`;
+export const isBoatRoom = (id: string | null | undefined): boolean => typeof id === 'string' && id.startsWith(BOAT_ROOM_PREFIX) && id.length > BOAT_ROOM_PREFIX.length;
+/** Id do jogador dono da sala do barco. */
+export const boatOwnerOf = (roomId: string): string => roomId.slice(BOAT_ROOM_PREFIX.length);
+
+/** O mapa do barco com o id da sala (tiles e marcadores do cache: somente leitura). */
+export function boatRoomMap(roomId: string): TileMap {
+  return { ...getMap(BOAT_MAP), id: roomId };
+}
 
 /** Ids antigos que apontam para um mapa canônico. */
 export const MAP_ALIASES: Readonly<Record<string, string>> = {

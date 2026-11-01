@@ -19,6 +19,17 @@ Comandos rodam com `. .\scripts\env.ps1` antes (Node e Git portáteis).
 ## PILOTO: as 5 fases estão concluídas
 O que falta depende dos autores ou de aparelho: ver PENDENTE.md. Para rodar, ver README.md.
 
+### Depois do piloto: travessia de barco jogável — CONCLUÍDA
+- No nível 8, depois do Bruno Ferro, o Seu Jacó leva o jogador num mapa jogável, `barco_travessia`,
+  com uma sala por jogador (`barco:<id>`). As margens passam rolando pelos lados.
+- Na ponte, por volta dos 12 s, abre a escolha de margem, instituição e guia.
+- Aula: 2 ondas no convés. O guia ensina os botões 1, 2 e 3 e o Especial, que começa carregado só ali.
+  No fim, o jogador desembarca no cais da margem.
+- As regras ficam em `shared/src/game/barco.ts`. O servidor e o offline fazem igual.
+- Atalho de dev: `?offline=1&dev_travessia=1`.
+- Verificação: 793 testes passando, build ok, e2e ok. O fluxo foi conferido no navegador em tela de
+  celular, de ponta a ponta nas duas margens.
+
 ## Fase 5: masmorra, plantão, IA de facção e itens — CONCLUÍDA
 - Galerias da Usina:
   - andares de 40x40 gerados por semente;
@@ -56,7 +67,7 @@ O que falta depende dos autores ou de aparelho: ver PENDENTE.md. Para rodar, ver
   - tabela do escopo, com os 11 itens prontos, em `decisoes/fase5-masmorra.md`.
 - Em aberto:
   - 60 fps e "entende em 1 minuto" só se medem em aparelho e com pessoas;
-  - a travessia de barco ainda é uma tela de escolha.
+  - a travessia de barco ainda é uma tela de escolha (resolvido depois: ver acima).
 
 Plano original:
 1. Galerias da Usina: masmorra sem fundo, em tempo real, com andares gerados por semente. Este piloto

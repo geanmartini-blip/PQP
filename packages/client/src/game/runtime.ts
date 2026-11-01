@@ -40,6 +40,16 @@ export function offlineCycleMin(): number | undefined {
   }
 }
 
+/** ?dev_travessia=1 (só no modo offline): Bruno Ferro derrotado e nível 8, para testar o barco. */
+export function devTravessia(): boolean {
+  try {
+    const v = new URLSearchParams(globalThis.location?.search ?? '').get('dev_travessia');
+    return v !== null && v !== '0' && v !== 'false';
+  } catch {
+    return false;
+  }
+}
+
 export function getRuntime(): Runtime {
   if (!current) throw new Error('runtime ainda não criado (BootScene)');
   return current;
@@ -95,6 +105,8 @@ export async function makeBaseTransport(cfg: ClientConfig, joinOptions: () => Re
         save: (c) => st?.setItem(OFFLINE_CITY_KEY, JSON.stringify(c)),
       },
       ...(offlineCycleMin() !== undefined ? { cityCycleMin: offlineCycleMin()!, factionTickMin: offlineCycleMin()! } : {}),
+      // dev: ?dev_travessia=1 deixa quem está no Delta pronto para o barco do Seu Jacó
+      ...(devTravessia() ? { devTravessia: true } : {}),
       // Fase 5: a IA de facção (regiões, pontos, avisos) também fica no aparelho
       factionStore: {
         load: () => {

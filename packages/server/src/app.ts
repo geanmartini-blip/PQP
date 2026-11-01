@@ -14,7 +14,7 @@ import os from 'node:os';
 import path from 'node:path';
 import express from 'express';
 import { matchMaker, Server, WebSocketTransport } from 'colyseus';
-import { listMaps, START_MAP } from '@pqp/shared/map';
+import { BOAT_MAP, listMaps, START_MAP } from '@pqp/shared/map';
 import { SALA_MUNDO } from '@pqp/shared/net';
 import { msAteProximoCiclo } from '@pqp/shared/game/city';
 import { CityService } from './city_service';
@@ -130,7 +130,8 @@ export async function startServer(opts: StartOptions = {}): Promise<Running> {
   await gameServer.listen(port, host);
   // o mundo é persistente: as salas existem desde o início (inimigos e plantonistas rodam sem
   // ninguém). A do Delta primeiro: quem entra sem mapId cai nela.
-  const maps = opts.maps ?? [START_MAP, ...listMaps().filter((m) => m !== START_MAP)];
+  // o barco da travessia não tem sala fixa: cada jogador abre a sua ('barco:<id>')
+  const maps = opts.maps ?? [START_MAP, ...listMaps().filter((m) => m !== START_MAP && m !== BOAT_MAP)];
   for (const mapId of maps) await matchMaker.createRoom(SALA_MUNDO, { mapId });
   const addr = httpServer.address() as AddressInfo | null;
   const realPort = addr?.port ?? port;

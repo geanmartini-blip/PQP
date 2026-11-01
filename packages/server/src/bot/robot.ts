@@ -16,6 +16,7 @@ import {
   type EntSnap,
   type HudSnap,
   type S2C_Aviso,
+  type S2C_BarcoInfo,
   type S2C_Dialogo,
   type S2C_Info,
   type S2C_MissaoEstado,
@@ -120,6 +121,8 @@ export class RobotClient {
   dialogo?: S2C_Dialogo;
   travessia?: S2C_TravessiaOpcoes;
   trocarSala?: S2C_TrocarSala;
+  /** travessia: fase do barco e dica da aula */
+  barco?: S2C_BarcoInfo;
   avisos: S2C_Aviso[] = [];
   /** todas as mensagens de jogo recebidas, em ordem */
   gameLog: { type: string; msg: unknown }[] = [];
@@ -145,6 +148,9 @@ export class RobotClient {
         break;
       case GAME_MSG.trocarSala:
         this.trocarSala = msg as S2C_TrocarSala;
+        break;
+      case GAME_MSG.barcoInfo:
+        this.barco = msg as S2C_BarcoInfo;
         break;
       case GAME_MSG.aviso:
         this.avisos.push(msg as S2C_Aviso);

@@ -2,6 +2,7 @@
  * Diálogo: a fala certa do NPC conforme o estágio, as story_flags e a missão (npcs.json e
  * trainers.json), e as opções (aceitar missão, escolha da missão, Máquina de Visual, embarcar na
  * travessia). As falas giram em ordem (contador por NPC e contexto), sem sorteio.
+ * (No Delta, "Embarcar na travessia"; no barco, "Escolher a margem".)
  */
 import { getData } from '../data';
 import { hasFlag } from './flags';
@@ -11,6 +12,7 @@ import { guideLine, guideOf } from './guides';
 import { alaTrainerOf, baseTrainerOf, isOwnGuide, npcMatches } from './people';
 import { teachesEmote, unlockTrainerEmote } from './trainers';
 import { FLAG_BRUNO } from './progression';
+import { FLAG_EMBARCOU } from './barco';
 import { canCross, travessiaOptions, type TravessiaOptions } from './travessia';
 import { canUseMachine } from './visual';
 import { emptyResult, mergeResult, type GameResult, type PlayerRecord } from './types';
@@ -95,7 +97,9 @@ export function dialogOptions(rec: PlayerRecord, npcId: string): DialogOption[] 
   for (const mq of D.institutions.maquinasVisual) {
     if (mq.atendente === npcId && canUseMachine(rec, mq.id).ok) out.push({ id: `maquina:${mq.id}`, tipo: 'maquina_visual', texto: mq.name });
   }
-  if (npcId === 'seu_jaco' && canCross(rec).ok) out.push({ id: 'travessia', tipo: 'travessia', texto: 'Embarcar na travessia' });
+  // no Delta embarca; já no barco, abre a escolha da margem (o servidor decide pela sala)
+  // SUGESTÃO: texto do botão de escolher a margem no barco.
+  if (npcId === 'seu_jaco' && canCross(rec).ok) out.push({ id: 'travessia', tipo: 'travessia', texto: hasFlag(rec, FLAG_EMBARCOU) ? 'Escolher a margem' : 'Embarcar na travessia' });
   // Fase 3: quem recebe a base apresenta as 3 alas; cada treinador da instituição oferece a dele
   const tr = D.trainersById.get(npcId);
   if (tr && tr.institution === rec.institution && canChooseArchetype(rec).ok) {
