@@ -8,14 +8,16 @@
      "img": "peao_baixo_perna_e",
      "papel": "perna_e",
      "x": 5.2,
-     "y": -36.5
+     "y": -36.5,
+     "r": -6
     },
     {
      "parte": "perna_d",
      "img": "peao_baixo_perna_d",
      "papel": "perna_d",
      "x": -5.2,
-     "y": -36.5
+     "y": -36.5,
+     "r": 6
     },
     {
      "parte": "tronco",
@@ -29,16 +31,18 @@
      "img": "peao_baixo_braco_e",
      "papel": "braco_e",
      "pai": "tronco",
-     "x": 12.8,
-     "y": -22
+     "x": 14.2,
+     "y": -22,
+     "r": -11
     },
     {
      "parte": "braco_d",
      "img": "peao_baixo_braco_d",
      "papel": "braco_d",
      "pai": "tronco",
-     "x": -12.8,
-     "y": -22
+     "x": -14.2,
+     "y": -22,
+     "r": 11
     },
     {
      "parte": "cabeca",
@@ -55,14 +59,16 @@
      "img": "peao_cima_perna_e",
      "papel": "perna_e",
      "x": -5.2,
-     "y": -36.5
+     "y": -36.5,
+     "r": 6
     },
     {
      "parte": "perna_d",
      "img": "peao_cima_perna_d",
      "papel": "perna_d",
      "x": 5.2,
-     "y": -36.5
+     "y": -36.5,
+     "r": -6
     },
     {
      "parte": "tronco",
@@ -76,16 +82,18 @@
      "img": "peao_cima_braco_e",
      "papel": "braco_e",
      "pai": "tronco",
-     "x": -12.8,
-     "y": -22
+     "x": -14.2,
+     "y": -22,
+     "r": 11
     },
     {
      "parte": "braco_d",
      "img": "peao_cima_braco_d",
      "papel": "braco_d",
      "pai": "tronco",
-     "x": 12.8,
-     "y": -22
+     "x": 14.2,
+     "y": -22,
+     "r": -11
     },
     {
      "parte": "cabeca",
@@ -103,14 +111,16 @@
      "papel": "braco_e",
      "pai": "tronco",
      "x": -1.5,
-     "y": -22.5
+     "y": -22.5,
+     "r": 8
     },
     {
      "parte": "perna_e",
      "img": "peao_lado_perna_e",
      "papel": "perna_e",
      "x": -2.2,
-     "y": -36.5
+     "y": -36.5,
+     "r": 10
     },
     {
      "parte": "tronco",
@@ -124,7 +134,8 @@
      "img": "peao_lado_perna_d",
      "papel": "perna_d",
      "x": 1.8,
-     "y": -36.5
+     "y": -36.5,
+     "r": -8
     },
     {
      "parte": "braco_d",
@@ -132,7 +143,8 @@
      "papel": "braco_d",
      "pai": "tronco",
      "x": 0.5,
-     "y": -22
+     "y": -22,
+     "r": -6
     },
     {
      "parte": "cabeca",
@@ -140,7 +152,8 @@
      "papel": "cabeca",
      "pai": "tronco",
      "x": 0.5,
-     "y": -24.5
+     "y": -24.5,
+     "r": 2
     }
    ]
   }
@@ -155,21 +168,24 @@
      "papel": "balanco",
      "pai": "cabeca",
      "x": 0,
-     "y": -16.32
+     "y": -16.32,
+     "r": -4
     },
     {
      "parte": "perna_e",
      "img": "idol_baixo_perna_e",
      "papel": "perna_e",
      "x": 4.6,
-     "y": -40
+     "y": -40,
+     "r": -3
     },
     {
      "parte": "perna_d",
      "img": "idol_baixo_perna_d",
      "papel": "perna_d",
      "x": -4.6,
-     "y": -40
+     "y": -40,
+     "r": 8
     },
     {
      "parte": "tronco",
@@ -183,16 +199,18 @@
      "img": "idol_baixo_braco_e",
      "papel": "braco_e",
      "pai": "tronco",
-     "x": 11.4,
-     "y": -23
+     "x": 11,
+     "y": -23,
+     "r": -4
     },
     {
      "parte": "braco_d",
      "img": "idol_baixo_braco_d",
      "papel": "braco_d",
      "pai": "tronco",
-     "x": -11.4,
-     "y": -23
+     "x": -11,
+     "y": -23,
+     "r": 9
     },
     {
      "parte": "cabeca",
@@ -200,7 +218,8 @@
      "papel": "cabeca",
      "pai": "tronco",
      "x": 0,
-     "y": -26
+     "y": -26,
+     "r": 6
     }
    ],
    "cima": [
@@ -209,14 +228,16 @@
      "img": "idol_cima_perna_e",
      "papel": "perna_e",
      "x": -4.6,
-     "y": -40
+     "y": -40,
+     "r": 8
     },
     {
      "parte": "perna_d",
      "img": "idol_cima_perna_d",
      "papel": "perna_d",
      "x": 4.6,
-     "y": -40
+     "y": -40,
+     "r": -3
     },
     {
      "parte": "tronco",
@@ -230,16 +251,18 @@
      "img": "idol_cima_braco_e",
      "papel": "braco_e",
      "pai": "tronco",
-     "x": -11.4,
-     "y": -23
+     "x": -11,
+     "y": -23,
+     "r": 4
     },
     {
      "parte": "braco_d",
      "img": "idol_cima_braco_d",
      "papel": "braco_d",
      "pai": "tronco",
-     "x": 11.4,
-     "y": -23
+     "x": 11,
+     "y": -23,
+     "r": -4
     },
     {
      "parte": "cabelo_tras",
@@ -247,7 +270,8 @@
      "papel": "balanco",
      "pai": "cabeca",
      "x": 0,
-     "y": -16.32
+     "y": -16.32,
+     "r": 4
     },
     {
      "parte": "cabeca",
@@ -255,7 +279,8 @@
      "papel": "cabeca",
      "pai": "tronco",
      "x": 0,
-     "y": -26
+     "y": -26,
+     "r": -6
     }
    ],
    "lado": [
@@ -272,7 +297,8 @@
      "img": "idol_lado_perna_e",
      "papel": "perna_e",
      "x": -2.2,
-     "y": -40
+     "y": -40,
+     "r": 7
     },
     {
      "parte": "tronco",
@@ -286,7 +312,8 @@
      "img": "idol_lado_perna_d",
      "papel": "perna_d",
      "x": 1.8,
-     "y": -40
+     "y": -40,
+     "r": -3
     },
     {
      "parte": "cabelo_tras",
@@ -294,7 +321,8 @@
      "papel": "balanco",
      "pai": "cabeca",
      "x": -2.66,
-     "y": -16.32
+     "y": -16.32,
+     "r": 5
     },
     {
      "parte": "braco_d",
@@ -302,7 +330,8 @@
      "papel": "braco_d",
      "pai": "tronco",
      "x": 0.5,
-     "y": -23
+     "y": -23,
+     "r": -4
     },
     {
      "parte": "cabeca",
@@ -310,13 +339,14 @@
      "papel": "cabeca",
      "pai": "tronco",
      "x": 0.5,
-     "y": -26
+     "y": -26,
+     "r": -6
     }
    ]
   }
  },
  "benzedeira": {
-  "altura": 89,
+  "altura": 88,
   "dirs": {
    "baixo": [
     {
@@ -345,8 +375,9 @@
      "img": "benzedeira_baixo_braco_e",
      "papel": "braco_e",
      "pai": "tronco",
-     "x": 11.8,
-     "y": -22
+     "x": 12.2,
+     "y": -22,
+     "r": -4
     },
     {
      "parte": "item_d",
@@ -361,8 +392,9 @@
      "img": "benzedeira_baixo_braco_d",
      "papel": "braco_d",
      "pai": "tronco",
-     "x": -11.8,
-     "y": -22
+     "x": -12.2,
+     "y": -22,
+     "r": 14
     },
     {
      "parte": "cabeca",
@@ -370,7 +402,8 @@
      "papel": "cabeca",
      "pai": "tronco",
      "x": 0,
-     "y": -25
+     "y": -24.5,
+     "r": -3
     }
    ],
    "lado": [
@@ -380,28 +413,32 @@
      "papel": "braco_e",
      "pai": "tronco",
      "x": -1.5,
-     "y": -22.5
+     "y": -22.5,
+     "r": 4
     },
     {
      "parte": "perna_e",
      "img": "benzedeira_lado_perna_e",
      "papel": "perna_e",
      "x": -2.2,
-     "y": -35
+     "y": -35,
+     "r": 4
     },
     {
      "parte": "perna_d",
      "img": "benzedeira_lado_perna_d",
      "papel": "perna_d",
      "x": 1.8,
-     "y": -35
+     "y": -35,
+     "r": -3
     },
     {
      "parte": "tronco",
      "img": "benzedeira_lado_tronco",
      "papel": "tronco",
      "x": 0,
-     "y": -35
+     "y": -35,
+     "r": 5
     },
     {
      "parte": "item_d",
@@ -417,7 +454,8 @@
      "papel": "braco_d",
      "pai": "tronco",
      "x": 0.5,
-     "y": -22
+     "y": -22,
+     "r": -16
     },
     {
      "parte": "cabeca",
@@ -425,13 +463,14 @@
      "papel": "cabeca",
      "pai": "tronco",
      "x": 0.5,
-     "y": -25
+     "y": -24.5,
+     "r": -5
     }
    ]
   }
  },
  "pm": {
-  "altura": 95,
+  "altura": 94,
   "dirs": {
    "baixo": [
     {
@@ -439,14 +478,16 @@
      "img": "pm_baixo_perna_e",
      "papel": "perna_e",
      "x": 5.4,
-     "y": -38
+     "y": -38,
+     "r": -5
     },
     {
      "parte": "perna_d",
      "img": "pm_baixo_perna_d",
      "papel": "perna_d",
      "x": -5.4,
-     "y": -38
+     "y": -38,
+     "r": 5
     },
     {
      "parte": "tronco",
@@ -468,8 +509,9 @@
      "img": "pm_baixo_braco_e",
      "papel": "braco_e",
      "pai": "tronco",
-     "x": 13,
-     "y": -23
+     "x": 14,
+     "y": -23,
+     "r": -7
     },
     {
      "parte": "item_d",
@@ -484,8 +526,9 @@
      "img": "pm_baixo_braco_d",
      "papel": "braco_d",
      "pai": "tronco",
-     "x": -13,
-     "y": -23
+     "x": -14,
+     "y": -23,
+     "r": 7
     },
     {
      "parte": "cabeca",
@@ -502,14 +545,16 @@
      "img": "pm_cima_perna_e",
      "papel": "perna_e",
      "x": -5.4,
-     "y": -38
+     "y": -38,
+     "r": 5
     },
     {
      "parte": "perna_d",
      "img": "pm_cima_perna_d",
      "papel": "perna_d",
      "x": 5.4,
-     "y": -38
+     "y": -38,
+     "r": -5
     },
     {
      "parte": "tronco",
@@ -531,8 +576,9 @@
      "img": "pm_cima_braco_e",
      "papel": "braco_e",
      "pai": "tronco",
-     "x": -13,
-     "y": -23
+     "x": -14,
+     "y": -23,
+     "r": 7
     },
     {
      "parte": "item_d",
@@ -547,8 +593,9 @@
      "img": "pm_cima_braco_d",
      "papel": "braco_d",
      "pai": "tronco",
-     "x": 13,
-     "y": -23
+     "x": 14,
+     "y": -23,
+     "r": -7
     },
     {
      "parte": "cabeca",
@@ -581,7 +628,8 @@
      "img": "pm_lado_perna_e",
      "papel": "perna_e",
      "x": -2.2,
-     "y": -38
+     "y": -38,
+     "r": 7
     },
     {
      "parte": "tronco",
@@ -595,7 +643,8 @@
      "img": "pm_lado_perna_d",
      "papel": "perna_d",
      "x": 1.8,
-     "y": -38
+     "y": -38,
+     "r": -6
     },
     {
      "parte": "item_d",
@@ -619,7 +668,8 @@
      "papel": "cabeca",
      "pai": "tronco",
      "x": 0.5,
-     "y": -25.5
+     "y": -25.5,
+     "r": 3
     }
    ]
   }

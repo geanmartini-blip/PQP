@@ -7,7 +7,8 @@
 import * as Phaser from 'phaser4';
 
 export type Dir = 'baixo' | 'cima' | 'lado';
-export interface ParteRig { parte: string; img: string; papel: string; pai?: string; x: number; y: number }
+/** r = rotação base em graus (pose de atitude parada), somada à animação. */
+export interface ParteRig { parte: string; img: string; papel: string; pai?: string; x: number; y: number; r?: number }
 export interface Rig { altura: number; dirs: Partial<Record<Dir, ParteRig[]>> }
 export interface InfoPeca { w: number; h: number; ax: number; ay: number; e: boolean; escala: number }
 
@@ -134,7 +135,7 @@ export class Boneco {
       if (feito) return feito;
       const pv = v.def.pai ? porNome.get(v.def.pai) : undefined;
       const pai = pv ? resolver(pv) : undefined;
-      let x = v.def.x + v.dx, y = v.def.y + v.dy, r = v.rot;
+      let x = v.def.x + v.dx, y = v.def.y + v.dy, r = v.rot + ((v.def.r ?? 0) * Math.PI) / 180;
       if (pai) {
         const lx = x * pai.sx, ly = y * pai.sy;
         const c = Math.cos(pai.r), sn = Math.sin(pai.r);

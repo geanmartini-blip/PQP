@@ -43,14 +43,28 @@ function formaTronco(C, dir) {
   return blob([[-T + 1.5, sy - 4.5], [1, sy - 5.6], [T - 1, sy - 3.5], [T + 1, sy + 5], [T - 0.4, hy - 4], [T - 0.8, hy + 3], [0, hy + 5], [-T + 0.6, hy + 3], [-T + 0.4, hy - 5], [-T - 0.4, sy + 5]]);
 }
 // cabeça adulta no espaço da cabeça: maçã do rosto marcada, mandíbula e queixo definidos
+// lado direito do contorno, do alto (0,-1) ao queixo (0,1), em frações de rx/ry; o esquerdo é espelhado
+const espelha = (dir) => [...dir, ...dir.slice(1, -1).reverse().map(([x, y]) => [-x, y])];
+const CRANIOS = {
+  quadrado: [[0, -1], [0.82, -0.88], [1, -0.28], [1.02, 0.3], [0.95, 0.72], [0.66, 0.97], [0, 1.03]],
+  fino: [[0, -1], [0.8, -0.84], [1, -0.22], [0.94, 0.3], [0.7, 0.72], [0.3, 0.98], [0, 1.03]],
+  comprido: [[0, -1], [0.82, -0.86], [1, -0.3], [1, 0.36], [0.96, 0.76], [0.62, 0.97], [0, 1]],
+  redondo: [[0, -1], [0.78, -0.8], [1, -0.12], [1.02, 0.36], [0.84, 0.78], [0.42, 0.99], [0, 1.01]],
+};
 function formaCabeca(C, dir) {
   const rx = C.rx, ry = C.ry;
+  if (C.cranio && dir !== 'lado') return blob(espelha(CRANIOS[C.cranio]).map(([x, y]) => [x * rx, y * ry]));
+  if (C.cranio) {
+    const n = C.nariz ?? 2.4, q = C.queixo ?? 0;
+    return blob([[-rx * 0.1, -ry], [rx * 0.7, -ry * 0.82], [rx * 0.96, -ry * 0.3], [rx * 0.98, -ry * 0.02], [rx + n, ry * 0.3], [rx * 0.98, ry * 0.46], [rx * 0.97, ry * 0.66], [rx * 0.8 + q, ry * 0.98], [rx * 0.1, ry * (1 + q * 0.02)], [-rx * 0.5, ry * 0.74], [-rx * 0.97, ry * 0.2], [-rx * 0.9, -ry * 0.58]]);
+  }
   if (dir !== 'lado') return blob([[0, -ry], [rx * 0.8, -ry * 0.82], [rx, -ry * 0.15], [rx * 0.97, ry * 0.25], [rx * 0.82, ry * 0.62], [rx * 0.42, ry * 0.94], [0, ry], [-rx * 0.42, ry * 0.94], [-rx * 0.82, ry * 0.62], [-rx * 0.97, ry * 0.25], [-rx, -ry * 0.15], [-rx * 0.8, -ry * 0.82]]);
   return blob([[-rx * 0.1, -ry], [rx * 0.7, -ry * 0.82], [rx * 0.96, -ry * 0.3], [rx * 0.98, -ry * 0.02], [rx + 2.4, ry * 0.32], [rx * 0.98, ry * 0.44], [rx * 0.96, ry * 0.62], [rx * 0.66, ry * 0.97], [rx * 0.1, ry * 0.98], [-rx * 0.5, ry * 0.72], [-rx * 0.97, ry * 0.2], [-rx * 0.9, -ry * 0.58]]);
 }
 
 /** Rosto adulto genérico no espaço da cabeça. o: { iris, sob (cor da sobrancelha), olheira, palpebra, boca, delineado } */
 function rosto(C, dir, o = {}) {
+  if (C.rosto) return C.rosto(C, dir);
   const rx = C.rx, ry = C.ry, pele = C.pele, sh = mistura(pele, '#4a2430', 0.42), cc = o.cc ?? '#1e1210';
   let s = '';
   if (dir === 'baixo') {
@@ -73,6 +87,117 @@ function rosto(C, dir, o = {}) {
   }
   return s;
 }
+// ---------- rostos próprios (nada de sorriso; a expressão vem da sobrancelha e das pálpebras) ----------
+const vinco = (pele) => mistura(pele, '#4a2430', 0.45);
+
+// Peão: rosto largo e quadrado, olhos apertados de sol, sobrancelha em V, nariz grande e quebrado
+function rostoPeao(C, dir) {
+  const rx = C.rx, pele = C.pele, sh = vinco(pele), cc = '#1a0e08';
+  const o = { rx: 3.3, ry: 2.3, iris: '#5a3a1e', palpebra: 0.2, baixa: 0.2, pele, cc, lw: 1.8, brilho: false };
+  let s = '';
+  if (dir === 'baixo') {
+    for (const k of [-1, 1]) s += olhoAdulto(k * 5.6, 1.6, { ...o, m: k, dx: 0 });
+    for (const k of [-1, 1]) s += sobrancelha(k * 1.3, -0.6, k * 9.8, -2.8, BIGODE, 2.7, -0.2);
+    s += traco('M-0.8,-2.6 l0.3,1.8 M0.8,-2.6 l-0.3,1.8', sh, 0.7, 0.75);
+    for (const k of [-1, 1]) s += traco(`M${k * 9.2},1.2 l${k * 1.9},-0.9 M${k * 9.2},2.4 l${k * 2.1},0.2 M${k * 9},3.4 l${k * 1.6},1`, sh, 0.6, 0.65);
+    for (const k of [-1, 1]) s += traco(`M${k * (rx - 3.4)},4.6 q${-k * 1.4},2 ${-k * 3.4},2.4`, sh, 1, 0.5);
+    // nariz grande, já quebrado: ponte torta e calombo
+    s += traco('M0.3,1.2 Q1.5,3 0.3,4.8 Q-0.5,5.8 0.7,6.6', sh, 1.1, 0.75) + `<ellipse cx="1" cy="3" rx="0.9" ry="0.6" fill="#fff" opacity=".16"/>`;
+    s += forma(blob([[-3.4, 7], [-1.2, 5], [1.8, 5.2], [4, 7.2], [2.8, 8.9], [-2.4, 8.9]]), mistura(pele, '#a0503a', 0.14), { w: 1.3, s: 1, l: 0.7, cc: '#3a1a10' });
+    s += traco('M-2,8.3 q0.6,0.5 1.1,0 M1.3,8.4 q0.6,0.5 1.1,0', '#3a1a10', 0.6, 0.8);
+    s += traco('M-3.8,13.2 Q0,12.6 3.8,13.5', '#2a100a', 1.2);
+    s += traco('M-3.6,15.2 q3.6,1.4 7.2,0', sh, 0.9, 0.45) + traco('M0,14.4 l0,1.3', sh, 0.7, 0.5);
+  } else if (dir === 'lado') {
+    s += olhoAdulto(8, 1.6, { ...o, rx: 2.3, dx: 0.6 });
+    s += sobrancelha(4.8, -0.7, 11.6, -2.4, BIGODE, 2.7, -0.2);
+    s += traco('M4.8,1.2 l-1.9,-0.8 M4.8,2.4 l-2.1,0.2', sh, 0.6, 0.65);
+    s += traco(`M${rx + 0.8},-0.6 q1.4,1.2 1.2,2.6`, sh, 0.9, 0.6) + traco(`M${rx + 2.4},7.4 q-1.2,0.8 -2.4,0`, '#3a1a10', 0.8, 0.8);
+    s += traco(`M${rx - 4.8},13.2 L${rx - 0.6},12.9`, '#2a100a', 1.2);
+    s += traco(`M${rx - 4.4},4.8 q-1.2,1.6 -3,1.8`, sh, 0.9, 0.45) + traco(`M${rx - 3},15.4 q1.4,0.3 2.4,-0.6`, sh, 0.8, 0.4);
+  }
+  return s;
+}
+// Idol: rosto fino, pálpebra pesada de cansaço, olhar de lado, uma sobrancelha de deboche, boca de lado, rímel borrado
+function rostoIdol(C, dir) {
+  const rx = C.rx, pele = C.pele, sh = vinco(pele), cc = '#16101a';
+  const o = { rx: 3.4, ry: 2.6, iris: '#5a4a66', palpebra: 0.4, pele, cc, lw: 1.6, delineado: true, olheira: 1, corOlheira: '#3e2a42' };
+  const borrado = (x, y, m) => `<path d="M${x - m * 2},${y + 1.6} q${m * 2.6},2 ${m * 5.2},0" fill="none" stroke="#3a2a40" stroke-width="1.5" opacity=".32" stroke-linecap="round"/>` + traco(`M${x + m * 1.6},${y + 2.4} l${m * 0.3},1.8`, '#3a2a40', 0.7, 0.35);
+  let s = '';
+  if (dir === 'baixo') {
+    for (const k of [-1, 1]) s += borrado(k * 5, 1.4, k) + olhoAdulto(k * 5, 1.4, { ...o, m: k, dx: 0.9 * k });
+    s += sobrancelha(-1.8, -3.2, -8.6, -4.9, LILAS_S, 1.5, -1.3);
+    s += sobrancelha(1.8, -2.2, 8.6, -2.9, LILAS_S, 1.5, -0.1);
+    s += traco('M0.2,1.6 Q0.9,4.6 -0.1,6.6', sh, 0.8, 0.55) + traco('M-1.2,7 q1.2,0.6 2.4,0', sh, 0.8, 0.7);
+    for (const k of [-1, 1]) s += traco(`M${k * (rx - 2.6)},4.4 q${-k * 1.6},2.4 ${-k * 3.6},3`, sh, 0.9, 0.5);
+    s += `<ellipse cx="-2" cy="10.6" rx="1.6" ry="0.7" fill="#8a4a52" opacity=".3"/>`;
+    s += traco('M-2.6,10.4 Q0.4,10.5 3,11.1', '#4a2028', 1.1) + traco('M-2.6,10.4 l-0.5,0.3', '#3a1a1e', 0.7);
+    s += traco('M-0.6,11.8 q1.4,0.4 2.6,-0.4', '#8a4a52', 0.9, 0.6) + traco('M-1.6,14.2 q1.6,0.7 3.2,0', sh, 0.7, 0.35);
+  } else if (dir === 'lado') {
+    s += borrado(6.8, 1.4, 1) + olhoAdulto(6.8, 1.4, { ...o, rx: 2.3, dx: 0.8 });
+    s += sobrancelha(4.2, -3.2, 10, -4.6, LILAS_S, 1.5, -1.2);
+    s += traco(`M${rx + 1.4},6.6 q-1,0.6 -2,0`, sh, 0.8, 0.7);
+    s += traco(`M${rx - 4},10.4 L${rx - 0.4},9.8`, '#4a2028', 1.1);
+    s += traco(`M${rx - 3.4},4.6 q-1.2,1.8 -2.8,2.2`, sh, 0.8, 0.45);
+  }
+  return s;
+}
+// PM: rosto comprido, mandíbula travada, olhar duro e vazio na sombra da aba
+function rostoPM(C, dir) {
+  const rx = C.rx, ry = C.ry, pele = C.pele, sh = vinco(pele), cc = '#100806';
+  const o = { rx: 3.2, ry: 2.2, iris: '#3a2a1e', palpebra: 0.16, pele, cc, lw: 1.9, brilho: false, olheira: 0.6, corOlheira: '#3a2228' };
+  const sombraAba = recorta(formaCabeca(C, dir), `<rect x="-30" y="-12" width="60" height="${12.6}" fill="#1a1018" opacity=".26"/>`);
+  let s = '';
+  if (dir === 'baixo') {
+    for (const k of [-1, 1]) s += olhoAdulto(k * 5.4, 1.4, { ...o, m: k, dx: 0 });
+    for (const k of [-1, 1]) s += sobrancelha(k * 1.5, -1.2, k * 9.8, -1.9, '#1e1612', 2.6, 0.1);
+    s += traco('M0,-0.4 L0.3,6.6', sh, 0.9, 0.5) + traco('M-2.2,7.6 q1.1,0.8 2.2,0.3 q1.1,0.5 2.2,-0.3', sh, 1, 0.75);
+    for (const k of [-1, 1]) s += traco(`M${k * (rx - 1.2)},6.4 q${-k * 0.9},3.4 ${-k * 0.3},7`, sh, 1, 0.5) + traco(`M${k * (rx - 3.4)},4.4 q${-k * 1},1.8 ${-k * 2.6},2`, sh, 0.8, 0.4);
+    s += traco('M-3.6,12.4 L3.6,12.4', '#1e0c08', 1.3) + traco('M-2,13.8 q2,0.5 4,0', sh, 0.8, 0.4);
+    s += traco(`M-4,${ry - 0.8} L4,${ry - 0.8}`, sh, 0.8, 0.35);
+    s += sombraAba;
+  } else if (dir === 'lado') {
+    s += olhoAdulto(7.8, 1.4, { ...o, rx: 2.2, dx: 0.6 });
+    s += sobrancelha(4.6, -1.2, 11.2, -1.8, '#1e1612', 2.6, 0.1);
+    s += traco(`M${rx + 1.8},7.4 q-1,0.6 -2,0`, sh, 0.8, 0.7);
+    s += traco(`M${rx - 4.8},12.4 L${rx - 0.6},12.2`, '#1e0c08', 1.3);
+    s += traco(`M-1,9 Q1,${ry - 0.6} ${rx - 2.6},${ry - 0.4}`, sh, 1, 0.5) + traco(`M1.6,6 q0.4,2.4 1.6,4`, sh, 0.9, 0.45);
+    s += sombraAba;
+  }
+  return s;
+}
+// Benzedeira: rosto redondo e enrugado, olho desconfiado espiando por cima dos óculos, boca franzida
+function rostoBenz(C, dir) {
+  const rx = C.rx, pele = C.pele, sh = vinco(pele), cc = '#1a0e08', ARO = '#2e2014';
+  const o = { rx: 3, ry: 2.3, iris: '#4a3020', palpebra: 0.12, baixa: 0.3, pele, cc, lw: 1.5, olheira: 0.9, corOlheira: '#4a2a2a' };
+  let s = '';
+  if (dir === 'baixo') {
+    for (const k of [-1, 1]) s += olhoAdulto(k * 5.2, 0.6, { ...o, m: k, dx: 0.9 * k });
+    s += sobrancelha(-2, -3.2, -8, -4.6, '#8a8890', 1.5, -1.4);
+    s += sobrancelha(2, -1.6, 8, -2.2, '#8a8890', 1.5, -0.1);
+    s += traco('M-5,-6.6 q5,-1.1 10,0 M-4,-8.4 q4,-0.8 8,0', sh, 0.6, 0.5);
+    for (const k of [-1, 1]) s += traco(`M${k * 8.4},0 l${k * 1.6},-0.8 M${k * 8.4},1.2 l${k * 1.8},0 M${k * 8.2},2.2 l${k * 1.4},0.9`, sh, 0.55, 0.65);
+    for (const k of [-1, 1]) s += traco(`M${k * 2.8},8 Q${k * 5},10.4 ${k * 4.4},13.2`, sh, 0.8, 0.55) + traco(`M${k * (rx - 2)},9.4 q${-k * 0.6},3 ${-k * 2.8},4.8`, sh, 0.8, 0.4);
+    s += forma(elipse(0, 7.2, 2.5, 2), mistura(pele, '#8a4030', 0.1), { w: 1.1, s: 0.8, l: 0.5, cc: '#3a1a10' });
+    // boca franzida
+    s += forma(elipse(0, 11.6, 1.7, 0.85), '#6a3028', { w: 0.8, s: 0, l: 0, cc: '#2a100a' });
+    for (const a of [-1.5, -0.5, 0.5, 1.5]) s += traco(`M${a * 1.3},10.4 l${a * 0.2},-0.8 M${a * 1.3},12.8 l${a * 0.2},0.8`, sh, 0.5, 0.6);
+    // óculos baixos na ponta do nariz
+    for (const k of [-1, 1]) {
+      s += `<ellipse cx="${k * 5}" cy="5.2" rx="3.3" ry="2.6" fill="#dfe8ea" opacity=".14"/><path d="M${k * 5 - 2},6.4 L${k * 5 - 0.4},3.4 L${k * 5 + 0.4},3.6 L${k * 5 - 1.2},6.7Z" fill="#fff" opacity=".25"/>`;
+      s += `<ellipse cx="${k * 5}" cy="5.2" rx="3.3" ry="2.6" fill="none" stroke="${ARO}" stroke-width="1.1"/>` + traco(`M${k * 8.3},4.8 L${k * (rx - 0.2)},2.6`, ARO, 0.8);
+    }
+    s += traco('M-1.7,5 Q0,4.2 1.7,5', ARO, 0.9);
+  } else if (dir === 'lado') {
+    s += olhoAdulto(7.4, 0.6, { ...o, rx: 2.1, dx: 0.7 });
+    s += sobrancelha(4.6, -3.2, 10, -4.4, '#8a8890', 1.5, -1.3);
+    s += traco('M3,-6.6 q4,-1 8,0', sh, 0.6, 0.5) + traco('M4.6,0.2 l-1.6,-0.8 M4.6,1.4 l-1.8,0', sh, 0.55, 0.65);
+    s += traco(`M${rx - 3},8 Q${rx - 5},10.4 ${rx - 4.4},13`, sh, 0.8, 0.55);
+    s += forma(elipse(rx - 1.6, 11.6, 1.2, 0.8), '#6a3028', { w: 0.8, s: 0, l: 0, cc: '#2a100a' });
+    s += `<ellipse cx="${rx - 1.4}" cy="5.2" rx="1.8" ry="2.6" fill="#dfe8ea" opacity=".14"/><ellipse cx="${rx - 1.4}" cy="5.2" rx="1.8" ry="2.6" fill="none" stroke="${ARO}" stroke-width="1.1"/>` + traco(`M${rx - 3.2},4.6 L-1.4,2.2`, ARO, 0.8);
+  }
+  return s;
+}
+
 const orelha = (C, x, y = 1.6) => forma(elipse(x, y, 2.6, 3.6), C.pele, { w: 1.6, s: 1, l: 0.6, cc: mistura(C.pele, '#2a1008', 0.6) }) + traco(`M${x + (x > 0 ? 0.3 : -0.3)},${y - 1.2} q${x > 0 ? -0.9 : 0.9},1.3 0,2.6`, mistura(C.pele, '#4a2430', 0.4), 0.7);
 const barba = (C, d, ate = 3.4, cor = '#2a1c18') => {
   const r = rnd(5);
@@ -165,8 +290,8 @@ function perna(C, dir, lado) {
 
 // ======================= PEÃO BRABO =======================
 const PEAO = {
-  nome: 'peao', hipY: -36.5, quadX: 5.2, pernaW: 8.8, ombroY: -58.5, ombroX: 12.8, neckY: -61, cabYn: -73.3, rx: 14.5, ry: 16,
-  Ws: 13.6, Wq: 11, T: 8.6, bracoR: 4.3, maoR: 3.5, bracoL: 26,
+  nome: 'peao', hipY: -36.5, quadX: 5.2, pernaW: 8.8, ombroY: -58.5, ombroX: 14.2, neckY: -61, cabYn: -73.3, rx: 15.6, ry: 15, cranio: 'quadrado', nariz: 3.6, queixo: 1, rosto: rostoPeao,
+  Ws: 15, Wq: 11.6, T: 9, bracoR: 4.7, maoR: 3.5, bracoL: 26,
   pele: '#c99470', calca: '#46607e', costura: '#a89262', barra: '#5a7392',
   sapato: { cor: '#6a4428', sola: '#2e1e14', cano: 7, poeira: true },
   manga: { comp: 'curta', cor: '#86393a', cc: '#2a0e10', padrao: (pid) => XADREZ_P(pid), punho: '#a8504a' },
@@ -286,12 +411,11 @@ function peaoCabeca(C, dir) {
   if (dir === 'baixo') {
     s += forma(elipse(0, -2, rx + 1, ry * 0.86), BIGODE, { s: 1.6, l: 0.8 });
     for (const k of [-1, 1]) s += orelha(C, k * (rx + 0.2));
-    s += forma(cab, C.pele, { cc: ccP, s: 2, l: 1.3 });
+    s += forma(cab, C.pele, { cc: ccP, s: 1.3, l: 1, cs: mistura(C.pele, '#6a3a44', 0.15), w: 1.8 });
     s += barba(C, cab, 4.5);
     for (const k of [-1, 1]) s += forma(blob([[k * (rx - 0.4), -7], [k * (rx - 3.8), -6], [k * (rx - 3.4), 4], [k * (rx - 1.4), 6], [k * (rx + 0.2), 0]]), BIGODE, { w: 1.2, s: 0.8, l: 0.5 });
     s += rosto(C, dir, { ...sob, boca: traco(`M-3,11.8 Q0,12.3 3,11.8`, '#3a1812', 1.1) });
-    for (const k of [-1, 1]) s += traco(`M${k * 9.2},0.6 l${k * 1.6},-0.6 M${k * 9.2},1.8 l${k * 1.7},0.3`, mistura(C.pele, '#4a2430', 0.45), 0.6, 0.6);
-    const big = blob([[0, 8], [3.6, 7.2], [7.4, 8], [9.4, 10.4], [8, 11.2], [4.4, 10.4], [0, 10], [-4.4, 10.4], [-8, 11.2], [-9.4, 10.4], [-7.4, 8], [-3.6, 7.2]]);
+    const big = blob([[0, 9], [3.6, 8.3], [7.4, 9], [9.2, 11.6], [7.8, 12.2], [4.4, 11.2], [0, 10.8], [-4.4, 11.2], [-7.8, 12.2], [-9.2, 11.6], [-7.4, 9], [-3.6, 8.3]]);
     s += forma(big, BIGODE, { s: 1.4, l: 0.8, w: 1.5 });
     for (const k of [-1, 1]) s += traco(`M${k * 1.6},8.4 q${k * 3},0.2 ${k * 6.2},1.6`, mistura(BIGODE, '#c8a888', 0.3), 0.6, 0.6);
     s += chapeuPeao(dir, by);
@@ -302,7 +426,7 @@ function peaoCabeca(C, dir) {
     s += recorta(cab, `<path d="M-6,${ry} Q0,${ry - 4} 6,${ry} Z" fill="${C.pele}"/>`);
     s += chapeuPeao(dir, by);
   } else {
-    s += forma(cab, C.pele, { cc: ccP, s: 2, l: 1.3 });
+    s += forma(cab, C.pele, { cc: ccP, s: 1.3, l: 1, cs: mistura(C.pele, '#6a3a44', 0.15), w: 1.8 });
     s += barba(C, cab, 4.5);
     s += recorta(cab, forma(blob([[-rx - 3, 9], [-rx - 3, -12], [0, -16], [2, -8], [-1, -3], [-3, 4], [-6, 11]]), BIGODE, { s: 1.6, l: 0.8, w: 1.3 }));
     s += forma(blob([[1, -7], [3.4, -7], [3, 4], [0.6, 6]]), BIGODE, { w: 1.1, s: 0.6, l: 0.4 });
@@ -319,7 +443,7 @@ const LILAS = '#9c8fae', LILAS_S = '#5e5272', LILAS_C = '#c8bfd4';
 const VINHO = '#5c2638', PRATA = '#a6a9b2';
 const prataPadrao = (pid) => `<linearGradient id="${pid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c6c8ce"/><stop offset="0.5" stop-color="#a9acb5"/><stop offset="1" stop-color="#868a95"/></linearGradient>`;
 const IDOL = {
-  nome: 'idol', hipY: -40, quadX: 4.6, pernaW: 7.8, ombroY: -63, ombroX: 11.4, neckY: -66, cabYn: -78, rx: 14, ry: 15.5,
+  nome: 'idol', hipY: -40, quadX: 4.6, pernaW: 7.8, ombroY: -63, ombroX: 11, neckY: -66, cabYn: -78, rx: 12.8, ry: 15.6, cranio: 'fino', nariz: 1.6, rosto: rostoIdol,
   Ws: 11.6, Wq: 10, T: 7.4, bracoR: 3.8, maoR: 3.1, bracoL: 26.5,
   pele: '#d8b49a', calca: '#2c2a32', poeiraCor: '#8a8478',
   sapato: { cor: '#d6d2cb', sola: '#4a2a36', faixa: VINHO, poeira: true },
@@ -355,7 +479,7 @@ function idolTronco(C, dir) {
 }
 function franjaIdol(C, dir) {
   const rx = C.rx, ry = C.ry;
-  if (dir === 'lado') return blob([[-rx - 2.5, 9], [-rx - 3, -5], [-9, -ry - 3], [3, -ry - 3.3], [rx + 0.6, -8.5], [rx + 1.4, -4.2], [rx - 3, -3.6], [6, -4.4], [2, -4.4], [0, 1], [-1.5, 9], [-5, 12]], 0.9);
+  if (dir === 'lado') return blob([[-rx - 2.5, 13], [-rx - 3, -5], [-9, -ry - 3], [3, -ry - 3.3], [rx + 0.6, -8.5], [rx + 1.4, -4.2], [rx - 3, -3.6], [6, -4.4], [2, -4.4], [0, 1], [-0.5, 10], [-2.5, ry + 1.5], [-7, ry + 2]], 0.9);
   return blob([[-rx - 2.4, 5], [-rx - 2.8, -6], [-rx + 1, -ry + 0.5], [-6, -ry - 3.2], [6, -ry - 3.2], [rx - 1, -ry + 0.5], [rx + 2.8, -6], [rx + 2.4, 5], [rx - 1.6, -1.4], [rx - 3.4, -4.2], [5, -5], [-5, -5], [-rx + 3.4, -4.2], [-rx + 1.6, -1.4]], 0.85);
 }
 const cabeloIdol = (d, extra = '') => comp(d, `<path d="${d}" fill="${LILAS}"/>${extra}`, { cc: '#2c2438', s: 2.4, l: 1.6, op: 0.2, opl: 0.12, w: 1.6 });
@@ -368,7 +492,7 @@ function idolCabeca(C, dir) {
   let s = '', em = '';
   const rost = { iris: '#4e4458', sob: LILAS_S, sobW: 1.5, olheira: 0.5, delineado: true, cc: '#1a1218' };
   if (dir === 'baixo') {
-    s += forma(cab, C.pele, { cc: ccP, s: 2, l: 1.3 });
+    s += forma(cab, C.pele, { cc: ccP, s: 1.3, l: 1, cs: mistura(C.pele, '#6a3a44', 0.15), w: 1.8 });
     s += rosto(C, dir, { ...rost, boca: `<path d="M-2.8,10.8 Q0,11.6 2.8,10.8 Q1.4,12.6 0,12.6 Q-1.4,12.6 -2.8,10.8Z" fill="#8a4a52" stroke="#3a1a1e" stroke-width="0.6"/>` });
     let ex = '';
     for (const x of [-9, -4.5, 0, 4.5, 9]) ex += traco(`M${x},-9 L${x + 0.3},-4.6`, LILAS_S, 0.8, 0.6);
@@ -393,7 +517,7 @@ function idolCabeca(C, dir) {
     s += fita(rx - 3.2, -ry - 1.6, 38);
     for (const k of [-1, 1]) s += forma(elipse(k * (rx + 1.6), 0.5, 2.6, 3.8), HS, { w: 1.3, s: 1, l: 0.6 });
   } else {
-    s += forma(cab, C.pele, { cc: ccP, s: 2, l: 1.3 });
+    s += forma(cab, C.pele, { cc: ccP, s: 1.3, l: 1, cs: mistura(C.pele, '#6a3a44', 0.15), w: 1.8 });
     s += rosto(C, dir, { ...rost, bocaLado: `<path d="M${rx - 4.6},10.8 Q${rx - 2},11.6 ${rx - 0.4},10.6 Q${rx - 1.6},12.4 ${rx - 3.6},11.8Z" fill="#8a4a52" stroke="#3a1a1e" stroke-width="0.6"/>` });
     let ex = anelIdol(-10, 6, -ry + 1.6);
     for (const x of [5, 9]) ex += traco(`M${x},-9 L${x + 0.6},-4.6`, LILAS_S, 0.8, 0.6);
@@ -433,7 +557,7 @@ function idolBalanco(C, dir) {
 // ======================= BENZEDEIRA =======================
 const GRIS = '#b4b2b4', VERDE = '#4a6644', OCRE = '#a88a48';
 const BENZ = {
-  nome: 'benzedeira', hipY: -35, quadX: 4.4, pernaW: 7.6, ombroY: -57, ombroX: 11.8, neckY: -60, cabYn: -71, rx: 14, ry: 15,
+  nome: 'benzedeira', hipY: -35, quadX: 4.4, pernaW: 7.6, ombroY: -57, ombroX: 12.2, neckY: -59.5, cabYn: -70.4, rx: 14.8, ry: 14, cranio: 'redondo', nariz: 2, rosto: rostoBenz,
   Ws: 12.6, Wq: 13, T: 9, bracoR: 4, maoR: 3.3, bracoL: 24,
   pele: '#a87656', calca: '#4a3426', saia: true,
   sapato: { cor: '#4a3222', sola: '#22160e', poeira: true },
@@ -518,27 +642,16 @@ function benzCabeca(C, dir) {
     const N = []; for (let k = 0; k < 14; k++) { const a = Math.PI * (0.92 + k / 13 * 1.16); N.push([a, k % 2 ? 1.06 : 1.13]); }
     s += cab(blob([[-rx - 2.6, 4], ...N.map(([a, k]) => [Math.cos(a) * rx * k, -1 + Math.sin(a) * ry * k * 0.95]), [rx + 2.6, 4], [0, 0]]));
     for (const k of [-1, 1]) s += orelha(C, k * (rx + 0.1), 2) + `<circle cx="${k * (rx + 0.4)}" cy="5.4" r="0.7" fill="${OCRE}" stroke="#3a2a10" stroke-width="0.3"/>`;
-    s += forma(cab0, C.pele, { cc: ccP, s: 2, l: 1.3 });
+    s += forma(cab0, C.pele, { cc: ccP, s: 1.3, l: 1, cs: mistura(C.pele, '#6a3a44', 0.15), w: 1.8 });
     s += cab(blob([[-rx - 1, -1], [-rx, -8], [-8, -ry - 0.5], [0, -ry - 1.2], [8, -ry - 0.5], [rx, -8], [rx + 1, -1], [rx - 2.5, -4.6], [8, -6.4], [3.5, -4.6], [0, -6.6], [-3.5, -4.6], [-8, -6.4], [-rx + 2.5, -4.6]], 0.9), traco(`M-9,-9 q3,-2 6,0 M3,-9 q3,-2 6,0`, '#dedce0', 0.7, 0.5));
     s += rosto(C, dir, { ...rost, boca: traco(`M-3,10.8 Q0,12 3,10.8`, '#4a2018', 1.1) });
-    s += rugas(dir);
-    for (const k of [-1, 1]) {
-      s += `<circle cx="${k * 5.4}" cy="1.2" r="4.1" fill="#dfe8ea" opacity=".1"/>`;
-      s += `<path d="M${k * 5.4 - 2.6},2.8 L${k * 5.4 - 0.6},-1.6 L${k * 5.4 + 0.4},-1.4 L${k * 5.4 - 1.6},3.2Z" fill="#fff" opacity=".3"/>`;
-      s += `<circle cx="${k * 5.4}" cy="1.2" r="4.1" fill="none" stroke="#2e2014" stroke-width="1.2"/>`;
-      s += traco(`M${k * 9.5},0.6 L${k * (rx - 0.2)},0`, '#2e2014', 0.9);
-    }
-    s += traco(`M-1.3,0.6 Q0,-0.4 1.3,0.6`, '#2e2014', 0.9);
   } else {
     s += cab(elipse(-7, -ry + 0.5, 6, 5.4), traco(`M-10.4,${-ry} q3.4,-2.6 6.8,0 M-10.8,${-ry + 2.4} q3.8,-2.2 7.6,0`, '#7a7880', 0.7, 0.7));
     s += traco(`M-3.6,${-ry - 3.6} l3,-2.4`, '#4a3220', 1) + `<circle cx="-0.4" cy="${-ry - 6}" r="0.8" fill="${OCRE}"/>`;
-    s += forma(cab0, C.pele, { cc: ccP, s: 2, l: 1.3 });
+    s += forma(cab0, C.pele, { cc: ccP, s: 1.3, l: 1, cs: mistura(C.pele, '#6a3a44', 0.15), w: 1.8 });
     s += cab(blob([[-rx - 2.4, 6], [-rx - 2.4, -6], [-6, -ry - 1], [4, -ry - 1], [rx - 1, -8], [rx, -4.6], [8, -5.6], [4, -4.4], [0, -3], [-1, 3], [-4, 7]], 0.9), traco(`M-9,-7 q4,-3 9,-1`, '#dedce0', 0.7, 0.5));
     s += orelha(C, -2, 2) + `<circle cx="-1.8" cy="5.4" r="0.7" fill="${OCRE}"/>`;
     s += rosto(C, dir, { ...rost, bocaLado: traco(`M${rx - 4.4},11 Q${rx - 2.4},11.6 ${rx - 0.8},10.8`, '#4a2018', 1.1) });
-    s += rugas(dir);
-    s += `<ellipse cx="7.6" cy="1.2" rx="2.6" ry="4" fill="#dfe8ea" opacity=".1"/><path d="M6.2,3 L7.6,-1.6 L8.4,-1.4 L7,3.4Z" fill="#fff" opacity=".3"/>`;
-    s += `<ellipse cx="7.6" cy="1.2" rx="2.6" ry="4" fill="none" stroke="#2e2014" stroke-width="1.2"/>` + traco(`M5,0.6 L-1.4,0`, '#2e2014', 0.9);
   }
   return { svg: s };
 }
@@ -560,11 +673,13 @@ function ramo(hx, hy) {
 // ======================= PM DO CONSÓRCIO =======================
 const GRAFITE = '#2e3034', REFLEXO = '#a8984e';
 const PM = {
-  nome: 'pm', hipY: -38, quadX: 5.4, pernaW: 9, ombroY: -61, ombroX: 13, neckY: -63.5, cabYn: -75.8, rx: 14.5, ry: 16,
-  Ws: 14, Wq: 11.6, T: 9, bracoR: 4.5, maoR: 3.6, bracoL: 27,
+  nome: 'pm', hipY: -38, quadX: 5.4, pernaW: 9, ombroY: -61, ombroX: 14, neckY: -63.5, cabYn: -75.4, rx: 13.4, ry: 17.4, cranio: 'comprido', nariz: 2.8, queixo: 1.4, rosto: rostoPM,
+  Ws: 15.4, Wq: 12, T: 9, bracoR: 4.5, maoR: 3.6, bracoL: 27,
   pele: '#9a6a4a', calca: '#2a2b30', bolsoCargo: true, poeiraCor: '#8a8478',
   sapato: { cor: '#1e1f22', sola: '#0e0e10', cano: 8, cadarco: '#4a4a52', poeira: true },
-  manga: { comp: 'curta', cor: '#5e646e', cc: '#16181e', punho: '#545a64', extra: ({ cot, r, dir }) => (dir === 'cima' ? '' : forma(retRed(cot[0] - r * 0.55, cot[1] - 7.5, r * 1.1, 2.4, 0.6), REFLEXO, { w: 0.8, s: 0.5, l: 0.3, cc: '#3a3410' })) },
+  manga: { comp: 'curta', cor: '#5e646e', cc: '#16181e', punho: '#545a64', extra: ({ sx, sy, cot, r, dir }) => (dir === 'cima' ? '' : forma(retRed(cot[0] - r * 0.55, cot[1] - 7.5, r * 1.1, 2.4, 0.6), REFLEXO, { w: 0.8, s: 0.5, l: 0.3, cc: '#3a3410' })) +
+    // ombreira do colete: deixa a silhueta larga e quadrada
+    forma(blob([[sx - r * 1.25, sy + 1.5], [sx - r * 1.1, sy - r * 0.9], [sx, sy - r * 1.3], [sx + r * 1.1, sy - r * 0.9], [sx + r * 1.25, sy + 1.5], [sx, sy + 3]], 0.8), '#2e3034', { cc: '#0c0c0e', s: 1.4, l: 1 }) },
 };
 PELES.add(PM.pele);
 function qr(x, y, m = 0.85) {
@@ -627,39 +742,39 @@ function pmCabeca(C, dir) {
   const curativo = (x, y, a) => `<g transform="rotate(${a} ${x} ${y})"><rect x="${x - 2.6}" y="${y - 1}" width="5.2" height="2" rx="1" fill="#c8a888" stroke="#4a3020" stroke-width="0.4"/><rect x="${x - 0.8}" y="${y - 0.8}" width="1.6" height="1.6" fill="#b8987a"/></g>`;
   if (dir === 'baixo') {
     for (const k of [-1, 1]) s += orelha(C, k * (rx + 0.1), 2);
-    s += forma(cab, C.pele, { cc: ccP, s: 2, l: 1.3 });
+    s += forma(cab, C.pele, { cc: ccP, s: 1.3, l: 1, cs: mistura(C.pele, '#6a3a44', 0.15), w: 1.8 });
     s += barba(C, cab, 5, '#1a1210');
     for (const k of [-1, 1]) s += forma(blob([[k * (rx - 0.2), -6], [k * (rx - 3.2), -5], [k * (rx - 2.8), 1.5], [k * (rx - 0.6), 2.5]]), CAB, { w: 1.1, s: 0.6, l: 0.4 });
     s += rosto(C, dir, { ...rost, boca: traco(`M-3.2,11 Q0,10.4 3.2,11.2`, '#2a1008', 1.2) });
     s += curativo(-7.6, 6.2, -20);
     s += '<g transform="translate(0,-2.6)">';
-    const copa = blob([[-rx - 1.2, -3], [-rx, -10], [-9, -ry - 5], [0, -ry - 6.4], [9, -ry - 5], [rx, -10], [rx + 1.2, -3], [0, -4.6]], 0.9);
+    const copa = blob([[-rx - 1.2, -3], [-rx, -10], [-9, -ry - 2.2], [0, -ry - 3.4], [9, -ry - 2.2], [rx, -10], [rx + 1.2, -3], [0, -4.6]], 0.9);
     s += forma(copa, BONE, { cc: '#0a0a0c', s: 2.6, l: 1.8 });
-    s += traco(`M0,${-ry - 6} L0,-5`, '#0a0a0c', 0.7, 0.6) + poeira(copa, -10, -ry - 6, 20, 10, 41, '#8a8478', 0.15);
+    s += traco(`M0,${-ry - 3} L0,-5`, '#0a0a0c', 0.7, 0.6) + poeira(copa, -10, -ry - 6, 20, 10, 41, '#8a8478', 0.15);
     const aba = blob([[-rx + 0.5, -4], [0, -5.2], [rx - 0.5, -4], [rx - 2, -1], [0, 0.2], [-rx + 2, -1]], 0.8);
     s += forma(aba, '#202124', { cc: '#08080a', s: 1.4, l: 0.8 });
-    s += forma(`M0,-15 l2.8,1 l0,2.4 q-0.8,2.8 -2.8,3.8 q-2,-1 -2.8,-3.8 l0,-2.4Z`, '#8e7a46', { cc: '#2a2010', w: 0.9, s: 0.8, l: 0.4 });
+    s += forma(`M0,-14 l2.8,1 l0,2.4 q-0.8,2.8 -2.8,3.8 q-2,-1 -2.8,-3.8 l0,-2.4Z`, '#8e7a46', { cc: '#2a2010', w: 0.9, s: 0.8, l: 0.4 });
     s += '</g>';
   } else if (dir === 'cima') {
     for (const k of [-1, 1]) s += orelha(C, k * (rx + 0.1), 2);
     s += forma(cab, CAB, { s: 2.6, l: 1.2 });
     for (const x of [-7, -3.5, 0, 3.5, 7]) s += traco(`M${x},4 l${x * 0.05},${7 - Math.abs(x) * 0.25}`, '#3a2c24', 0.8, 0.7);
     s += recorta(cab, `<path d="M-6,${ry} Q0,${ry - 4} 6,${ry} Z" fill="${C.pele}"/>`);
-    const copa = blob([[-rx - 1.2, 1], [-rx, -10], [-9, -ry - 5], [0, -ry - 6.4], [9, -ry - 5], [rx, -10], [rx + 1.2, 1], [0, 2.4]], 0.9);
+    const copa = blob([[-rx - 1.2, 1], [-rx, -10], [-9, -ry - 2.2], [0, -ry - 3.4], [9, -ry - 2.2], [rx, -10], [rx + 1.2, 1], [0, 2.4]], 0.9);
     s += forma(copa, BONE, { cc: '#0a0a0c', s: 2.6, l: 1.8 });
     s += forma(`M-4,2 Q0,-3 4,2Z`, CAB, { w: 0.9, s: 0, l: 0 }) + forma(retRed(-4.5, -0.8, 9, 1.6, 0.7), '#4a4c52', { w: 0.7, s: 0.4, l: 0.2 });
   } else {
-    s += forma(cab, C.pele, { cc: ccP, s: 2, l: 1.3 });
+    s += forma(cab, C.pele, { cc: ccP, s: 1.3, l: 1, cs: mistura(C.pele, '#6a3a44', 0.15), w: 1.8 });
     s += barba(C, cab, 5, '#1a1210');
     s += recorta(cab, forma(blob([[-rx - 3, 10], [-rx - 3, -10], [0, -10], [1, -2], [-2, 4], [-6, 12]]), CAB, { s: 1.2, l: 0.8, w: 1.1 }));
     s += orelha(C, -2, 2);
     s += rosto(C, dir, { ...rost, bocaLado: traco(`M${rx - 4.6},11.2 L${rx - 0.8},10.8`, '#2a1008', 1.2) });
     s += curativo(5, 6.4, -12);
     s += '<g transform="translate(0,-2.4)">';
-    const copa = blob([[-rx - 1.2, -1], [-rx, -10], [-8, -ry - 6], [2, -ry - 6.4], [10, -ry - 4.4], [rx + 1, -8], [rx + 1.4, -3], [0, -3.6]], 0.9);
+    const copa = blob([[-rx - 1.2, -1], [-rx, -10], [-8, -ry - 2.4], [2, -ry - 3.4], [10, -ry - 1.6], [rx + 1, -8], [rx + 1.4, -3], [0, -3.6]], 0.9);
     s += forma(copa, BONE, { cc: '#0a0a0c', s: 2.6, l: 1.8 });
     s += forma(blob([[rx - 4, -5], [rx + 9, -3.6], [rx + 9.6, -1.6], [rx - 3, -1.8]], 0.7), '#202124', { cc: '#08080a', s: 0.8, l: 0.6 });
-    s += forma(`M9,-14 l2.4,1 l0,2.2 q-0.8,2.4 -2.4,3.4 q-1.6,-1 -2,-3.4 l0,-2.2Z`, '#8e7a46', { cc: '#2a2010', w: 0.8, s: 0.6, l: 0.4 });
+    s += forma(`M9,-13 l2.4,1 l0,2.2 q-0.8,2.4 -2.4,3.4 q-1.6,-1 -2,-3.4 l0,-2.2Z`, '#8e7a46', { cc: '#2a2010', w: 0.8, s: 0.6, l: 0.4 });
     s += '</g>';
   }
   return { svg: s };
@@ -754,10 +869,23 @@ function humanoide(C, fns, dirs = ['baixo', 'cima', 'lado']) {
     else if (dir === 'cima') ordem = [P.perna_e, P.perna_d, tron, ...I('e'), P.braco_e, ...I('d'), P.braco_d, ...(balP ? [balP] : []), cab];
     else if (C.saia) ordem = [...I('e'), P.braco_e, P.perna_e, P.perna_d, tron, ...(balP ? [balP] : []), ...I('d'), P.braco_d, cab];
     else ordem = [...I('e'), P.braco_e, P.perna_e, tron, P.perna_d, ...(balP ? [balP] : []), ...I('d'), P.braco_d, cab];
+    for (const p of ordem) { const r = C.pose?.[dir]?.[p.parte]; if (r) p.r = r; }
     out[dir] = ordem;
   }
   return out;
 }
+
+// postura parada de atitude: rotação base (graus) que a cena soma à animação. Na frente, perna_e/braco_e
+// ficam à direita da tela (negativo = abre para fora); de costas é o contrário; de lado, negativo = para a frente.
+const abre = (pe, br, extra = {}) => ({
+  baixo: { perna_e: -pe, perna_d: pe, braco_e: -br, braco_d: br, ...extra.baixo },
+  cima: { perna_e: pe, perna_d: -pe, braco_e: br, braco_d: -br, ...extra.cima },
+  lado: { ...extra.lado },
+});
+PEAO.pose = abre(6, 11, { lado: { perna_e: 10, perna_d: -8, braco_e: 8, braco_d: -6, cabeca: 2 } }); // base larga, punhos prontos, queixo baixo
+IDOL.pose = abre(3, 4, { baixo: { perna_d: 8, cabeca: 6, braco_d: 9, cabelo_tras: -4 }, cima: { perna_e: 8, cabeca: -6, cabelo_tras: 4 }, lado: { perna_e: 7, perna_d: -3, cabeca: -6, braco_d: -4, cabelo_tras: 5 } }); // peso numa perna, cabeça de lado
+PM.pose = abre(5, 7, { lado: { perna_e: 7, perna_d: -6, cabeca: 3 } }); // plantado, cassetetes abertos
+BENZ.pose = { baixo: { braco_d: 14, braco_e: -4, cabeca: -3 }, lado: { tronco: 5, cabeca: -5, braco_d: -16, braco_e: 4, perna_e: 4, perna_d: -3 } }; // corcunda, ramo apontado
 
 const bonecos = {
   peao: humanoide(PEAO, { tronco: peaoTronco, cabeca: peaoCabeca }),
@@ -787,6 +915,7 @@ for (const [b, dirs] of Object.entries(bonecos)) {
       const e = { parte: p.parte, img: p.img, papel: p.papel };
       if (pai) e.pai = p.pai;
       e.x = fx(p.jx - (pai ? pai.jx : 0)); e.y = fx(p.jy - (pai ? pai.jy : 0));
+      if (p.r) e.r = p.r;
       return e;
     });
   }

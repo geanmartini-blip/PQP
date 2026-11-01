@@ -53,7 +53,10 @@ export function olhoAdulto(x, y, o = {}) {
   s += `<path d="${d}" fill="#ece4da"/>`;
   s += `<g clip-path="url(#${cp})"><circle cx="${dx}" cy="0.1" r="${ry * 0.98}" fill="url(#${g})"/><circle cx="${dx}" cy="0.15" r="${ry * 0.42}" fill="#120a0a"/>` +
     `<path d="M${-rx},${-ry * 1.4} L${rx},${-ry * 1.4} L${rx},${-ry * 0.25} Q0,${-ry * 0.7} ${-rx},${-ry * 0.1}Z" fill="#000" opacity=".22"/></g>`;
-  s += `<circle cx="${dx - ry * 0.35}" cy="${-ry * 0.3}" r="${Math.max(0.35, ry * 0.2)}" fill="#fff" opacity=".7"/>`;
+  if (o.brilho !== false) s += `<circle cx="${dx - ry * 0.35}" cy="${-ry * 0.3}" r="${Math.max(0.35, ry * 0.2)}" fill="#fff" opacity=".7"/>`;
+  // pálpebra de baixo subindo (olho apertado / desconfiado)
+  if (o.baixa) s += `<path d="M${-rx - 0.3},0.4 Q${rx * 0.2},${ry * 1.3} ${rx + 0.4},${-ry * 0.1} L${rx + 0.4},${-ry * 0.1 + 0.01} Q${rx * 0.2},${ry * (1.15 - o.baixa * 1.3)} ${-rx - 0.3},0.4Z" fill="${o.pele}"/>` +
+    `<path d="M${-rx * 0.8},${ry * (0.5 - o.baixa * 0.5)} Q${rx * 0.2},${ry * (1.15 - o.baixa * 1.3)} ${rx * 0.9},${-ry * 0.05}" fill="none" stroke="${cc}" stroke-width="0.8" opacity=".7" stroke-linecap="round"/>`;
   s += `<path d="M${-rx},0.2 Q${rx * 0.2},${ry * 1.15} ${rx},${-ry * 0.15}" fill="none" stroke="${cc}" stroke-width="0.6" opacity=".55"/>`;
   s += `<path d="M${-rx - 0.3},0.35 Q${-rx * 0.3},${-ry * 1.42} ${rx + 0.4},${-ry * 0.2}" fill="none" stroke="${cc}" stroke-width="${o.lw ?? 1.5}" stroke-linecap="round"/>`;
   if (o.delineado) s += `<path d="M${rx + 0.2},${-ry * 0.2} l${1.6},${-0.9}" fill="none" stroke="${cc}" stroke-width="1.1" stroke-linecap="round"/>`;
@@ -190,7 +193,7 @@ export function montarHTML(dirPng, man, lista, pose = {}, zoom = 2) {
   const mat = (p) => {
     if (M[p.parte]) return M[p.parte];
     const base = p.pai ? mat(por[p.pai]) : [zoom, 0, 0, zoom, 0, 0];
-    const g = pose[p.parte] ?? pose[p.papel] ?? 0;
+    const g = (p.r ?? 0) + (pose[p.parte] ?? pose[p.papel] ?? 0);
     return (M[p.parte] = mul(mul(base, T(p.x, p.y)), R(g)));
   };
   let html = '';
