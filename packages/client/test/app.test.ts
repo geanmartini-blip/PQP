@@ -40,16 +40,14 @@ describe('versão e novidades', () => {
     expect(versionLabel('0.1.0')).toBe('v0.1');
   });
 
-  it('o NOVIDADES.md da raiz tem a v0.1 com 3 a 5 itens curtos', () => {
+  it('o NOVIDADES.md da raiz tem a versão do package.json com 3 a 5 itens curtos', () => {
     const md = readFileSync(new URL('../../../NOVIDADES.md', import.meta.url), 'utf8');
-    const n = parseNovidades(md, '0.1.0');
-    expect(n?.titulo).toBe('v0.1');
+    const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as { version: string };
+    const n = parseNovidades(md, pkg.version);
+    expect(n?.titulo).toBe(versionLabel(pkg.version));
     expect(n!.itens.length).toBeGreaterThanOrEqual(3);
     expect(n!.itens.length).toBeLessThanOrEqual(5);
     for (const it of n!.itens) expect(it.length).toBeLessThan(110);
-    // a versão do package.json do cliente é a 0.1.0
-    const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as { version: string };
-    expect(pkg.version).toBe('0.1.0');
   });
 
   it('só a seção da versão; versão sem seção não mostra nada', () => {
