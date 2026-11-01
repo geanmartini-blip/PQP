@@ -45,10 +45,13 @@ export interface EntityViewOpts {
   elite?: boolean;
   /** escala inteira do rótulo (layout.worldTextScale) */
   textScale?: number;
+  /** 'alvo': o rótulo só aparece quando a entidade é o alvo (inimigo comum) */
+  labelWhen?: 'sempre' | 'alvo';
 }
 
-// SUGESTÃO: rótulo com mais de 10 letras sai uma escala menor (nome de elite comprido não cobre a tela).
-const LONG_LABEL_CHARS = 10;
+// SUGESTÃO: rótulo com mais de 14 letras sai uma escala menor quando der (nome de elite comprido não
+// cobre a tela). Na escala 1 (a dos nomes, ~10 px de altura) não diminui mais.
+const LONG_LABEL_CHARS = 14;
 
 export { shouldRevive } from './viewRules';
 
@@ -68,7 +71,8 @@ export class EntityView {
   private stun?: Phaser.GameObjects.Sprite;
   private bubble?: Phaser.GameObjects.Sprite;
   sheetKey = '';
-  private isFx = false;
+  /** folha de efeito (não é gente): não esconde o boneco */
+  isFx = false;
   private frameH = 48;
   private originY = 1;
   private anim: AnimName | '' = '';
@@ -92,6 +96,11 @@ export class EntityView {
   private dieAt = 0;
   private depthY = NaN;
   private labelText = '';
+  private labelOnlyTarget = false;
+  private targeted = false;
+  private labelBelow = false;
+  /** silhueta por cima de tudo quando alguém fica na frente do próprio boneco */
+  private ghost?: Phaser.GameObjects.Image;
   lastSeen = 0;
 
   static colors = COLOR;
@@ -135,7 +144,31 @@ export class EntityView {
       this.label = scene.add.bitmapText(0, 0, FONT_KEY, this.labelText, 7).setOrigin(0.5, 1).setDepth(DEPTH.overlay + 3);
       this.label.setTint(o.labelColor ?? COLOR.nameNpc);
       this.setTextScale(o.textScale ?? 2);
+      this.labelOnlyTarget = o.labelWhen === 'alvo';
+      if (this.labelOnlyTarget) this.label.setVisible(false);
     }
+  }
+
+  /** Virou (ou deixou de ser) o alvo: o rótulo de quem só mostra o nome no alvo aparece. */
+  setTargeted(on: boolean): void {
+    if (on === this.targeted) return;
+    this.targeted = on;
+    if (this.labelOnlyTarget) this.label?.setVisible(this.visible && on && !this.dying);
+  }
+
+  /**
+   * Rótulo embaixo dos pés: o alvo colado logo abaixo do jogador teria o nome em cima do corpo do
+   * jogador (a câmera deixa o jogador no centro, e ele não pode sumir atrás de texto).
+   */
+  setLabelBelow(on: boolean): void {
+    if (on === this.labelBelow || !this.label) return;
+    this.labelBelow = on;
+    this.label.setOrigin(0.5, on ? 0 : 1);
+    this.place(this.px, this.py);
+  }
+
+  private get labelOn(): boolean {
+    return this.visible && (!this.labelOnlyTarget || (this.targeted && !this.dying));
   }
 
   /** Escala inteira do rótulo (muda com o zoom da câmera). */
@@ -193,7 +226,10 @@ export class EntityView {
       this.barFill!.setPosition(bx, by);
       this.barShield!.setPosition(bx, by - 2);
     }
-    if (this.label) this.label.setPosition(Math.round(px), Math.round(top - (this.barBg && this.barShown ? 6 : 1)));
+    if (this.label) {
+      if (this.labelBelow) this.label.setPosition(Math.round(px), Math.round(py + 3));
+      else this.label.setPosition(Math.round(px), Math.round(top - (this.barBg && this.barShown ? 6 : 1)));
+    }
     if (this.stun) {
       this.stun.setPosition(px, top + 2);
       if (depthChanged) this.stun.setDepth(DEPTH.entity + dy + 1);
@@ -301,6 +337,7 @@ export class EntityView {
     this.anim = '';
     this.setBarVisible(false);
     this.aura?.setVisible(false);
+    if (this.labelOnlyTarget) this.label?.setVisible(false);
   }
 
   setVisible(v: boolean): void {
@@ -311,9 +348,29 @@ export class EntityView {
     this.glow?.setVisible(v);
     this.aura?.setVisible(v && !this.dying);
     this.setBarVisible(v);
-    this.label?.setVisible(v);
+    this.label?.setVisible(this.labelOn);
     this.stun?.setVisible(v && this.stunned);
     this.bubble?.setVisible(v && this.bubbleOn);
+  }
+
+  /**
+   * Alguém está na frente do boneco (inimigo colado, chefe grande): desenha a silhueta clara dele por
+   * cima de tudo, meio transparente, para o jogador nunca perder o próprio personagem de vista.
+   * Chamado a cada quadro com o resultado da conta de sobreposição (WorldScene).
+   */
+  setOccluded(on: boolean): void {
+    if (!on || !this.visible || this.dying) {
+      if (this.ghost?.visible) this.ghost.setVisible(false);
+      return;
+    }
+    const s = this.sprite;
+    if (!this.ghost) {
+      this.ghost = this.scene.add.image(0, 0, s.texture.key, s.frame.name).setDepth(DEPTH.ambient - 1).setAlpha(0.45);
+      this.ghost.setTintFill(0xfff2c8);
+    }
+    const g = this.ghost;
+    if (g.texture.key !== s.texture.key || g.frame.name !== s.frame.name) g.setTexture(s.texture.key, s.frame.name);
+    g.setOrigin(s.originX, s.originY).setPosition(s.x, s.y).setFlipX(s.flipX).setScale(s.scaleX, s.scaleY).setVisible(true);
   }
 
   /** Topo da cabeça (px), para balões e números. */
@@ -332,5 +389,6 @@ export class EntityView {
     this.label?.destroy();
     this.stun?.destroy();
     this.bubble?.destroy();
+    this.ghost?.destroy();
   }
 }

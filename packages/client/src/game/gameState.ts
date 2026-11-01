@@ -42,7 +42,7 @@ export type CarteiraInfo = S2C_Carteira & { inventario?: string[] };
 import { TUTORIAL_STEPS, type TutorialStep } from '@pqp/shared/game/tutorial';
 import type { Unlock } from '@pqp/shared/game/types';
 
-export type ToastKind = 'info' | 'missao' | 'nivel' | 'erro' | 'xp';
+export type ToastKind = 'info' | 'missao' | 'nivel' | 'erro' | 'xp' | 'mapa' | 'saque' | 'guia';
 
 /** Dica curta da tela: um passo do tutorial do Delta ou a dica do barco da travessia. */
 export type HintStep = Pick<TutorialStep, 'texto' | 'destaca'> & { id: string };
@@ -54,6 +54,14 @@ export interface Toast {
   at: number;
   /** linha menor embaixo (desbloqueio do tutorial, bônus de grupo) */
   sub?: string;
+  /** classe extra de estilo (aviso do mapa: 'esquerda', 'direita', 'apagao') */
+  cls?: string;
+}
+
+/** XP ganho há pouco (o HUD mostra "+N XP" colado na barra de XP, não como aviso). */
+export interface XpGain {
+  amount: number;
+  at: number;
 }
 
 /** Tela que o servidor pediu para abrir. */
@@ -66,9 +74,14 @@ export interface LevelUp {
   desbloqueios: Unlock[];
 }
 
-// SUGESTÃO: XP que chega em até 1,2 s vira um aviso só; no máximo 6 avisos guardados.
+// SUGESTÃO: XP que chega em até 1,2 s vira um aviso só; no máximo 8 avisos guardados.
 export const XP_MERGE_MS = 1200;
-export const MAX_TOASTS = 6;
+export const MAX_TOASTS = 8;
+// SUGESTÃO: moedas e saque que chegam em até 1,5 s viram um aviso só; no máximo 12 novidades no Perfil.
+export const GAIN_MERGE_MS = 1500;
+export const MAX_NOVIDADES = 12;
+// SUGESTÃO: desbloqueio com texto de até 44 letras vira "Novo: ..."; mais longo ou vários, "veja no Perfil".
+export const UNLOCK_TOAST_CHARS = 44;
 // SUGESTÃO: no máximo 3 falas do guia esperando o balão.
 export const MAX_GUIDE_LINES = 3;
 
@@ -128,6 +141,13 @@ export class GameState {
   // ---- travessia de barco ----
   /** fase do barco e a dica da aula (null fora do barco; o GameClient limpa no welcome de outro mapa) */
   boat: S2C_BarcoInfo | null = null;
+  // ---- revisão visual ----
+  /** XP ganho há pouco (somado), para o "+N XP" do quadro do jogador */
+  xpGain: XpGain | null = null;
+  /** controles novos liberados (o Perfil lista; o MENU mostra o selo enquanto não forem vistos) */
+  readonly novidades: Unlock[] = [];
+  /** há novidade que o jogador ainda não viu no Perfil */
+  novidadesNaoVistas = false;
   private toastSeq = 0;
   private pendingUnlocks: Unlock[] = [];
 
@@ -242,9 +262,28 @@ export class GameState {
     const prev = this.profile;
     this.profile = p;
     if (prev && prev.criado && p.level > prev.level) {
-      this.levelUp = { level: p.level, at: now, desbloqueios: this.pendingUnlocks.filter((u) => u.nivel <= p.level) };
+      const des = this.pendingUnlocks.filter((u) => u.nivel <= p.level);
+      this.levelUp = { level: p.level, at: now, desbloqueios: des };
+      this.addNovidades(des);
       this.pendingUnlocks = [];
     }
+  }
+
+  /** Guarda os controles novos para o Perfil (sem repetir) e acende o selo do MENU. */
+  private addNovidades(list: readonly Unlock[]): void {
+    for (const u of list) {
+      if (this.novidades.some((x) => x.controle === u.controle && x.descricao === u.descricao)) continue;
+      this.novidades.unshift(u);
+      this.novidadesNaoVistas = true;
+    }
+    if (this.novidades.length > MAX_NOVIDADES) this.novidades.length = MAX_NOVIDADES;
+  }
+
+  /** O jogador abriu o Perfil: o selo de novidade apaga. */
+  seeNovidades(): void {
+    if (!this.novidadesNaoVistas) return;
+    this.novidadesNaoVistas = false;
+    this.version++;
   }
 
   private onAviso(a: S2C_Aviso, now: number): void {
@@ -253,12 +292,17 @@ export class GameState {
     if (a?.desbloqueios && a.desbloqueios.length > 0) {
       // desbloqueios chegam junto com a subida de nível: vão para o banner (ou viram aviso próprio)
       const lv = this.profile?.level ?? 0;
-      if (this.levelUp && now - this.levelUp.at < 1500) this.levelUp.desbloqueios.push(...a.desbloqueios);
-      else {
-        for (const u of a.desbloqueios) {
-          // já valem no nível atual (travessia, cadastro): aviso na hora; de nível futuro: espera o perfil
-          if (u.nivel <= lv) this.pushToast(`Novo: ${u.descricao}`, 'missao', now);
-          else this.pendingUnlocks.push(u);
+      if (this.levelUp && now - this.levelUp.at < 1500) {
+        this.levelUp.desbloqueios.push(...a.desbloqueios);
+        this.addNovidades(a.desbloqueios);
+      } else {
+        // já valem no nível atual (travessia, cadastro): UM aviso curto na hora (o texto inteiro fica
+        // no Perfil); de nível futuro: espera o perfil
+        const now0 = a.desbloqueios.filter((u) => u.nivel <= lv);
+        for (const u of a.desbloqueios) if (u.nivel > lv) this.pendingUnlocks.push(u);
+        if (now0.length > 0) {
+          this.addNovidades(now0);
+          this.pushToast(unlockToastText(now0), 'missao', now);
         }
       }
     }
@@ -267,8 +311,15 @@ export class GameState {
     this.pushToast(texto, tipo, now);
   }
 
-  pushToast(texto: string, tipo: ToastKind, now: number, sub?: string): Toast {
-    const t: Toast = { id: ++this.toastSeq, texto, tipo, at: now, ...(sub ? { sub } : {}) };
+  pushToast(texto: string, tipo: ToastKind, now: number, sub?: string, cls?: string): Toast {
+    // o mesmo texto que ainda está na fila não entra de novo (só renova a hora)
+    const dup = this.toasts.find((x) => x.texto === texto && x.tipo === tipo && now - x.at < GAIN_MERGE_MS * 2);
+    if (dup) {
+      dup.at = now;
+      this.version++;
+      return dup;
+    }
+    const t: Toast = { id: ++this.toastSeq, texto, tipo, at: now, ...(sub ? { sub } : {}), ...(cls ? { cls } : {}) };
     this.toasts.push(t);
     if (this.toasts.length > MAX_TOASTS) this.toasts.shift();
     this.version++;
@@ -276,22 +327,40 @@ export class GameState {
   }
 
   /**
-   * XP ganho (evento 'xp' do próprio jogador). Só luta em grupo dá XP: o aviso diz isso, e quem
-   * ainda está no Delta luta com o Seu Jacó junto. Somas em sequência viram um aviso só.
+   * XP ganho (evento 'xp' do próprio jogador): não vira aviso; o HUD mostra "+N XP" colado na barra
+   * de XP do quadro. Somas em sequência (até 1,2 s) viram um número só.
    */
   onXp(amount: number, now: number): void {
     if (amount <= 0) return;
+    const g = this.xpGain;
+    if (g && now - g.at < XP_MERGE_MS) {
+      g.amount += Math.round(amount);
+      g.at = now;
+    } else this.xpGain = { amount: Math.round(amount), at: now };
+  }
+
+  /**
+   * Moeda ou item coletado: sai do mundo (o texto comprido cobria o boneco) e vira UM aviso curto na
+   * faixa de mensagens; ganhos seguidos (até 1,5 s) se somam no mesmo aviso.
+   */
+  onGain(g: { semente?: number; credito?: number; item?: string }, now: number): void {
     const last = this.toasts[this.toasts.length - 1];
-    if (last && last.tipo === 'xp' && now - last.at < XP_MERGE_MS) {
-      const n = Number(/\+(\d+)/.exec(last.texto)?.[1] ?? 0) + Math.round(amount);
-      last.texto = `+${n} XP`;
+    const acc = last && last.tipo === 'saque' && now - last.at < GAIN_MERGE_MS ? (last as Toast & { gain?: GainAcc }).gain : undefined;
+    const sum: GainAcc = acc ? { ...acc, itens: [...acc.itens] } : { semente: 0, credito: 0, itens: [] };
+    sum.semente += Math.max(0, Math.round(g.semente ?? 0));
+    sum.credito += Math.max(0, Math.round(g.credito ?? 0));
+    if (g.item) sum.itens.push(g.item);
+    const texto = gainText(sum);
+    if (!texto) return;
+    if (acc && last) {
+      last.texto = texto;
       last.at = now;
+      (last as Toast & { gain?: GainAcc }).gain = sum;
       this.version++;
       return;
     }
-    // SUGESTÃO: textos do aviso de XP em grupo
-    const sub = this.profile?.stage === 'delta' ? 'Luta em grupo: o Seu Jacó está junto' : 'Luta em grupo (+15% por jogador a mais)';
-    this.pushToast(`+${Math.round(amount)} XP`, 'xp', now, sub);
+    const t = this.pushToast(texto, 'saque', now);
+    (t as Toast & { gain?: GainAcc }).gain = sum;
   }
 
   /** Próximo aviso do mapa para a faixa do topo (sai da fila). */
@@ -369,4 +438,34 @@ export class GameState {
   liveToasts(now: number, ms: number): Toast[] {
     return this.toasts.filter((t) => now - t.at < ms);
   }
+}
+
+/** Soma de ganhos seguidos (moedas e itens) de um aviso de saque. */
+interface GainAcc {
+  semente: number;
+  credito: number;
+  itens: string[];
+}
+
+/** Texto curto do aviso de saque: "+2 Semente · +8 Crédito · Facão" (SUGESTÃO). */
+export function gainText(g: GainAcc): string {
+  const parts: string[] = [];
+  if (g.semente > 0) parts.push(`+${g.semente} Semente`);
+  if (g.credito > 0) parts.push(`+${g.credito} Crédito`);
+  if (g.itens.length === 1) parts.push(`+ ${g.itens[0]}`);
+  else if (g.itens.length > 1) parts.push(`+${g.itens.length} itens`);
+  return parts.join(' · ');
+}
+
+/**
+ * Aviso dos controles liberados de uma vez: um só, curto. Um desbloqueio de texto curto vira
+ * "Novo: ..."; mais longo, ou vários, "N coisas novas: veja no MENU" (o texto inteiro fica no Perfil).
+ * SUGESTÃO: textos.
+ */
+export function unlockToastText(list: readonly Unlock[]): string {
+  if (list.length === 1) {
+    const d = list[0]!.descricao.trim();
+    return d.length <= UNLOCK_TOAST_CHARS ? `Novo: ${d}` : 'Controle novo: veja no MENU, em Perfil';
+  }
+  return `${list.length} coisas novas: veja no MENU, em Perfil`;
 }

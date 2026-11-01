@@ -352,7 +352,8 @@ export class GameClient {
     this.cmds.ack(s.cack);
     for (const ev of s.ev ?? []) {
       this.eventsOut.push(ev);
-      if (ev.t === 'xp' && ev.dst === this.world.you && this.game.active) this.game.onXp(ev.amount, this.now);
+      // o "+N XP" do quadro do jogador vale também no protótipo (sem perfil)
+      if (ev.t === 'xp' && ev.dst === this.world.you) this.game.onXp(ev.amount, this.now);
     }
     const me = s.ents.find((e) => e.i === this.world.you);
     if (me && this.pred && this.map) {

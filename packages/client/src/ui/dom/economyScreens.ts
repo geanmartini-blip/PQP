@@ -39,8 +39,6 @@ import { button, el } from './styles';
 export const RESULT_MS = 4000;
 
 const CSS = `
-#pqp-ui .f4-perto { position: absolute; left: 50%; transform: translateX(-50%); bottom: 46%; display: flex; gap: 6px; pointer-events: none; }
-#pqp-ui .f4-perto .btn { pointer-events: auto; }
 #pqp-ui .f4-carteira { min-width: 72px; }
 #pqp-ui .f4-carteira.alerta { background: #ffb0a0; animation: pqpPisca 0.9s ease-in-out infinite alternate; }
 #pqp-ui .f4-abas { display: flex; gap: 6px; }
@@ -110,9 +108,13 @@ export class Fase4Ui {
   private scr: Fase4Screen | null = null;
   private res: HTMLDivElement | null = null;
   private shownKey = '';
-  private near: HTMLDivElement;
+  /** botões de perto (loja, feira, app, câmbio, casa): entram na coluna de perto do HUD */
+  readonly near: HTMLDivElement;
   private nearSig = '';
   private walletSig = '';
+  /** texto da carteira e se está em alerta (dívida, aluguel atrasado), para o MENU */
+  walletText = '';
+  walletAlert = false;
   // estado das telas (não vem do servidor)
   private tab: 'comprar' | 'vender' | 'lista' | 'anunciar' = 'comprar';
   private pick: Good | null = null;
@@ -209,6 +211,8 @@ export class Fase4Ui {
     const label = walletLabel(p);
     const alerta = (p.divida ?? 0) > 0 || (p.casa?.atraso ?? 0) > 0;
     const sig = `${label}|${alerta}`;
+    this.walletText = label;
+    this.walletAlert = alerta;
     if (sig === this.walletSig) return;
     this.walletSig = sig;
     this.walletChip.textContent = label;

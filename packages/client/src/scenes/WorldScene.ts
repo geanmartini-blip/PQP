@@ -22,7 +22,7 @@ import { Balloons, FloatTextPool, FxPool, ImagePool } from '../render/effects';
 import { EntityView, shouldRevive } from '../render/entityView';
 import { buildTileLayer, type TileLayerView } from '../render/tileLayer';
 import { BOAT_SCROLL_SLOW_TILES_S, BOAT_SCROLL_TILES_S, buildBoatScroll, type BoatScrollView } from '../render/boatScroll';
-import { computeZoom, worldTextScale } from '../ui/layout';
+import { computeZoom, WORLD_LABEL_CSS, WORLD_NUMBER_CSS, worldTextScale } from '../ui/layout';
 
 const T = TILE_PX;
 // SUGESTÃO: cores dos números.
@@ -68,6 +68,7 @@ export class WorldScene extends Phaser.Scene {
   private zoneViews = new Map<number, { s: Phaser.GameObjects.Sprite; seen: number }>();
   private targetMarker!: Phaser.GameObjects.Sprite;
   private destMarker!: Phaser.GameObjects.Sprite;
+  private targetView: EntityView | undefined;
   private guideG!: Phaser.GameObjects.Graphics;
   private guide: Guide | null = null;
   private floats!: FloatTextPool;
@@ -100,7 +101,7 @@ export class WorldScene extends Phaser.Scene {
     this.destMarker = this.add.sprite(0, 0, 'fx_alvo_aliado', '0').setDepth(DEPTH.marker).setVisible(false).setAlpha(0.6).setScale(0.6);
     this.destMarker.play('fx_alvo_aliado:play:0');
     this.guideG = this.add.graphics().setDepth(DEPTH.guide);
-    this.floats = new FloatTextPool(this, 48);
+    this.floats = new FloatTextPool(this);
     this.fxPool = new FxPool(this);
     this.balloons = new Balloons(this, 6);
     this.telPool = new ImagePool(this);
@@ -120,10 +121,11 @@ export class WorldScene extends Phaser.Scene {
     this.zoom = computeZoom(this.scale.width, this.scale.height, boat ? BOAT_VIEW_TILES : undefined, boat ? 0.5 : 1);
     this.cameras.main.setZoom(this.zoom);
     this.cameras.main.setSize(this.scale.width, this.scale.height);
-    const ts = worldTextScale(this.px, this.zoom);
+    // revisão visual: nomes e números numa escala menor (~10 px de altura), para não taparem o boneco
+    const ts = worldTextScale(this.px, this.zoom, WORLD_LABEL_CSS);
     const changed = ts !== this.textScale;
     this.textScale = ts;
-    this.floats.setScale(ts);
+    this.floats.setScale(worldTextScale(this.px, this.zoom, WORLD_NUMBER_CSS));
     this.balloons.setDensity(this.px, this.zoom);
     // os rótulos já criados mudam de escala junto
     if (changed) for (const v of this.views.values()) v.setTextScale(ts);
@@ -165,6 +167,7 @@ export class WorldScene extends Phaser.Scene {
     }
     for (const [id, v] of this.views) {
       if (v.lastSeen !== this.frameNo) {
+        if (v === this.targetView) this.targetView = undefined;
         v.destroy();
         this.views.delete(id);
         this.lookSig.delete(id);
@@ -174,15 +177,22 @@ export class WorldScene extends Phaser.Scene {
     this.syncTelegraphs(now);
     this.syncZones();
     this.syncMarkers();
+    this.syncOcclusion();
     this.drawGuide();
     this.handleEvents(now);
     // Fase 3: bordão usado como emote vira balão em cima de quem fez
     for (const em of gc.game.takeEmotes()) this.balloons.say(em.entity, em.texto, now);
     this.floats.update(now);
-    this.balloons.update(now, (id) => {
-      const v = this.views.get(id);
-      return v ? { x: v.px, y: v.headY, visible: v.visible } : null;
-    });
+    const me = this.views.get(world.you);
+    this.balloons.update(
+      now,
+      (id) => {
+        const v = this.views.get(id);
+        return v ? { x: v.px, y: v.headY, visible: v.visible } : null;
+      },
+      // quem fala colado no jogador (até 1,5 tile): o balão sobe acima da cabeça dele
+      me ? { id: me.id, x: me.px, y: me.headY, near: 1.5 * T } : undefined,
+    );
 
     // câmera no personagem
     if (sp) {
@@ -198,6 +208,7 @@ export class WorldScene extends Phaser.Scene {
     for (const v of this.views.values()) v.destroy();
     this.views.clear();
     this.lookSig.clear();
+    this.targetView = undefined;
     const map = gc.map!;
     this.tiles = buildTileLayer(this, map);
     this.mapId = gc.world.mapId;
@@ -281,17 +292,21 @@ export class WorldScene extends Phaser.Scene {
     const elite = (e.fl & (FL.elite | FL.chefe)) !== 0;
     const enemyDef = e.kind === 'e' ? D.enemiesById.get(e.defId ?? '') : undefined;
     const radius = enemyDef?.raioCorpoTiles ?? (e.kind === 'l' ? SIM_TUNING.LOOT_RADIUS : SIM_TUNING.PLAYER_RADIUS);
+    // revisão visual: nomes pequenos; o inimigo comum só mostra o nome quando vira o alvo (o nível
+    // fica no quadro do alvo); o elite mostra o nome sempre; o chefe tem a barra no topo
     let label: string | undefined;
     let labelColor: number | undefined;
+    let labelWhen: 'sempre' | 'alvo' = 'sempre';
     if (e.kind === 'p' && !isSelf) {
-      label = `${e.name ?? ''} ${e.lv ?? ''}`.trim();
+      label = e.name ?? '';
       labelColor = EntityView.colors.nameAlly;
     } else if (e.kind === 'n') {
       label = e.name ?? e.defId;
       labelColor = EntityView.colors.nameNpc;
     } else if (e.kind === 'e' && !(e.fl & FL.chefe)) {
-      label = elite ? `${e.name ?? ''} ${e.lv ?? ''}` : `${e.lv ?? ''}`;
+      label = e.name ?? enemyDef?.name ?? '';
       labelColor = elite ? EntityView.colors.nameElite : EntityView.colors.nameEnemy;
+      if (!elite) labelWhen = 'alvo';
     }
     const v = new EntityView(this, {
       id: e.id,
@@ -306,6 +321,7 @@ export class WorldScene extends Phaser.Scene {
       ...(labelColor !== undefined ? { labelColor } : {}),
       elite,
       textScale: this.textScale,
+      labelWhen,
     });
     this.views.set(e.id, v);
     // folha provisória: assinatura vazia força refazer no próximo quadro
@@ -443,10 +459,42 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * Alguém de pé na frente do próprio boneco (pés mais abaixo e corpo por cima do dele): liga a
+   * silhueta do jogador por cima de tudo. Só conta quem cobre o tronco, não quem encosta de lado.
+   */
+  private syncOcclusion(): void {
+    const me = this.views.get(this.rt.gc.world.you);
+    if (!me) return;
+    let hidden = false;
+    for (const v of this.views.values()) {
+      if (v === me || !v.visible || v.dying || v.isFx) continue;
+      const dx = Math.abs(v.px - me.px), dy = v.py - me.py;
+      if (dy > 0 && dy < 40 && dx < 18) {
+        hidden = true;
+        break;
+      }
+    }
+    me.setOccluded(hidden);
+  }
+
   private syncMarkers(): void {
     const gc = this.rt.gc;
     const tid = gc.currentTarget();
     const tv = tid !== undefined ? this.views.get(tid) : undefined;
+    // o nome do inimigo comum só aparece no alvo
+    if (this.targetView !== tv) {
+      this.targetView?.setTargeted(false);
+      this.targetView?.setLabelBelow(false);
+      tv?.setTargeted(true);
+      this.targetView = tv;
+    }
+    // alvo colado logo abaixo do jogador: o nome dele vai para baixo dos pés, para não cobrir o boneco
+    const me = this.views.get(gc.world.you);
+    if (tv && me) {
+      const dx = tv.px - me.px, dy = tv.py - me.py;
+      tv.setLabelBelow(Math.abs(dx) < T * 1.25 && dy > -T * 0.25 && dy < T * 1.75);
+    }
     if (tv && tv.visible && !tv.dying) {
       this.targetMarker.setVisible(true).setPosition(tv.px, tv.py);
       const s = Math.max(0.8, (tv.radius * 2.6 * T) / (this.targetMarker.width || 32));
@@ -496,7 +544,8 @@ export class WorldScene extends Phaser.Scene {
           const v = this.views.get(ev.dst);
           if (!v || !v.visible) break;
           const color = ev.dst === you ? NUM.selfHurt : ev.src === you ? (ev.crit ? NUM.crit : NUM.dealt) : NUM.other;
-          this.floats.spawn(v.px, v.headY, String(Math.round(ev.amount)), color, now, ev.crit === true);
+          // golpes no mesmo alvo em até 200 ms viram um número só
+          this.floats.spawnNum(`d${ev.dst}:${ev.dst === you ? 1 : ev.src === you ? 2 : 3}`, v.px, v.headY, ev.amount, color, now, ev.crit === true);
           let fx = 'fx_faisca';
           if (ev.ability && !ev.ability.startsWith('basico')) {
             const src = gc.world.ents.get(ev.src);
@@ -515,7 +564,7 @@ export class WorldScene extends Phaser.Scene {
         case 'heal': {
           const v = this.views.get(ev.dst);
           if (!v?.visible) break;
-          this.floats.spawn(v.px, v.headY, `+${Math.round(ev.amount)}`, NUM.heal, now);
+          this.floats.spawnNum(`h${ev.dst}`, v.px, v.headY, ev.amount, NUM.heal, now, false, '+');
           this.fxPool.play('fx_cura', v.px, v.py, DEPTH.entity + v.py + 5);
           break;
         }
@@ -541,31 +590,33 @@ export class WorldScene extends Phaser.Scene {
           break;
         }
         case 'xp':
-          if (ev.dst === you && this.selfTile) this.floats.spawn(this.selfTile.x * T, this.selfTile.y * T - 52, `+${Math.round(ev.amount)} xp`, NUM.xp, now);
+          // revisão visual: o "+N XP" fica colado na barra de XP do quadro do jogador (HudScene)
           break;
         case 'level':
-          if (ev.dst === you) {
-            if (this.selfTile) this.floats.spawn(this.selfTile.x * T, this.selfTile.y * T - 60, `nivel ${ev.level}!`, NUM.gold, now, true);
-            // Fase 2: o banner de nível vem do perfil (com os desbloqueios)
-            if (!gc.game.active) gc.pushNotice(`Nível ${ev.level}!`);
-          }
+          // Fase 2: o banner de nível vem do perfil (com os desbloqueios), na faixa de mensagens;
+          // no protótipo, o aviso do HUD (também no topo). Nada em cima do boneco.
+          if (ev.dst === you && !gc.game.active) gc.pushNotice(`Nível ${ev.level}!`);
           break;
         case 'currency':
-          if (ev.dst === you && this.selfTile) {
-            const parts = [ev.semente ? `+${ev.semente} semente` : '', ev.credito ? `+${ev.credito} credito` : ''].filter(Boolean).join(' ');
-            if (parts) this.floats.spawn(this.selfTile.x * T, this.selfTile.y * T - 52, parts, NUM.gold, now);
+          // moeda e item coletado saem do mundo (o texto comprido cobria o boneco): aviso curto no topo
+          if (ev.dst === you) {
+            if (gc.game.active) gc.game.onGain({ ...(ev.semente ? { semente: ev.semente } : {}), ...(ev.credito ? { credito: ev.credito } : {}) }, now);
+            else if (this.selfTile && (ev.semente || ev.credito)) this.floats.spawn(this.selfTile.x * T, this.selfTile.y * T - 52, `+${ev.semente || ev.credito}`, NUM.gold, now);
           }
           break;
         case 'loot_pick':
-          if (ev.by === you && this.selfTile) {
+          if (ev.by === you) {
             const l = gc.world.ents.get(ev.id);
             const name = l?.name && l.name !== 'moeda' ? (getData().itemsById.get(l.defId ?? '')?.name ?? l.name) : '';
-            if (name) this.floats.spawn(this.selfTile.x * T, this.selfTile.y * T - 60, `+ ${name}`, NUM.gold, now);
+            if (name && gc.game.active) gc.game.onGain({ item: name }, now);
           }
           break;
-        case 'say':
-          this.balloons.say(ev.src, ev.text, now);
+        case 'say': {
+          // no máximo 2 balões de inimigo ao mesmo tempo
+          const src = gc.world.ents.get(ev.src);
+          this.balloons.say(ev.src, ev.text, now, src?.kind === 'e');
           break;
+        }
         default:
           break;
       }

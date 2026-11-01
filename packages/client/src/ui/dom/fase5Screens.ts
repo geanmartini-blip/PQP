@@ -45,22 +45,11 @@ export const MAP_ALERT_MS = 5000;
 export const FACTION_REFRESH_MS = 5000;
 
 const CSS = `
-#pqp-ui .f5-linha { position: absolute; right: 8px; display: flex; gap: 6px; pointer-events: none; }
-#pqp-ui .f5-linha .btn { pointer-events: auto; min-height: 48px; padding: 6px 10px; font-size: 14px; }
-#pqp-ui .f5-perto { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54%; display: flex; gap: 6px; pointer-events: none; }
-#pqp-ui .f5-perto .btn { pointer-events: auto; }
-#pqp-ui .f5-faixa { position: absolute; left: 0; right: 0; top: env(safe-area-inset-top, 0px); padding: 6px 12px; text-align: center; font-weight: bold; font-size: 14px;
-  background: #140c16ee; border-bottom: 3px solid #ffd060; color: #ffe8a0; pointer-events: none; animation: pqpEntra 0.25s ease-out; z-index: 8; }
-#pqp-ui .f5-faixa.esquerda { border-color: #8ac060; color: #e0f0b0; background: #1e2a14ee; }
-#pqp-ui .f5-faixa.direita { border-color: #40e8ff; color: #b0f8ff; background: #14142aee; box-shadow: 0 0 10px #ff40c860; }
-#pqp-ui .f5-faixa.apagao { border-color: #d84a3a; color: #ffb0a0; }
-#pqp-ui .f5-faixa small { display: block; font-size: 11px; font-weight: normal; color: #c8c0d0; }
-#pqp-ui .f5-andar { position: absolute; left: 8px; pointer-events: auto; padding: 6px 10px; background: #140c16e0; border: 3px solid #c8a050; display: flex; flex-direction: column; gap: 4px; max-width: 58vw; }
-#pqp-ui .f5-andar b { color: #ffd060; font-size: 14px; }
-#pqp-ui .f5-andar span { font-size: 12px; color: #fff6e0; }
-#pqp-ui .f5-andar .bts { display: flex; gap: 4px; }
-#pqp-ui .f5-andar .btn { min-height: 44px; font-size: 13px; padding: 4px 8px; }
-#pqp-ui .f5-andar .btn.pisca { background: #ffd060; animation: pqpPisca 0.9s ease-in-out infinite alternate; }
+#pqp-ui .f5-andar { position: absolute; pointer-events: none; height: 32px; display: flex; align-items: center; gap: 6px; padding: 0 8px; overflow: hidden;
+  background: #140c16cc; border: 2px solid #c8a050; box-shadow: 0 2px 0 #0008; white-space: nowrap; }
+#pqp-ui .f5-andar b { color: #ffd060; font-size: 13px; }
+#pqp-ui .f5-andar span { font-size: 12px; color: #fff6e0; overflow: hidden; text-overflow: ellipsis; }
+#pqp-ui .perto-col .btn.pisca { background: #ffd060; animation: pqpPisca 0.9s ease-in-out infinite alternate; }
 #pqp-ui .f5-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 #pqp-ui .f5-slot { pointer-events: auto; min-height: 92px; border: 3px solid #140c16; background: #2a1e30; color: #fff6e0; font: bold 12px 'Trebuchet MS', Verdana, sans-serif;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 4px; box-shadow: inset 0 0 0 3px var(--cor, #4a3a52); cursor: pointer; touch-action: manipulation; text-align: center; }
@@ -107,9 +96,12 @@ function injectCss(): void {
 export type Fase5Screen = 'itens' | 'doutrina' | 'plantao' | 'faccao' | 'evento';
 
 export interface Fase5Frame {
-  rowTopCss: number;
   selfTile: { x: number; y: number } | null;
   free: boolean;
+  /** Z1: faixa do rastreador (px de CSS): a linha do andar da masmorra entra no lugar dele */
+  band?: { x: number; y: number; w: number };
+  /** a barra do chefe ocupa a faixa agora */
+  bossOn?: boolean;
 }
 
 const SLOTS = ['cabeca', 'peito', 'calca', 'arma', 'calcado', 'adorno'] as const;
@@ -118,14 +110,12 @@ export class Fase5Ui {
   private modal: HTMLDivElement | null = null;
   private kind: Fase5Screen | null = null;
   private shownKey = '';
-  private row: HTMLDivElement;
-  private rowSig = '';
-  private near: HTMLDivElement;
+  /** botões de perto (plantão, masmorra) e da masmorra (descer, sair): entram na coluna de perto do HUD */
+  readonly near: HTMLDivElement;
   private nearSig = '';
   private floorBox: HTMLDivElement;
   private floorSig = '';
-  private banner: HTMLDivElement;
-  private bannerUntil = 0;
+  readonly floorBtns: HTMLDivElement;
   private icons: { cv: HTMLCanvasElement; id: string; arch?: string }[] = [];
   // estado das telas (não vem do servidor)
   private selSlot: string | null = null;
@@ -142,18 +132,20 @@ export class Fase5Ui {
     private readonly scene: () => Phaser.Scene | undefined,
   ) {
     injectCss();
-    this.row = el('div', 'f5-linha');
-    this.row.style.display = 'none';
-    root.appendChild(this.row);
     this.near = el('div', 'f5-perto');
     this.near.style.display = 'none';
     root.appendChild(this.near);
+    this.floorBtns = el('div', 'f5-andar-bts');
+    this.floorBtns.style.display = 'none';
+    root.appendChild(this.floorBtns);
     this.floorBox = el('div', 'f5-andar');
     this.floorBox.style.display = 'none';
     root.appendChild(this.floorBox);
-    this.banner = el('div', 'f5-faixa');
-    this.banner.style.display = 'none';
-    root.appendChild(this.banner);
+  }
+
+  /** A masmorra mostra a linha do andar na faixa do topo (o rastreador de missão sai). */
+  get floorLineOn(): boolean {
+    return this.floorBox.style.display !== 'none';
   }
 
   get isOpen(): boolean {
@@ -199,9 +191,6 @@ export class Fase5Ui {
     const p = g.profile;
     this.updateBanner(now);
     const onMargin = !!p && p.criado && p.stage === 'margem';
-    const showRow = f.free && !this.modal && onMargin;
-    this.row.style.display = showRow ? '' : 'none';
-    if (showRow) this.renderRow(f);
     this.updateNear(f, onMargin);
     this.updateFloor(f, onMargin);
     // sala de evento na masmorra: abre a escolha uma vez por sala
@@ -236,18 +225,6 @@ export class Fase5Ui {
   // ---------------------------------------------------------------------------
   // HUD
 
-  private renderRow(f: Fase5Frame): void {
-    this.row.style.top = `${Math.round(f.rowTopCss + 56)}px`;
-    const sig = 'r';
-    if (sig === this.rowSig) return;
-    this.rowSig = sig;
-    this.row.innerHTML = '';
-    // SUGESTÃO: textos dos botões do topo da Fase 5
-    this.row.appendChild(button('Mochila', 'sec', () => this.open('itens')));
-    this.row.appendChild(button('Doutrina', 'sec', () => this.open('doutrina')));
-    this.row.appendChild(button('Mapa', 'sec', () => this.open('faccao')));
-  }
-
   private updateNear(f: Fase5Frame, onMargin: boolean): void {
     const g = this.gc.game;
     let spots: Fase5Spot[] = [];
@@ -267,55 +244,54 @@ export class Fase5Ui {
     }
   }
 
-  /** Faixa do andar: nome, andar, chefe, escada e sair. */
+  /**
+   * Masmorra: a linha do andar (andar, salas, chefe) fica na faixa do rastreador, no topo; os botões
+   * (descer a escada, sair) entram na coluna de perto, à direita do FALAR.
+   */
   private updateFloor(f: Fase5Frame, onMargin: boolean): void {
     const d = this.gc.game.dungeon;
     const on = !!d?.ativa && onMargin && f.free && !this.modal;
-    this.floorBox.style.display = on ? '' : 'none';
+    const line = on && !!f.band && !f.bossOn;
+    this.floorBox.style.display = line ? '' : 'none';
+    this.floorBtns.style.display = on ? '' : 'none';
     if (!on || !d) return;
-    this.floorBox.style.top = `${Math.round(f.rowTopCss + 56)}px`;
+    if (f.band) {
+      const s = this.floorBox.style;
+      s.left = `${Math.round(f.band.x)}px`;
+      s.top = `${Math.round(f.band.y)}px`;
+      s.maxWidth = `${Math.round(f.band.w)}px`;
+    }
     const limpas = (d.salas ?? []).filter((s) => s.limpa).length;
     const sig = JSON.stringify([d.andar, d.nome, d.escadaAberta, d.chefe, limpas, d.salas?.length, d.guardadas, d.grupo?.length]);
     if (sig === this.floorSig) return;
     this.floorSig = sig;
     this.floorBox.innerHTML = '';
-    this.floorBox.appendChild(el('b', '', `${d.andar}º andar · ${d.nome ?? 'Galerias'}`));
-    // SUGESTÃO: textos da faixa do andar
-    const linhas: string[] = [`Salas limpas: ${limpas}/${d.salas?.length ?? 0}`];
-    if (d.chefe) linhas.push(d.chefe.vencido ? `${d.chefe.nome}: vencido` : `Chefe: ${d.chefe.nome}`);
-    if ((d.guardadas ?? 0) > 0) linhas.push(`${d.guardadas} recompensas guardadas`);
-    if ((d.grupo?.length ?? 1) > 1) linhas.push(`Grupo: ${(d.grupo ?? []).map((m) => m.nome).join(', ')}`);
-    for (const l of linhas) this.floorBox.appendChild(el('span', '', l));
-    const bts = el('div', 'bts');
+    this.floorBox.appendChild(el('b', '', `${d.andar}º andar`));
+    // SUGESTÃO: textos da linha do andar (curtos: uma linha só)
+    const linhas: string[] = [`salas ${limpas}/${d.salas?.length ?? 0}`];
+    if (d.chefe) linhas.push(d.chefe.vencido ? `${d.chefe.nome}: vencido` : `chefe: ${d.chefe.nome}`);
+    if ((d.guardadas ?? 0) > 0) linhas.push(`${d.guardadas} guardadas`);
+    if ((d.grupo?.length ?? 1) > 1) linhas.push(`grupo de ${d.grupo?.length ?? 1}`);
+    this.floorBox.appendChild(el('span', '', linhas.join(' · ')));
+    this.floorBtns.innerHTML = '';
     if (d.escadaAberta && d.escada) {
       const esc = d.escada;
-      bts.appendChild(button('Descer a escada', 'pisca', () => this.gc.goTo(esc.x, esc.y)));
+      this.floorBtns.appendChild(button('Descer a escada', 'pisca', () => this.gc.goTo(esc.x, esc.y)));
     }
-    bts.appendChild(button('Sair', 'sec', () => this.gc.leaveDungeon()));
-    this.floorBox.appendChild(bts);
+    this.floorBtns.appendChild(button('Sair da masmorra', 'sec', () => this.gc.leaveDungeon()));
   }
 
-  /** Faixa do topo: um aviso do mapa por vez. */
+  /** Aviso do mapa: entra na fila da faixa de mensagens (Z2), em vez de tapar o quadro de vida. */
   private updateBanner(now: number): void {
-    if (now >= this.bannerUntil) {
-      const a = this.gc.game.takeMapAlert();
-      if (a) {
-        this.showBanner(a);
-        this.bannerUntil = now + MAP_ALERT_MS;
-      } else if (this.banner.style.display !== 'none') this.banner.style.display = 'none';
-    }
+    for (let a = this.gc.game.takeMapAlert(); a; a = this.gc.game.takeMapAlert()) this.pushAlert(a, now);
   }
 
-  private showBanner(a: S2C_AvisoMapa): void {
-    this.banner.className = `f5-faixa ${a.tipo === 'apagao' ? 'apagao' : (a.lado ?? '')}`;
-    this.banner.innerHTML = '';
-    this.banner.appendChild(el('span', '', a.texto));
+  private pushAlert(a: S2C_AvisoMapa, now: number): void {
     const D = getData();
     const sub: string[] = [];
     if (a.lider) sub.push(D.factionCharactersById.get(a.lider)?.name ?? a.lider);
     if (a.regiao) sub.push(D.regionsById.get(a.regiao)?.name ?? a.regiao);
-    if (sub.length > 0) this.banner.appendChild(el('small', '', sub.join(' · ')));
-    this.banner.style.display = '';
+    this.gc.game.pushToast(a.texto, 'mapa', now, sub.length > 0 ? sub.join(' · ') : undefined, a.tipo === 'apagao' ? 'apagao' : (a.lado ?? ''));
   }
 
   // ---------------------------------------------------------------------------

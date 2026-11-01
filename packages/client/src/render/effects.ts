@@ -6,10 +6,14 @@ import * as Phaser from 'phaser';
 import { FONT_KEY, sheetMeta } from '../art/index';
 import { fontText } from '../art/fx';
 import { DEPTH } from './depth';
+import { clampLines } from './viewRules';
 
-// SUGESTÃO: duração e subida dos números; o crítico sai uma escala inteira maior.
-const FLOAT_MS = 750;
-const FLOAT_RISE_PX = 22;
+// SUGESTÃO (revisão visual): os números sobem 30 px em 600 ms; o crítico sai uma escala inteira
+// maior; no máximo 8 números vivos; dano no mesmo alvo em até 200 ms vira um número só.
+export const FLOAT_MS = 600;
+const FLOAT_RISE_PX = 30;
+export const FLOAT_MAX_LIVE = 8;
+export const FLOAT_MERGE_MS = 200;
 
 interface Floater {
   t: Phaser.GameObjects.BitmapText;
@@ -18,14 +22,18 @@ interface Floater {
   y: number;
   scale: number;
   active: boolean;
+  /** número somável: chave (alvo e cor), valor e prefixo */
+  key: string;
+  value: number;
+  prefix: string;
 }
 
-/** Números que sobem e somem (dano, cura, XP, "LENTO"). */
+/** Números que sobem e somem (dano, cura, "LENTO"). */
 export class FloatTextPool {
   private items: Floater[] = [];
   private next = 0;
   /** escala inteira dos números (a fonte de pixel tem contorno; ver layout.worldTextScale) */
-  private base = 2;
+  private base = 1;
 
   setScale(s: number): void {
     this.base = Math.max(1, Math.round(s));
@@ -33,18 +41,44 @@ export class FloatTextPool {
 
   constructor(
     private readonly scene: Phaser.Scene,
-    size = 40,
+    size = FLOAT_MAX_LIVE,
   ) {
     for (let i = 0; i < size; i++) {
       const t = scene.add.bitmapText(0, 0, FONT_KEY, '', 7).setOrigin(0.5, 1).setDepth(DEPTH.text).setVisible(false);
-      this.items.push({ t, born: 0, x: 0, y: 0, scale: 1, active: false });
+      this.items.push({ t, born: 0, x: 0, y: 0, scale: 1, active: false, key: '', value: 0, prefix: '' });
     }
   }
 
+  /**
+   * Número somável: se o mesmo `key` (alvo e tipo) nasceu há menos de 200 ms, soma nele em vez de
+   * criar outro (golpes seguidos e dano em área não viram uma nuvem de números).
+   */
+  spawnNum(key: string, x: number, y: number, value: number, color: number, now: number, crit = false, prefix = ''): void {
+    const f = this.items.find((it) => it.active && it.key === key && now - it.born < FLOAT_MERGE_MS);
+    if (f) {
+      f.value += value;
+      f.t.setText(fontText(`${f.prefix}${Math.round(f.value)}`));
+      if (crit && f.scale === this.base) {
+        f.scale = this.base + 1;
+        f.t.setScale(f.scale).setTint(color);
+      }
+      return;
+    }
+    const n = this.take(x, y, `${prefix}${Math.round(value)}`, color, now, crit);
+    n.key = key;
+    n.value = value;
+    n.prefix = prefix;
+  }
+
   spawn(x: number, y: number, text: string, color: number, now: number, crit = false): void {
+    this.take(x, y, text, color, now, crit);
+  }
+
+  private take(x: number, y: number, text: string, color: number, now: number, crit: boolean): Floater {
     // o mais velho dá lugar quando o pool enche
     const f = this.items[this.next]!;
     this.next = (this.next + 1) % this.items.length;
+    f.key = '';
     f.t.setText(fontText(text));
     f.t.setTint(color);
     f.scale = crit ? this.base + 1 : this.base;
@@ -55,6 +89,7 @@ export class FloatTextPool {
     f.born = now;
     f.active = true;
     f.t.setVisible(true).setAlpha(1).setPosition(Math.round(f.x), Math.round(f.y));
+    return f;
   }
 
   update(now: number): void {
@@ -121,16 +156,23 @@ export class FxPool {
   }
 }
 
-// SUGESTÃO: fala no balão fica 4 s (mais 40 ms por letra, até 7 s).
-const SAY_BASE_MS = 4000;
-const SAY_PER_CHAR_MS = 40;
-const SAY_MAX_MS = 7000;
+// SUGESTÃO (revisão visual): a fala no balão fica 2,5 s (mais 25 ms por letra, até 3,5 s); balão
+// de até 120 px de CSS de largura, fonte de 11 px, no máximo 2 linhas (o resto vira "…"); no máximo
+// 2 balões de inimigo ao mesmo tempo; um balão por pessoa.
+export const SAY_BASE_MS = 2500;
+const SAY_PER_CHAR_MS = 25;
+export const SAY_MAX_MS = 3500;
+export const BALLOON_MAX_LINES = 2;
+export const BALLOON_WRAP_CSS = 120;
+export const MAX_ENEMY_BALLOONS = 2;
 
 interface Balloon {
   t: Phaser.GameObjects.Text;
   until: number;
   ownerId: number;
   active: boolean;
+  enemy: boolean;
+  text: string;
 }
 
 /** Balões de fala ('say') presos na cabeça de quem fala. */
@@ -139,16 +181,17 @@ export class Balloons {
 
   /**
    * Texto nítido na densidade da tela: o balão fica no mundo (com o zoom da câmera), então a fonte
-   * vai em px de mundo (~12 px de CSS) e o texto é rasterizado na resolução do zoom.
+   * vai em px de mundo (~11 px de CSS) e o texto é rasterizado na resolução do zoom.
    */
   setDensity(px: number, zoom: number): void {
     const z = Math.max(1, zoom);
-    const size = Math.max(8, Math.round((12 * px) / z));
+    const size = Math.max(7, Math.round((11 * px) / z));
     for (const b of this.items) {
       b.t.setResolution(z);
       b.t.setFontSize(size);
-      b.t.setPadding(Math.round((5 * px) / z), Math.round((3 * px) / z));
-      b.t.setWordWrapWidth(Math.round((170 * px) / z), true);
+      b.t.setPadding(Math.round((4 * px) / z), Math.round((2 * px) / z));
+      b.t.setWordWrapWidth(Math.round((BALLOON_WRAP_CSS * px) / z), true);
+      if (b.active) b.t.setText(this.fit(b.t, b.text));
     }
   }
 
@@ -163,29 +206,41 @@ export class Balloons {
           fontSize: '11px',
           color: '#1a1018',
           backgroundColor: '#fff6e0',
-          padding: { x: 5, y: 3 },
-          wordWrap: { width: 170, useAdvancedWrap: true },
+          padding: { x: 4, y: 2 },
+          wordWrap: { width: BALLOON_WRAP_CSS, useAdvancedWrap: true },
           align: 'center',
         })
         .setOrigin(0.5, 1)
         .setDepth(DEPTH.text + 10)
         .setVisible(false);
-      this.items.push({ t, until: 0, ownerId: -1, active: false });
+      this.items.push({ t, until: 0, ownerId: -1, active: false, enemy: false, text: '' });
     }
   }
 
-  say(ownerId: number, text: string, now: number): void {
+  private fit(t: Phaser.GameObjects.Text, text: string): string {
+    return clampLines(text, BALLOON_MAX_LINES, (s) => t.getWrappedText(s));
+  }
+
+  /** `enemy`: fala de inimigo (no máximo 2 ao mesmo tempo; a terceira não aparece). */
+  say(ownerId: number, text: string, now: number, enemy = false): void {
     // a mesma pessoa troca a fala; senão usa o balão livre (ou o que acaba primeiro)
-    let b = this.items.find((x) => x.active && x.ownerId === ownerId) ?? this.items.find((x) => !x.active);
+    let b = this.items.find((x) => x.active && x.ownerId === ownerId);
+    if (!b && enemy && this.items.filter((x) => x.active && x.enemy).length >= MAX_ENEMY_BALLOONS) return;
+    b ??= this.items.find((x) => !x.active);
     if (!b) b = this.items.reduce((a, c) => (c.until < a.until ? c : a));
     b.ownerId = ownerId;
     b.active = true;
+    b.enemy = enemy;
+    b.text = text;
     b.until = now + Math.min(SAY_MAX_MS, SAY_BASE_MS + text.length * SAY_PER_CHAR_MS);
-    b.t.setText(text).setVisible(true);
+    b.t.setText(this.fit(b.t, text)).setVisible(true);
   }
 
-  /** `pos(id)` devolve o topo da cabeça em px, ou null se a entidade sumiu. */
-  update(now: number, pos: (id: number) => { x: number; y: number; visible: boolean } | null): void {
+  /**
+   * `pos(id)` devolve o topo da cabeça em px, ou null se a entidade sumiu. `self` é o topo da cabeça
+   * do próprio jogador: o balão de quem está colado nele sobe acima da cabeça dele (não cobre o boneco).
+   */
+  update(now: number, pos: (id: number) => { x: number; y: number; visible: boolean } | null, self?: { id: number; x: number; y: number; near: number }): void {
     for (const b of this.items) {
       if (!b.active) continue;
       const p = pos(b.ownerId);
@@ -194,7 +249,9 @@ export class Balloons {
         b.t.setVisible(false);
         continue;
       }
-      b.t.setPosition(Math.round(p.x), Math.round(p.y - 4));
+      let y = p.y - 4;
+      if (self && b.ownerId !== self.id && Math.abs(p.x - self.x) < self.near && Math.abs(p.y - self.y) < self.near) y = Math.min(y, self.y - 12);
+      b.t.setPosition(Math.round(p.x), Math.round(y));
       b.t.setVisible(p.visible);
     }
   }

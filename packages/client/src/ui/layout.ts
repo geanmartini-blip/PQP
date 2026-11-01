@@ -72,8 +72,28 @@ export function computeZoom(screenW: number, screenH = Infinity, target = ZOOM_T
  * Escala dos textos do mundo (nomes, números) sobre a câmera com zoom `zoom`: ~1,75 px de CSS por
  * pixel da fonte, inteiro em pixels de canvas. SUGESTÃO.
  */
-export function worldTextScale(px: number, zoom: number): number {
-  return Math.max(1, Math.round((1.75 * px) / Math.max(1, zoom)));
+export function worldTextScale(px: number, zoom: number, cssPerFontPx = 1.75): number {
+  return Math.max(1, Math.round((cssPerFontPx * px) / Math.max(1, zoom)));
+}
+
+// SUGESTÃO (revisão visual): números de dano e nomes no mundo saem menores (~1,2 px de CSS por pixel
+// da fonte, ~10 px de altura), para não taparem o boneco.
+export const WORLD_NUMBER_CSS = 1.2;
+export const WORLD_LABEL_CSS = 1.2;
+
+/**
+ * Zona livre central (Z0), em px de CSS: o retângulo em volta do boneco (a câmera segue o jogador,
+ * então ele fica sempre no centro). Nada de interface de tela fica parado aqui. Em 375x812: x 127 a
+ * 247, y 300 a 500 (os pés ficam em ~422). SUGESTÃO.
+ */
+export function centerZone(cw: number, ch: number): Rect {
+  return { x: cw / 2 - 60, y: ch / 2 - 106, w: 120, h: 200 };
+}
+
+/** O retângulo `r` (px de CSS) fica fora da zona livre central da tela `cw`×`ch`. */
+export function centerSafe(r: Rect, cw: number, ch: number): boolean {
+  const z = centerZone(cw, ch);
+  return r.x + r.w <= z.x || r.x >= z.x + z.w || r.y + r.h <= z.y || r.y >= z.y + z.h;
 }
 
 export interface Circle {
@@ -147,8 +167,15 @@ export interface HudLayout {
   target: TargetFrame;
   boss: { x: number; y: number; w: number; h: number };
   tips: Record<TipId, TipAnchor>;
-  /** linha de cima livre para avisos (abaixo da barra do chefe) */
+  /** Z2: topo da faixa de mensagens (abaixo da engrenagem e do MENU); a seta do rumo fica abaixo dela */
   bannerY: number;
+  /** Z1: topo da faixa do rastreador compacto (a barra do chefe entra no lugar dele) */
+  trackerY: number;
+  /** Z1: a faixa do rastreador vai de bandX0 a bandX1 (entre a engrenagem e o MENU) */
+  bandX0: number;
+  bandX1: number;
+  /** Z0: zona livre em volta do boneco */
+  center: Rect;
 }
 
 // SUGESTÃO: tamanhos dos botões (o mínimo pedido é 56 px de CSS) e a folga das bordas.
@@ -235,18 +262,27 @@ export function hudLayout(W: number, H: number, safeBottom = 0, safeTop = 0, px 
 
   const ala: Circle = { x: cw - EDGE - rSmall, y: top + tH + 8 + rSmall, r: rSmall };
   const ajuste: Circle = { x: 8 + rSmall, y: top + pH + 8 + rSmall, r: rSmall };
-  // barra do chefe abaixo dos botões do topo, com espaço para o nome em cima
-  const bossY = top + Math.max(pH, tH) + 8 + 2 * rSmall + 8 + lineH + 4;
-  const boss = { x: cw * 0.12, y: bossY, w: cw * 0.76, h: 14 * ui };
-  const bannerY = bossY + boss.h + 10;
+  // Z1: faixa do rastreador compacto logo abaixo dos quadros, entre a engrenagem e o MENU (ALA). A
+  // barra do chefe entra no lugar do rastreador quando o chefe está perto (nome em cima, barra embaixo)
+  // em vez de reservar o espaço o tempo todo.
+  const trackerY = top + Math.max(pH, tH) + 6;
+  const bandX0 = ajuste.x + ajuste.r + 8;
+  const bandX1 = ala.x - ala.r - 8;
+  const boss = { x: bandX0, y: trackerY + lineH + 4, w: bandX1 - bandX0, h: 12 * ui };
+  // Z2: faixa de mensagens abaixo da engrenagem e do MENU (uma mensagem por vez)
+  const bannerY = Math.max(ajuste.y + ajuste.r, ala.y + ala.r, boss.y + boss.h) + 8;
+  const center = centerZone(cw, ch);
+  // a dica da mira fica em cima do Falar, mas só à direita da zona livre (ela cruzava o boneco):
+  // coluna estreita entre a borda direita de Z0 e a beira da tela, com a fonte quebrando em 2 a 3 linhas
+  const miraL = center.x + center.w + 6, miraR = cw - 6;
 
   const tips: Record<TipId, TipAnchor> = {
     andar: { x: cw * 0.25, y: ch * 0.7, oy: 0.5, wrap: cw * 0.42 },
-    // em cima do botão Falar (os dois aparecem juntos perto de um NPC), na metade direita
-    mira: { x: Math.min(cw - cw * 0.21 - 4, Math.max(cw / 2 + cw * 0.21, falar.x)), y: falar.y - falar.r - 10 * ui, oy: 1, wrap: cw * 0.42 },
-    alvo: { x: cw / 2, y: ch * 0.28, oy: 0.5, wrap: cw * 0.8 },
-    estilo: { x: cw / 2, y: ch * 0.36, oy: 0.5, wrap: cw * 0.8 },
-    rumo: { x: cw / 2, y: bannerY + 40 * ui, oy: 0, wrap: cw * 0.6 },
+    mira: { x: (miraL + miraR) / 2, y: falar.y - falar.r - 10 * ui, oy: 1, wrap: Math.max(80, miraR - miraL - 16 * ui) },
+    // as do topo ficam abaixo da faixa de mensagens, longe do boneco (Z0)
+    alvo: { x: cw / 2, y: bannerY + 52 * ui, oy: 0, wrap: cw * 0.8 },
+    estilo: { x: cw / 2, y: bannerY + 52 * ui, oy: 0, wrap: cw * 0.8 },
+    rumo: { x: cw / 2, y: bannerY + 52 * ui, oy: 0, wrap: cw * 0.6 },
   };
 
   const S = (c: Circle): Circle => ({ x: Math.round(c.x * px), y: Math.round(c.y * px), r: Math.round(c.r * px) });
@@ -284,6 +320,10 @@ export function hudLayout(W: number, H: number, safeBottom = 0, safeTop = 0, px 
     boss: { x: Math.round(boss.x * px), y: Math.round(boss.y * px), w: Math.round(boss.w * px), h: Math.round(boss.h * px) },
     tips: tipsOut,
     bannerY: Math.round(bannerY * px),
+    trackerY: Math.round(trackerY * px),
+    bandX0: Math.round(bandX0 * px),
+    bandX1: Math.round(bandX1 * px),
+    center: SR(center),
   };
 }
 

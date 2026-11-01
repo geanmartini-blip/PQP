@@ -2,10 +2,12 @@
 import { describe, expect, it } from 'vitest';
 import { getMap } from '@pqp/shared/map';
 import { FONT_CELL_W } from '../src/art/fx';
-import { COMPASS_MIN_TILES, nearestEnemyMarker } from '../src/ui/compass';
+import { COMPASS_MIN_TILES, easiestEnemyMarker, nearestEnemyMarker } from '../src/ui/compass';
 import {
   applyOffsets,
   BUTTON_MIN_PX,
+  centerSafe,
+  centerZone,
   circlesOverlap,
   clampButton,
   computeZoom,
@@ -18,6 +20,8 @@ import {
   parseOffsets,
   pickDpr,
   serializeOffsets,
+  WORLD_LABEL_CSS,
+  WORLD_NUMBER_CSS,
   worldTextScale,
   type Circle,
 } from '../src/ui/layout';
@@ -89,6 +93,22 @@ describe('computeZoom', () => {
     expect(worldTextScale(2.625, 3)).toBe(2);
     expect(worldTextScale(3, 3)).toBe(2);
   });
+
+  it('números e nomes do mundo uma escala menor (~1 px de CSS por pixel da fonte)', () => {
+    for (const [px, z] of [[1, 1], [2, 2], [2.625, 3], [3, 3]] as const) {
+      expect(worldTextScale(px, z, WORLD_NUMBER_CSS)).toBe(1);
+      expect(worldTextScale(px, z, WORLD_LABEL_CSS)).toBe(1);
+    }
+  });
+
+  it('zona livre do centro: 120x200 px em volta do boneco; centerSafe reprova quem cruza', () => {
+    expect(centerZone(375, 812)).toEqual({ x: 127.5, y: 300, w: 120, h: 200 });
+    expect(centerSafe({ x: 0, y: 0, w: 375, h: 290 }, 375, 812)).toBe(true);
+    expect(centerSafe({ x: 250, y: 300, w: 100, h: 100 }, 375, 812)).toBe(true);
+    // os avisos antigos (topo 319, no meio da largura) e o banner de nível (211 a 361) cruzavam
+    expect(centerSafe({ x: 60, y: 319, w: 255, h: 40 }, 375, 812)).toBe(false);
+    expect(centerSafe({ x: 94, y: 211, w: 188, h: 150 }, 375, 812)).toBe(false);
+  });
 });
 
 describe('hudLayout', () => {
@@ -121,10 +141,39 @@ describe('hudLayout', () => {
       }
       for (let i = 0; i < all.length; i++) for (let j = i + 1; j < all.length; j++) expect(overlaps(all[i]!, all[j]!)).toBe(false);
       expect(hitCircle(L.especial, L.especial.x + L.especial.r + 3, L.especial.y)).toBe(true);
-      // ALA e a engrenagem ficam abaixo dos quadros, e a barra do chefe abaixo deles
+      // ALA e a engrenagem ficam abaixo dos quadros; a barra do chefe fica na faixa do rastreador,
+      // entre as duas, e a faixa de mensagens abaixo de tudo isso
       expect(L.ala.y - L.ala.r).toBeGreaterThanOrEqual(L.target.y + L.target.h);
       expect(L.ajuste.y - L.ajuste.r).toBeGreaterThanOrEqual(L.player.y + L.player.h);
-      expect(L.boss.y).toBeGreaterThan(L.ala.y + L.ala.r);
+      expect(L.trackerY).toBeGreaterThanOrEqual(Math.max(L.player.y + L.player.h, L.target.y + L.target.h));
+      expect(L.boss.x).toBeGreaterThanOrEqual(L.ajuste.x + L.ajuste.r);
+      expect(L.boss.x + L.boss.w).toBeLessThanOrEqual(L.ala.x - L.ala.r);
+      expect(L.bannerY).toBeGreaterThan(Math.max(L.ala.y + L.ala.r, L.ajuste.y + L.ajuste.r, L.boss.y + L.boss.h));
+    });
+
+    it(`zona livre do centro: nada do HUD parado em volta do boneco (${w}x${h} @${dpr})`, () => {
+      const L = hudLayout(W, H, 20, 0, dpr);
+      const cw = W / dpr, ch = H / dpr;
+      const css = (c: Circle) => ({ x: (c.x - c.r) / dpr, y: (c.y - c.r) / dpr, w: (2 * c.r) / dpr, h: (2 * c.r) / dpr });
+      for (const c of [L.b1, L.b2, L.b3, L.especial, L.item, L.auto, L.ala, L.ajuste]) expect(centerSafe(css(c), cw, ch)).toBe(true);
+      // o FALAR só aparece perto de NPC (não é permanente): em tela baixa ele pode encostar na borda
+      // da zona livre, mas nunca no boneco (32x48 px, pés 16 px abaixo do centro)
+      const body = { x: cw / 2 - 16, y: ch / 2 + 16 - 48, w: 32, h: 48 };
+      const f = css(L.falar);
+      expect(f.x >= body.x + body.w || f.x + f.w <= body.x || f.y >= body.y + body.h || f.y + f.h <= body.y).toBe(true);
+      if (w === 375) expect(centerSafe(f, cw, ch)).toBe(true);
+      const R = (r: { x: number; y: number; w: number; h: number }) => ({ x: r.x / dpr, y: r.y / dpr, w: r.w / dpr, h: r.h / dpr });
+      expect(centerSafe(R(L.player), cw, ch)).toBe(true);
+      expect(centerSafe(R(L.target), cw, ch)).toBe(true);
+      expect(centerSafe(R(L.boss), cw, ch)).toBe(true);
+      // rastreador (32 px) e faixa de mensagens (até 3 linhas, ~70 px) acima da zona livre
+      expect(centerSafe({ x: L.bandX0 / dpr, y: L.trackerY / dpr, w: (L.bandX1 - L.bandX0) / dpr, h: 32 }, cw, ch)).toBe(true);
+      expect(centerSafe({ x: 0, y: L.bannerY / dpr, w: cw, h: 70 }, cw, ch)).toBe(true);
+      // as dicas do protótipo do topo também
+      for (const k of ['alvo', 'estilo', 'rumo'] as const) expect(centerSafe({ x: 0, y: L.tips[k].y / dpr, w: cw, h: 40 }, cw, ch)).toBe(true);
+      // a coluna de perto (à direita do FALAR) não entra na zona livre (no celular em pé)
+      const z = centerZone(cw, ch);
+      if (w < 600) expect((L.falar.x + L.falar.r) / dpr + 8).toBeGreaterThanOrEqual(z.x + z.w);
     });
 
     it(`texto do HUD legível e dentro dos quadros (${w}x${h} @${dpr})`, () => {
@@ -158,6 +207,9 @@ describe('hudLayout', () => {
       // e na metade direita (a esquerda é do joystick)
       expect(m.x - m.wrap / 2).toBeGreaterThanOrEqual(W / 2 - 1);
       expect(m.x + m.wrap / 2).toBeLessThanOrEqual(W);
+      // e à direita da zona livre do centro (com o padding de 8 px de cada lado)
+      const z = centerZone(W / dpr, H / dpr);
+      expect((m.x - m.wrap / 2) / dpr - 8).toBeGreaterThanOrEqual(z.x + z.w - 0.5);
     });
   }
 });
@@ -227,6 +279,19 @@ describe('seta do rumo', () => {
     expect(nearestEnemyMarker(ms, 0, 0)).toMatchObject({ x: 10, y: 0 });
     expect(nearestEnemyMarker([ms[0]!], 0, 0)).toMatchObject({ x: 1, y: 0 });
     expect(nearestEnemyMarker([], 0, 0)).toBeUndefined();
+  });
+
+  it('objetivo de luta sem lugar: o bando mais fraco, fora do que acabou de ser limpo, nunca o chefe', () => {
+    const ms = [
+      { kind: 'bando', x: 1, y: 0, params: { level: 1 } },
+      { kind: 'bando', x: 12, y: 0, params: { level: 3 } },
+      { kind: 'bando', x: 20, y: 0, params: { level: 2 } },
+      { kind: 'bando', x: 15, y: 0, params: { level: 2 } },
+      { kind: 'chefe', x: 9, y: 0 },
+    ];
+    expect(easiestEnemyMarker(ms, 0, 0, 8)).toMatchObject({ x: 15, y: 0 });
+    expect(easiestEnemyMarker(ms, 0, 0, 0)).toMatchObject({ x: 1, y: 0 });
+    expect(easiestEnemyMarker([ms[4]!], 0, 0, 0)).toBeUndefined();
   });
 
   it('a seta fica na borda certa, dentro da margem', () => {

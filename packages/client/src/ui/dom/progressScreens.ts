@@ -18,20 +18,16 @@ import type { S2C_ProgressoOpcoes } from '@pqp/shared/net';
 import type { ArtApi, CharacterLook } from '../../art/contract';
 import { archetypeLook, asCharacterLook, whenSheetReady } from '../../art/index';
 import type { GameClient } from '../../game/GameClient';
-import { ABILITY_TYPE_LABEL, emoteText, PAPEL_LABEL } from '../progressModel';
+import { ABILITY_TYPE_LABEL, abilityCardText, emoteText, PAPEL_LABEL } from '../progressModel';
 import { button, el } from './styles';
 import { drawFrame, idleFrame } from './sprite';
 import { isDungeonMapId } from '../../game/dungeonMap';
 
-// SUGESTÃO: a fala do guia fica 5,5 s no balão; a transição de mapa dura 1,5 s.
-export const GUIDE_BUBBLE_MS = 5500;
+// SUGESTÃO: a transição de mapa dura 1,5 s. (A fala do guia entra na faixa de mensagens, uiController.)
 export const MAP_FADE_MS = 1500;
 
 
 const CSS = `
-#pqp-ui .f3-linha { position: absolute; right: 8px; display: flex; gap: 6px; pointer-events: none; }
-#pqp-ui .f3-linha .btn { pointer-events: auto; min-height: 48px; padding: 6px 10px; font-size: 14px; }
-#pqp-ui .f3-linha .btn.pisca { background: #ffd060; animation: pqpPisca 0.9s ease-in-out infinite alternate; }
 #pqp-ui .f3-lista { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; pointer-events: auto; touch-action: pan-y; min-height: 0; }
 #pqp-ui .f3-cartao { padding: 10px; border: 3px solid #140c16; background: #3a2a40; box-shadow: inset -3px -3px 0 #24182a, inset 3px 3px 0 #5a4a62;
   display: flex; gap: 10px; align-items: flex-start; color: #fff6e0; font-size: 14px; }
@@ -57,10 +53,12 @@ const CSS = `
 #pqp-ui .f3-bloco small { color: #c8c0d0; }
 #pqp-ui .f3-botoes { display: flex; flex-wrap: wrap; gap: 6px; }
 #pqp-ui .f3-botoes .btn { flex: 1 1 45%; }
-#pqp-ui .f3-guia { position: absolute; left: 8px; bottom: 36%; max-width: min(64vw, 300px); padding: 8px 10px; background: #fff6e0; color: #140c16;
-  border: 3px solid #140c16; box-shadow: 0 3px 0 #0009; font-size: 14px; pointer-events: none; animation: pqpEntra 0.25s ease-out; }
-#pqp-ui .f3-guia b { display: block; font-size: 12px; color: #6a3a70; }
-#pqp-ui .f3-guia:after { content: ''; position: absolute; left: 14px; bottom: -11px; border: 8px solid transparent; border-top-color: #140c16; }
+#pqp-ui .f3-cartao .gesto { font-size: 12px; color: #9ad0ff; }
+#pqp-ui .f3-cartao .num { font-size: 12px; color: #ffd060; }
+#pqp-ui .f3-cartao .slot { display: inline-block; margin-right: 6px; padding: 0 6px; background: #ffd060; color: #140c16; font-size: 12px; font-weight: bold; }
+#pqp-ui .f3-novo { padding: 8px 10px; border: 3px solid #ffd060; background: #2a1e30; }
+#pqp-ui .f3-novo h2 { font-size: 13px; color: #ffd060; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+#pqp-ui .f3-novo p { margin: 2px 0; font-size: 13px; }
 #pqp-ui .f3-troca { position: absolute; inset: 0; background: #0d0b10; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px;
   pointer-events: none; animation: pqpTroca ${MAP_FADE_MS}ms ease-in forwards; z-index: 9; }
 #pqp-ui .f3-troca .n { font-size: 26px; font-weight: bold; color: #ffe8a0; text-shadow: 2px 2px 0 #140c16; }
@@ -78,11 +76,9 @@ function injectCss(): void {
   cssDone = true;
 }
 
-export type Fase3Screen = 'ala' | 'talento' | 'slot3' | 'emotes' | 'painel';
+export type Fase3Screen = 'ala' | 'talento' | 'slot3' | 'emotes' | 'painel' | 'habilidades';
 
 export interface Fase3Frame {
-  /** topo da linha de botões do topo (px de CSS), abaixo do quadro do jogador */
-  rowTopCss: number;
   /** a interface está livre (sem diálogo, sem tela da Fase 2 aberta) */
   free: boolean;
 }
@@ -100,15 +96,9 @@ export class Fase3Ui {
   private draws: PendingDraw[] = [];
   private dataSig: unknown[] = [];
   private shownKey = '';
-  private row: HTMLDivElement;
-  private rowSig = '';
-  private guideBox: HTMLDivElement;
-  private guideUntil = 0;
   private fadeAt = -1;
   private fadeBox: HTMLDivElement | null = null;
   private waiting = false;
-  /** Fase 4: elemento que entra no começo da linha do topo (o botão da carteira) */
-  rowPrefix: HTMLElement | null = null;
 
   constructor(
     private readonly root: HTMLElement,
@@ -117,12 +107,6 @@ export class Fase3Ui {
     private readonly scene: () => Phaser.Scene | undefined,
   ) {
     injectCss();
-    this.row = el('div', 'f3-linha');
-    this.row.style.display = 'none';
-    root.appendChild(this.row);
-    this.guideBox = el('div', 'f3-guia');
-    this.guideBox.style.display = 'none';
-    root.appendChild(this.guideBox);
   }
 
   get isOpen(): boolean {
@@ -142,6 +126,8 @@ export class Fase3Ui {
     this.root.appendChild(this.modal);
     if (kind === 'ala' || kind === 'talento' || kind === 'slot3' || kind === 'painel') this.gc.requestProgress();
     if (kind === 'painel' && this.gc.game.profile?.institution) this.gc.requestInstitution();
+    // o Perfil lista as novidades: o selo do MENU apaga
+    if (kind === 'painel') this.gc.game.seeNovidades();
     this.shownKey = this.dataKey();
     this.dataSig = [this.gc.game.profile, this.gc.game.progress, this.gc.game.institution];
     this.render();
@@ -163,10 +149,6 @@ export class Fase3Ui {
     const p = game.profile;
     this.updateFade(now);
     this.updateGuide(now, f.free && !this.modal);
-    // linha de botões do topo: só na margem (no Delta o tutorial libera os controles aos poucos)
-    const showRow = f.free && !this.modal && !!p && p.criado && p.stage === 'margem';
-    this.row.style.display = showRow ? '' : 'none';
-    if (showRow) this.renderRow(f);
     if (!this.modal) return;
     // erro do servidor: mostra e libera o botão
     const err = game.lastError;
@@ -212,7 +194,9 @@ export class Fase3Ui {
       case 'emotes':
         return JSON.stringify(p?.emotes);
       case 'painel':
-        return JSON.stringify([p?.level, p?.semente, p?.credito, p?.rank, p?.institution_rank, p?.archetype, p?.talentos, p?.talentosPendentes, p?.loadout, p?.emotes, p?.podeEscolherAla, g.institution]);
+        return JSON.stringify([p?.level, p?.semente, p?.credito, p?.rank, p?.institution_rank, p?.archetype, p?.talentos, p?.talentosPendentes, p?.loadout, p?.emotes, p?.podeEscolherAla, g.institution, g.novidades.length, this.slotAbilities()]);
+      case 'habilidades':
+        return JSON.stringify([p?.loadout, p?.archetype, this.slotAbilities()]);
       default:
         return '';
     }
@@ -235,37 +219,16 @@ export class Fase3Ui {
   }
 
   // ---------------------------------------------------------------------------
-  // linha do topo e balão do guia
+  // fala do guia
 
-  private renderRow(f: Fase3Frame): void {
-    this.row.style.top = `${Math.round(f.rowTopCss)}px`;
-    const p = this.gc.game.profile!;
-    const pend = this.gc.game.pendingChoice;
-    const sig = `${pend}|${(p.emotes ?? []).length}|${this.rowPrefix ? 1 : 0}`;
-    if (sig === this.rowSig) return;
-    this.rowSig = sig;
-    this.row.innerHTML = '';
-    if (this.rowPrefix) this.row.appendChild(this.rowPrefix);
-    // SUGESTÃO: textos dos botões do topo
-    if (pend === 'ala') this.row.appendChild(button('Escolher ala!', 'pisca', () => this.open('ala')));
-    else if (pend === 'talento') this.row.appendChild(button('Talento!', 'pisca', () => this.open('talento')));
-    if ((p.emotes ?? []).length > 0) this.row.appendChild(button('Bordão', 'sec', () => this.open('emotes')));
-    this.row.appendChild(button('Perfil', 'sec', () => this.open('painel')));
-  }
-
+  /**
+   * A fala do guia entra na fila da faixa de mensagens do topo (Z2), com o nome em cima: não fica
+   * mais num balão parado no meio da tela, apontando para o nada.
+   */
   private updateGuide(now: number, free: boolean): void {
-    const game = this.gc.game;
-    if (now >= this.guideUntil) {
-      const line = free ? game.takeGuideLine() : undefined;
-      if (line) {
-        this.guideBox.innerHTML = '';
-        this.guideBox.appendChild(el('b', '', line.nome));
-        this.guideBox.appendChild(el('span', '', line.texto));
-        this.guideUntil = now + GUIDE_BUBBLE_MS;
-      }
-    }
-    const on = free && now < this.guideUntil;
-    this.guideBox.style.display = on ? '' : 'none';
+    if (!free) return;
+    const line = this.gc.game.takeGuideLine();
+    if (line) this.gc.game.pushToast(line.texto, 'guia', now, line.nome);
   }
 
   /** Transição entre mapas: tela escura com o nome do lugar, que some sozinha. */
@@ -323,6 +286,9 @@ export class Fase3Ui {
         break;
       case 'painel':
         this.renderPanel(box);
+        break;
+      case 'habilidades':
+        this.renderAbilities(box);
         break;
     }
     box.appendChild(this.erro);
@@ -498,6 +464,15 @@ export class Fase3Ui {
     const margem = p.side ? (D.regionsById.get(`margem_${p.side}`)?.name ?? p.side) : 'Delta (sem lado)';
     const moeda = p.side === 'direita' ? `${p.credito} Crédito (score ${p.score})` : p.side === 'esquerda' ? `${p.semente} Semente` : `${p.semente} Semente, ${p.credito} Crédito`;
     bloco('Personagem', [`Nível ${p.level} - ${margem}`, moeda]);
+    // controles liberados (o aviso da faixa só diz "veja no Perfil"; o texto inteiro fica aqui)
+    const novs = this.gc.game.novidades;
+    if (novs.length > 0) {
+      const nb = el('div', 'f3-novo');
+      // SUGESTÃO: título do bloco de novidades
+      nb.appendChild(el('h2', '', 'Novidades'));
+      for (const u of novs.slice(0, 6)) nb.appendChild(el('p', '', u.descricao));
+      pan.appendChild(nb);
+    }
     // instituição e patente
     const inst = p.institution ? D.institutionsById.get(p.institution) : undefined;
     const info = this.gc.game.institution;
@@ -530,11 +505,17 @@ export class Fase3Ui {
     if ((p.talentosPendentes ?? []).length > 0) tLines.push(`Esperando escolha: nível ${(p.talentosPendentes ?? []).join(', ')}`);
     if (tLines.length === 0) tLines.push('O primeiro talento é no nível 10.');
     bloco('Talentos', tLines);
-    // botões
+    // botões: o que cada habilidade faz (ícone, tipo, recarga, custo, gesto e a descrição inteira)
     const lo = p.loadout;
-    if (lo) {
-      const nm = (id: string) => D.abilities.get(id)?.name ?? id;
-      bloco('Botões', [`1: ${nm(lo.b1)}`, `2: ${nm(lo.b2)}`, `3: ${nm(lo.b3)}`, `Especial: ${nm(lo.especial)}`]);
+    if (this.slotAbilities().some((x) => x)) {
+      const hb = el('div', 'f3-bloco');
+      // SUGESTÃO: título do bloco
+      hb.appendChild(el('h2', '', 'Habilidades dos botões'));
+      const lst = el('div', 'f3-lista');
+      lst.style.overflow = 'visible';
+      this.abilityCards(lst);
+      hb.appendChild(lst);
+      pan.appendChild(hb);
     }
     // ações
     const acoes = el('div', 'f3-botoes');
@@ -552,6 +533,62 @@ export class Fase3Ui {
       );
     if (acoes.childElementCount > 0) pan.appendChild(acoes);
     box.appendChild(pan);
+  }
+
+  /** As habilidades dos botões 1, 2, 3 e Especial agora (as do HUD; sem HUD, as do perfil). */
+  private slotAbilities(): (string | undefined)[] {
+    const ab = this.gc.world.hud?.ab;
+    if (ab && ab.slice(0, 4).some((x) => x)) return [ab[0], ab[1], ab[2], ab[3]];
+    const lo = this.gc.game.profile?.loadout;
+    return lo ? [lo.b1, lo.b2, lo.b3, lo.especial] : [];
+  }
+
+  /** Cartões das habilidades dos botões, no estilo da troca do botão 3. SUGESTÃO: textos. */
+  private abilityCards(list: HTMLElement): void {
+    const D = getData();
+    const p = this.gc.game.profile;
+    const side = p?.side ?? null;
+    const arch = p?.archetype ? D.archetypesById.get(p.archetype) : this.gc.world.hud?.arch ? D.archetypesById.get(this.gc.world.hud.arch) : undefined;
+    const clsId = this.gc.world.hud?.cls ?? (p?.institution ? D.institutionsById.get(p.institution)?.classe : undefined);
+    const cls = clsId ? D.classesById.get(clsId) : undefined;
+    const res = cls ? cls.resource[side ?? arch?.margem ?? 'esquerda'] : undefined;
+    const rotulo = ['Botão 1', 'Botão 2', 'Botão 3', 'Especial'];
+    this.slotAbilities().forEach((id, i) => {
+      const ab = id ? D.abilities.get(id) : undefined;
+      if (!id || !ab) return;
+      const t = abilityCardText(ab, res?.name, side ?? arch?.margem ?? null);
+      const card = el('div', `f3-cartao ${side ?? ''}`);
+      const ic = el('canvas', 'px icone');
+      this.queueIcon(ic, id);
+      card.appendChild(ic);
+      const col = el('div', 'col');
+      const h = el('div', '');
+      h.appendChild(el('span', 'slot', rotulo[i]!));
+      h.appendChild(el('b', '', t.name));
+      h.appendChild(el('span', 'tag', t.tipo));
+      col.appendChild(h);
+      if (t.numeros) col.appendChild(el('div', 'num', t.numeros));
+      col.appendChild(el('p', '', t.descricao));
+      col.appendChild(el('div', 'gesto', t.gesto));
+      card.appendChild(col);
+      list.appendChild(card);
+    });
+  }
+
+  private renderAbilities(box: HTMLDivElement): void {
+    // SUGESTÃO: título e subtítulo da lista de habilidades
+    box.appendChild(el('h1', 'sombra', 'Habilidades'));
+    box.appendChild(el('div', 'sub', 'Toda habilidade mira sozinha. As de área: segure e arraste o botão para posicionar.'));
+    const list = el('div', 'f3-lista');
+    if (!this.slotAbilities().some((x) => x)) list.appendChild(el('div', 'sub', 'Nenhuma habilidade nos botões ainda.'));
+    this.abilityCards(list);
+    box.appendChild(list);
+    const lo = this.gc.game.profile?.loadout;
+    if (lo && lo.slot3Opcoes.length > 0) {
+      const acoes = el('div', 'f3-botoes');
+      acoes.appendChild(button('Trocar botão 3', '', () => this.open('slot3')));
+      box.appendChild(acoes);
+    }
   }
 
   // ---------------------------------------------------------------------------

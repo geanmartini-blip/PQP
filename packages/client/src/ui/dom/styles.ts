@@ -52,7 +52,9 @@ const CSS = `
 
 /* diálogo */
 #pqp-ui .dlg { position: absolute; left: 8px; right: 8px; bottom: calc(env(safe-area-inset-bottom, 0px) + 10px); pointer-events: auto;
-  padding: 10px; display: flex; flex-direction: column; gap: 8px; max-height: 62%; }
+  padding: 10px; display: flex; flex-direction: column; gap: 8px; max-height: calc(50% - 30px - env(safe-area-inset-bottom, 0px)); }
+/* o quadro para logo abaixo dos pés do boneco (centro da tela + 24 px): em tela baixa as opções rolam */
+#pqp-ui .dlg-ops { overflow-y: auto; min-height: 48px; flex: 0 1 auto; }
 #pqp-ui .dlg-topo { display: flex; gap: 10px; align-items: flex-start; }
 #pqp-ui .dlg-retrato { flex: 0 0 auto; width: 72px; height: 72px; background: #140c16; border: 3px solid #6a4a70; }
 #pqp-ui .dlg-retrato canvas { width: 66px; height: 66px; }
@@ -62,35 +64,73 @@ const CSS = `
 #pqp-ui .dlg-ops .btn { text-align: left; }
 #pqp-ui .dlg-toque { font-size: 12px; color: #c8c0d0; text-align: right; }
 
-/* rastreador de missão */
-#pqp-ui .rastreador { position: absolute; left: 50%; transform: translateX(-50%); max-width: min(92vw, 420px); pointer-events: auto; cursor: pointer;
-  padding: 6px 12px 6px 34px; background: #140c16d8; border: 3px solid #ffe8a0; box-shadow: 0 3px 0 #0009; min-height: 44px; touch-action: manipulation; }
-#pqp-ui .rastreador .missao { font-size: 11px; color: #ffd060; text-transform: uppercase; letter-spacing: 1px; }
-#pqp-ui .rastreador .obj { font-size: 14px; font-weight: bold; }
-#pqp-ui .rastreador .pe { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; background: #ffe8a0;
+/* Z1: rastreador de missão compacto (uma linha, entre a engrenagem e o MENU) */
+#pqp-ui .rastreador { position: absolute; pointer-events: auto; cursor: pointer; height: 32px; display: flex; align-items: center; gap: 6px;
+  padding: 0 8px 0 6px; background: #140c16cc; border: 2px solid #c8a050; box-shadow: 0 2px 0 #0008; touch-action: manipulation; overflow: hidden; }
+#pqp-ui .rastreador .obj { flex: 1; min-width: 0; font-size: 13px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#pqp-ui .rastreador .pe { flex: 0 0 auto; width: 14px; height: 14px; background: #ffe8a0;
   clip-path: polygon(0 35%, 55% 35%, 55% 0, 100% 50%, 55% 100%, 55% 65%, 0 65%); }
-#pqp-ui .rastreador.pisca { animation: pqpPisca 0.9s ease-in-out infinite alternate; }
+#pqp-ui .rastreador.pisca { animation: pqpPisca 0.9s ease-in-out infinite alternate; border-color: #ffe8a0; }
 @keyframes pqpPisca { from { box-shadow: 0 0 0 0 #ffe8a0aa, 0 3px 0 #0009; } to { box-shadow: 0 0 0 6px #ffe8a000, 0 3px 0 #0009; } }
 
-/* dica do tutorial */
-#pqp-ui .dica { position: absolute; left: 50%; transform: translateX(-50%); padding: 8px 14px; background: #fff6e0; color: #140c16; border: 3px solid #140c16;
-  font-weight: bold; font-size: 15px; box-shadow: 0 3px 0 #0009; white-space: nowrap; animation: pqpBalanca 1.4s ease-in-out infinite; }
-@keyframes pqpBalanca { 0%,100% { margin-top: 0; } 50% { margin-top: -4px; } }
+/* dica do andar: perto do polegar esquerdo (Z7) */
+#pqp-ui .dica { position: absolute; padding: 6px 10px; background: #140c16cc; color: #fff6e0; border: 2px solid #ffe8a0;
+  font-weight: bold; font-size: 14px; box-shadow: 0 2px 0 #0008; max-width: 46vw; }
 
-/* avisos */
-#pqp-ui .avisos { position: absolute; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-#pqp-ui .aviso { padding: 6px 12px; background: #140c16dd; border: 3px solid #6a4a70; font-weight: bold; font-size: 14px; max-width: 88vw; text-align: center; animation: pqpEntra 0.25s ease-out; }
-#pqp-ui .aviso.missao { border-color: #ffd060; color: #ffe8a0; }
-#pqp-ui .aviso.erro { border-color: #d84a3a; color: #ffb0a0; }
-#pqp-ui .aviso.xp { border-color: #a070ff; color: #e0c8ff; }
-#pqp-ui .aviso small { display: block; font-weight: normal; font-size: 11px; color: #c8c0d0; }
+/* Z2: faixa de mensagens (uma por vez: avisos, dica do tutorial, fala do guia, nível) */
+#pqp-ui .faixa { position: absolute; left: 50%; transform: translateX(-50%); width: max-content; max-width: min(92vw, 420px); text-align: center;
+  padding: 5px 12px; background: #140c16e0; border: 2px solid #6a4a70; box-shadow: 0 2px 0 #0008; font-weight: bold; font-size: 14px; line-height: 1.25; }
+#pqp-ui .faixa .t { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+#pqp-ui .faixa.entra { animation: pqpFaixa 0.2s ease-out; }
+#pqp-ui .faixa.missao { border-color: #ffd060; color: #ffe8a0; }
+#pqp-ui .faixa.erro { border-color: #d84a3a; color: #ffb0a0; }
+#pqp-ui .faixa.saque, #pqp-ui .faixa.xp { border-color: #c8a050; color: #ffe8a0; font-size: 13px; }
+#pqp-ui .faixa.mapa.esquerda { border-color: #8ac060; color: #e0f0b0; background: #1e2a14ee; }
+#pqp-ui .faixa.mapa.direita { border-color: #40e8ff; color: #b0f8ff; background: #14142aee; }
+#pqp-ui .faixa.mapa.apagao { border-color: #d84a3a; color: #ffb0a0; }
+#pqp-ui .faixa.guia { text-align: left; background: #fff6e0; color: #140c16; border-color: #140c16; font-weight: normal; font-size: 13px; }
+#pqp-ui .faixa.guia .t { -webkit-line-clamp: 3; }
+#pqp-ui .faixa.guia b { display: block; font-size: 11px; color: #6a3a70; }
+#pqp-ui .faixa.dica2 { background: #140c16cc; border-color: #ffe8a0; color: #fff6e0; }
+#pqp-ui .faixa.dica2 .t:before { content: '\\25B6\\00a0'; color: #ffd060; }
+#pqp-ui .faixa.nivel { border: 3px solid #ffd060; box-shadow: 0 0 0 3px #140c16, 0 4px 0 #0009; padding: 6px 18px; }
+#pqp-ui .faixa.nivel .n { font-size: 24px; color: #ffd060; }
+#pqp-ui .faixa.nivel small { display: block; font-size: 12px; font-weight: normal; color: #fff6e0; }
+#pqp-ui .faixa small.sub { display: block; font-size: 11px; font-weight: normal; color: #c8c0d0; }
+@keyframes pqpFaixa { from { transform: translate(-50%, -6px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
 @keyframes pqpEntra { from { transform: translateY(-8px); opacity: 0; } to { transform: none; opacity: 1; } }
-#pqp-ui .nivel { position: absolute; left: 50%; top: 26%; transform: translateX(-50%); text-align: center; padding: 12px 22px; background: #140c16ee;
-  border: 4px solid #ffd060; box-shadow: 0 0 0 4px #140c16, 0 6px 0 #0009; animation: pqpSobe 0.5s cubic-bezier(.2,1.6,.4,1); }
-#pqp-ui .nivel .n { font-size: 30px; font-weight: bold; color: #ffd060; }
-#pqp-ui .nivel .d { font-size: 13px; color: #fff6e0; margin-top: 4px; max-width: 78vw; }
-@keyframes pqpSobe { from { transform: translateX(-50%) scale(0.4); opacity: 0; } to { transform: translateX(-50%) scale(1); opacity: 1; } }
-#pqp-ui .acao { position: absolute; left: 50%; transform: translateX(-50%); }
+
+/* Z6: botões de perto (loja, feira, câmbio, máquina, plantão, masmorra), numa coluna à direita do FALAR */
+#pqp-ui .perto-col { position: absolute; display: flex; flex-direction: column-reverse; align-items: stretch; gap: 6px; pointer-events: none; }
+#pqp-ui .perto-col > div { display: flex; flex-direction: column-reverse; gap: 6px; }
+#pqp-ui .perto-col .btn { pointer-events: auto; min-height: 44px; min-width: 0; padding: 4px 8px; font-size: 13px; line-height: 1.15; white-space: normal; }
+
+/* Z5: MENU (os botões do topo juntos) e a gaveta */
+#pqp-ui .menu-btn { position: absolute; pointer-events: auto; border-radius: 50%; padding: 0; min-width: 0; min-height: 0; background: #30223a; color: #ffe8a0;
+  font-size: 22px; line-height: 1; box-shadow: inset -3px -3px 0 #1e1424, inset 3px 3px 0 #4e3a5a, 0 3px 0 #0009; }
+#pqp-ui .menu-btn .selo { position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 4px; border-radius: 10px; background: #ffd060;
+  color: #140c16; border: 2px solid #140c16; font-size: 12px; line-height: 16px; animation: pqpPisca 0.9s ease-in-out infinite alternate; }
+#pqp-ui .gaveta-fundo { position: absolute; inset: 0; pointer-events: auto; background: #0008; }
+#pqp-ui .gaveta { position: absolute; top: 0; right: 0; bottom: 0; width: min(72vw, 300px); pointer-events: auto; display: flex; flex-direction: column; gap: 8px;
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) 10px calc(env(safe-area-inset-bottom, 0px) + 10px); overflow-y: auto; animation: pqpGaveta 0.18s ease-out; }
+#pqp-ui .gaveta .btn { text-align: left; position: relative; }
+#pqp-ui .gaveta .btn.pisca { background: #ffd060; animation: pqpPisca 0.9s ease-in-out infinite alternate; }
+#pqp-ui .gaveta .btn .selo { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 0 6px; background: #d84a3a; color: #fff; font-size: 12px; }
+#pqp-ui .gaveta .btn.alerta { background: #ffb0a0; }
+@keyframes pqpGaveta { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* cartão de habilidade da primeira vez (ao lado do arco, sem pegar toque) */
+#pqp-ui .hab-cartao { position: absolute; pointer-events: none; display: flex; gap: 8px; align-items: flex-start; padding: 6px 8px; background: #140c16ee;
+  border: 2px solid #ffd060; box-shadow: 0 3px 0 #0009; animation: pqpCartao 0.2s ease-out; }
+#pqp-ui .hab-cartao canvas { flex: 0 0 auto; width: 36px; height: 36px; image-rendering: pixelated; background: #2a1e30; border: 2px solid #6a4a70; }
+#pqp-ui .hab-cartao .col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+#pqp-ui .hab-cartao b { font-size: 13px; color: #ffe8a0; }
+#pqp-ui .hab-cartao .tag { display: inline-block; margin-left: 4px; padding: 0 4px; background: #3a2a40; color: #ffd060; font-size: 10px; font-weight: bold; vertical-align: 1px; }
+#pqp-ui .hab-cartao .l { font-size: 12px; color: #fff6e0; line-height: 1.2; }
+#pqp-ui .hab-cartao .n { font-size: 11px; color: #c8c0d0; }
+#pqp-ui .hab-cartao .g { font-size: 11px; color: #9ad0ff; }
+#pqp-ui .hab-cartao:after { content: ''; position: absolute; right: -12px; top: var(--seta, 50%); transform: translateY(-50%); border: 6px solid transparent; border-left-color: #ffd060; }
+@keyframes pqpCartao { from { transform: translateX(-10px); opacity: 0; } to { transform: none; opacity: 1; } }
 
 /* travessia */
 #pqp-ui .tv-margens { flex: 1; display: flex; gap: 8px; min-height: 0; }

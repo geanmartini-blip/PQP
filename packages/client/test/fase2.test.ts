@@ -87,17 +87,15 @@ describe('GameState', () => {
     expect(g.toasts.some((t) => t.texto === 'Novo: Coisa nova.')).toBe(true);
   });
 
-  it('XP em grupo: somas seguidas viram um aviso só, com o Seu Jacó no Delta', () => {
+  it('XP: não vira aviso (vai para a barra do quadro); somas seguidas viram um número só', () => {
     const g = new GameState();
     g.onMessage(GAME_MSG.perfil, perfil(), 0);
     g.onXp(10, 100);
     g.onXp(5, 600);
-    const xp = g.toasts.filter((t) => t.tipo === 'xp');
-    expect(xp).toHaveLength(1);
-    expect(xp[0]!.texto).toBe('+15 XP');
-    expect(xp[0]!.sub).toMatch(/Seu Jacó/);
+    expect(g.toasts.filter((t) => t.tipo === 'xp')).toHaveLength(0);
+    expect(g.xpGain).toEqual({ amount: 15, at: 600 });
     g.onXp(7, 5000);
-    expect(g.toasts.filter((t) => t.tipo === 'xp')).toHaveLength(2);
+    expect(g.xpGain).toEqual({ amount: 7, at: 5000 });
   });
 
   it('dica do tutorial: o primeiro passo que falta, só no Delta e depois do cadastro', () => {

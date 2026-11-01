@@ -29,7 +29,7 @@ import { ColyseusTransport } from '../net/colyseusTransport';
 import { LaggedTransport } from '../net/transport';
 import { isTap, JOY_RADIUS_PX, keysVector, newJoystick, TAP_MAX_MOVE_PX, updateJoystick, type JoyState } from '../input/joystick';
 import { RoundButton } from '../ui/buttons';
-import { COMPASS_MIN_TILES, nearestEnemyMarker } from '../ui/compass';
+import { COMPASS_MIN_TILES, easiestEnemyMarker, nearestEnemyMarker } from '../ui/compass';
 import { arrowTex, gearTex, panelTex, ringDiscTex } from '../ui/hudTextures';
 import {
   applyOffsets,
@@ -51,7 +51,7 @@ import {
   type Rect,
 } from '../ui/layout';
 import { TIP_TEXT, type TipId } from '../ui/tips';
-import { getUi, type UiController } from '../ui/dom/uiController';
+import { getUi, type UiController, type UiFrame } from '../ui/dom/uiController';
 import type { WorldScene } from './WorldScene';
 
 type Slot = 1 | 2 | 3 | 'especial';
@@ -82,6 +82,8 @@ const BOSS_BAR_TILES = 14;
 const TEMPLATE_ALAS = ['peao_brabo', 'idol'] as const;
 // SUGESTÃO: cores dos recursos.
 const RES_COLOR: Record<string, number> = { folego: 0xf0c040, municao: 0xf09040, espirito: 0x60e0b0, bateria: 0x40c8f0, foco: 0xc080ff };
+// SUGESTÃO: o "+N XP" fica 1,5 s na barra de XP.
+const XP_GAIN_MS = 1500;
 // SUGESTÃO: textos do modo de ajuste.
 const EDIT_TEXT = 'Arraste os botões para onde preferir';
 const EDIT_OK = 'OK';
@@ -135,6 +137,9 @@ export class HudScene extends Phaser.Scene {
   private readonly pressed = new Set<BtnId>();
   private downedText!: Phaser.GameObjects.Text;
   private downedShown = -1;
+  private tutorialArrow!: Phaser.GameObjects.Image;
+  /** a barra do chefe está na faixa do rastreador (o DOM esconde o rastreador) */
+  private bossOn = false;
   private readonly cds = new LocalCooldowns();
   private iconKeys = new Map<string, string>();
   // seta do rumo
@@ -161,6 +166,12 @@ export class HudScene extends Phaser.Scene {
     this.rt = getRuntime();
     this.world = this.scene.get('WorldScene') as WorldScene;
     this.ui = getUi(this.rt.gc, this.rt.art, () => this.world);
+    this.ui.goToCompass = () => {
+      const to = this.compassTo;
+      if (!to || this.compassMission) return false;
+      this.rt.gc.goTo(to.x, to.y);
+      return true;
+    };
     this.wasModal = false;
     this.touch = this.sys.game.device.input.touch;
     this.W = this.scale.width;
@@ -288,17 +299,23 @@ export class HudScene extends Phaser.Scene {
     const m = Math.round(3 * px);
     this.bossBox = this.add.rectangle(B.x - m, B.y - m, B.w + 2 * m, B.h + 2 * m, 0x140c16, 0.85).setOrigin(0).setDepth(10).setStrokeStyle(Math.round(2 * px), 0xffd060, 1).setVisible(false);
     this.bar('chefe', B, 0x3a1414, 0xc02a2a);
-    this.texts['chefe'] = this.bt(W / 2, B.y - m - Math.round(2 * px), ts, 0xffd060).setOrigin(0.5, 1);
-    // caído
+    // Z1: o nome do chefe em cima da barra, na faixa do rastreador
+    this.texts['chefe'] = this.bt(B.x + B.w / 2, B.y - m - Math.round(1 * px), ts, 0xffd060).setOrigin(0.5, 1);
+    // "+N XP" colado na barra de XP do quadro (o XP não vira aviso)
+    this.texts['xpGanho'] = this.bt(P.xpBar.x + P.xpBar.w, P.xpBar.y + P.xpBar.h / 2, Math.max(1, ts - 1), 0xd8b8ff).setOrigin(1, 0.5).setDepth(12.5).setVisible(false);
+    // caído: abaixo da faixa de mensagens, longe do boneco
     this.downedText = this.add
-      .text(W / 2, H * 0.36, '', this.textStyle(17, { color: '#ffffff', backgroundColor: '#3a1418dd', padding: { x: 12 * px, y: 8 * px }, align: 'center', wordWrap: { width: Math.round(W * 0.86) } }))
-      .setOrigin(0.5)
+      .text(W / 2, L.bannerY + Math.round(56 * L.ui * px), '', this.textStyle(15, { color: '#ffffff', backgroundColor: '#3a1418dd', padding: { x: 10 * px, y: 6 * px }, align: 'center', wordWrap: { width: Math.round(W * 0.86) } }))
+      .setOrigin(0.5, 0)
       .setDepth(60)
       .setVisible(false);
     this.texts['debug'] = this.bt(8 * px, L.ajuste.y + L.ajuste.r + 8 * px, Math.max(1, ts - 1), 0x9ad0ff);
+    // seta do tutorial em cima do botão citado ("Toque no botão 1")
+    this.tutorialArrow = this.add.image(0, 0, arrowTex(this, Math.round(34 * L.ui * px))).setRotation(Math.PI / 2).setDepth(36).setVisible(false);
 
-    // botões
-    const hint = (k: string) => (this.touch ? undefined : k);
+    // botões: no celular o número (1, 2, 3) aparece pequeno no canto, como no teclado, para a fala
+    // "toque no botão 1" casar com a tela; ESP, Q e E são só do teclado
+    const hint = (k: string) => (this.touch && !['1', '2', '3'].includes(k) ? undefined : k);
     const mk = (id: BtnId, c: Circle, o: ConstructorParameters<typeof RoundButton>[2] = {}) => {
       const b = new RoundButton(this, c, { px, ts, ...o });
       b.setDepth(20);
@@ -314,7 +331,7 @@ export class HudScene extends Phaser.Scene {
     mk('ala', L.ala, { label: 'ALA', color: 0x30223a });
     mk('falar', L.falar, { label: 'FALAR', color: 0x3a3020, ...opt(hint('E')) }).setVisible(false);
     mk('ajuste', L.ajuste, { color: 0x2a2a2a }).setIcon(gearTex(this, 48));
-    this.texts['falarNome'] = this.bt(L.falar.x, L.falar.y - L.falar.r - 4 * px, Math.max(1, ts - 1), 0xffe8a0).setOrigin(0.5, 1).setDepth(21);
+    // (o nome do NPC em cima do FALAR saiu: ele já aparece no mundo, em cima do NPC)
 
     // joystick
     const jr = Math.round(JOY_RADIUS_PX * px);
@@ -348,9 +365,10 @@ export class HudScene extends Phaser.Scene {
       .setOrigin(0.5, 0)
       .setDepth(90)
       .setVisible(false);
+    // aviso do protótipo (sem perfil): na faixa de mensagens do topo (Z2), nunca no centro
     this.noticeText = this.add
-      .text(W / 2, H * 0.34, '', { ...big, fontSize: `${Math.round(18 * L.ui * px)}px`, backgroundColor: '#140c16aa', padding: { x: 10 * px, y: 6 * px } })
-      .setOrigin(0.5)
+      .text(W / 2, L.bannerY, '', { ...big, fontSize: `${Math.round(16 * L.ui * px)}px`, backgroundColor: '#140c16dd', padding: { x: 10 * px, y: 5 * px } })
+      .setOrigin(0.5, 0)
       .setDepth(91)
       .setVisible(false);
 
@@ -597,6 +615,8 @@ export class HudScene extends Phaser.Scene {
     const i = HUD_INDEX[btn];
     const ok = this.isReady(btn) && !this.cds.blocked(i, now);
     const cmd = gc.useAbility(SLOT_OF[btn], at);
+    // usou o botão: o cartão de primeira vez dele some
+    this.ui.abilityUsed(btn);
     if (ok) {
       this.world.localCast(SLOT_OF[btn]);
       this.cds.onCast(i, now, getData().balance.combate.recargaGlobalMs, gc.rtt.value, cmd?.id);
@@ -715,8 +735,8 @@ export class HudScene extends Phaser.Scene {
   override update(): void {
     const gc = this.rt.gc;
     const now = performance.now();
-    // interface em DOM da Fase 2 (telas, rastreador, avisos)
-    this.ui.update(now, { topCss: this.L.bannerY / this.px, selfTile: this.world.selfTile, rowTopCss: (this.L.ajuste.y - this.L.ajuste.r) / this.px });
+    // interface em DOM (telas, rastreador, faixa de mensagens, MENU, botões de perto, cartão de habilidade)
+    this.ui.update(now, this.uiFrame());
     const modal = this.ui.modalOpen;
     if (modal !== this.wasModal) {
       this.wasModal = modal;
@@ -750,13 +770,54 @@ export class HudScene extends Phaser.Scene {
     }
     this.updateButtons(now);
     this.updateFrames();
+    this.updateXpGain(now);
     this.updateJoystick();
     this.updateTips(now);
     this.updateNotices(now);
     this.updateDebug();
   }
 
+  /** O que a interface em DOM precisa saber do HUD do Phaser, em px de CSS. */
+  private uiFrame(): UiFrame {
+    const L = this.L, px = this.px;
+    const C = (c: Circle) => ({ x: c.x / px, y: c.y / px, r: c.r / px });
+    const hud = this.rt.gc.world.hud;
+    const btn = (id: 'b1' | 'b2' | 'b3' | 'especial') => {
+      const b = this.buttons.get(id);
+      const c = b ? b.c : L[id];
+      return { id: hud?.ab[HUD_INDEX[id]], ...C(c) };
+    };
+    // Z5: o MENU no lugar da ALA (que só existe no modo de teste); com a ALA na tela, logo abaixo dela
+    const ala = C(L.ala);
+    const alaOn = this.buttons.get('ala')?.visible === true;
+    const menu = alaOn ? { ...ala, y: ala.y + 2 * ala.r + 8 } : ala;
+    // Z6: a coluna de perto fica à direita do FALAR e acima do AUTO e do botão 3
+    const falar = C(L.falar), auto = C(L.auto), b3 = C(L.b3);
+    const cw = this.W / px, ch = this.H / px;
+    const bottom = Math.min(falar.y + falar.r, auto.y - auto.r - 6, b3.y - b3.r - 6);
+    const D = getData();
+    const cls = hud?.cls ? D.classesById.get(hud.cls) : undefined;
+    const side = (hud?.arch ? D.archetypesById.get(hud.arch)?.margem : undefined) ?? this.rt.gc.game.profile?.side ?? 'esquerda';
+    const res = cls?.resource[side];
+    return {
+      topCss: L.bannerY / px,
+      selfTile: this.world.selfTile,
+      band: { x: L.bandX0 / px, y: L.trackerY / px, w: (L.bandX1 - L.bandX0) / px },
+      bossOn: this.bossOn,
+      menu,
+      perto: { x: falar.x + falar.r + 8, bottom, right: cw - 8 },
+      buttons: { b1: btn('b1'), b2: btn('b2'), b3: btn('b3'), especial: btn('especial') },
+      cw,
+      ch,
+      joy: this.joy !== null,
+      walkTip: this.tipTexts.get('andar')?.visible === true,
+      ...(res ? { resourceName: res.name } : {}),
+    };
+  }
+
   private hideWorldUi(): void {
+    this.tutorialArrow.setVisible(false);
+    this.texts['xpGanho']?.setVisible(false);
     for (const t of this.tipTexts.values()) if (t.visible) t.setVisible(false);
     if (this.targetPortrait.visible) this.targetPortrait.setVisible(false);
     if (this.targetPanel.visible) this.targetPanel.setVisible(false);
@@ -854,9 +915,45 @@ export class HudScene extends Phaser.Scene {
     // Falar: só perto de NPC
     this.talkTarget = this.world.nearestTalkNpc();
     const falar = this.buttons.get('falar')!;
-    falar.setVisible(this.talkTarget !== undefined);
+    // com o diálogo aberto o FALAR sai: ele ficava cortado pela borda de cima do quadro de conversa
+    falar.setVisible(this.talkTarget !== undefined && !this.ui.dialogOpen);
     falar.update({ cd: 0, gcd: 0, disabled: false, pressed: pressed.has('falar') }, now);
-    this.text('falarNome', this.talkTarget ? fontText(this.talkTarget.name) : '');
+    // o quadro de conversa cobre o arco: os botões que sobravam por cima dele (item, AUTO) apareciam
+    // cortados pela borda; com a conversa aberta o arco inteiro sai e volta ao fechar
+    if (this.ui.dialogOpen) for (const id of ['b1', 'b2', 'b3', 'especial', 'item', 'auto'] as const) this.buttons.get(id)!.setVisible(false);
+    this.updateTutorialArrow(now);
+  }
+
+  /** Seta piscando em cima do botão que a dica do tutorial cita ("Toque no botão 1", "Brilhou? Toque no Especial"). */
+  private updateTutorialArrow(now: number): void {
+    const step = this.rt.gc.game.tutorialStep();
+    const map: Record<string, BtnId> = { botao_1: 'b1', botao_2: 'b2', botao_3: 'b3', especial: 'especial' };
+    // com o cartão de habilidade na tela a seta espera: o cartão já aponta para o botão, e as duas
+    // setas juntas cobriam o texto do cartão
+    const id = step && !this.ui.modalOpen && !this.ui.dialogOpen && !this.ui.card.visible ? map[step.destaca] : undefined;
+    const b = id ? this.buttons.get(id) : undefined;
+    if (!b || !b.visible) {
+      if (this.tutorialArrow.visible) this.tutorialArrow.setVisible(false);
+      return;
+    }
+    // a seta chega por um lado livre do arco: o 1 pela esquerda, o 2 e o 3 por cima à esquerda, o
+    // Especial por baixo à esquerda (em cima dele fica o 3)
+    const deg = id === 'b1' ? 180 : id === 'especial' ? 225 : 135;
+    const a = (deg * Math.PI) / 180;
+    const bob = (Math.sin(now / 160) + 1) * 3 * this.px;
+    const d = b.c.r + this.tutorialArrow.height / 2 + 2 * this.px + bob;
+    const x = b.c.x + Math.cos(a) * d, y = b.c.y - Math.sin(a) * d;
+    this.tutorialArrow.setPosition(x, y).setRotation(Math.atan2(b.c.y - y, b.c.x - x)).setVisible(true);
+    this.tutorialArrow.setAlpha(0.75 + 0.25 * Math.sin(now / 120));
+  }
+
+  /** "+N XP" colado na barra de XP por 1,5 s depois do último ganho. */
+  private updateXpGain(now: number): void {
+    const g = this.rt.gc.game.xpGain;
+    const t = this.texts['xpGanho']!;
+    const on = !!g && now - g.at < XP_GAIN_MS;
+    if (t.visible !== on) t.setVisible(on);
+    if (on) this.text('xpGanho', fontText(`+${g!.amount} XP`));
   }
 
   private updateFrames(): void {
@@ -939,6 +1036,7 @@ export class HudScene extends Phaser.Scene {
         if (Math.hypot(e.x - me.x, e.y - me.y) <= BOSS_BAR_TILES) boss = { name: e.name ?? 'Chefe', h: e.h };
       }
     }
+    this.bossOn = boss !== undefined;
     this.bossBox.setVisible(boss !== undefined);
     this.setBar('chefe', boss ? boss.h / 1000 : 0, boss !== undefined);
     const chefe = this.texts['chefe']!;
@@ -1021,6 +1119,14 @@ export class HudScene extends Phaser.Scene {
     // Fase 2: a seta aponta para o alvo da missão (e tocar nela liga o auto-caminho)
     if (gc.game.active) {
       const a = gc.game.missions?.alvo;
+      // objetivo sem lugar ("Toque num inimigo para trocar o alvo", "Use o botão 1") e nenhum inimigo à
+      // vista: a seta leva ao bando mais fraco (e mais perto) que não seja o que acabou de ser limpo
+      // (só no Delta, onde esses objetivos são todos de luta)
+      if (me && !this.ui.modalOpen && a && gc.game.profile?.stage === 'delta' &&a.mapa === gc.world.mapId && (a.x === undefined || a.y === undefined) && this.enemiesSeen === 0 && gc.map) {
+        const m = easiestEnemyMarker(gc.map.markers, me.x, me.y, COMPASS_MIN_TILES + 3);
+        if (m) this.compassTo = { x: m.x, y: m.y };
+        return;
+      }
       if (!me || this.ui.modalOpen || !a || a.mapa !== gc.world.mapId || a.x === undefined || a.y === undefined) return;
       if (Math.hypot(a.x - me.x, a.y - me.y) > COMPASS_MIN_TILES) {
         this.compassTo = { x: a.x, y: a.y };
@@ -1063,6 +1169,16 @@ export class HudScene extends Phaser.Scene {
     const n = this.rt.gc.notices;
     const last = n[n.length - 1];
     if (!last) return;
+    // com perfil, o aviso entra na fila da faixa de mensagens do DOM (uma por vez)
+    const game = this.rt.gc.game;
+    if (game.active) {
+      if (this.shownNotice !== n.length) {
+        this.shownNotice = n.length;
+        if (now - last.at < 2500) game.pushToast(last.text, 'info', now);
+      }
+      if (this.noticeText.visible) this.noticeText.setVisible(false);
+      return;
+    }
     // SUGESTÃO: avisos ficam 2,5 s
     const on = now - last.at < 2500;
     if (on && this.shownNotice !== n.length) {

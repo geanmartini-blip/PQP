@@ -132,7 +132,8 @@ export class TravessiaScreen {
         txt.appendChild(el('b', '', g.name));
         if (g.origem) txt.appendChild(el('span', 'cl', g.origem));
         txt.appendChild(el('p', '', g.bonusTexto));
-        if (g.saudacao) txt.appendChild(el('p', '', `"${g.saudacao}"`));
+        // variável sem valor aqui ({chance}) vira '?', como nas falas do guia em shared (aparecia "{chance}%")
+        if (g.saudacao) txt.appendChild(el('p', '', `"${g.saudacao.replace(/\{[a-zA-Z]+\}/g, '?')}"`));
         card.appendChild(txt);
         card.addEventListener('click', () => {
           pickGuide(s, g.id);
