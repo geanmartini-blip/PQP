@@ -156,14 +156,15 @@ export class FxPool {
   }
 }
 
-// SUGESTÃO (revisão visual): a fala no balão fica 2,5 s (mais 25 ms por letra, até 3,5 s); balão
-// de até 120 px de CSS de largura, fonte de 11 px, no máximo 2 linhas (o resto vira "…"); no máximo
-// 2 balões de inimigo ao mesmo tempo; um balão por pessoa.
+// SUGESTÃO (revisão visual): a fala no balão fica 2,5 s (mais 45 ms por letra, até 7 s); balão
+// de até 200 px de CSS de largura, fonte de 11 px, no máximo 5 linhas (o resto vira "…"); no máximo
+// 2 balões de inimigo ao mesmo tempo; um balão por pessoa. (Antes eram 120 px e 2 linhas, e no
+// teste a frase aparecia cortada.)
 export const SAY_BASE_MS = 2500;
-const SAY_PER_CHAR_MS = 25;
-export const SAY_MAX_MS = 3500;
-export const BALLOON_MAX_LINES = 2;
-export const BALLOON_WRAP_CSS = 120;
+const SAY_PER_CHAR_MS = 45;
+export const SAY_MAX_MS = 7000;
+export const BALLOON_MAX_LINES = 5;
+export const BALLOON_WRAP_CSS = 200;
 export const MAX_ENEMY_BALLOONS = 2;
 
 interface Balloon {
