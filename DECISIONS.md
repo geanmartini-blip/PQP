@@ -231,9 +231,10 @@ O registro completo está em `decisoes/fase5-masmorra.md`. Os pontos principais:
     - no andar de frente e de costas, as pernas mexem pouco.
   - Tudo isso dá para corrigir com texto (cabelo castanho, proporção) ou refazendo uma direção, sem
     redesenhar.
-- **Decisão:** pendente com o usuário. Ele decide pelos prints se o PixelLab segue para todos os
-  bonecos e o cenário.
-  - **Se seguir, a sugestão é:**
+- **Decisão (2026-11-01):** o usuário testou o mock e aprovou. O PixelLab passa a ser o caminho da
+  arte de todos os bonecos e do cenário. Ele substitui a arte por script (`tools/art/cartoon`), que
+  fica como histórico.
+  - **Próximos passos sugeridos:**
     - usar o Peão aprovado como `style_image` de todos os bonecos, para o elenco ficar coerente;
     - usar 128 px como padrão;
     - assinar um plano com mais de uma geração por vez. Com 24 arquétipos, 24 treinadores e NPCs,
