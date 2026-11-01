@@ -2,11 +2,11 @@
 // mock: recorta todos os quadros no mesmo retângulo (a união do conteúdo de todos), para os pés não
 // pularem entre quadros, e grava packages/client/public/mock-pixellab/pl_<dir>_<i>.png mais a lista no
 // manifest.json (chave "pl"). As direções são as do PixelLab: south, north, east e west.
-// Uso: node tools/art/mock-pixellab-pl.mjs
+// Uso: node tools/art/mock-pixellab-pl.mjs [pasta]   (padrão: a v2, cabelo castanho e cabeça maior)
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { chromium } from 'playwright';
 
-const SRC = 'pixellab/resultados/andar';
+const SRC = process.argv[2] ?? 'pixellab/resultados/v2/andar';
 const OUT = 'packages/client/public/mock-pixellab';
 const arquivos = readdirSync(SRC).filter((f) => /^(south|north|east|west)_\d+\.png$/.test(f)).sort();
 const b = await chromium.launch();

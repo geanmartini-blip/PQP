@@ -231,6 +231,14 @@ O registro completo está em `decisoes/fase5-masmorra.md`. Os pontos principais:
     - no andar de frente e de costas, as pernas mexem pouco.
   - Tudo isso dá para corrigir com texto (cabelo castanho, proporção) ou refazendo uma direção, sem
     redesenhar.
+- **v2, a correção:** o Peão foi gerado de novo com o mesmo recorte de estilo. O texto pediu cabelo e
+  bigode castanho-escuros e cabeça grande, com cerca de 1/3 da altura. Saiu com cabelo castanho, cabeça
+  maior e corpo mais parrudo, e no andar de frente os pés alternam melhor.
+  - Custou mais 12 gerações. No total foram 24, e restam 16 no trial.
+  - Os arquivos estão em `pixellab/resultados/v2/`. O mock usa a v2, e a v1 ficou em
+    `pixellab/resultados/` como histórico.
+  - O id da v2 no PixelLab é `67d1586d-f0c3-41d5-bc5e-ddd9f3391fa7`. É ela que vai como
+    `style_image` do elenco.
 - **Decisão (2026-11-01):** o usuário testou o mock e aprovou. O PixelLab passa a ser o caminho da
   arte de todos os bonecos e do cenário. Ele substitui a arte por script (`tools/art/cartoon`), que
   fica como histórico.

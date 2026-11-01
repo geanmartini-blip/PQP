@@ -45,14 +45,15 @@ await tirar('referencia', '?peao=ref');
 
 // prancha ampliada (4x, sem suavizar)
 const b64 = (f) => 'data:image/png;base64,' + readFileSync(f).toString('base64');
-const R = 'pixellab/resultados/';
+const R = 'pixellab/resultados/v2/';
 const andar = readdirSync(R + 'andar').filter((f) => f.endsWith('.png')).sort();
 const img = (f, z = 3) => `<img src="${b64(f)}" style="image-rendering:pixelated;zoom:${z}">`;
 const p2 = await browser.newPage({ viewport: { width: 1700, height: 1200 } });
 await p2.setContent(`<body style="margin:0;background:#1b1720;color:#ddd;font:16px sans-serif;padding:12px">
   <div style="display:flex;gap:24px;align-items:flex-end">
     <div>referência ${img('pixellab/referencia-peao-frente.png')}</div>
-    <div>PixelLab ${['south', 'east', 'north', 'west'].map((d) => img(R + 'rotacoes/' + d + '.png')).join('')}</div>
+    <div>v1 ${img('pixellab/resultados/rotacoes/south.png')}</div>
+    <div>PixelLab v2 ${['south', 'east', 'north', 'west'].map((d) => img(R + 'rotacoes/' + d + '.png')).join('')}</div>
   </div>
   <div style="margin-top:12px">andar (PixelLab, 6 quadros)</div>
   ${['south', 'east', 'north', 'west'].map((d) => `<div>${andar.filter((f) => f.startsWith(d + '_')).map((f) => img(R + 'andar/' + f, 1.5)).join('')}</div>`).join('')}
