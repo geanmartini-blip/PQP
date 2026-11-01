@@ -1,5 +1,7 @@
 # Narrativa
 
+> **v0.3 (sugestão):** a jornada do 1 ao 20 mudou: Delta do 1 ao 4, balsa no 5, ala no 10 e cabeceira da Ponte no 19, com 5 slots de item. Ver docs/Jornada.md. Onde este texto fala em 7, 8 e 12, valem 4, 5 e 10.
+
 ## Duas Margens, 2077
 
 Duas Margens já foi uma cidade só, crescida dos dois lados do Rio Claro e ligada por uma ponte que também era usina. Em 2077 são duas cidades que se encaram de frente, e cada uma acha que é a única adulta da relação.

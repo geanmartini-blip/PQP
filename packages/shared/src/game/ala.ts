@@ -17,7 +17,8 @@ import { hasFlag, setFlag } from './flags';
 import { refreshMissions } from './missions';
 import { emptyResult, mergeResult, type Check, type GameResult, type PlayerRecord } from './types';
 
-export const ALA_LEVEL = 12;
+/** v0.3: a ala é no 10, junto com o primeiro talento e a primeira peça do conjunto. */
+export const ALA_LEVEL = 10;
 export const FLAG_ENTROU = 'entrou_instituicao';
 export const FLAG_ALA = 'ala_escolhida';
 

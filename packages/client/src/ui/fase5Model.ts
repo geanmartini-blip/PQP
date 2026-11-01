@@ -36,12 +36,11 @@ export const ACTION_LABEL: Record<ActionId, string> = {
 };
 
 export const SLOT_LABEL: Record<string, string> = {
-  cabeca: 'Cabeça',
-  peito: 'Peito',
-  calca: 'Calça',
+  cabeca: 'Capacete',
+  peito: 'Armadura',
   arma: 'Arma',
   calcado: 'Calçado',
-  adorno: 'Adorno',
+  adorno: 'Adereço',
 };
 
 export const RARITY_LABEL: Record<string, string> = { comum: 'Comum', raro: 'Raro', unico: 'Único', set: 'Set' };

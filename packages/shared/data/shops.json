@@ -6,7 +6,10 @@
     "delta": "No Delta ninguém tem lado: a venda aceita Semente e Crédito.",
     "contrabando": "Contrabando pelo Juncal, com Bruno Ferro, para quem não quer pagar taxa nem enfrentar fila.",
     "compraDoJogadorPct": 0.4,
-    "sugestaoCampos": ["delta", "compraDoJogadorPct"]
+    "sugestaoCampos": [
+      "delta",
+      "compraDoJogadorPct"
+    ]
   },
   "lojas": [
     {
@@ -16,31 +19,124 @@
       "local": "brigada_popular",
       "regiao": "margem_esquerda",
       "npc": "jacques",
-      "moedas": ["semente"],
+      "moedas": [
+        "semente"
+      ],
       "regraPreco": "tabelado",
       "taxaPct": 0,
       "variacaoPct": 0,
       "filaS": 0,
       "descricao": "No galpão de trem da Brigada. Itens de Combatente da Esquerda e consumíveis.",
       "itens": [
-        { "item": "cabeca_combatente_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "peito_combatente_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "calca_combatente_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "arma_combatente_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "calcado_combatente_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "adorno_combatente_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "cabeca_combatente_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "peito_combatente_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "calca_combatente_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "arma_combatente_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "calcado_combatente_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "adorno_combatente_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "pocao", "tipo": "consumivel", "preco": { "semente": 15 } },
-        { "item": "sopa", "tipo": "consumivel", "preco": { "semente": 20 } },
-        { "item": "energetico", "tipo": "consumivel", "preco": { "semente": 25 } },
-        { "item": "granada", "tipo": "consumivel", "preco": { "semente": 30 } }
+        {
+          "item": "cabeca_combatente_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "peito_combatente_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "arma_combatente_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "calcado_combatente_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "adorno_combatente_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "cabeca_combatente_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "peito_combatente_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "arma_combatente_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "calcado_combatente_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "adorno_combatente_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "pocao",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 15
+          }
+        },
+        {
+          "item": "sopa",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 20
+          }
+        },
+        {
+          "item": "energetico",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 25
+          }
+        },
+        {
+          "item": "granada",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 30
+          }
+        }
       ],
-      "sugestaoCampos": ["name", "npc", "itens"]
+      "sugestaoCampos": [
+        "name",
+        "npc",
+        "itens"
+      ]
     },
     {
       "id": "loja_guarda_comunitaria",
@@ -49,31 +145,124 @@
       "local": "guarda_comunitaria",
       "regiao": "margem_esquerda",
       "npc": "olga",
-      "moedas": ["semente"],
+      "moedas": [
+        "semente"
+      ],
       "regraPreco": "tabelado",
       "taxaPct": 0,
       "variacaoPct": 0,
       "filaS": 0,
       "descricao": "Numa guarita de quarteirão. Itens de Atirador da Esquerda e consumíveis.",
       "itens": [
-        { "item": "cabeca_atirador_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "peito_atirador_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "calca_atirador_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "arma_atirador_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "calcado_atirador_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "adorno_atirador_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "cabeca_atirador_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "peito_atirador_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "calca_atirador_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "arma_atirador_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "calcado_atirador_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "adorno_atirador_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "pocao", "tipo": "consumivel", "preco": { "semente": 15 } },
-        { "item": "sopa", "tipo": "consumivel", "preco": { "semente": 20 } },
-        { "item": "energetico", "tipo": "consumivel", "preco": { "semente": 25 } },
-        { "item": "granada", "tipo": "consumivel", "preco": { "semente": 30 } }
+        {
+          "item": "cabeca_atirador_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "peito_atirador_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "arma_atirador_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "calcado_atirador_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "adorno_atirador_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "cabeca_atirador_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "peito_atirador_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "arma_atirador_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "calcado_atirador_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "adorno_atirador_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "pocao",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 15
+          }
+        },
+        {
+          "item": "sopa",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 20
+          }
+        },
+        {
+          "item": "energetico",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 25
+          }
+        },
+        {
+          "item": "granada",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 30
+          }
+        }
       ],
-      "sugestaoCampos": ["name", "npc", "itens"]
+      "sugestaoCampos": [
+        "name",
+        "npc",
+        "itens"
+      ]
     },
     {
       "id": "loja_escola_dos_saberes",
@@ -82,31 +271,124 @@
       "local": "escola_dos_saberes",
       "regiao": "margem_esquerda",
       "npc": "seamus",
-      "moedas": ["semente"],
+      "moedas": [
+        "semente"
+      ],
       "regraPreco": "tabelado",
       "taxaPct": 0,
       "variacaoPct": 0,
       "filaS": 0,
       "descricao": "Debaixo da figueira da Escola. Itens de Elemental da Esquerda e consumíveis.",
       "itens": [
-        { "item": "cabeca_elemental_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "peito_elemental_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "calca_elemental_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "arma_elemental_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "calcado_elemental_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "adorno_elemental_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "cabeca_elemental_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "peito_elemental_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "calca_elemental_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "arma_elemental_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "calcado_elemental_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "adorno_elemental_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "pocao", "tipo": "consumivel", "preco": { "semente": 15 } },
-        { "item": "sopa", "tipo": "consumivel", "preco": { "semente": 20 } },
-        { "item": "energetico", "tipo": "consumivel", "preco": { "semente": 25 } },
-        { "item": "granada", "tipo": "consumivel", "preco": { "semente": 30 } }
+        {
+          "item": "cabeca_elemental_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "peito_elemental_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "arma_elemental_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "calcado_elemental_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "adorno_elemental_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "cabeca_elemental_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "peito_elemental_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "arma_elemental_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "calcado_elemental_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "adorno_elemental_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "pocao",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 15
+          }
+        },
+        {
+          "item": "sopa",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 20
+          }
+        },
+        {
+          "item": "energetico",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 25
+          }
+        },
+        {
+          "item": "granada",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 30
+          }
+        }
       ],
-      "sugestaoCampos": ["name", "npc", "itens"]
+      "sugestaoCampos": [
+        "name",
+        "npc",
+        "itens"
+      ]
     },
     {
       "id": "loja_trupe_do_povo",
@@ -115,31 +397,124 @@
       "local": "trupe_do_povo",
       "regiao": "margem_esquerda",
       "npc": "tiao",
-      "moedas": ["semente"],
+      "moedas": [
+        "semente"
+      ],
       "regraPreco": "tabelado",
       "taxaPct": 0,
       "variacaoPct": 0,
       "filaS": 0,
       "descricao": "No antigo cinema da Trupe. Itens de Mascarado da Esquerda e consumíveis.",
       "itens": [
-        { "item": "cabeca_mascarado_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "peito_mascarado_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "calca_mascarado_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "arma_mascarado_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "calcado_mascarado_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "adorno_mascarado_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 40 } },
-        { "item": "cabeca_mascarado_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "peito_mascarado_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "calca_mascarado_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "arma_mascarado_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "calcado_mascarado_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "adorno_mascarado_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 160 }, "patenteMin": "militante" },
-        { "item": "pocao", "tipo": "consumivel", "preco": { "semente": 15 } },
-        { "item": "sopa", "tipo": "consumivel", "preco": { "semente": 20 } },
-        { "item": "energetico", "tipo": "consumivel", "preco": { "semente": 25 } },
-        { "item": "granada", "tipo": "consumivel", "preco": { "semente": 30 } }
+        {
+          "item": "cabeca_mascarado_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "peito_mascarado_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "arma_mascarado_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "calcado_mascarado_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "adorno_mascarado_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 40
+          }
+        },
+        {
+          "item": "cabeca_mascarado_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "peito_mascarado_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "arma_mascarado_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "calcado_mascarado_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "adorno_mascarado_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 160
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "pocao",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 15
+          }
+        },
+        {
+          "item": "sopa",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 20
+          }
+        },
+        {
+          "item": "energetico",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 25
+          }
+        },
+        {
+          "item": "granada",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 30
+          }
+        }
       ],
-      "sugestaoCampos": ["name", "npc", "itens"]
+      "sugestaoCampos": [
+        "name",
+        "npc",
+        "itens"
+      ]
     },
     {
       "id": "loja_casa_da_assembleia",
@@ -148,7 +523,9 @@
       "local": "casa_da_assembleia",
       "regiao": "margem_esquerda",
       "npc": "yusuf_adeyemi",
-      "moedas": ["semente"],
+      "moedas": [
+        "semente"
+      ],
       "regraPreco": "tabelado",
       "taxaPct": 0,
       "variacaoPct": 0,
@@ -156,22 +533,102 @@
       "descricao": "A banca do QG da Esquerda: itens sem classe da Esquerda e consumíveis, a preço tabelado e com fila.",
       "fala": "Cada saco aqui tem nome. Esse da poção é o Jurandir. Pega senha.",
       "itens": [
-        { "item": "cabeca_geral_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 35 } },
-        { "item": "peito_geral_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 35 } },
-        { "item": "calca_geral_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 35 } },
-        { "item": "calcado_geral_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 35 } },
-        { "item": "adorno_geral_esquerda_comum", "tipo": "equipamento", "preco": { "semente": 35 } },
-        { "item": "cabeca_geral_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 140 }, "patenteMin": "militante" },
-        { "item": "peito_geral_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 140 }, "patenteMin": "militante" },
-        { "item": "calca_geral_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 140 }, "patenteMin": "militante" },
-        { "item": "calcado_geral_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 140 }, "patenteMin": "militante" },
-        { "item": "adorno_geral_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 140 }, "patenteMin": "militante" },
-        { "item": "pocao", "tipo": "consumivel", "preco": { "semente": 15 } },
-        { "item": "sopa", "tipo": "consumivel", "preco": { "semente": 20 } },
-        { "item": "energetico", "tipo": "consumivel", "preco": { "semente": 25 } },
-        { "item": "granada", "tipo": "consumivel", "preco": { "semente": 30 } }
+        {
+          "item": "cabeca_geral_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 35
+          }
+        },
+        {
+          "item": "peito_geral_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 35
+          }
+        },
+        {
+          "item": "calcado_geral_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 35
+          }
+        },
+        {
+          "item": "adorno_geral_esquerda_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 35
+          }
+        },
+        {
+          "item": "cabeca_geral_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 140
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "peito_geral_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 140
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "calcado_geral_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 140
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "adorno_geral_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 140
+          },
+          "patenteMin": "militante"
+        },
+        {
+          "item": "pocao",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 15
+          }
+        },
+        {
+          "item": "sopa",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 20
+          }
+        },
+        {
+          "item": "energetico",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 25
+          }
+        },
+        {
+          "item": "granada",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 30
+          }
+        }
       ],
-      "sugestaoCampos": ["name", "npc", "filaS", "fala", "itens"]
+      "sugestaoCampos": [
+        "name",
+        "npc",
+        "filaS",
+        "fala",
+        "itens"
+      ]
     },
     {
       "id": "loja_torcida_furia_neon",
@@ -180,31 +637,127 @@
       "local": "torcida_furia_neon",
       "regiao": "margem_direita",
       "npc": "edson",
-      "moedas": ["credito"],
+      "moedas": [
+        "credito"
+      ],
       "regraPreco": "dinamico",
       "taxaPct": 10,
       "variacaoPct": 20,
       "filaS": 0,
       "descricao": "Colada no estádio. Itens de Combatente da Direita e consumíveis; o preço sobe em dia de clássico.",
       "itens": [
-        { "item": "cabeca_combatente_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "peito_combatente_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "calca_combatente_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "arma_combatente_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "calcado_combatente_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "adorno_combatente_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "cabeca_combatente_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "peito_combatente_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "calca_combatente_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "arma_combatente_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "calcado_combatente_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "adorno_combatente_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "pocao", "tipo": "consumivel", "preco": { "credito": 30 } },
-        { "item": "sopa", "tipo": "consumivel", "preco": { "credito": 40 } },
-        { "item": "energetico", "tipo": "consumivel", "preco": { "credito": 50 } },
-        { "item": "granada", "tipo": "consumivel", "preco": { "credito": 60 } }
+        {
+          "item": "cabeca_combatente_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "peito_combatente_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "arma_combatente_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "calcado_combatente_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "adorno_combatente_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "cabeca_combatente_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "peito_combatente_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "arma_combatente_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "calcado_combatente_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "adorno_combatente_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "pocao",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 30
+          }
+        },
+        {
+          "item": "sopa",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 40
+          }
+        },
+        {
+          "item": "energetico",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 50
+          }
+        },
+        {
+          "item": "granada",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 60
+          }
+        }
       ],
-      "sugestaoCampos": ["name", "npc", "taxaPct", "variacaoPct", "descricao", "itens"]
+      "sugestaoCampos": [
+        "name",
+        "npc",
+        "taxaPct",
+        "variacaoPct",
+        "descricao",
+        "itens"
+      ]
     },
     {
       "id": "loja_pm_do_consorcio",
@@ -213,31 +766,126 @@
       "local": "pm_do_consorcio",
       "regiao": "margem_direita",
       "npc": "dusty",
-      "moedas": ["credito"],
+      "moedas": [
+        "credito"
+      ],
       "regraPreco": "dinamico",
       "taxaPct": 10,
       "variacaoPct": 20,
       "filaS": 0,
       "descricao": "No batalhão da PM, ao lado do estúdio de gravação. Itens de Atirador da Direita e consumíveis.",
       "itens": [
-        { "item": "cabeca_atirador_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "peito_atirador_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "calca_atirador_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "arma_atirador_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "calcado_atirador_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "adorno_atirador_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "cabeca_atirador_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "peito_atirador_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "calca_atirador_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "arma_atirador_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "calcado_atirador_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "adorno_atirador_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "pocao", "tipo": "consumivel", "preco": { "credito": 30 } },
-        { "item": "sopa", "tipo": "consumivel", "preco": { "credito": 40 } },
-        { "item": "energetico", "tipo": "consumivel", "preco": { "credito": 50 } },
-        { "item": "granada", "tipo": "consumivel", "preco": { "credito": 60 } }
+        {
+          "item": "cabeca_atirador_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "peito_atirador_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "arma_atirador_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "calcado_atirador_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "adorno_atirador_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "cabeca_atirador_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "peito_atirador_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "arma_atirador_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "calcado_atirador_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "adorno_atirador_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "pocao",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 30
+          }
+        },
+        {
+          "item": "sopa",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 40
+          }
+        },
+        {
+          "item": "energetico",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 50
+          }
+        },
+        {
+          "item": "granada",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 60
+          }
+        }
       ],
-      "sugestaoCampos": ["name", "npc", "taxaPct", "variacaoPct", "itens"]
+      "sugestaoCampos": [
+        "name",
+        "npc",
+        "taxaPct",
+        "variacaoPct",
+        "itens"
+      ]
     },
     {
       "id": "loja_universidade_neon",
@@ -246,31 +894,126 @@
       "local": "universidade_neon",
       "regiao": "margem_direita",
       "npc": "klaus",
-      "moedas": ["credito"],
+      "moedas": [
+        "credito"
+      ],
       "regraPreco": "dinamico",
       "taxaPct": 10,
       "variacaoPct": 20,
       "filaS": 0,
       "descricao": "Atrás da catraca por mensalidade da Universidade. Itens de Elemental da Direita e consumíveis.",
       "itens": [
-        { "item": "cabeca_elemental_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "peito_elemental_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "calca_elemental_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "arma_elemental_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "calcado_elemental_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "adorno_elemental_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "cabeca_elemental_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "peito_elemental_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "calca_elemental_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "arma_elemental_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "calcado_elemental_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "adorno_elemental_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "pocao", "tipo": "consumivel", "preco": { "credito": 30 } },
-        { "item": "sopa", "tipo": "consumivel", "preco": { "credito": 40 } },
-        { "item": "energetico", "tipo": "consumivel", "preco": { "credito": 50 } },
-        { "item": "granada", "tipo": "consumivel", "preco": { "credito": 60 } }
+        {
+          "item": "cabeca_elemental_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "peito_elemental_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "arma_elemental_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "calcado_elemental_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "adorno_elemental_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "cabeca_elemental_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "peito_elemental_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "arma_elemental_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "calcado_elemental_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "adorno_elemental_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "pocao",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 30
+          }
+        },
+        {
+          "item": "sopa",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 40
+          }
+        },
+        {
+          "item": "energetico",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 50
+          }
+        },
+        {
+          "item": "granada",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 60
+          }
+        }
       ],
-      "sugestaoCampos": ["name", "npc", "taxaPct", "variacaoPct", "itens"]
+      "sugestaoCampos": [
+        "name",
+        "npc",
+        "taxaPct",
+        "variacaoPct",
+        "itens"
+      ]
     },
     {
       "id": "loja_agencia_neon",
@@ -279,31 +1022,127 @@
       "local": "agencia_neon",
       "regiao": "margem_direita",
       "npc": "katia",
-      "moedas": ["credito"],
+      "moedas": [
+        "credito"
+      ],
       "regraPreco": "dinamico",
       "taxaPct": 10,
       "variacaoPct": 20,
       "filaS": 0,
       "descricao": "No saguão da Agência, entre dois ring lights. Itens de Mascarado da Direita e consumíveis.",
       "itens": [
-        { "item": "cabeca_mascarado_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "peito_mascarado_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "calca_mascarado_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "arma_mascarado_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "calcado_mascarado_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "adorno_mascarado_direita_comum", "tipo": "equipamento", "preco": { "credito": 80 } },
-        { "item": "cabeca_mascarado_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "peito_mascarado_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "calca_mascarado_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "arma_mascarado_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "calcado_mascarado_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "adorno_mascarado_direita_raro", "tipo": "equipamento", "preco": { "credito": 320 }, "patenteMin": "parceiro" },
-        { "item": "pocao", "tipo": "consumivel", "preco": { "credito": 30 } },
-        { "item": "sopa", "tipo": "consumivel", "preco": { "credito": 40 } },
-        { "item": "energetico", "tipo": "consumivel", "preco": { "credito": 50 } },
-        { "item": "granada", "tipo": "consumivel", "preco": { "credito": 60 } }
+        {
+          "item": "cabeca_mascarado_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "peito_mascarado_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "arma_mascarado_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "calcado_mascarado_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "adorno_mascarado_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 80
+          }
+        },
+        {
+          "item": "cabeca_mascarado_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "peito_mascarado_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "arma_mascarado_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "calcado_mascarado_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "adorno_mascarado_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 320
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "pocao",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 30
+          }
+        },
+        {
+          "item": "sopa",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 40
+          }
+        },
+        {
+          "item": "energetico",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 50
+          }
+        },
+        {
+          "item": "granada",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 60
+          }
+        }
       ],
-      "sugestaoCampos": ["name", "npc", "taxaPct", "variacaoPct", "descricao", "itens"]
+      "sugestaoCampos": [
+        "name",
+        "npc",
+        "taxaPct",
+        "variacaoPct",
+        "descricao",
+        "itens"
+      ]
     },
     {
       "id": "loja_torre_do_consorcio",
@@ -312,7 +1151,9 @@
       "local": "torre_do_consorcio",
       "regiao": "margem_direita",
       "npc": "mateo_silva_park",
-      "moedas": ["credito"],
+      "moedas": [
+        "credito"
+      ],
       "regraPreco": "dinamico",
       "taxaPct": 10,
       "variacaoPct": 20,
@@ -320,22 +1161,103 @@
       "descricao": "O andar de lojas do QG da Direita: itens sem classe da Direita e consumíveis, com preço dinâmico e taxa.",
       "fala": "O preço mudou desde que você entrou. Para cima, mas com frete grátis no próximo ciclo.",
       "itens": [
-        { "item": "cabeca_geral_direita_comum", "tipo": "equipamento", "preco": { "credito": 70 } },
-        { "item": "peito_geral_direita_comum", "tipo": "equipamento", "preco": { "credito": 70 } },
-        { "item": "calca_geral_direita_comum", "tipo": "equipamento", "preco": { "credito": 70 } },
-        { "item": "calcado_geral_direita_comum", "tipo": "equipamento", "preco": { "credito": 70 } },
-        { "item": "adorno_geral_direita_comum", "tipo": "equipamento", "preco": { "credito": 70 } },
-        { "item": "cabeca_geral_direita_raro", "tipo": "equipamento", "preco": { "credito": 280 }, "patenteMin": "parceiro" },
-        { "item": "peito_geral_direita_raro", "tipo": "equipamento", "preco": { "credito": 280 }, "patenteMin": "parceiro" },
-        { "item": "calca_geral_direita_raro", "tipo": "equipamento", "preco": { "credito": 280 }, "patenteMin": "parceiro" },
-        { "item": "calcado_geral_direita_raro", "tipo": "equipamento", "preco": { "credito": 280 }, "patenteMin": "parceiro" },
-        { "item": "adorno_geral_direita_raro", "tipo": "equipamento", "preco": { "credito": 280 }, "patenteMin": "parceiro" },
-        { "item": "pocao", "tipo": "consumivel", "preco": { "credito": 30 } },
-        { "item": "sopa", "tipo": "consumivel", "preco": { "credito": 40 } },
-        { "item": "energetico", "tipo": "consumivel", "preco": { "credito": 50 } },
-        { "item": "granada", "tipo": "consumivel", "preco": { "credito": 60 } }
+        {
+          "item": "cabeca_geral_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 70
+          }
+        },
+        {
+          "item": "peito_geral_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 70
+          }
+        },
+        {
+          "item": "calcado_geral_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 70
+          }
+        },
+        {
+          "item": "adorno_geral_direita_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 70
+          }
+        },
+        {
+          "item": "cabeca_geral_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 280
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "peito_geral_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 280
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "calcado_geral_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 280
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "adorno_geral_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "credito": 280
+          },
+          "patenteMin": "parceiro"
+        },
+        {
+          "item": "pocao",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 30
+          }
+        },
+        {
+          "item": "sopa",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 40
+          }
+        },
+        {
+          "item": "energetico",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 50
+          }
+        },
+        {
+          "item": "granada",
+          "tipo": "consumivel",
+          "preco": {
+            "credito": 60
+          }
+        }
       ],
-      "sugestaoCampos": ["name", "npc", "taxaPct", "variacaoPct", "fala", "itens"]
+      "sugestaoCampos": [
+        "name",
+        "npc",
+        "taxaPct",
+        "variacaoPct",
+        "fala",
+        "itens"
+      ]
     },
     {
       "id": "loja_delta",
@@ -344,7 +1266,10 @@
       "local": "delta",
       "regiao": "delta",
       "npc": "seu_jaco",
-      "moedas": ["semente", "credito"],
+      "moedas": [
+        "semente",
+        "credito"
+      ],
       "regraPreco": "tabelado",
       "taxaPct": 0,
       "variacaoPct": 0,
@@ -352,19 +1277,93 @@
       "descricao": "A venda da vila de palafitas, onde todo mundo começa. Roupa do Delta e consumíveis, nas duas moedas.",
       "fala": "Compra aqui, que do outro lado do rio é tudo mais caro. E desconfia de quem vende chopindita barata.",
       "itens": [
-        { "item": "cabeca_geral_delta_comum", "tipo": "equipamento", "preco": { "semente": 20, "credito": 40 } },
-        { "item": "peito_geral_delta_comum", "tipo": "equipamento", "preco": { "semente": 20, "credito": 40 } },
-        { "item": "calca_geral_delta_comum", "tipo": "equipamento", "preco": { "semente": 20, "credito": 40 } },
-        { "item": "calcado_geral_delta_comum", "tipo": "equipamento", "preco": { "semente": 20, "credito": 40 } },
-        { "item": "adorno_geral_delta_comum", "tipo": "equipamento", "preco": { "semente": 20, "credito": 40 } },
-        { "item": "cabeca_geral_delta_raro", "tipo": "equipamento", "preco": { "semente": 80, "credito": 160 } },
-        { "item": "adorno_geral_delta_raro", "tipo": "equipamento", "preco": { "semente": 80, "credito": 160 } },
-        { "item": "pocao", "tipo": "consumivel", "preco": { "semente": 12, "credito": 24 } },
-        { "item": "sopa", "tipo": "consumivel", "preco": { "semente": 16, "credito": 32 } },
-        { "item": "energetico", "tipo": "consumivel", "preco": { "semente": 20, "credito": 40 } },
-        { "item": "granada", "tipo": "consumivel", "preco": { "semente": 24, "credito": 48 } }
+        {
+          "item": "cabeca_geral_delta_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 20,
+            "credito": 40
+          }
+        },
+        {
+          "item": "peito_geral_delta_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 20,
+            "credito": 40
+          }
+        },
+        {
+          "item": "calcado_geral_delta_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 20,
+            "credito": 40
+          }
+        },
+        {
+          "item": "adorno_geral_delta_comum",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 20,
+            "credito": 40
+          }
+        },
+        {
+          "item": "cabeca_geral_delta_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 80,
+            "credito": 160
+          }
+        },
+        {
+          "item": "adorno_geral_delta_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 80,
+            "credito": 160
+          }
+        },
+        {
+          "item": "pocao",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 12,
+            "credito": 24
+          }
+        },
+        {
+          "item": "sopa",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 16,
+            "credito": 32
+          }
+        },
+        {
+          "item": "energetico",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 20,
+            "credito": 40
+          }
+        },
+        {
+          "item": "granada",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 24,
+            "credito": 48
+          }
+        }
       ],
-      "sugestaoCampos": ["name", "npc", "fala", "itens"]
+      "sugestaoCampos": [
+        "name",
+        "npc",
+        "fala",
+        "itens"
+      ]
     },
     {
       "id": "loja_contrabando_juncal",
@@ -373,7 +1372,10 @@
       "local": "juncal",
       "regiao": "juncal",
       "npc": "bruno_ferro",
-      "moedas": ["semente", "credito"],
+      "moedas": [
+        "semente",
+        "credito"
+      ],
       "regraPreco": "contrabando",
       "taxaPct": 0,
       "variacaoPct": 8,
@@ -381,24 +1383,142 @@
       "descricao": "Na mata do Juncal, sem taxa e sem fila. Vende item das duas margens, arma raro sem patente e chopindita barata. Item da outra margem funciona com metade do bônus até ser benzido ou calibrado.",
       "fala": "Sem taxa, sem fila, sem nota. Quer recibo, vai para a Assembleia. Quer garantia, vai para a Torre.",
       "itens": [
-        { "item": "arma_combatente_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 200, "credito": 400 } },
-        { "item": "arma_atirador_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 200, "credito": 400 } },
-        { "item": "arma_elemental_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 200, "credito": 400 } },
-        { "item": "arma_mascarado_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 200, "credito": 400 } },
-        { "item": "arma_combatente_direita_raro", "tipo": "equipamento", "preco": { "semente": 200, "credito": 400 } },
-        { "item": "arma_atirador_direita_raro", "tipo": "equipamento", "preco": { "semente": 200, "credito": 400 } },
-        { "item": "arma_elemental_direita_raro", "tipo": "equipamento", "preco": { "semente": 200, "credito": 400 } },
-        { "item": "arma_mascarado_direita_raro", "tipo": "equipamento", "preco": { "semente": 200, "credito": 400 } },
-        { "item": "calcado_geral_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 175, "credito": 350 } },
-        { "item": "calcado_geral_direita_raro", "tipo": "equipamento", "preco": { "semente": 175, "credito": 350 } },
-        { "item": "adorno_geral_esquerda_raro", "tipo": "equipamento", "preco": { "semente": 175, "credito": 350 } },
-        { "item": "adorno_geral_direita_raro", "tipo": "equipamento", "preco": { "semente": 175, "credito": 350 } },
-        { "item": "pocao", "tipo": "consumivel", "preco": { "semente": 18, "credito": 36 } },
-        { "item": "energetico", "tipo": "consumivel", "preco": { "semente": 28, "credito": 56 } },
-        { "item": "granada", "tipo": "consumivel", "preco": { "semente": 35, "credito": 70 } },
-        { "item": "chopindita", "tipo": "material", "preco": { "semente": 12, "credito": 24 } }
+        {
+          "item": "arma_combatente_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 200,
+            "credito": 400
+          }
+        },
+        {
+          "item": "arma_atirador_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 200,
+            "credito": 400
+          }
+        },
+        {
+          "item": "arma_elemental_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 200,
+            "credito": 400
+          }
+        },
+        {
+          "item": "arma_mascarado_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 200,
+            "credito": 400
+          }
+        },
+        {
+          "item": "arma_combatente_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 200,
+            "credito": 400
+          }
+        },
+        {
+          "item": "arma_atirador_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 200,
+            "credito": 400
+          }
+        },
+        {
+          "item": "arma_elemental_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 200,
+            "credito": 400
+          }
+        },
+        {
+          "item": "arma_mascarado_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 200,
+            "credito": 400
+          }
+        },
+        {
+          "item": "calcado_geral_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 175,
+            "credito": 350
+          }
+        },
+        {
+          "item": "calcado_geral_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 175,
+            "credito": 350
+          }
+        },
+        {
+          "item": "adorno_geral_esquerda_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 175,
+            "credito": 350
+          }
+        },
+        {
+          "item": "adorno_geral_direita_raro",
+          "tipo": "equipamento",
+          "preco": {
+            "semente": 175,
+            "credito": 350
+          }
+        },
+        {
+          "item": "pocao",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 18,
+            "credito": 36
+          }
+        },
+        {
+          "item": "energetico",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 28,
+            "credito": 56
+          }
+        },
+        {
+          "item": "granada",
+          "tipo": "consumivel",
+          "preco": {
+            "semente": 35,
+            "credito": 70
+          }
+        },
+        {
+          "item": "chopindita",
+          "tipo": "material",
+          "preco": {
+            "semente": 12,
+            "credito": 24
+          }
+        }
       ],
-      "sugestaoCampos": ["name", "variacaoPct", "descricao", "fala", "itens"]
+      "sugestaoCampos": [
+        "name",
+        "variacaoPct",
+        "descricao",
+        "fala",
+        "itens"
+      ]
     }
   ]
 }

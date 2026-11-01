@@ -72,7 +72,7 @@ describe('criação de personagem', () => {
     expect(e.defId).toBe('delta');
     expect(e.level).toBe(1);
     expect(e.deltaRookie).toBe(true);
-    expect(e.levelCap).toBe(7);
+    expect(e.levelCap).toBe(4);
     // o Seu Jacó acompanha no Delta
     expect(h.core.companionOf(bot.sid)?.defId).toBe('seu_jaco');
     // o visual vai no lk do snapshot
@@ -442,7 +442,8 @@ describe('fluxo completo da Fase 2', () => {
     h.game(bot, GAME_MSG.dialogoOpcao, { npcId: 'seu_jaco', opcao: 'escolha:desconfiar' });
     expect(fight(h, bot, arena, [{ id: 'capanga_do_capataz', n: 5 }, { id: 'capanga_do_capataz', n: 1, tier: 'elite' }])).toBeGreaterThanOrEqual(0);
     expect(drinkPotion(h, bot, 'delta_05_chopindita_barata')).toBeGreaterThanOrEqual(0);
-    expect(rec().item_count).toBe(potions0 - 2);
+    // v0.3: com o ritmo novo a luta pode render uma poção de saque no meio; ao menos uma foi bebida
+    expect(rec().item_count).toBeLessThanOrEqual(potions0 - 1);
     expect(done('delta_05_chopindita_barata')).toBe(true);
 
     // --- 6: a fila e o boleto (fila, automático, cobradores e capangas, levantar o Seu Jacó)
@@ -466,24 +467,24 @@ describe('fluxo completo da Fase 2', () => {
     expect(revived).toBeGreaterThanOrEqual(0);
     expect(h.eventsOf('revive').length).toBeGreaterThan(0);
 
-    // --- nível 7 antes do chefe (o teto do Delta é o 7)
-    // só com os inimigos pedidos pelas missões (sem os bandos do mapa) o novato chega no 6
-    expect(rec().level).toBeGreaterThanOrEqual(5);
-    if (rec().level < 7) {
+    // --- nível 4 antes do chefe (o teto do Delta é o 4)
+    // só com os inimigos pedidos pelas missões (sem os bandos do mapa) o novato chega no 4
+    expect(rec().level).toBeGreaterThanOrEqual(3);
+    if (rec().level < 4) {
       // atalho de teste: o XP que os bandos do mapa dariam
       const e = h.core.entityOf(bot.sid)!;
       gainXp(rec(), 1_000_000);
-      expect(rec().level).toBe(7);
-      relevel(h.world, e, 7);
+      expect(rec().level).toBe(4);
+      relevel(h.world, e, 4);
       e.xp = rec().xp;
     }
-    expect(rec().level).toBe(7);
-    expect(h.core.entityOf(bot.sid)!.levelCap).toBe(7);
-    // XP a mais não passa do 7 sem o Bruno Ferro
+    expect(rec().level).toBe(4);
+    expect(h.core.entityOf(bot.sid)!.levelCap).toBe(4);
+    // XP a mais não passa do 4 sem o Bruno Ferro
     gainXp(rec(), 1_000_000);
-    expect(rec().level).toBe(7);
+    expect(rec().level).toBe(4);
 
-    // --- 7: o barco do vizinho (cais, capangas, Bruno Ferro, devolver o barco)
+    // --- 4: o barco do vizinho (cais, capangas, Bruno Ferro, devolver o barco)
     moveParty(h, bot, cais.x, cais.y);
     h.tick(12);
     expect(fight(h, bot, arena, [{ id: 'capanga_do_capataz', n: 4 }, { id: 'cobrador_do_capataz', n: 2 }])).toBeGreaterThanOrEqual(0);
@@ -499,13 +500,13 @@ describe('fluxo completo da Fase 2', () => {
     expect(done('delta_07_o_barco_do_vizinho')).toBe(true);
     expect(rec().story_flags).toContain('delta_bruno_ferro_derrotado');
 
-    // --- nível 8 e a travessia ativa
-    expect(rec().level).toBe(8);
+    // --- nível 5 e a travessia ativa
+    expect(rec().level).toBe(5);
     expect(rec().stage).not.toBe('margem');
     h.tick(4);
-    expect(h.core.entityOf(bot.sid)!.level).toBe(8);
-    // o 8 segura até atravessar
-    expect(h.core.entityOf(bot.sid)!.levelCap).toBe(8);
+    expect(h.core.entityOf(bot.sid)!.level).toBe(5);
+    // o 5 segura até atravessar
+    expect(h.core.entityOf(bot.sid)!.levelCap).toBe(5);
     expect(rec().missions.ativas).toContain('travessia_08');
     for (const m of deltaChainMissions().filter((x) => x !== 'travessia_08')) expect(rec().missions.concluidas).toContain(m);
 
@@ -540,13 +541,13 @@ describe('fluxo completo da Fase 2', () => {
     expect(r2.institution).toBe(inst.id);
     expect(r2.class).toBe(inst.classe);
     expect(r2.guide_id).toBe(guia.id);
-    expect(r2.level).toBe(8);
+    expect(r2.level).toBe(5);
     expect(r2.story_flags).toEqual(expect.arrayContaining(['delta_bruno_ferro_derrotado', 'travessia_feita', 'margem_esquerda']));
     expect(r2.missions.concluidas).toContain('travessia_08');
     expect(r2.missions.ativas.length).toBeGreaterThan(0);
     const e2 = h2.core.entityOf(b2.sid)!;
     expect(e2.classId).toBe(inst.classe);
-    expect(e2.level).toBe(8);
+    expect(e2.level).toBe(5);
     const qgSpawn = getMap('qg_esquerda').markers.find((m) => m.kind === 'spawn_jogador')!;
     expect(Math.hypot(e2.x - qgSpawn.x, e2.y - qgSpawn.y)).toBeLessThan(1);
     h2.tick(10);

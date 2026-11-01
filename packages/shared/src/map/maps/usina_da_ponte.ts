@@ -108,13 +108,13 @@ function build(): AsciiMapDef {
     mk('npc_o_sombra', 'npc', 54, 48, 'o_sombra', { lugar: 'entrada_galerias_da_usina' }),
 
     // inimigos: mercenários do Sombra na ponte, turbina na passarela, enguias na água rasa
-    bando('bando_mercenario_oeste', 'mercenario_do_sombra', 2, 12, 34, 29),
-    bando('bando_mercenario_leste', 'mercenario_do_sombra', 3, 13, 72, 22),
-    bando('bando_mercenario_galerias', 'mercenario_do_sombra', 2, 12, 42, 46),
-    bando('bando_turbina_passarela', 'turbina_desgovernada', 1, 12, 66, 31),
-    bando('bando_enguia_da_barragem', 'enguia_eletrica', 3, 12, 64, 46),
+    bando('bando_mercenario_oeste', 'mercenario_do_sombra', 2, 10, 34, 29),
+    bando('bando_mercenario_leste', 'mercenario_do_sombra', 3, 11, 72, 22),
+    bando('bando_mercenario_galerias', 'mercenario_do_sombra', 2, 10, 42, 46),
+    bando('bando_turbina_passarela', 'turbina_desgovernada', 1, 10, 66, 31),
+    bando('bando_enguia_da_barragem', 'enguia_eletrica', 3, 10, 64, 46),
     // SUGESTÃO: os cambistas do Capataz no estádio (missão de entrada da Torcida Fúria Neon)
-    bando('bando_cambista_estadio', 'capanga_do_capataz', 3, 9, 42, 9, { sugestao: true }),
+    bando('bando_cambista_estadio', 'capanga_do_capataz', 3, 6, 42, 9, { sugestao: true }),
     mk('elite_cambista_blindado', 'inimigo', 58, 9, 'capanga_do_capataz', { tier: 'elite', affixes: ['blindado'], level: 10, sugestao: true }),
   ];
 

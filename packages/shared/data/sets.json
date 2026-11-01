@@ -7,21 +7,127 @@
       "tipo": "individual",
       "tipoTexto": "Individual (Elemental)",
       "contagem": "portador",
-      "classes": ["elemental"],
+      "classes": [
+        "elemental"
+      ],
       "margem": null,
-      "pecasTexto": "Cabeça, peito, calça, arma",
+      "pecasTexto": "Cabeça, armadura, arma",
       "pecas": [
-        { "id": "set_turbina_cabeca", "name": "Capacete da Turbina", "slot": "cabeca", "classLock": "elemental", "margem": null, "stats": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }], "sugestaoCampos": ["name", "stats"] },
-        { "id": "set_turbina_peito", "name": "Carcaça da Turbina", "slot": "peito", "classLock": "elemental", "margem": null, "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "sugestaoCampos": ["name", "stats"] },
-        { "id": "set_turbina_calca", "name": "Calça da Turbina", "slot": "calca", "classLock": "elemental", "margem": null, "stats": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }], "sugestaoCampos": ["name", "stats"] },
-        { "id": "set_turbina_arma", "name": "Pá da Turbina", "slot": "arma", "classLock": "elemental", "margem": null, "stats": [{ "stat": "damage", "pct": 8 }], "sugestaoCampos": ["name", "stats"] }
+        {
+          "id": "set_turbina_cabeca",
+          "name": "Capacete da Turbina",
+          "slot": "cabeca",
+          "classLock": "elemental",
+          "margem": null,
+          "stats": [
+            {
+              "stat": "accuracy",
+              "pct": 6
+            },
+            {
+              "stat": "ccResist",
+              "pct": 6
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        },
+        {
+          "id": "set_turbina_peito",
+          "name": "Carcaça da Turbina",
+          "slot": "peito",
+          "classLock": "elemental",
+          "margem": null,
+          "stats": [
+            {
+              "stat": "hp",
+              "pct": 8
+            },
+            {
+              "stat": "defense",
+              "pct": 6
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        },
+        {
+          "id": "set_turbina_arma",
+          "name": "Pá da Turbina",
+          "slot": "arma",
+          "classLock": "elemental",
+          "margem": null,
+          "stats": [
+            {
+              "stat": "damage",
+              "pct": 8
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        }
       ],
       "bonus": [
-        { "pecas": 2, "texto": "+20% de recurso", "passivos": [{ "kind": "numero", "stats": [{ "stat": "resourceMax", "pct": 20 }] }] },
-        { "pecas": 3, "texto": "Raios saltam para mais 1 alvo", "passivos": [{ "kind": "regra", "gancho": "raio_salta_mais", "params": { "saltosExtras": 1 } }] },
-        { "pecas": 4, "texto": "Totens e robôs custam metade", "passivos": [{ "kind": "regra", "gancho": "custo_de_invocacao", "params": { "mult": 0.5, "tipos": ["totem", "robo"] } }] }
+        {
+          "pecas": 2,
+          "texto": "+20% de recurso",
+          "passivos": [
+            {
+              "kind": "numero",
+              "stats": [
+                {
+                  "stat": "resourceMax",
+                  "pct": 20
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "pecas": 3,
+          "texto": "Raios saltam para mais 1 alvo",
+          "passivos": [
+            {
+              "kind": "regra",
+              "gancho": "raio_salta_mais",
+              "params": {
+                "saltosExtras": 1
+              }
+            }
+          ]
+        },
+        {
+          "pecas": 3,
+          "texto": "Totens e robôs custam metade",
+          "passivos": [
+            {
+              "kind": "regra",
+              "gancho": "custo_de_invocacao",
+              "params": {
+                "mult": 0.5,
+                "tipos": [
+                  "totem",
+                  "robo"
+                ]
+              }
+            }
+          ],
+          "sugestao": true
+        }
       ],
-      "visualSetCompleto": { "descricao": "Pás de turbina girando nas costas e um capacete de engrenagem; o boneco zune ao andar.", "esquerda": "Pás de madeira girando com vento-espírito.", "direita": "Pás de metal girando com faísca.", "chaveArte": "set_turbina_completo", "sugestao": true },
+      "visualSetCompleto": {
+        "descricao": "Pás de turbina girando nas costas e um capacete de engrenagem; o boneco zune ao andar.",
+        "esquerda": "Pás de madeira girando com vento-espírito.",
+        "direita": "Pás de metal girando com faísca.",
+        "chaveArte": "set_turbina_completo",
+        "sugestao": true
+      },
       "foraDoPiloto": true
     },
     {
@@ -32,17 +138,82 @@
       "contagem": "portador",
       "classes": null,
       "margem": null,
-      "pecasTexto": "Calça, calçado, adorno",
+      "pecasTexto": ", calçado, adorno",
       "pecas": [
-        { "id": "set_contrabandista_calca", "name": "Calça de Bolso Falso", "slot": "calca", "classLock": null, "margem": null, "stats": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }], "sugestaoCampos": ["name", "stats"] },
-        { "id": "set_contrabandista_calcado", "name": "Botas de Trilha do Juncal", "slot": "calcado", "classLock": null, "margem": null, "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "sugestaoCampos": ["name", "stats"] },
-        { "id": "set_contrabandista_adorno", "name": "Duas Maquininhas no Cinto", "slot": "adorno", "classLock": null, "margem": null, "stats": [], "sugestaoCampos": ["name"] }
+        {
+          "id": "set_contrabandista_calcado",
+          "name": "Botas de Trilha do Juncal",
+          "slot": "calcado",
+          "classLock": null,
+          "margem": null,
+          "stats": [
+            {
+              "stat": "attackSpeed",
+              "pct": 4
+            },
+            {
+              "stat": "cooldownSpeed",
+              "pct": 4
+            },
+            {
+              "stat": "moveSpeed",
+              "pct": 5
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        },
+        {
+          "id": "set_contrabandista_adorno",
+          "name": "Duas Maquininhas no Cinto",
+          "slot": "adorno",
+          "classLock": null,
+          "margem": null,
+          "stats": [],
+          "sugestaoCampos": [
+            "name"
+          ]
+        }
       ],
       "bonus": [
-        { "pecas": 2, "texto": "+velocidade no mapa", "passivos": [{ "kind": "regra", "gancho": "velocidade_no_mapa", "params": { "moveSpeedPct": 15 }, "valeNoMapa": true }], "sugestaoCampos": ["passivos.0.params.moveSpeedPct"] },
-        { "pecas": 3, "texto": "Comboio invisível 1 vez por dia", "passivos": [{ "kind": "recarga", "recargaS": 86400, "gancho": "comboio_invisivel", "valeNoMapa": true }] }
+        {
+          "pecas": 2,
+          "texto": "+velocidade no mapa",
+          "passivos": [
+            {
+              "kind": "regra",
+              "gancho": "velocidade_no_mapa",
+              "params": {
+                "moveSpeedPct": 15
+              },
+              "valeNoMapa": true
+            }
+          ],
+          "sugestaoCampos": [
+            "passivos.0.params.moveSpeedPct"
+          ]
+        },
+        {
+          "pecas": 2,
+          "texto": "Comboio invisível 1 vez por dia",
+          "passivos": [
+            {
+              "kind": "recarga",
+              "recargaS": 86400,
+              "gancho": "comboio_invisivel",
+              "valeNoMapa": true
+            }
+          ],
+          "sugestao": true
+        }
       ],
-      "visualSetCompleto": { "descricao": "Capa de lona do Juncal com bolsos por dentro e duas maquininhas no cinto, uma de Semente e outra de Crédito.", "chaveArte": "set_contrabandista_completo", "sugestao": true },
+      "visualSetCompleto": {
+        "descricao": "Capa de lona do Juncal com bolsos por dentro e duas maquininhas no cinto, uma de Semente e outra de Crédito.",
+        "chaveArte": "set_contrabandista_completo",
+        "sugestao": true
+      },
       "foraDoPiloto": true
     },
     {
@@ -51,24 +222,160 @@
       "tipo": "individual",
       "tipoTexto": "Individual (Atirador ou Combatente)",
       "contagem": "portador",
-      "classes": ["atirador", "combatente"],
+      "classes": [
+        "atirador",
+        "combatente"
+      ],
       "margem": null,
-      "pecasTexto": "Cabeça, peito, arma, calçado",
+      "pecasTexto": "Cabeça, armadura, arma, calçado",
       "pecas": [
-        { "id": "set_sombra_cabeca", "name": "Capuz da Sombra", "slot": "cabeca", "classLock": null, "margem": null, "stats": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }], "sugestaoCampos": ["name", "stats"] },
-        { "id": "set_sombra_peito", "name": "Capa de Dois Crachás", "slot": "peito", "classLock": null, "margem": null, "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "sugestaoCampos": ["name", "stats"] },
-        { "id": "set_sombra_arma", "name": "Lâmina Sem Nota Fiscal", "slot": "arma", "classLock": null, "margem": null, "stats": [{ "stat": "damage", "pct": 8 }], "sugestaoCampos": ["name", "stats"] },
-        { "id": "set_sombra_calcado", "name": "Botas de Passo Mudo", "slot": "calcado", "classLock": null, "margem": null, "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "sugestaoCampos": ["name", "stats"] }
+        {
+          "id": "set_sombra_cabeca",
+          "name": "Capuz da Sombra",
+          "slot": "cabeca",
+          "classLock": null,
+          "margem": null,
+          "stats": [
+            {
+              "stat": "accuracy",
+              "pct": 6
+            },
+            {
+              "stat": "ccResist",
+              "pct": 6
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        },
+        {
+          "id": "set_sombra_peito",
+          "name": "Capa de Dois Crachás",
+          "slot": "peito",
+          "classLock": null,
+          "margem": null,
+          "stats": [
+            {
+              "stat": "hp",
+              "pct": 8
+            },
+            {
+              "stat": "defense",
+              "pct": 6
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        },
+        {
+          "id": "set_sombra_arma",
+          "name": "Lâmina Sem Nota Fiscal",
+          "slot": "arma",
+          "classLock": null,
+          "margem": null,
+          "stats": [
+            {
+              "stat": "damage",
+              "pct": 8
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        },
+        {
+          "id": "set_sombra_calcado",
+          "name": "Botas de Passo Mudo",
+          "slot": "calcado",
+          "classLock": null,
+          "margem": null,
+          "stats": [
+            {
+              "stat": "attackSpeed",
+              "pct": 4
+            },
+            {
+              "stat": "cooldownSpeed",
+              "pct": 4
+            },
+            {
+              "stat": "moveSpeed",
+              "pct": 5
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        }
       ],
       "bonus": [
-        { "pecas": 2, "texto": "+crítico", "passivos": [{ "kind": "numero", "stats": [{ "stat": "crit", "pct": 5 }] }], "sugestaoCampos": ["passivos.0.stats"] },
-        { "pecas": 3, "texto": "Depois de 3 s sem ser atingido, o próximo ataque é crítico", "passivos": [{ "kind": "gatilho", "trigger": "sem_tomar_dano", "intervaloS": 3, "gancho": "proximo_ataque_critico" }] },
-        { "pecas": 4, "texto": "Fica invisível por 3 s ao derrotar um elite", "passivos": [{ "kind": "gatilho", "trigger": "ao_derrotar", "params": { "tier": "elite" }, "efeitos": [{ "kind": "invisivel", "duracaoMs": 3000, "target": "self" }] }] }
+        {
+          "pecas": 2,
+          "texto": "+crítico",
+          "passivos": [
+            {
+              "kind": "numero",
+              "stats": [
+                {
+                  "stat": "crit",
+                  "pct": 5
+                }
+              ]
+            }
+          ],
+          "sugestaoCampos": [
+            "passivos.0.stats"
+          ]
+        },
+        {
+          "pecas": 3,
+          "texto": "Depois de 3 s sem ser atingido, o próximo ataque é crítico",
+          "passivos": [
+            {
+              "kind": "gatilho",
+              "trigger": "sem_tomar_dano",
+              "intervaloS": 3,
+              "gancho": "proximo_ataque_critico"
+            }
+          ]
+        },
+        {
+          "pecas": 4,
+          "texto": "Fica invisível por 3 s ao derrotar um elite",
+          "passivos": [
+            {
+              "kind": "gatilho",
+              "trigger": "ao_derrotar",
+              "params": {
+                "tier": "elite"
+              },
+              "efeitos": [
+                {
+                  "kind": "invisivel",
+                  "duracaoMs": 3000,
+                  "target": "self"
+                }
+              ]
+            }
+          ]
+        }
       ],
       "regraQueda": "A arma do set usa o tipo de ataque da classe de quem veste.",
-      "visualSetCompleto": { "descricao": "Capa preta comprida com dois crachás pendurados, um de cada margem, e o rosto sempre na sombra.", "chaveArte": "set_sombra_completo", "sugestao": true },
+      "visualSetCompleto": {
+        "descricao": "Capa preta comprida com dois crachás pendurados, um de cada margem, e o rosto sempre na sombra.",
+        "chaveArte": "set_sombra_completo",
+        "sugestao": true
+      },
       "foraDoPiloto": true,
-      "sugestaoCampos": ["regraQueda"]
+      "sugestaoCampos": [
+        "regraQueda"
+      ]
     },
     {
       "id": "mutirao",
@@ -78,20 +385,138 @@
       "contagem": "grupo",
       "classes": null,
       "margem": "esquerda",
-      "pecasTexto": "Peito do Combatente, calça do Mascarado, calçado do Atirador, arma do Elemental",
+      "pecasTexto": "Peito do Combatente do Mascarado, calçado do Atirador, arma do Elemental",
       "pecas": [
-        { "id": "set_mutirao_peito", "name": "Colete do Mutirão", "slot": "peito", "classLock": "combatente", "margem": "esquerda", "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "sugestaoCampos": ["name", "stats"] },
-        { "id": "set_mutirao_calca", "name": "Calça do Mutirão", "slot": "calca", "classLock": "mascarado", "margem": "esquerda", "stats": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }], "sugestaoCampos": ["name", "stats"] },
-        { "id": "set_mutirao_calcado", "name": "Botina do Mutirão", "slot": "calcado", "classLock": "atirador", "margem": "esquerda", "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "sugestaoCampos": ["name", "stats"] },
-        { "id": "set_mutirao_arma", "name": "Enxada-Cajado do Mutirão", "slot": "arma", "classLock": "elemental", "margem": "esquerda", "stats": [{ "stat": "damage", "pct": 8 }], "sugestaoCampos": ["name", "stats"] }
+        {
+          "id": "set_mutirao_peito",
+          "name": "Colete do Mutirão",
+          "slot": "peito",
+          "classLock": "combatente",
+          "margem": "esquerda",
+          "stats": [
+            {
+              "stat": "hp",
+              "pct": 8
+            },
+            {
+              "stat": "defense",
+              "pct": 6
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        },
+        {
+          "id": "set_mutirao_calcado",
+          "name": "Botina do Mutirão",
+          "slot": "calcado",
+          "classLock": "atirador",
+          "margem": "esquerda",
+          "stats": [
+            {
+              "stat": "attackSpeed",
+              "pct": 4
+            },
+            {
+              "stat": "cooldownSpeed",
+              "pct": 4
+            },
+            {
+              "stat": "moveSpeed",
+              "pct": 5
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        },
+        {
+          "id": "set_mutirao_arma",
+          "name": "Enxada-Cajado do Mutirão",
+          "slot": "arma",
+          "classLock": "elemental",
+          "margem": "esquerda",
+          "stats": [
+            {
+              "stat": "damage",
+              "pct": 8
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        }
       ],
       "bonus": [
-        { "pecas": 2, "texto": "+defesa do grupo", "passivos": [{ "kind": "aura", "params": { "alcance": "grupo" }, "stats": [{ "stat": "defense", "pct": 10 }] }], "sugestaoCampos": ["passivos.0.stats"] },
-        { "pecas": 3, "texto": "Cura do grupo +15%", "passivos": [{ "kind": "aura", "params": { "alcance": "grupo" }, "stats": [{ "stat": "healing", "pct": 15 }] }] },
-        { "pecas": 4, "texto": "O Especial de todo o grupo carrega 30% mais rápido", "passivos": [{ "kind": "aura", "params": { "alcance": "grupo" }, "stats": [{ "stat": "specialCharge", "pct": 30 }] }] }
+        {
+          "pecas": 2,
+          "texto": "+defesa do grupo",
+          "passivos": [
+            {
+              "kind": "aura",
+              "params": {
+                "alcance": "grupo"
+              },
+              "stats": [
+                {
+                  "stat": "defense",
+                  "pct": 10
+                }
+              ]
+            }
+          ],
+          "sugestaoCampos": [
+            "passivos.0.stats"
+          ]
+        },
+        {
+          "pecas": 3,
+          "texto": "Cura do grupo +15%",
+          "passivos": [
+            {
+              "kind": "aura",
+              "params": {
+                "alcance": "grupo"
+              },
+              "stats": [
+                {
+                  "stat": "healing",
+                  "pct": 15
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "pecas": 3,
+          "texto": "O Especial de todo o grupo carrega 30% mais rápido",
+          "passivos": [
+            {
+              "kind": "aura",
+              "params": {
+                "alcance": "grupo"
+              },
+              "stats": [
+                {
+                  "stat": "specialCharge",
+                  "pct": 30
+                }
+              ]
+            }
+          ],
+          "sugestao": true
+        }
       ],
       "regraQueda": "Peças de set de grupo só caem para quem participou.",
-      "visualSetCompleto": { "descricao": "Cada um do grupo ganha um lenço de mutirão igual e uma ferramenta nas costas; juntos, parecem uma obra andando.", "chaveArte": "set_mutirao_completo", "sugestao": true },
+      "visualSetCompleto": {
+        "descricao": "Cada um do grupo ganha um lenço de mutirão igual e uma ferramenta nas costas; juntos, parecem uma obra andando.",
+        "chaveArte": "set_mutirao_completo",
+        "sugestao": true
+      },
       "foraDoPiloto": true
     },
     {
@@ -102,20 +527,148 @@
       "contagem": "grupo",
       "classes": null,
       "margem": "direita",
-      "pecasTexto": "Cabeça do Atirador, peito do Elemental, arma do Combatente, calçado do Mascarado",
+      "pecasTexto": "Cabeça do Atirador, armadura do Elemental, arma do Combatente, calçado do Mascarado",
       "pecas": [
-        { "id": "set_diretoria_cabeca", "name": "Óculos de Reunião da Diretoria", "slot": "cabeca", "classLock": "atirador", "margem": "direita", "stats": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }], "sugestaoCampos": ["name", "stats"] },
-        { "id": "set_diretoria_peito", "name": "Paletó da Diretoria", "slot": "peito", "classLock": "elemental", "margem": "direita", "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "sugestaoCampos": ["name", "stats"] },
-        { "id": "set_diretoria_arma", "name": "Manopla de Bônus Anual", "slot": "arma", "classLock": "combatente", "margem": "direita", "stats": [{ "stat": "damage", "pct": 8 }], "sugestaoCampos": ["name", "stats"] },
-        { "id": "set_diretoria_calcado", "name": "Sapato de Sala de Reunião", "slot": "calcado", "classLock": "mascarado", "margem": "direita", "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "sugestaoCampos": ["name", "stats"] }
+        {
+          "id": "set_diretoria_cabeca",
+          "name": "Óculos de Reunião da Diretoria",
+          "slot": "cabeca",
+          "classLock": "atirador",
+          "margem": "direita",
+          "stats": [
+            {
+              "stat": "accuracy",
+              "pct": 6
+            },
+            {
+              "stat": "ccResist",
+              "pct": 6
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        },
+        {
+          "id": "set_diretoria_peito",
+          "name": "Paletó da Diretoria",
+          "slot": "peito",
+          "classLock": "elemental",
+          "margem": "direita",
+          "stats": [
+            {
+              "stat": "hp",
+              "pct": 8
+            },
+            {
+              "stat": "defense",
+              "pct": 6
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        },
+        {
+          "id": "set_diretoria_arma",
+          "name": "Manopla de Bônus Anual",
+          "slot": "arma",
+          "classLock": "combatente",
+          "margem": "direita",
+          "stats": [
+            {
+              "stat": "damage",
+              "pct": 8
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        },
+        {
+          "id": "set_diretoria_calcado",
+          "name": "Sapato de Sala de Reunião",
+          "slot": "calcado",
+          "classLock": "mascarado",
+          "margem": "direita",
+          "stats": [
+            {
+              "stat": "attackSpeed",
+              "pct": 4
+            },
+            {
+              "stat": "cooldownSpeed",
+              "pct": 4
+            },
+            {
+              "stat": "moveSpeed",
+              "pct": 5
+            }
+          ],
+          "sugestaoCampos": [
+            "name",
+            "stats"
+          ]
+        }
       ],
       "bonus": [
-        { "pecas": 2, "texto": "+crítico do grupo", "passivos": [{ "kind": "aura", "params": { "alcance": "grupo" }, "stats": [{ "stat": "crit", "pct": 5 }] }], "sugestaoCampos": ["passivos.0.stats"] },
-        { "pecas": 3, "texto": "Saque com 1 rolagem extra", "passivos": [{ "kind": "regra", "gancho": "saque_rolagem_extra", "params": { "rolagensExtras": 1 } }] },
-        { "pecas": 4, "texto": "Consumíveis têm 25% de chance de não gastar", "passivos": [{ "kind": "regra", "gancho": "consumivel_nao_gasta", "params": { "chance": 0.25 } }] }
+        {
+          "pecas": 2,
+          "texto": "+crítico do grupo",
+          "passivos": [
+            {
+              "kind": "aura",
+              "params": {
+                "alcance": "grupo"
+              },
+              "stats": [
+                {
+                  "stat": "crit",
+                  "pct": 5
+                }
+              ]
+            }
+          ],
+          "sugestaoCampos": [
+            "passivos.0.stats"
+          ]
+        },
+        {
+          "pecas": 3,
+          "texto": "Saque com 1 rolagem extra",
+          "passivos": [
+            {
+              "kind": "regra",
+              "gancho": "saque_rolagem_extra",
+              "params": {
+                "rolagensExtras": 1
+              }
+            }
+          ]
+        },
+        {
+          "pecas": 4,
+          "texto": "Consumíveis têm 25% de chance de não gastar",
+          "passivos": [
+            {
+              "kind": "regra",
+              "gancho": "consumivel_nao_gasta",
+              "params": {
+                "chance": 0.25
+              }
+            }
+          ]
+        }
       ],
       "regraQueda": "Peças de set de grupo só caem para quem participou.",
-      "visualSetCompleto": { "descricao": "Cada um do grupo ganha uma gravata de holograma e um crachá VIP; juntos, parecem uma reunião que podia ser um e-mail.", "chaveArte": "set_diretoria_completo", "sugestao": true },
+      "visualSetCompleto": {
+        "descricao": "Cada um do grupo ganha uma gravata de holograma e um crachá VIP; juntos, parecem uma reunião que podia ser um e-mail.",
+        "chaveArte": "set_diretoria_completo",
+        "sugestao": true
+      },
       "foraDoPiloto": true
     },
     {
@@ -128,24 +681,161 @@
       "margem": null,
       "pecasTexto": "2 peças da Esquerda e 2 da Direita; caem só em missões mistas",
       "pecas": [
-        { "id": "set_ponte_cabeca", "name": "Elmo do Pilar Esquerdo", "slot": "cabeca", "classLock": null, "margem": "esquerda", "stats": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }], "sugestao": true },
-        { "id": "set_ponte_peito", "name": "Peitoral do Pilar Esquerdo", "slot": "peito", "classLock": null, "margem": "esquerda", "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "sugestao": true },
-        { "id": "set_ponte_calca", "name": "Calça do Pilar Direito", "slot": "calca", "classLock": null, "margem": "direita", "stats": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }], "sugestao": true },
-        { "id": "set_ponte_calcado", "name": "Botas do Pilar Direito", "slot": "calcado", "classLock": null, "margem": "direita", "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "sugestao": true }
+        {
+          "id": "set_ponte_cabeca",
+          "name": "Elmo do Pilar Esquerdo",
+          "slot": "cabeca",
+          "classLock": null,
+          "margem": "esquerda",
+          "stats": [
+            {
+              "stat": "accuracy",
+              "pct": 6
+            },
+            {
+              "stat": "ccResist",
+              "pct": 6
+            }
+          ],
+          "sugestao": true
+        },
+        {
+          "id": "set_ponte_peito",
+          "name": "Peitoral do Pilar Esquerdo",
+          "slot": "peito",
+          "classLock": null,
+          "margem": "esquerda",
+          "stats": [
+            {
+              "stat": "hp",
+              "pct": 8
+            },
+            {
+              "stat": "defense",
+              "pct": 6
+            }
+          ],
+          "sugestao": true
+        },
+        {
+          "id": "set_ponte_calcado",
+          "name": "Botas do Pilar Direito",
+          "slot": "calcado",
+          "classLock": null,
+          "margem": "direita",
+          "stats": [
+            {
+              "stat": "attackSpeed",
+              "pct": 4
+            },
+            {
+              "stat": "cooldownSpeed",
+              "pct": 4
+            },
+            {
+              "stat": "moveSpeed",
+              "pct": 5
+            }
+          ],
+          "sugestao": true
+        }
       ],
       "bonus": [
         {
           "pecas": 2,
           "texto": "+10% em tudo",
-          "passivos": [{ "kind": "numero", "stats": [{ "stat": "hp", "pct": 10 }, { "stat": "attack", "pct": 10 }, { "stat": "defense", "pct": 10 }, { "stat": "speed", "pct": 10 }, { "stat": "range", "pct": 10 }, { "stat": "ccDuration", "pct": 10 }, { "stat": "healing", "pct": 10 }] }]
+          "passivos": [
+            {
+              "kind": "numero",
+              "stats": [
+                {
+                  "stat": "hp",
+                  "pct": 10
+                },
+                {
+                  "stat": "attack",
+                  "pct": 10
+                },
+                {
+                  "stat": "defense",
+                  "pct": 10
+                },
+                {
+                  "stat": "speed",
+                  "pct": 10
+                },
+                {
+                  "stat": "range",
+                  "pct": 10
+                },
+                {
+                  "stat": "ccDuration",
+                  "pct": 10
+                },
+                {
+                  "stat": "healing",
+                  "pct": 10
+                }
+              ]
+            }
+          ]
         },
-        { "pecas": 3, "texto": "A cada 30 s, escudo de grupo por 3 s", "passivos": [{ "kind": "recarga", "recargaS": 30, "efeitos": [{ "kind": "escudo", "pctVidaMax": 10, "duracaoMs": 3000, "target": "grupo" }] }], "sugestaoCampos": ["passivos.0.efeitos.0.pctVidaMax"] },
-        { "pecas": 4, "texto": "Barragem: quando alguém do grupo cai abaixo de 20% de vida, o grupo não sofre dano por 2 s; recarga de 90 s", "passivos": [{ "kind": "gatilho", "trigger": "pouca_vida", "limiarPct": 20, "recargaS": 90, "params": { "quem": "qualquer_do_grupo" }, "efeitos": [{ "kind": "imune", "duracaoMs": 2000, "aDano": true, "target": "grupo" }] }] }
+        {
+          "pecas": 3,
+          "texto": "A cada 30 s, escudo de grupo por 3 s",
+          "passivos": [
+            {
+              "kind": "recarga",
+              "recargaS": 30,
+              "efeitos": [
+                {
+                  "kind": "escudo",
+                  "pctVidaMax": 10,
+                  "duracaoMs": 3000,
+                  "target": "grupo"
+                }
+              ]
+            }
+          ],
+          "sugestaoCampos": [
+            "passivos.0.efeitos.0.pctVidaMax"
+          ]
+        },
+        {
+          "pecas": 3,
+          "texto": "Barragem: quando alguém do grupo cai abaixo de 20% de vida, o grupo não sofre dano por 2 s; recarga de 90 s",
+          "passivos": [
+            {
+              "kind": "gatilho",
+              "trigger": "pouca_vida",
+              "limiarPct": 20,
+              "recargaS": 90,
+              "params": {
+                "quem": "qualquer_do_grupo"
+              },
+              "efeitos": [
+                {
+                  "kind": "imune",
+                  "duracaoMs": 2000,
+                  "aDano": true,
+                  "target": "grupo"
+                }
+              ]
+            }
+          ],
+          "sugestao": true
+        }
       ],
       "regraQueda": "Caem só em missões mistas, e só para quem participou.",
-      "visualSetCompleto": { "descricao": "Metade do traje em madeira e folha, metade em cromo e neon, costuradas no meio por um cabo de aço da ponte.", "chaveArte": "set_ponte_completo", "sugestao": true },
+      "visualSetCompleto": {
+        "descricao": "Metade do traje em madeira e folha, metade em cromo e neon, costuradas no meio por um cabo de aço da ponte.",
+        "chaveArte": "set_ponte_completo",
+        "sugestao": true
+      },
       "foraDoPiloto": true,
-      "sugestaoCampos": ["pecas"]
+      "sugestaoCampos": [
+        "pecas"
+      ]
     }
   ]
 }

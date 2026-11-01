@@ -6,7 +6,7 @@ import { Ability, Passive, StatKey, StatMod } from './ability';
  * Itens, únicos, sets, consumíveis, lojas de NPC e saque.
  *
  * Regras dos docs que estes esquemas carregam:
- * - 6 tipos (slots), um de cada por personagem. Comum, raro, único e set. Sem runas nem soquetes.
+ * - 5 tipos (slots; v0.3: a calça entrou na armadura), um de cada por personagem. Comum, raro, único e set. Sem runas nem soquetes.
  * - Itens de outra classe não podem ser usados. Itens sem classe adotam o estilo da ala.
  * - A raridade aparece: comum simples, raro com detalhe, único com visual próprio, set completo muda a silhueta.
  * - Esquerda cresce com benzimento (reputação e lições); Direita com calibração (Crédito).
@@ -17,7 +17,7 @@ import { Ability, Passive, StatKey, StatMod } from './ability';
 // ---------------------------------------------------------------------------
 // Enums do domínio
 
-export const ItemSlot = z.enum(['cabeca', 'peito', 'calca', 'arma', 'calcado', 'adorno']);
+export const ItemSlot = z.enum(['cabeca', 'peito', 'arma', 'calcado', 'adorno']);
 export type ItemSlot = z.infer<typeof ItemSlot>;
 
 export const ItemRarity = z.enum(['comum', 'raro', 'unico', 'set']);
@@ -333,7 +333,7 @@ const SLOTS = ItemSlot.options;
 
 export const ItemsFile = z
   .object({
-    slots: z.array(SlotDef).length(6),
+    slots: z.array(SlotDef).length(5),
     raridades: z.array(RarityDef).length(4),
     atributosBase: BaseStatsTable,
     regras: ItemRules,

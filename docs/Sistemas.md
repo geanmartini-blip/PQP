@@ -1,5 +1,7 @@
 # Sistemas
 
+> **v0.3 (sugestão):** a jornada do 1 ao 20 mudou: Delta do 1 ao 4, balsa no 5, ala no 10 e cabeceira da Ponte no 19, com 5 slots de item. Ver docs/Jornada.md. Onde este texto fala em 7, 8 e 12, valem 4, 5 e 10.
+
 ## Resumo do que está decidido
 
 | Tema | Decisão |

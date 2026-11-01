@@ -75,14 +75,14 @@
   {
     "id": "barreira_de_sucata",
     "name": "Barreira de Sucata",
-    "hpPct": 8,
+    "hpPct": 5,
     "attackMult": 0,
     "behavior": "muralha",
     "range": 0,
     "radius": 0,
     "effects": [],
     "destructible": true,
-    "rebuildMs": 10000,
+    "rebuildMs": 13000,
     "description": "Barreira do Funciona, Não Pergunta (Engenheira de Gambiarra): segura passagem e projéteis e se refaz depois de destruída.",
     "visual": { "direita": "Geladeira velha, ventilador e fita prata, com o lacre \"GARANTIA VIOLADA\"." },
     "sugestaoCampos": ["hpPct", "rebuildMs"]
@@ -90,12 +90,12 @@
   {
     "id": "robo_geladeira",
     "name": "Robô-Geladeira",
-    "hpPct": 12,
+    "hpPct": 7,
     "attackMult": 0.05,
     "behavior": "provoca",
     "range": 1,
-    "radius": 3,
-    "tickMs": 6000,
+    "radius": 2,
+    "tickMs": 8000,
     "effects": [
       { "kind": "controle", "cc": "provocar", "duracaoMs": 500, "target": "inimigos_area" }
     ],

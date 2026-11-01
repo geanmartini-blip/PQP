@@ -6,7 +6,10 @@
     "defesaMult": 1.15,
     "xpMult": 4,
     "escalaVisual": 1.25,
-    "afixos": { "min": 1, "max": 2 },
+    "afixos": {
+      "min": 1,
+      "max": 2
+    },
     "tabelaSaque": "loot_elite",
     "sugestao": true
   },
@@ -17,7 +20,13 @@
     "controleViraLentidaoPct": 40,
     "vidaPorJogadorExtraPct": 50,
     "description": "Chefes têm avisos no chão em todo ataque em área (pelo menos 0,8 s) e só ficam lentos: atordoar, prender, derrubar, silenciar, cegar, confundir, provocar e tontura viram lentidão de 40% pela mesma duração. A vida sobe 50% por jogador além do primeiro.",
-    "sugestaoCampos": ["fasesMin", "fasesMax", "controleViraLentidaoPct", "vidaPorJogadorExtraPct", "description"]
+    "sugestaoCampos": [
+      "fasesMin",
+      "fasesMax",
+      "controleViraLentidaoPct",
+      "vidaPorJogadorExtraPct",
+      "description"
+    ]
   },
   "escalaPorNivel": {
     "vidaPct": 8,
@@ -32,41 +41,111 @@
       "name": "Rápido",
       "description": "Tomou o energético do Consórcio e o chá da Esquerda no mesmo copo. Anda 40% mais rápido e bate e recarrega 30% mais rápido.",
       "passivos": [
-        { "kind": "numero", "stats": [{ "stat": "moveSpeed", "pct": 40 }, { "stat": "attackSpeed", "pct": 30 }, { "stat": "cooldownSpeed", "pct": 30 }] }
+        {
+          "kind": "numero",
+          "stats": [
+            {
+              "stat": "moveSpeed",
+              "pct": 40
+            },
+            {
+              "stat": "attackSpeed",
+              "pct": 30
+            },
+            {
+              "stat": "cooldownSpeed",
+              "pct": 30
+            }
+          ]
+        }
       ],
       "visual": "Rastro de poeira atrás dos pés e contorno amarelo.",
-      "sugestaoCampos": ["description", "passivos", "visual"]
+      "sugestaoCampos": [
+        "description",
+        "passivos",
+        "visual"
+      ]
     },
     {
       "id": "blindado",
       "name": "Blindado",
       "description": "Placas de sucata parafusadas por cima da roupa. Recebe 40% menos dano, controles duram metade e não pode ser empurrado. Ninguém sabe onde ele parafusou; ninguém pergunta.",
       "passivos": [
-        { "kind": "numero", "stats": [{ "stat": "damageTaken", "pct": -40 }, { "stat": "ccResist", "pct": 50 }] },
-        { "kind": "regra", "gancho": "imune_empurrao" }
+        {
+          "kind": "numero",
+          "stats": [
+            {
+              "stat": "damageTaken",
+              "pct": -40
+            },
+            {
+              "stat": "ccResist",
+              "pct": 50
+            }
+          ]
+        },
+        {
+          "kind": "regra",
+          "gancho": "imune_empurrao"
+        }
       ],
       "visual": "Placas cinza parafusadas e contorno azul.",
-      "sugestaoCampos": ["description", "passivos", "visual"]
+      "sugestaoCampos": [
+        "description",
+        "passivos",
+        "visual"
+      ]
     },
     {
       "id": "explode_ao_morrer",
       "name": "Explode ao Morrer",
       "description": "Ao cair, pisca 1,2 s com aviso no chão e explode num raio de 2,5 tiles. Ninguém sabia o que tinha na mochila dele; agora todo mundo sabe.",
       "passivos": [
-        { "kind": "regra", "efeitos": [{ "kind": "explode_ao_morrer", "mult": 2, "raio": 2.5, "janelaMs": 1200 }] }
+        {
+          "kind": "regra",
+          "efeitos": [
+            {
+              "kind": "explode_ao_morrer",
+              "mult": 2,
+              "raio": 2.5,
+              "janelaMs": 1200
+            }
+          ]
+        }
       ],
       "visual": "Pavio aceso nas costas e contorno vermelho.",
-      "sugestaoCampos": ["description", "passivos", "visual"]
+      "sugestaoCampos": [
+        "description",
+        "passivos",
+        "visual"
+      ]
     },
     {
       "id": "cura_os_outros",
       "name": "Cura os Outros",
       "description": "A cada 6 s, cura 12% da vida dos outros inimigos a até 5 tiles. É o único do bando que trabalha: derrube esse primeiro.",
       "passivos": [
-        { "kind": "gatilho", "trigger": "intervalo", "intervaloS": 6, "raio": 5, "efeitos": [{ "kind": "cura", "pctVidaMax": 12, "target": "aliados_area_sem_self", "radius": 5 }] }
+        {
+          "kind": "gatilho",
+          "trigger": "intervalo",
+          "intervaloS": 6,
+          "raio": 5,
+          "efeitos": [
+            {
+              "kind": "cura",
+              "pctVidaMax": 12,
+              "target": "aliados_area_sem_self",
+              "radius": 5
+            }
+          ]
+        }
       ],
       "visual": "Cruz verde piscando em cima da cabeça e contorno verde.",
-      "sugestaoCampos": ["description", "passivos", "visual"]
+      "sugestaoCampos": [
+        "description",
+        "passivos",
+        "visual"
+      ]
     }
   ],
   "inimigos": [
@@ -76,7 +155,9 @@
       "description": "Anda de lado, belisca de frente e cobra pedágio de quem pisa no mangue dele. Vem em bando, porque sozinho ninguém respeita.",
       "tier": "normal",
       "nivel": 1,
-      "regioes": ["delta"],
+      "regioes": [
+        "delta"
+      ],
       "vida": 22,
       "ataque": 3,
       "defesa": 2,
@@ -84,12 +165,21 @@
       "alcance": 1,
       "comportamento": "enxame",
       "raioCorpoTiles": 0.3,
-      "bando": { "min": 3, "max": 5 },
-      "afixosPossiveis": ["rapido", "blindado", "explode_ao_morrer"],
+      "bando": {
+        "min": 3,
+        "max": 5
+      },
+      "afixosPossiveis": [
+        "rapido",
+        "blindado",
+        "explode_ao_morrer"
+      ],
       "tabelaSaque": "loot_normal",
       "xp": 3,
       "ataqueBasico": "siri_do_mangue_beliscao",
-      "habilidades": ["siri_do_mangue_tesoura_dupla"],
+      "habilidades": [
+        "siri_do_mangue_tesoura_dupla"
+      ],
       "visual": "Siri azul-lama com uma pinça bem maior que a outra.",
       "sugestao": true
     },
@@ -99,7 +189,9 @@
       "description": "O verdadeiro dono do Delta. Não tem lado, não tem classe e não paga imposto; só cobra sangue, à vista.",
       "tier": "normal",
       "nivel": 2,
-      "regioes": ["delta"],
+      "regioes": [
+        "delta"
+      ],
       "vida": 12,
       "ataque": 2,
       "defesa": 0,
@@ -108,12 +200,20 @@
       "comportamento": "enxame",
       "voa": true,
       "raioCorpoTiles": 0.25,
-      "bando": { "min": 4, "max": 7 },
-      "afixosPossiveis": ["rapido", "explode_ao_morrer"],
+      "bando": {
+        "min": 4,
+        "max": 7
+      },
+      "afixosPossiveis": [
+        "rapido",
+        "explode_ao_morrer"
+      ],
       "tabelaSaque": "loot_normal",
       "xp": 2,
       "ataqueBasico": "mosquito_do_delta_picada",
-      "habilidades": ["mosquito_do_delta_zumbido"],
+      "habilidades": [
+        "mosquito_do_delta_zumbido"
+      ],
       "visual": "Mosquito do tamanho de um pombo, de barriga vermelha e cara satisfeita.",
       "sugestao": true
     },
@@ -122,8 +222,11 @@
       "name": "Capanga do Capataz",
       "description": "Camiseta da firma do Bruno, que não existe no papel. Ganha por cobrança feita e comissão por barco tomado.",
       "tier": "normal",
-      "nivel": 3,
-      "regioes": ["delta", "juncal"],
+      "nivel": 2,
+      "regioes": [
+        "delta",
+        "juncal"
+      ],
       "vida": 45,
       "ataque": 5,
       "defesa": 5,
@@ -131,12 +234,22 @@
       "alcance": 1,
       "comportamento": "corpo_a_corpo",
       "raioCorpoTiles": 0.4,
-      "bando": { "min": 2, "max": 3 },
-      "afixosPossiveis": ["rapido", "blindado", "explode_ao_morrer", "cura_os_outros"],
+      "bando": {
+        "min": 2,
+        "max": 3
+      },
+      "afixosPossiveis": [
+        "rapido",
+        "blindado",
+        "explode_ao_morrer",
+        "cura_os_outros"
+      ],
       "tabelaSaque": "loot_normal",
       "xp": 6,
       "ataqueBasico": "capanga_do_capataz_porrete",
-      "habilidades": ["capanga_do_capataz_cobranca_amigavel"],
+      "habilidades": [
+        "capanga_do_capataz_cobranca_amigavel"
+      ],
       "visual": "Regata, porrete de madeira e boné com a aba para trás; crachá escrito à mão.",
       "sugestao": true
     },
@@ -145,8 +258,10 @@
       "name": "Cobrador do Capataz",
       "description": "Prancheta, caneta presa no cordão e um sorriso que cresce com os juros. Aceita Semente, Crédito e promessa por escrito, com firma reconhecida.",
       "tier": "elite",
-      "nivel": 5,
-      "regioes": ["delta"],
+      "nivel": 3,
+      "regioes": [
+        "delta"
+      ],
       "vida": 120,
       "ataque": 6,
       "defesa": 6,
@@ -154,16 +269,38 @@
       "alcance": 2,
       "comportamento": "a_distancia",
       "raioCorpoTiles": 0.45,
-      "bando": { "min": 1, "max": 1 },
-      "escolta": [{ "inimigo": "capanga_do_capataz", "min": 2, "max": 2 }],
-      "afixosPossiveis": ["rapido", "blindado", "explode_ao_morrer", "cura_os_outros"],
-      "afixosFixos": { "min": 1, "max": 1 },
+      "bando": {
+        "min": 1,
+        "max": 1
+      },
+      "escolta": [
+        {
+          "inimigo": "capanga_do_capataz",
+          "min": 2,
+          "max": 2
+        }
+      ],
+      "afixosPossiveis": [
+        "rapido",
+        "blindado",
+        "explode_ao_morrer",
+        "cura_os_outros"
+      ],
+      "afixosFixos": {
+        "min": 1,
+        "max": 1
+      },
       "tabelaSaque": "loot_elite",
       "xp": 25,
       "ataqueBasico": "cobrador_do_capataz_boleto",
-      "habilidades": ["cobrador_do_capataz_juros_compostos", "cobrador_do_capataz_taxa_de_servico"],
+      "habilidades": [
+        "cobrador_do_capataz_juros_compostos",
+        "cobrador_do_capataz_taxa_de_servico"
+      ],
       "falas": {
-        "aoAparecer": ["Bom dia! Vim só conversar sobre a sua dívida. E sobre a dívida da sua dívida."]
+        "aoAparecer": [
+          "Bom dia! Vim só conversar sobre a sua dívida. E sobre a dívida da sua dívida."
+        ]
       },
       "visual": "Camisa social suada, prancheta e uma maquininha pendurada no pescoço.",
       "sugestao": true
@@ -173,8 +310,10 @@
       "name": "Bruno Ferro, o Capataz",
       "description": "Contrabandista do Juncal, que vende para os dois lados e entrega lá em cima. No Delta, está levando o barco de um vizinho por uma dívida que ele mesmo calculou, com juros que ele mesmo inventou.",
       "tier": "chefe",
-      "nivel": 7,
-      "regioes": ["delta"],
+      "nivel": 4,
+      "regioes": [
+        "delta"
+      ],
       "vida": 700,
       "ataque": 9,
       "defesa": 8,
@@ -182,7 +321,10 @@
       "alcance": 1,
       "comportamento": "corpo_a_corpo",
       "raioCorpoTiles": 0.7,
-      "bando": { "min": 1, "max": 1 },
+      "bando": {
+        "min": 1,
+        "max": 1
+      },
       "afixosPossiveis": [],
       "tabelaSaque": "loot_chefe",
       "xp": 200,
@@ -199,7 +341,10 @@
           "id": "negociacao",
           "name": "Negociação",
           "vidaAbaixoPct": 100,
-          "habilidades": ["bruno_ferro_chefe_corrente_dourada", "bruno_ferro_chefe_passa_no_cartao"],
+          "habilidades": [
+            "bruno_ferro_chefe_corrente_dourada",
+            "bruno_ferro_chefe_passa_no_cartao"
+          ],
           "fala": "Calma, vizinho. Ninguém tá roubando ninguém. Tá todo mundo pagando.",
           "sugestao": true
         },
@@ -207,8 +352,17 @@
           "id": "cobranca_com_garantia",
           "name": "Cobrança com Garantia",
           "vidaAbaixoPct": 65,
-          "habilidades": ["bruno_ferro_chefe_corrente_dourada", "bruno_ferro_chefe_passa_no_cartao", "bruno_ferro_chefe_maquininha_dupla"],
-          "reforcos": [{ "inimigo": "capanga_do_capataz", "quantidade": 2 }],
+          "habilidades": [
+            "bruno_ferro_chefe_corrente_dourada",
+            "bruno_ferro_chefe_passa_no_cartao",
+            "bruno_ferro_chefe_maquininha_dupla"
+          ],
+          "reforcos": [
+            {
+              "inimigo": "capanga_do_capataz",
+              "quantidade": 2
+            }
+          ],
           "fala": "Ô rapaziada! Vem cobrar o juro do juro!",
           "sugestao": true
         },
@@ -216,8 +370,18 @@
           "id": "liquidacao_do_barco",
           "name": "Liquidação do Barco",
           "vidaAbaixoPct": 30,
-          "habilidades": ["bruno_ferro_chefe_corrente_dourada", "bruno_ferro_chefe_maquininha_dupla", "bruno_ferro_chefe_reboque_do_barco", "bruno_ferro_chefe_liquidacao_total"],
-          "reforcos": [{ "inimigo": "capanga_do_capataz", "quantidade": 1 }],
+          "habilidades": [
+            "bruno_ferro_chefe_corrente_dourada",
+            "bruno_ferro_chefe_maquininha_dupla",
+            "bruno_ferro_chefe_reboque_do_barco",
+            "bruno_ferro_chefe_liquidacao_total"
+          ],
+          "reforcos": [
+            {
+              "inimigo": "capanga_do_capataz",
+              "quantidade": 1
+            }
+          ],
           "reforcosACadaS": 20,
           "fala": "Se o barco não sai, sai você. Parcelado em doze vezes.",
           "sugestao": true
@@ -226,9 +390,16 @@
       "controleViraLentidaoPct": 40,
       "vidaPorJogadorExtraPct": 50,
       "falas": {
-        "aoAparecer": ["Aceito Semente, Crédito e barco. Troco eu não dou.", "Dívida é dívida, vizinho. O juro é que é criativo."],
-        "aoCair": ["Tá bom, tá bom! O barco é seu. A dívida... a gente conversa no Juncal."],
-        "aoDerrotarJogador": ["Volta quando tiver Crédito. Ou Semente. Ou um barco."]
+        "aoAparecer": [
+          "Aceito Semente, Crédito e barco. Troco eu não dou.",
+          "Dívida é dívida, vizinho. O juro é que é criativo."
+        ],
+        "aoCair": [
+          "Tá bom, tá bom! O barco é seu. A dívida... a gente conversa no Juncal."
+        ],
+        "aoDerrotarJogador": [
+          "Volta quando tiver Crédito. Ou Semente. Ou um barco."
+        ]
       },
       "visual": "Colete de couro, corrente dourada falsa e duas maquininhas, uma de Semente e outra de Crédito. Sorriso de vendedor que não fecha nunca.",
       "sugestaoCampos": [
@@ -256,8 +427,10 @@
       "name": "Contrabandista",
       "description": "Leva chopindita sem nota pela trilha do Juncal, para os dois lados. Atira primeiro e emite recibo nunca.",
       "tier": "normal",
-      "nivel": 9,
-      "regioes": ["juncal"],
+      "nivel": 6,
+      "regioes": [
+        "juncal"
+      ],
       "vida": 70,
       "ataque": 9,
       "defesa": 6,
@@ -265,23 +438,59 @@
       "alcance": 2,
       "comportamento": "a_distancia",
       "raioCorpoTiles": 0.4,
-      "bando": { "min": 2, "max": 4 },
-      "escolta": [{ "inimigo": "cao_de_guarda_do_capataz", "min": 0, "max": 1 }],
-      "afixosPossiveis": ["rapido", "blindado", "explode_ao_morrer", "cura_os_outros"],
+      "bando": {
+        "min": 2,
+        "max": 4
+      },
+      "escolta": [
+        {
+          "inimigo": "cao_de_guarda_do_capataz",
+          "min": 0,
+          "max": 1
+        }
+      ],
+      "afixosPossiveis": [
+        "rapido",
+        "blindado",
+        "explode_ao_morrer",
+        "cura_os_outros"
+      ],
       "tabelaSaque": "loot_normal",
       "xp": 14,
       "ataqueBasico": "contrabandista_garrucha",
-      "habilidades": ["contrabandista_mercadoria_quente"],
+      "habilidades": [
+        "contrabandista_mercadoria_quente"
+      ],
       "visual": "Mochila cheia de pedra cor de chope, lenço no rosto e uma garrucha remendada.",
-      "sugestaoCampos": ["description", "nivel", "vida", "ataque", "defesa", "velocidade", "alcance", "comportamento", "raioCorpoTiles", "bando", "escolta", "afixosPossiveis", "tabelaSaque", "xp", "ataqueBasico", "habilidades", "visual"]
+      "sugestaoCampos": [
+        "description",
+        "nivel",
+        "vida",
+        "ataque",
+        "defesa",
+        "velocidade",
+        "alcance",
+        "comportamento",
+        "raioCorpoTiles",
+        "bando",
+        "escolta",
+        "afixosPossiveis",
+        "tabelaSaque",
+        "xp",
+        "ataqueBasico",
+        "habilidades",
+        "visual"
+      ]
     },
     {
       "id": "cao_de_guarda_do_capataz",
       "name": "Cão de Guarda do Capataz",
       "description": "Treinado para morder quem não pagou, ou seja, todo mundo. Usa coleira com as duas maquininhas, por via das dúvidas.",
       "tier": "normal",
-      "nivel": 9,
-      "regioes": ["juncal"],
+      "nivel": 6,
+      "regioes": [
+        "juncal"
+      ],
       "vida": 55,
       "ataque": 8,
       "defesa": 4,
@@ -289,12 +498,21 @@
       "alcance": 1,
       "comportamento": "corpo_a_corpo",
       "raioCorpoTiles": 0.35,
-      "bando": { "min": 2, "max": 3 },
-      "afixosPossiveis": ["rapido", "blindado", "explode_ao_morrer"],
+      "bando": {
+        "min": 2,
+        "max": 3
+      },
+      "afixosPossiveis": [
+        "rapido",
+        "blindado",
+        "explode_ao_morrer"
+      ],
       "tabelaSaque": "loot_normal",
       "xp": 11,
       "ataqueBasico": "cao_de_guarda_do_capataz_mordida",
-      "habilidades": ["cao_de_guarda_do_capataz_bote"],
+      "habilidades": [
+        "cao_de_guarda_do_capataz_bote"
+      ],
       "visual": "Vira-lata enorme de coleira de couro com duas maquininhas penduradas.",
       "sugestao": true
     },
@@ -303,8 +521,10 @@
       "name": "Cobra do Juncal",
       "description": "Mora no Juncal desde antes das duas margens e não reconhece nenhuma. O Curupira jura que ela é mansa, rindo.",
       "tier": "normal",
-      "nivel": 10,
-      "regioes": ["juncal"],
+      "nivel": 7,
+      "regioes": [
+        "juncal"
+      ],
       "vida": 60,
       "ataque": 9,
       "defesa": 5,
@@ -312,12 +532,21 @@
       "alcance": 1,
       "comportamento": "corpo_a_corpo",
       "raioCorpoTiles": 0.35,
-      "bando": { "min": 1, "max": 3 },
-      "afixosPossiveis": ["rapido", "blindado", "cura_os_outros"],
+      "bando": {
+        "min": 1,
+        "max": 3
+      },
+      "afixosPossiveis": [
+        "rapido",
+        "blindado",
+        "cura_os_outros"
+      ],
       "tabelaSaque": "loot_normal",
       "xp": 12,
       "ataqueBasico": "cobra_do_juncal_picada",
-      "habilidades": ["cobra_do_juncal_bote_venenoso"],
+      "habilidades": [
+        "cobra_do_juncal_bote_venenoso"
+      ],
       "visual": "Cobra verde-musgo com folhas grudadas e cara de quem já viu muita comissão de licença.",
       "sugestao": true
     },
@@ -326,8 +555,10 @@
       "name": "Fiscal da Comissão",
       "description": "Braçadeira, prancheta e três vias de tudo. Não veio brigar, veio avaliar a briga; o parecer sai na próxima reunião, se der quórum.",
       "tier": "normal",
-      "nivel": 10,
-      "regioes": ["margem_esquerda"],
+      "nivel": 7,
+      "regioes": [
+        "margem_esquerda"
+      ],
       "vida": 80,
       "ataque": 7,
       "defesa": 8,
@@ -335,15 +566,31 @@
       "alcance": 2,
       "comportamento": "suporte",
       "raioCorpoTiles": 0.4,
-      "bando": { "min": 2, "max": 3 },
-      "afixosPossiveis": ["rapido", "blindado", "explode_ao_morrer", "cura_os_outros"],
+      "bando": {
+        "min": 2,
+        "max": 3
+      },
+      "afixosPossiveis": [
+        "rapido",
+        "blindado",
+        "explode_ao_morrer",
+        "cura_os_outros"
+      ],
       "tabelaSaque": "loot_normal",
       "xp": 15,
       "ataqueBasico": "fiscal_da_comissao_carimbo",
-      "habilidades": ["fiscal_da_comissao_embargo", "fiscal_da_comissao_parecer_favoravel"],
+      "habilidades": [
+        "fiscal_da_comissao_embargo",
+        "fiscal_da_comissao_parecer_favoravel"
+      ],
       "falas": {
-        "aoAparecer": ["Isso aqui tem licença? Tem ata? Tem três vias?", "Uma comissão nunca anda sozinha, companheiro."],
-        "aoCair": ["Vou registrar em ata..."]
+        "aoAparecer": [
+          "Isso aqui tem licença? Tem ata? Tem três vias?",
+          "Uma comissão nunca anda sozinha, companheiro."
+        ],
+        "aoCair": [
+          "Vou registrar em ata..."
+        ]
       },
       "visual": "Vizinho de braçadeira, prancheta de madeira e carimbo do tamanho de um tijolo.",
       "sugestao": true
@@ -353,8 +600,10 @@
       "name": "Drone de Cobrança",
       "description": "Voa atrás de quem atrasou o boleto, com uma tela que pisca o seu score em público. Aceita negociação; não aceita desaforo.",
       "tier": "normal",
-      "nivel": 10,
-      "regioes": ["margem_direita"],
+      "nivel": 7,
+      "regioes": [
+        "margem_direita"
+      ],
       "vida": 50,
       "ataque": 8,
       "defesa": 6,
@@ -363,27 +612,67 @@
       "comportamento": "a_distancia",
       "voa": true,
       "raioCorpoTiles": 0.35,
-      "bando": { "min": 2, "max": 4 },
-      "afixosPossiveis": ["rapido", "blindado", "explode_ao_morrer", "cura_os_outros"],
+      "bando": {
+        "min": 2,
+        "max": 4
+      },
+      "afixosPossiveis": [
+        "rapido",
+        "blindado",
+        "explode_ao_morrer",
+        "cura_os_outros"
+      ],
       "tabelaSaque": "loot_normal",
       "xp": 13,
       "ataqueBasico": "drone_de_cobranca_notificacao",
-      "habilidades": ["drone_de_cobranca_cobranca_recorrente", "drone_de_cobranca_negativacao"],
+      "habilidades": [
+        "drone_de_cobranca_cobranca_recorrente",
+        "drone_de_cobranca_negativacao"
+      ],
       "falas": {
-        "aoAparecer": ["Olá! Identificamos uma pendência no seu cadastro. Sorria: você está sendo cobrado."],
-        "aoCair": ["Sua dívida foi transferida para outro drone."]
+        "aoAparecer": [
+          "Olá! Identificamos uma pendência no seu cadastro. Sorria: você está sendo cobrado."
+        ],
+        "aoCair": [
+          "Sua dívida foi transferida para outro drone."
+        ]
       },
       "visual": "Drone de quatro hélices com tela piscando o score em vermelho e um alto-falante de atendimento.",
-      "sugestaoCampos": ["description", "nivel", "vida", "ataque", "defesa", "velocidade", "alcance", "comportamento", "voa", "raioCorpoTiles", "bando", "afixosPossiveis", "tabelaSaque", "xp", "ataqueBasico", "habilidades", "falas", "visual"]
+      "sugestaoCampos": [
+        "description",
+        "nivel",
+        "vida",
+        "ataque",
+        "defesa",
+        "velocidade",
+        "alcance",
+        "comportamento",
+        "voa",
+        "raioCorpoTiles",
+        "bando",
+        "afixosPossiveis",
+        "tabelaSaque",
+        "xp",
+        "ataqueBasico",
+        "habilidades",
+        "falas",
+        "visual"
+      ]
     },
     {
       "id": "mercenario_do_sombra",
       "name": "Mercenário do Sombra",
       "description": "Capa preta e dois crachás, um de cada margem, igual ao patrão. Sabota a Esquerda de manhã, a Direita de tarde e cobra hora extra das duas.",
       "tier": "normal",
-      "nivel": 12,
-      "regioes": ["usina_da_ponte"],
-      "masmorra": { "id": "galerias_da_usina", "andarMin": 1, "andarMax": 5 },
+      "nivel": 10,
+      "regioes": [
+        "usina_da_ponte"
+      ],
+      "masmorra": {
+        "id": "galerias_da_usina",
+        "andarMin": 1,
+        "andarMax": 5
+      },
       "vida": 110,
       "ataque": 11,
       "defesa": 9,
@@ -391,14 +680,27 @@
       "alcance": 1,
       "comportamento": "corpo_a_corpo",
       "raioCorpoTiles": 0.4,
-      "bando": { "min": 2, "max": 3 },
-      "afixosPossiveis": ["rapido", "blindado", "explode_ao_morrer", "cura_os_outros"],
+      "bando": {
+        "min": 2,
+        "max": 3
+      },
+      "afixosPossiveis": [
+        "rapido",
+        "blindado",
+        "explode_ao_morrer",
+        "cura_os_outros"
+      ],
       "tabelaSaque": "loot_normal",
       "xp": 22,
       "ataqueBasico": "mercenario_do_sombra_faca",
-      "habilidades": ["mercenario_do_sombra_cracha_duplo", "mercenario_do_sombra_sabotagem"],
+      "habilidades": [
+        "mercenario_do_sombra_cracha_duplo",
+        "mercenario_do_sombra_sabotagem"
+      ],
       "falas": {
-        "aoAparecer": ["Nada pessoal. É contrato. São dois, na verdade."]
+        "aoAparecer": [
+          "Nada pessoal. É contrato. São dois, na verdade."
+        ]
       },
       "visual": "Capa preta curta e dois crachás pendurados, os dois escritos FUNCIONÁRIO DO MÊS.",
       "sugestao": true
@@ -408,9 +710,15 @@
       "name": "Turbina Desgovernada",
       "description": "Gira desde a guerra civil e ninguém sabe desligar. A Esquerda diz que é mau-olhado; a Direita, falta de manutenção preventiva. As duas têm razão.",
       "tier": "normal",
-      "nivel": 12,
-      "regioes": ["usina_da_ponte"],
-      "masmorra": { "id": "galerias_da_usina", "andarMin": 2, "andarMax": 5 },
+      "nivel": 10,
+      "regioes": [
+        "usina_da_ponte"
+      ],
+      "masmorra": {
+        "id": "galerias_da_usina",
+        "andarMin": 2,
+        "andarMax": 5
+      },
       "vida": 160,
       "ataque": 10,
       "defesa": 14,
@@ -419,12 +727,21 @@
       "comportamento": "corpo_a_corpo",
       "imovel": true,
       "raioCorpoTiles": 0.9,
-      "bando": { "min": 1, "max": 2 },
-      "afixosPossiveis": ["blindado", "explode_ao_morrer"],
+      "bando": {
+        "min": 1,
+        "max": 2
+      },
+      "afixosPossiveis": [
+        "blindado",
+        "explode_ao_morrer"
+      ],
       "tabelaSaque": "loot_normal",
       "xp": 20,
       "ataqueBasico": "turbina_desgovernada_pa",
-      "habilidades": ["turbina_desgovernada_succao", "turbina_desgovernada_pa_solta"],
+      "habilidades": [
+        "turbina_desgovernada_succao",
+        "turbina_desgovernada_pa_solta"
+      ],
       "visual": "Turbina enferrujada de pás tortas, com uma placa de patrimônio de cada margem e uma fita de interditado que ninguém respeitou.",
       "sugestao": true
     },
@@ -433,9 +750,15 @@
       "name": "Enguia Elétrica",
       "description": "Mora na água que sobe pelas galerias e é a única coisa na cidade com energia sobrando. A Direita quer patentear, a Esquerda quer benzer; ela só quer morder.",
       "tier": "normal",
-      "nivel": 12,
-      "regioes": ["usina_da_ponte"],
-      "masmorra": { "id": "galerias_da_usina", "andarMin": 1, "andarMax": 5 },
+      "nivel": 10,
+      "regioes": [
+        "usina_da_ponte"
+      ],
+      "masmorra": {
+        "id": "galerias_da_usina",
+        "andarMin": 1,
+        "andarMax": 5
+      },
       "vida": 45,
       "ataque": 9,
       "defesa": 4,
@@ -444,12 +767,21 @@
       "comportamento": "enxame",
       "soNaAgua": true,
       "raioCorpoTiles": 0.3,
-      "bando": { "min": 3, "max": 5 },
-      "afixosPossiveis": ["rapido", "explode_ao_morrer", "cura_os_outros"],
+      "bando": {
+        "min": 3,
+        "max": 5
+      },
+      "afixosPossiveis": [
+        "rapido",
+        "explode_ao_morrer",
+        "cura_os_outros"
+      ],
       "tabelaSaque": "loot_normal",
       "xp": 9,
       "ataqueBasico": "enguia_eletrica_mordida",
-      "habilidades": ["enguia_eletrica_choque"],
+      "habilidades": [
+        "enguia_eletrica_choque"
+      ],
       "visual": "Enguia escura com listras que acendem em amarelo antes do choque.",
       "sugestao": true
     },
@@ -458,9 +790,15 @@
       "name": "A Bomba Descontrolada",
       "description": "Mora no andar 5 das Galerias da Usina, presa às turbinas, com um visor que marca 00:07 há três anos. A Esquerda diz que é da Direita, a Direita diz que é da Esquerda, e a nota fiscal está no nome das duas.",
       "tier": "chefe",
-      "nivel": 14,
-      "regioes": ["usina_da_ponte"],
-      "masmorra": { "id": "galerias_da_usina", "andarMin": 5, "andarMax": 5 },
+      "nivel": 12,
+      "regioes": [
+        "usina_da_ponte"
+      ],
+      "masmorra": {
+        "id": "galerias_da_usina",
+        "andarMin": 5,
+        "andarMax": 5
+      },
       "vida": 3500,
       "ataque": 14,
       "defesa": 12,
@@ -469,7 +807,10 @@
       "comportamento": "a_distancia",
       "imovel": true,
       "raioCorpoTiles": 1.2,
-      "bando": { "min": 1, "max": 1 },
+      "bando": {
+        "min": 1,
+        "max": 1
+      },
       "afixosPossiveis": [],
       "tabelaSaque": "loot_chefe_galerias",
       "xp": 600,
@@ -485,7 +826,10 @@
           "id": "tic_tac",
           "name": "Tic-Tac",
           "vidaAbaixoPct": 100,
-          "habilidades": ["bomba_descontrolada_pulso", "bomba_descontrolada_contagem_regressiva"],
+          "habilidades": [
+            "bomba_descontrolada_pulso",
+            "bomba_descontrolada_contagem_regressiva"
+          ],
           "fala": "VISOR: 00:07... 00:07... 00:07.",
           "sugestao": true
         },
@@ -493,9 +837,28 @@
           "id": "agua_subindo",
           "name": "Água Subindo",
           "vidaAbaixoPct": 65,
-          "habilidades": ["bomba_descontrolada_pulso", "bomba_descontrolada_contagem_regressiva", "bomba_descontrolada_curto_circuito"],
-          "aoEntrar": [{ "kind": "gancho", "gancho": "agua_subindo", "params": { "nivel": 1, "areaDaSalaPct": 40, "lentidaoNaAguaPct": 20 } }],
-          "reforcos": [{ "inimigo": "turbina_desgovernada", "quantidade": 2 }],
+          "habilidades": [
+            "bomba_descontrolada_pulso",
+            "bomba_descontrolada_contagem_regressiva",
+            "bomba_descontrolada_curto_circuito"
+          ],
+          "aoEntrar": [
+            {
+              "kind": "gancho",
+              "gancho": "agua_subindo",
+              "params": {
+                "nivel": 1,
+                "areaDaSalaPct": 40,
+                "lentidaoNaAguaPct": 20
+              }
+            }
+          ],
+          "reforcos": [
+            {
+              "inimigo": "turbina_desgovernada",
+              "quantidade": 2
+            }
+          ],
           "fala": "VISOR: ATENÇÃO. NÍVEL DA ÁGUA ACIMA DO PREVISTO NO TRIMESTRE.",
           "sugestao": true
         },
@@ -503,9 +866,28 @@
           "id": "pavio_curto",
           "name": "Pavio Curto",
           "vidaAbaixoPct": 30,
-          "habilidades": ["bomba_descontrolada_contagem_regressiva", "bomba_descontrolada_curto_circuito", "bomba_descontrolada_pavio_curto"],
-          "aoEntrar": [{ "kind": "gancho", "gancho": "agua_subindo", "params": { "nivel": 2, "areaDaSalaPct": 70, "lentidaoNaAguaPct": 30 } }],
-          "reforcos": [{ "inimigo": "enguia_eletrica", "quantidade": 3 }],
+          "habilidades": [
+            "bomba_descontrolada_contagem_regressiva",
+            "bomba_descontrolada_curto_circuito",
+            "bomba_descontrolada_pavio_curto"
+          ],
+          "aoEntrar": [
+            {
+              "kind": "gancho",
+              "gancho": "agua_subindo",
+              "params": {
+                "nivel": 2,
+                "areaDaSalaPct": 70,
+                "lentidaoNaAguaPct": 30
+              }
+            }
+          ],
+          "reforcos": [
+            {
+              "inimigo": "enguia_eletrica",
+              "quantidade": 3
+            }
+          ],
           "reforcosACadaS": 25,
           "fala": "VISOR: GARANTIA EXPIRADA.",
           "sugestao": true
@@ -514,9 +896,15 @@
       "controleViraLentidaoPct": 40,
       "vidaPorJogadorExtraPct": 50,
       "falas": {
-        "aoAparecer": ["VISOR: 00:59. Obrigado por escolher a Bomba Descontrolada."],
-        "aoCair": ["VISOR: 00:00. ...Desarmada. Pelas duas margens juntas, por incrível que pareça."],
-        "aoDerrotarJogador": ["VISOR: 00:07."]
+        "aoAparecer": [
+          "VISOR: 00:59. Obrigado por escolher a Bomba Descontrolada."
+        ],
+        "aoCair": [
+          "VISOR: 00:00. ...Desarmada. Pelas duas margens juntas, por incrível que pareça."
+        ],
+        "aoDerrotarJogador": [
+          "VISOR: 00:07."
+        ]
       },
       "visual": "Barril de chopindita do tamanho de uma geladeira, enrolado em fio e fita isolante, com um visor vermelho e duas plaquinhas de patrimônio, uma de cada margem.",
       "sugestaoCampos": [

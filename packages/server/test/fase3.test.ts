@@ -153,10 +153,10 @@ describe('objetivo sobreviver', () => {
 });
 
 describe('ala, talentos, botão 3, emote e guia', () => {
-  it('ala no 12: recusa antes do 12 e longe do treinador; perto de quem recebe a base, escolhe e troca o kit', async () => {
+  it('ala no 10: recusa antes do 10 e longe do treinador; perto de quem recebe a base, escolhe e troca o kit', async () => {
     const store = new MemoryStore();
     const token = 'tok-fase3-ala-0001';
-    await seed(store, token, margemRecord('aaaaaaaa-1111-4111-8111-000000000003', 11));
+    await seed(store, token, margemRecord('aaaaaaaa-1111-4111-8111-000000000003', 9));
     const h = new Harness({ mapId: 'margem_esquerda', content: true, store });
     const bot = await h.connectAsync({ token, seed: 411 });
     const inst = D.institutionsById.get(INST)!;
@@ -167,8 +167,8 @@ describe('ala, talentos, botão 3, emote e guia', () => {
     h.game(bot, GAME_MSG.escolherAla, { archetype: ala });
     expect(bot.robot.avisos.at(-1)?.tipo).toBe('erro');
     expect(h.core.recordOf(bot.sid)!.archetype).toBeNull();
-    // nível 12, mas longe
-    h.core.recordOf(bot.sid)!.level = 12;
+    // nível 10, mas longe
+    h.core.recordOf(bot.sid)!.level = 10;
     teleport(h, bot, base.x + 20, base.y + 20);
     h.game(bot, GAME_MSG.escolherAla, { archetype: ala });
     expect(bot.robot.avisos.at(-1)?.texto).toContain('treinador');
@@ -182,7 +182,7 @@ describe('ala, talentos, botão 3, emote e guia', () => {
     expect(rec.archetype).toBe(ala);
     const e = h.core.entityOf(bot.sid)!;
     expect(e.archetypeId).toBe(ala);
-    expect(e.level).toBe(12);
+    expect(e.level).toBe(10);
     expect(e.loadout?.b1).toBe(D.archetypesById.get(ala)!.habilidadesMarca.marca_1);
     expect(bot.robot.perfil?.archetype).toBe(ala);
     // a escolha fica gravada

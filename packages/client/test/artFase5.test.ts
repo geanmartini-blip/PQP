@@ -136,14 +136,14 @@ describe('itens no boneco por ala', () => {
       const arch = d.archetypesById.get(a)!;
       let layered = 0;
       let differ = 0;
-      for (const slot of ['cabeca', 'peito', 'calca', 'arma', 'calcado']) {
+      for (const slot of ['cabeca', 'peito', 'arma', 'calcado']) {
         const c = itemLayerPix(a, slot, 'comum');
         const r = itemLayerPix(a, slot, 'raro');
         if (!c || !r) continue;
         layered++;
         if (sig(c) !== sig(r)) differ++;
       }
-      expect(layered, a).toBeGreaterThanOrEqual(4);
+      expect(layered, a).toBeGreaterThanOrEqual(3);
       // onde aprendiz e veterano têm a mesma peça, o raro se distingue pelo contorno (teste abaixo)
       expect(differ, a).toBeGreaterThanOrEqual(2);
       // item raro de peito no aprendiz troca a camada do torso pela do veterano da ala

@@ -388,7 +388,7 @@ export class Fase3Ui {
     const lo = this.progress()?.loadout ?? this.gc.game.profile?.loadout ?? null;
     if (!lo) return this.loading(box);
     const list = el('div', 'f3-lista');
-    if (lo.slot3Opcoes.length === 0) list.appendChild(el('div', 'sub', 'O botão 3 é escolhível depois da ala, no nível 12.'));
+    if (lo.slot3Opcoes.length === 0) list.appendChild(el('div', 'sub', 'O botão 3 é escolhível depois da ala, no nível 10.'));
     const D = getData();
     for (const id of lo.slot3Opcoes) {
       const ab = D.abilities.get(id);
@@ -488,14 +488,14 @@ export class Fase3Ui {
         const est: Record<string, string> = { disponivel: 'disponível', ativa: 'em andamento', concluida: 'feita', bloqueada: 'trancada' };
         instLines.push([`Entrada: ${info.missaoEntrada.texto}`, `(${est[info.missaoEntrada.estado] ?? info.missaoEntrada.estado})`]);
       }
-    } else instLines.push('Ainda sem instituição. A escolha é na travessia, no nível 8.');
+    } else instLines.push('Ainda sem instituição. A escolha é na balsa, no nível 5.');
     bloco('Instituição', instLines);
     // ala
     const arch = p.archetype ? D.archetypesById.get(p.archetype) : undefined;
     if (arch) {
       const tr = D.trainersById.get(arch.treinador);
       bloco('Ala', [[arch.name, `(${PAPEL_LABEL[arch.papel] ?? arch.papel})`], `Treinador: ${tr?.name ?? arch.treinador}`]);
-    } else if (p.institution) bloco('Ala', [p.podeEscolherAla ? 'Pronto para escolher a ala!' : 'A ala é no nível 12, depois da missão de entrada.']);
+    } else if (p.institution) bloco('Ala', [p.podeEscolherAla ? 'Pronto para escolher a ala!' : 'A ala é no nível 10, depois da missão de entrada.']);
     // guia
     const g = p.guide_id ? D.guidesById.get(p.guide_id) : undefined;
     if (g) bloco(g.tipo === 'ia_de_bolso' ? 'IA de bolso' : 'Espírito guia', [g.name, g.bonusTexto]);

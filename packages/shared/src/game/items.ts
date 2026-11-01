@@ -14,7 +14,7 @@ import { getData } from '../data';
 import type { Item, Unique } from '../schema/item';
 import type { CharacterLook, PlayerRecord, SideId } from './types';
 
-export const ITEM_SLOTS = ['cabeca', 'peito', 'calca', 'arma', 'calcado', 'adorno'] as const;
+export const ITEM_SLOTS = ['cabeca', 'peito', 'arma', 'calcado', 'adorno'] as const;
 export type ItemSlotId = (typeof ITEM_SLOTS)[number];
 export type Raridade = 'comum' | 'raro' | 'unico' | 'set';
 export const RARIDADES: readonly Raridade[] = ['comum', 'raro', 'unico', 'set'];

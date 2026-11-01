@@ -102,16 +102,16 @@ const LEGENDA: Record<string, AsciiLegendEntry> = {
   '2': { tile: Tile.Lama, marker: bando('bando_siri_lamacal', 'siri_do_mangue', 4, 1) },
   '3': { tile: Tile.Lama, marker: bando('bando_siri_canal', 'siri_do_mangue', 5, 2) },
   '4': { tile: Tile.Lama, marker: bando('bando_mosquito_brejo', 'mosquito_do_delta', 5, 2) },
-  '5': { tile: Tile.Lama, marker: bando('bando_mosquito_leste', 'mosquito_do_delta', 6, 3) },
-  '6': { tile: Tile.Lama, marker: bando('bando_mosquito_fundo', 'mosquito_do_delta', 7, 3) },
+  '5': { tile: Tile.Lama, marker: bando('bando_mosquito_leste', 'mosquito_do_delta', 6, 2) },
+  '6': { tile: Tile.Lama, marker: bando('bando_mosquito_fundo', 'mosquito_do_delta', 7, 2) },
   e: {
     tile: Tile.Lama,
     marker: { id: 'elite_siri_do_fundo', kind: 'inimigo', ref: 'siri_do_mangue', params: { tier: 'elite', affixes: ['rapido'], level: 3 } },
   },
   // porto
-  '7': { tile: Tile.Grama, marker: bando('bando_capanga_estrada', 'capanga_do_capataz', 2, 3) },
-  '8': { tile: Tile.Madeira, marker: bando('bando_capanga_feira', 'capanga_do_capataz', 3, 4) },
-  '9': { tile: Tile.Grama, marker: bando('bando_capanga_posto', 'capanga_do_capataz', 3, 5) },
+  '7': { tile: Tile.Grama, marker: bando('bando_capanga_estrada', 'capanga_do_capataz', 2, 2) },
+  '8': { tile: Tile.Madeira, marker: bando('bando_capanga_feira', 'capanga_do_capataz', 3, 3) },
+  '9': { tile: Tile.Grama, marker: bando('bando_capanga_posto', 'capanga_do_capataz', 3, 3) },
   W: {
     tile: Tile.Madeira,
     marker: { id: 'elite_capanga_da_feira', kind: 'inimigo', ref: 'capanga_do_capataz', params: { tier: 'elite', affixes: ['blindado'], level: 4 } },
@@ -120,7 +120,7 @@ const LEGENDA: Record<string, AsciiLegendEntry> = {
   I: { tile: Tile.Grama, marker: { id: 'cobrador_do_posto_norte', kind: 'inimigo', ref: 'cobrador_do_capataz', params: { tier: 'normal', level: 5 } } },
   L: { tile: Tile.Grama, marker: { id: 'cobrador_do_posto_sul', kind: 'inimigo', ref: 'cobrador_do_capataz', params: { tier: 'normal', level: 5 } } },
   // acampamento do Capataz
-  '0': { tile: Tile.Terra, marker: bando('bando_capanga_curral', 'capanga_do_capataz', 3, 6) },
+  '0': { tile: Tile.Terra, marker: bando('bando_capanga_curral', 'capanga_do_capataz', 3, 4) },
   O: { tile: Tile.Terra, marker: { id: 'cobrador_do_galpao', kind: 'inimigo', ref: 'cobrador_do_capataz', params: { tier: 'normal', level: 6 } } },
   E: {
     tile: Tile.Terra,

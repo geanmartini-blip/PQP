@@ -94,16 +94,16 @@ function build(): AsciiMapDef {
     mk('deposito_do_capataz', 'lugar', 73, 92, 'trilha_dos_contrabandistas', { deposito: 'deposito_do_capataz' }),
 
     // inimigos da mata
-    bando('bando_cobra_curupira', 'cobra_do_juncal', 2, 10, 14, 44),
-    bando('bando_cobra_trilha', 'cobra_do_juncal', 2, 10, 30, 31),
-    bando('bando_cobra_mato_alto', 'cobra_do_juncal', 3, 11, 74, 30),
-    bando('bando_contrabandista_entrada', 'contrabandista', 2, 9, 9, 82),
-    bando('bando_contrabandista_clareira', 'contrabandista', 3, 9, 38, 62),
-    bando('bando_contrabandista_atalho', 'contrabandista', 3, 10, 40, 105),
+    bando('bando_cobra_curupira', 'cobra_do_juncal', 2, 7, 14, 44),
+    bando('bando_cobra_trilha', 'cobra_do_juncal', 2, 7, 30, 31),
+    bando('bando_cobra_mato_alto', 'cobra_do_juncal', 3, 9, 74, 30),
+    bando('bando_contrabandista_entrada', 'contrabandista', 2, 6, 9, 82),
+    bando('bando_contrabandista_clareira', 'contrabandista', 3, 6, 38, 62),
+    bando('bando_contrabandista_atalho', 'contrabandista', 3, 7, 40, 105),
     mk('elite_contrabandista_rapido', 'inimigo', 50, 64, 'contrabandista', { tier: 'elite', affixes: ['rapido'], level: 10 }),
-    bando('bando_capanga_acampamento', 'capanga_do_capataz', 3, 9, 58, 98),
-    bando('bando_cao_acampamento', 'cao_de_guarda_do_capataz', 2, 9, 72, 98),
-    bando('bando_cao_portao', 'cao_de_guarda_do_capataz', 3, 10, 63, 76),
+    bando('bando_capanga_acampamento', 'capanga_do_capataz', 3, 6, 58, 98),
+    bando('bando_cao_acampamento', 'cao_de_guarda_do_capataz', 2, 6, 72, 98),
+    bando('bando_cao_portao', 'cao_de_guarda_do_capataz', 3, 7, 63, 76),
   ];
 
   c.scatter('T', 0.05, 401, ':;', cellsOf(markers), 2);

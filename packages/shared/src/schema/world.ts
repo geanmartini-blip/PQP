@@ -79,6 +79,8 @@ export const Reward = z.discriminatedUnion('kind', [
       item: Id.optional(),
       /** ou rolagem numa tabela de saque (loot_normal, loot_elite, loot_chefe...) */
       tabela: Id.optional(),
+      /** v0.3: ou a peça da classe e da margem do jogador nesse slot (\\_\_\_\\) */
+      slotDaClasse: z.enum(['cabeca', 'peito', 'arma', 'calcado', 'adorno']).optional(),
       raridade: Rarity.optional(),
       quantidade: z.number().int().positive().optional(),
       ...Sugestao,

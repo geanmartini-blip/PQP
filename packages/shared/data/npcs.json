@@ -5,7 +5,7 @@
       "name": "Seu Jacó",
       "categoria": "historia",
       "lado": "neutro",
-      "quemE": "Pescador do Delta, que ensina os novatos e reclama de tudo. Preenche a ficha do cadastro do Delta com uma caneta que falha, ensina a remar, a lutar e a desconfiar de quem vende chopindita barata, e no nível 8 leva o novato de barco até a ponte.",
+      "quemE": "Pescador do Delta, que ensina os novatos e reclama de tudo. Preenche a ficha do cadastro do Delta com uma caneta que falha, ensina a remar, a lutar e a desconfiar de quem vende chopindita barata, e no nível 5 leva o novato de balsa até o meio do rio.",
       "apresentacao": "presencial",
       "visual": {
         "descricao": "Pescador de chapéu de palha furado, vara remendada e um bagre de estimação num balde",
@@ -211,7 +211,7 @@
       "apelido": "o Capataz",
       "categoria": "historia",
       "lado": "neutro",
-      "quemE": "Contrabandista do Juncal, que vende para os dois lados e entrega lá em cima. Chefe do Delta no nível 7, quando está levando o barco de um vizinho por uma dívida; depois, o contrabando pelo Juncal para quem não quer pagar taxa nem enfrentar fila.",
+      "quemE": "Contrabandista do Juncal, que vende para os dois lados e entrega lá em cima. Chefe do Delta no nível 4, quando está levando o barco de um vizinho por uma dívida; depois, o contrabando pelo Juncal para quem não quer pagar taxa nem enfrentar fila.",
       "apresentacao": "presencial",
       "visual": {
         "descricao": "Colete de couro, corrente dourada falsa e duas maquininhas, uma de Semente e outra de Crédito",
@@ -589,7 +589,7 @@
       "name": "Toninho do Barco",
       "categoria": "menor",
       "lado": "neutro",
-      "quemE": "O vizinho do Delta cujo barco Bruno Ferro, o Capataz, está levando por uma dívida no nível 7.",
+      "quemE": "O vizinho do Delta cujo barco Bruno Ferro, o Capataz, está levando por uma dívida no nível 4.",
       "apresentacao": "presencial",
       "visual": { "descricao": "Bermuda de pescador, regata furada e um remo sem barco", "piada": "Carrega o remo pra todo lado, por esperança", "artKey": "npc_toninho_do_barco" },
       "regioes": ["delta"],

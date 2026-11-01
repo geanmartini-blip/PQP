@@ -4,7 +4,10 @@
       "id": "escolta_de_comboio",
       "name": "Escolta de comboio",
       "modo": "Grupo",
-      "modoTags": { "grupo": true, "solo": false },
+      "modoTags": {
+        "grupo": true,
+        "solo": false
+      },
       "comoFunciona": "Levar carga da Serra ao depósito, com emboscadas no caminho",
       "oQueMuda": "O depósito enche",
       "efeito": [],
@@ -15,18 +18,33 @@
       "id": "corrida_contra_o_apagao",
       "name": "Corrida contra o apagão",
       "modo": "Grupo",
-      "modoTags": { "grupo": true, "solo": false },
+      "modoTags": {
+        "grupo": true,
+        "solo": false
+      },
       "comoFunciona": "Religar subestações antes que o bairro apague",
       "oQueMuda": "O bairro acende",
-      "efeito": [{ "kind": "medidor", "medidor": "energia", "delta": 10 }],
+      "efeito": [
+        {
+          "kind": "medidor",
+          "medidor": "energia",
+          "delta": 10
+        }
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["efeito"]
+      "sugestaoCampos": [
+        "efeito"
+      ]
     },
     {
       "id": "mutirao",
       "name": "Mutirão",
       "modo": "Grupo, Esquerda",
-      "modoTags": { "grupo": true, "solo": false, "margem": "esquerda" },
+      "modoTags": {
+        "grupo": true,
+        "solo": false,
+        "margem": "esquerda"
+      },
       "comoFunciona": "Erguer uma casa ou um gerador em poucos minutos enquanto bandidos atacam",
       "oQueMuda": "Estrutura nova",
       "efeito": [],
@@ -36,7 +54,11 @@
       "id": "assembleia_sem_fim",
       "name": "Assembleia Sem Fim",
       "modo": "Solo, Esquerda",
-      "modoTags": { "grupo": false, "solo": true, "margem": "esquerda" },
+      "modoTags": {
+        "grupo": false,
+        "solo": true,
+        "margem": "esquerda"
+      },
       "comoFunciona": "Vencer um debate por turnos antes do amanhecer contra a comissão que avalia a comissão",
       "oQueMuda": "A decisão da Assembleia muda",
       "efeito": [],
@@ -47,18 +69,35 @@
       "id": "fila_do_posto",
       "name": "Fila do Posto",
       "modo": "Solo, Esquerda",
-      "modoTags": { "grupo": false, "solo": true, "margem": "esquerda" },
+      "modoTags": {
+        "grupo": false,
+        "solo": true,
+        "margem": "esquerda"
+      },
       "comoFunciona": "Conseguir atendimento para um vizinho com lábia, troca ou atalho",
       "oQueMuda": "Opinião pública",
-      "efeito": [{ "kind": "medidor", "medidor": "opiniao_publica", "delta": 3, "aFavorDe": "esquerda" }],
+      "efeito": [
+        {
+          "kind": "medidor",
+          "medidor": "opiniao_publica",
+          "delta": 3,
+          "aFavorDe": "esquerda"
+        }
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["efeito"]
+      "sugestaoCampos": [
+        "efeito"
+      ]
     },
     {
       "id": "cobranca_implacavel",
       "name": "Cobrança Implacável",
       "modo": "Solo, Direita",
-      "modoTags": { "grupo": false, "solo": true, "margem": "direita" },
+      "modoTags": {
+        "grupo": false,
+        "solo": true,
+        "margem": "direita"
+      },
       "comoFunciona": "Fugir do drone de cobrança ou negociar o boleto de alguém",
       "oQueMuda": "O score sobe ou cai",
       "efeito": [],
@@ -68,19 +107,35 @@
       "id": "trote_da_universidade",
       "name": "Trote da Universidade",
       "modo": "Solo, Direita",
-      "modoTags": { "grupo": false, "solo": true, "margem": "direita" },
+      "modoTags": {
+        "grupo": false,
+        "solo": true,
+        "margem": "direita"
+      },
       "comoFunciona": "Sobreviver ao trote da Universidade Neon",
       "oQueMuda": "Itens de calouro",
-      "efeito": [{ "kind": "item", "tabela": "loot_normal", "quantidade": 1 }],
+      "efeito": [
+        {
+          "kind": "item",
+          "tabela": "loot_normal",
+          "quantidade": 1
+        }
+      ],
       "emPiloto": true,
       "notaPiloto": "Usado na missão de entrada da Universidade Neon.",
-      "sugestaoCampos": ["efeito"]
+      "sugestaoCampos": [
+        "efeito"
+      ]
     },
     {
       "id": "greve_dos_entregadores",
       "name": "Greve dos Entregadores",
       "modo": "Grupo misto",
-      "modoTags": { "grupo": true, "solo": false, "misto": true },
+      "modoTags": {
+        "grupo": true,
+        "solo": false,
+        "misto": true
+      },
       "comoFunciona": "Mediar entre os entregadores e o aplicativo, com objetivos secretos dos dois lados",
       "oQueMuda": "Preço da entrega na região",
       "efeito": [],
@@ -91,7 +146,11 @@
       "id": "classico_das_margens",
       "name": "Clássico das Margens",
       "modo": "Grupo, evento",
-      "modoTags": { "grupo": true, "solo": false, "evento": true },
+      "modoTags": {
+        "grupo": true,
+        "solo": false,
+        "evento": true
+      },
       "comoFunciona": "Garantir que Neon FC e Raiz FC joguem sem a cidade pegar fogo",
       "oQueMuda": "Trégua ou briga",
       "efeito": [],
@@ -102,7 +161,11 @@
       "id": "resgate_na_enchente",
       "name": "Resgate na enchente",
       "modo": "Grupo, evento",
-      "modoTags": { "grupo": true, "solo": false, "evento": true },
+      "modoTags": {
+        "grupo": true,
+        "solo": false,
+        "evento": true
+      },
       "comoFunciona": "Salvar moradores e segurar a barragem",
       "oQueMuda": "A barragem aguenta ou cede",
       "efeito": [],
@@ -113,7 +176,10 @@
       "id": "cacada_ao_sombra",
       "name": "Caçada ao Sombra",
       "modo": "Grupo",
-      "modoTags": { "grupo": true, "solo": false },
+      "modoTags": {
+        "grupo": true,
+        "solo": false
+      },
       "comoFunciona": "Chefe que aparece em lugares aleatórios",
       "oQueMuda": "Desfaz uma sabotagem",
       "efeito": [],
@@ -124,7 +190,10 @@
       "id": "expedicao_na_masmorra",
       "name": "Expedição na masmorra",
       "modo": "Grupo",
-      "modoTags": { "grupo": true, "solo": false },
+      "modoTags": {
+        "grupo": true,
+        "solo": false
+      },
       "comoFunciona": "Descer andares sem fim",
       "oQueMuda": "Abre atalhos",
       "efeito": [],
@@ -135,7 +204,10 @@
       "id": "infiltracao_com_disfarce",
       "name": "Infiltração com disfarce",
       "modo": "Solo",
-      "modoTags": { "grupo": false, "solo": true },
+      "modoTags": {
+        "grupo": false,
+        "solo": true
+      },
       "comoFunciona": "Entrar na outra margem com figurino da Trupe ou crachá falso da Agência",
       "oQueMuda": "Revela um plano inimigo",
       "efeito": [],
@@ -146,7 +218,10 @@
       "id": "sabotagem_silenciosa",
       "name": "Sabotagem silenciosa",
       "modo": "Solo",
-      "modoTags": { "grupo": false, "solo": true },
+      "modoTags": {
+        "grupo": false,
+        "solo": true
+      },
       "comoFunciona": "Cortar um cabo ou plantar um grampo",
       "oQueMuda": "Uma estrutura inimiga para",
       "efeito": [],
@@ -156,7 +231,10 @@
       "id": "debate_na_radio",
       "name": "Debate na rádio",
       "modo": "Solo",
-      "modoTags": { "grupo": false, "solo": true },
+      "modoTags": {
+        "grupo": false,
+        "solo": true
+      },
       "comoFunciona": "Duelo de argumentos contra alguém da outra margem",
       "oQueMuda": "A região muda de opinião",
       "efeito": [],
@@ -166,7 +244,10 @@
       "id": "cartazes_de_madrugada",
       "name": "Cartazes de madrugada",
       "modo": "Solo",
-      "modoTags": { "grupo": false, "solo": true },
+      "modoTags": {
+        "grupo": false,
+        "solo": true
+      },
       "comoFunciona": "Colar sem ser pego pela patrulha",
       "oQueMuda": "Opinião pública",
       "efeito": [],
@@ -176,25 +257,45 @@
       "id": "negocio_com_o_capataz",
       "name": "Negócio com o Capataz",
       "modo": "Solo",
-      "modoTags": { "grupo": false, "solo": true },
+      "modoTags": {
+        "grupo": false,
+        "solo": true
+      },
       "comoFunciona": "Barganhar chopindita no Juncal",
       "oQueMuda": "O preço da chopindita muda",
-      "efeito": [{ "kind": "preco", "preco": "chopindita_contrabando", "variacaoPct": 15, "sentido": "conforme_resultado", "regiao": "juncal" }],
+      "efeito": [
+        {
+          "kind": "preco",
+          "preco": "chopindita_contrabando",
+          "variacaoPct": 15,
+          "sentido": "conforme_resultado",
+          "regiao": "juncal"
+        }
+      ],
       "emPiloto": true,
       "notaPiloto": "Vencer a barganha baixa em 15% o preço da chopindita do Capataz (economy.json, contrabando.precoChopindita); perder sobe 15%. Vale o resultado da última barganha.",
-      "sugestaoCampos": ["efeito", "notaPiloto"]
+      "sugestaoCampos": [
+        "efeito",
+        "notaPiloto"
+      ]
     },
     {
       "id": "ordens_do_comando",
       "name": "Ordens do comando",
       "modo": "Varia",
-      "modoTags": { "grupo": true, "solo": true, "varia": true },
+      "modoTags": {
+        "grupo": true,
+        "solo": true,
+        "varia": true
+      },
       "comoFunciona": "Missões do dia criadas por quem ocupa os cargos",
       "oQueMuda": "Segue a estratégia da margem",
       "efeito": [],
       "emPiloto": true,
       "notaPiloto": "No piloto não há cargos eleitos: as ordens do dia saem da IA de facção (Lazzaro Prati na Esquerda, Rolf Halvorsen na Direita), montadas a partir dos tipos que estão no piloto.",
-      "sugestaoCampos": ["notaPiloto"]
+      "sugestaoCampos": [
+        "notaPiloto"
+      ]
     }
   ],
   "cadeias": [
@@ -202,111 +303,175 @@
       "id": "delta_1_a_7",
       "name": "O Delta",
       "nivelMin": 1,
-      "nivelMax": 7,
-      "textoDoc": "Você cria o seu personagem no cadastro do Delta, numa ficha que o Seu Jacó preenche com uma caneta que falha, e começa igual a todo mundo, sem lado e sem classe, numa vila de palafitas rio abaixo. Seu Jacó ensina a remar, a lutar e a desconfiar de quem vende chopindita barata. No Delta, a fila do posto e o boleto chegam do mesmo jeito, e ninguém sabe ainda de que margem vai ser. No nível 7, o chefe é Bruno Ferro, o Capataz, que está levando o barco de um vizinho por uma dívida.",
-      "missoes": ["delta_01_cadastro", "delta_02_remar", "delta_03_briga_no_mangue", "delta_04_mosquito_nao_negocia", "delta_05_chopindita_barata", "delta_06_a_fila_e_o_boleto", "delta_07_o_barco_do_vizinho"],
+      "nivelMax": 4,
+      "textoDoc": "Você cria o seu personagem no cadastro do Delta, numa ficha que o Seu Jacó preenche com uma caneta que falha, e começa igual a todo mundo, sem lado e sem classe, numa vila de palafitas rio abaixo. Seu Jacó ensina a remar, a lutar e a desconfiar de quem vende chopindita barata. No Delta, a fila do posto e o boleto chegam do mesmo jeito, e ninguém sabe ainda de que margem vai ser. No nível 4, o chefe é Bruno Ferro, o Capataz, que está levando o barco de um vizinho por uma dívida.",
+      "missoes": [
+        "delta_01_cadastro",
+        "delta_02_remar",
+        "delta_03_briga_no_mangue",
+        "delta_04_mosquito_nao_negocia",
+        "delta_05_chopindita_barata",
+        "delta_06_a_fila_e_o_boleto",
+        "delta_07_o_barco_do_vizinho"
+      ],
       "emPiloto": true
     },
     {
       "id": "travessia",
       "name": "A Travessia",
-      "nivelMin": 8,
-      "nivelMax": 8,
+      "nivelMin": 5,
+      "nivelMax": 5,
       "textoDoc": "Seu Jacó leva você de barco até a ponte. À esquerda, a Margem Esquerda: fumaça de fogueira, tambor e uma assembleia que dá para ouvir do rio. À direita, a Margem Direita: neon, drones e propaganda de plano de saúde pintada no casco do barco.",
-      "missoes": ["travessia_08"],
+      "missoes": [
+        "travessia_08"
+      ],
       "emPiloto": true
     },
     {
       "id": "entradas",
       "name": "Missões de entrada",
-      "nivelMin": 8,
-      "nivelMax": 8,
+      "nivelMin": 5,
+      "nivelMax": 5,
       "textoDoc": "Você escolhe a margem e entra numa instituição. A missão de entrada é o primeiro trabalho, e o seu guia aparece: um espírito na Esquerda, uma IA de bolso na Direita.",
-      "missoes": ["entrada_brigada_popular", "entrada_guarda_comunitaria", "entrada_escola_dos_saberes", "entrada_trupe_do_povo", "entrada_torcida_furia_neon", "entrada_pm_do_consorcio", "entrada_universidade_neon", "entrada_agencia_neon"],
+      "missoes": [
+        "entrada_brigada_popular",
+        "entrada_guarda_comunitaria",
+        "entrada_escola_dos_saberes",
+        "entrada_trupe_do_povo",
+        "entrada_torcida_furia_neon",
+        "entrada_pm_do_consorcio",
+        "entrada_universidade_neon",
+        "entrada_agencia_neon"
+      ],
       "emPiloto": true
     },
     {
       "id": "esquerda_a_roda",
       "name": "A Roda",
-      "nivelMin": 8,
-      "nivelMax": 11,
+      "nivelMin": 5,
+      "nivelMax": 9,
       "margem": "esquerda",
       "textoDoc": "Você se apresenta na Assembleia, escolhe o seu espírito guia e faz o primeiro mutirão. Descobre que a energia da sua rua foi cortada para a Direita pagar mais caro por ela.",
-      "missoes": ["roda_01_apresentacao", "roda_02_primeiro_mutirao", "roda_03_fila_do_posto", "roda_04_a_luz_da_rua", "roda_05_quem_levou_a_luz"],
+      "missoes": [
+        "roda_01_apresentacao",
+        "roda_02_primeiro_mutirao",
+        "roda_03_fila_do_posto",
+        "roda_04_a_luz_da_rua",
+        "roda_05_quem_levou_a_luz"
+      ],
       "emPiloto": true
     },
     {
       "id": "direita_o_primeiro_contrato",
       "name": "O Primeiro Contrato",
-      "nivelMin": 8,
-      "nivelMax": 11,
+      "nivelMin": 5,
+      "nivelMax": 9,
       "margem": "direita",
       "textoDoc": "Sua IA de bolso te ativa, você assina o contrato da instituição e faz o primeiro bico para a Sahl Energia. Descobre que o seu pagamento já vem descontado do aluguel da cápsula.",
-      "missoes": ["contrato_01_ativacao", "contrato_02_drone_de_cobranca", "contrato_03_primeiro_bico", "contrato_04_desconto_na_capsula"],
+      "missoes": [
+        "contrato_01_ativacao",
+        "contrato_02_drone_de_cobranca",
+        "contrato_03_primeiro_bico",
+        "contrato_04_desconto_na_capsula"
+      ],
       "emPiloto": true
     },
     {
       "id": "escolha_da_ala",
       "name": "A Ala",
-      "nivelMin": 12,
-      "nivelMax": 12,
+      "nivelMin": 10,
+      "nivelMax": 10,
       "textoDoc": "Você escolhe a ala e passa a treinar com o treinador dela.",
-      "missoes": ["escolha_da_ala_esquerda", "escolha_da_ala_direita"],
+      "missoes": [
+        "escolha_da_ala_esquerda",
+        "escolha_da_ala_direita"
+      ],
       "emPiloto": true
     },
     {
       "id": "esquerda_a_licenca",
       "name": "A Licença",
-      "nivelMin": 12,
-      "nivelMax": 15,
+      "nivelMin": 10,
+      "nivelMax": 13,
       "margem": "esquerda",
       "textoDoc": "Você escolhe a ala e passa a treinar com o treinador dela, como o Wesley ou a Olga. A Sahl Energia quer abrir uma mina na mata, e a comissão de licenças está dividida: Teodoro quer negociar, Lazzaro quer guerra. Sua escolha muda as missões do grupo. No caminho, você descobre que a comissão está parada há dois anos por falta de quórum.",
-      "missoes": ["licenca_01_a_mina_na_mata", "licenca_02a_negociar", "licenca_02b_guerra", "licenca_03_sem_quorum"],
-      "emPiloto": false,
-      "esboco": true
+      "missoes": [
+        "licenca_01_a_mina_na_mata",
+        "licenca_02a_negociar",
+        "licenca_02b_guerra",
+        "licenca_03_sem_quorum"
+      ],
+      "emPiloto": true
     },
     {
       "id": "esquerda_o_rio_turvo",
       "name": "O Rio Turvo",
-      "nivelMin": 16,
-      "nivelMax": 19,
+      "nivelMin": 15,
+      "nivelMax": 18,
       "margem": "esquerda",
       "textoDoc": "O rio fica turvo, o Encanto falha e você investiga. Acha o relatório da barragem no porão do Cartório da Assembleia, embaixo de três mil atas, e vê pela primeira vez um cabo que sobe a Serra.",
-      "missoes": ["rio_turvo_01_agua_turva", "rio_turvo_02_tres_mil_atas", "rio_turvo_03_o_cabo"],
-      "emPiloto": false,
-      "esboco": true
+      "missoes": [
+        "rio_turvo_01_agua_turva",
+        "rio_turvo_02_tres_mil_atas",
+        "rio_turvo_03_o_cabo"
+      ],
+      "emPiloto": true
     },
     {
       "id": "direita_a_mata_fechada",
       "name": "A Mata Fechada",
-      "nivelMin": 12,
-      "nivelMax": 15,
+      "nivelMin": 10,
+      "nivelMax": 13,
       "margem": "direita",
       "textoDoc": "Você escolhe a ala e passa a treinar com o treinador dela, como o Li Wei ou o Doktor Klaus. A Sahl manda você abrir caminho na mata para uma mina, e você conhece quem mora lá. Ajuda a empresa, a mata ou os dois; a escolha muda as missões do grupo.",
-      "missoes": ["mata_01_abrir_caminho", "mata_02_a_escolha", "mata_03a_a_mina", "mata_03b_a_mata", "mata_03c_os_dois"],
-      "emPiloto": false,
-      "esboco": true
+      "missoes": [
+        "mata_01_abrir_caminho",
+        "mata_02_a_escolha",
+        "mata_03a_a_mina",
+        "mata_03b_a_mata",
+        "mata_03c_os_dois"
+      ],
+      "emPiloto": true
     },
     {
       "id": "direita_siga_o_dinheiro",
       "name": "Siga o Dinheiro",
-      "nivelMin": 16,
-      "nivelMax": 19,
+      "nivelMin": 15,
+      "nivelMax": 18,
       "margem": "direita",
       "textoDoc": "Um apagão derruba metade da Direita. Com Klara Lindqvist, você segue o dinheiro da energia, acha o relatório arquivado como \"custo não previsto\" e o mesmo cabo subindo a Serra.",
-      "missoes": ["dinheiro_01_apagao", "dinheiro_02_custo_nao_previsto", "dinheiro_03_o_cabo"],
-      "emPiloto": false,
-      "esboco": true
+      "missoes": [
+        "dinheiro_01_apagao",
+        "dinheiro_02_custo_nao_previsto",
+        "dinheiro_03_o_cabo"
+      ],
+      "emPiloto": true
     },
     {
       "id": "os_lideres",
       "name": "Os Líderes",
-      "nivelMin": 19,
-      "nivelMax": 19,
+      "nivelMin": 18,
+      "nivelMax": 18,
       "textoDoc": "O seu líder aparece num telão e dá a ordem da guerra, e você espiona o líder do outro lado. Nayra fala de dignidade, Kenji fala de oportunidade, e os dois usam as mesmas palavras em ordem diferente.",
-      "missoes": ["lideres_esquerda", "lideres_direita"],
+      "missoes": [
+        "lideres_esquerda",
+        "lideres_direita"
+      ],
       "emPiloto": false,
       "esboco": true
+    },
+    {
+      "id": "a_cabeceira",
+      "name": "A Cabeceira",
+      "nivelMin": 19,
+      "nivelMax": 19,
+      "textoDoc": "Sugestão v0.3: o jogador chega ao pé da Ponte sem atravessar. Ganha a última peça do conjunto da classe e a troca de lado fica liberada.",
+      "missoes": [
+        "cabeceira_da_ponte_esquerda",
+        "cabeceira_da_ponte_direita"
+      ],
+      "emPiloto": true,
+      "sugestao": true
     }
   ],
   "missoes": [
@@ -321,18 +486,62 @@
       "modo": "solo",
       "resumo": "Seu Jacó preenche a sua ficha com uma caneta que falha.",
       "objetivos": [
-        { "tipo": "falar", "npc": "seu_jaco", "descricao": "Faça o cadastro com o Seu Jacó" },
-        { "tipo": "interagir", "alvo": "maquina_visual_delta", "acao": "usar", "descricao": "Ajeite o visual no espelho", "opcional": true },
-        { "tipo": "usar_controle", "controle": "andar_joystick", "quantidade": 1, "descricao": "Arraste o polegar para andar", "ensina": ["andar_joystick"] },
-        { "tipo": "usar_controle", "controle": "tocar_no_chao", "quantidade": 1, "descricao": "Toque no chão para ir até lá", "ensina": ["tocar_no_chao"] },
-        { "tipo": "ir_ate", "lugar": "palafitas_do_delta", "descricao": "Vá até a palafita do Seu Jacó" }
+        {
+          "tipo": "falar",
+          "npc": "seu_jaco",
+          "descricao": "Faça o cadastro com o Seu Jacó"
+        },
+        {
+          "tipo": "interagir",
+          "alvo": "maquina_visual_delta",
+          "acao": "usar",
+          "descricao": "Ajeite o visual no espelho",
+          "opcional": true
+        },
+        {
+          "tipo": "usar_controle",
+          "controle": "andar_joystick",
+          "quantidade": 1,
+          "descricao": "Arraste o polegar para andar",
+          "ensina": [
+            "andar_joystick"
+          ]
+        },
+        {
+          "tipo": "usar_controle",
+          "controle": "tocar_no_chao",
+          "quantidade": 1,
+          "descricao": "Toque no chão para ir até lá",
+          "ensina": [
+            "tocar_no_chao"
+          ]
+        },
+        {
+          "tipo": "ir_ate",
+          "lugar": "palafitas_do_delta",
+          "descricao": "Vá até a palafita do Seu Jacó"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "recurso", "recurso": "comida", "quantidade": 5 }], "grupo": [] },
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "comida",
+            "quantidade": 5
+          }
+        ],
+        "grupo": []
+      },
       "requerFlags": [],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["delta_cadastro_feito"],
+      "ligaFlags": [
+        "delta_cadastro_feito"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos", "recompensas"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas"
+      ]
     },
     {
       "id": "delta_02_remar",
@@ -343,23 +552,75 @@
       "regiao": "delta",
       "lugar": "cais_do_delta",
       "modo": "solo",
-      "aliadosIA": ["seu_jaco"],
+      "aliadosIA": [
+        "seu_jaco"
+      ],
       "resumo": "O barco não rema sozinho. Quase.",
       "objetivos": [
-        { "tipo": "ir_ate", "lugar": "cais_do_delta", "descricao": "Pegue o remo no cais" },
-        { "tipo": "usar_controle", "controle": "auto_caminho", "quantidade": 1, "descricao": "Toque na missão para ir sozinho", "ensina": ["auto_caminho"] },
-        { "tipo": "visitar_lugar", "lugar": "palafitas_do_delta", "descricao": "Reme pelo caminho de Dona Celeste" },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "siri_do_mangue", "quantidade": 3, "tier": "normal" }], "descricao": "Siri no barco! O ataque é sozinho", "ensina": ["alvo_automatico"] }
+        {
+          "tipo": "ir_ate",
+          "lugar": "cais_do_delta",
+          "descricao": "Pegue o remo no cais"
+        },
+        {
+          "tipo": "usar_controle",
+          "controle": "auto_caminho",
+          "quantidade": 1,
+          "descricao": "Toque na missão para ir sozinho",
+          "ensina": [
+            "auto_caminho"
+          ]
+        },
+        {
+          "tipo": "visitar_lugar",
+          "lugar": "palafitas_do_delta",
+          "descricao": "Reme pelo caminho de Dona Celeste"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "siri_do_mangue",
+              "quantidade": 3,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Siri no barco! O ataque é sozinho",
+          "ensina": [
+            "alvo_automatico"
+          ]
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "recurso", "recurso": "comida", "quantidade": 5 }],
-        "grupo": [{ "kind": "xp", "quantidade": 100, "sugestao": true }]
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "comida",
+            "quantidade": 5
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 100,
+            "sugestao": true
+          }
+        ]
       },
-      "requerFlags": ["delta_cadastro_feito"],
+      "requerFlags": [
+        "delta_cadastro_feito"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["delta_aprendeu_remar"],
+      "ligaFlags": [
+        "delta_aprendeu_remar"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["resumo", "objetivos", "recompensas", "aliadosIA"]
+      "sugestaoCampos": [
+        "resumo",
+        "objetivos",
+        "recompensas",
+        "aliadosIA"
+      ]
     },
     {
       "id": "delta_03_briga_no_mangue",
@@ -370,45 +631,142 @@
       "regiao": "delta",
       "lugar": "palafitas_do_delta",
       "modo": "solo",
-      "aliadosIA": ["seu_jaco"],
+      "aliadosIA": [
+        "seu_jaco"
+      ],
       "resumo": "Seu Jacó ensina a lutar, reclamando de cada golpe.",
       "objetivos": [
-        { "tipo": "usar_controle", "controle": "trocar_alvo", "quantidade": 2, "descricao": "Toque num inimigo para trocar o alvo", "ensina": ["trocar_alvo"] },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "siri_do_mangue", "quantidade": 6, "tier": "normal" }], "descricao": "Limpe o mangue" },
-        { "tipo": "coletar", "chave": "saque", "quantidade": 3, "descricao": "Passe por cima do saque", "ensina": ["saque"] }
+        {
+          "tipo": "usar_controle",
+          "controle": "trocar_alvo",
+          "quantidade": 2,
+          "descricao": "Toque num inimigo para trocar o alvo",
+          "ensina": [
+            "trocar_alvo"
+          ]
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "siri_do_mangue",
+              "quantidade": 6,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Limpe o mangue"
+        },
+        {
+          "tipo": "coletar",
+          "chave": "saque",
+          "quantidade": 3,
+          "descricao": "Passe por cima do saque",
+          "ensina": [
+            "saque"
+          ]
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "item", "tabela": "loot_normal_missao_delta", "quantidade": 1 }, { "kind": "recurso", "recurso": "pecas", "quantidade": 5 }],
-        "grupo": [{ "kind": "xp", "quantidade": 200, "sugestao": true }]
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal_missao_delta",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "pecas",
+            "quantidade": 5
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 200,
+            "sugestao": true
+          }
+        ]
       },
-      "requerFlags": ["delta_aprendeu_remar"],
+      "requerFlags": [
+        "delta_aprendeu_remar"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["delta_aprendeu_lutar"],
+      "ligaFlags": [
+        "delta_aprendeu_lutar"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["resumo", "objetivos", "recompensas", "aliadosIA", "nivel"]
+      "sugestaoCampos": [
+        "resumo",
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "nivel"
+      ]
     },
     {
       "id": "delta_04_mosquito_nao_negocia",
       "name": "Mosquito Não Negocia",
       "cadeia": "delta_1_a_7",
       "dadaPor": "seu_jaco",
-      "nivel": 3,
+      "nivel": 2,
       "regiao": "delta",
       "lugar": "palafitas_do_delta",
       "modo": "solo",
-      "aliadosIA": ["seu_jaco"],
+      "aliadosIA": [
+        "seu_jaco"
+      ],
       "resumo": "Nuvem de mosquito no Delta. O repelente acabou em 2061.",
       "objetivos": [
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "mosquito_do_delta", "quantidade": 12, "tier": "normal" }], "descricao": "Espante a nuvem. Ande batendo: o ataque é sozinho" },
-        { "tipo": "usar_habilidade", "botao": "item", "quantidade": 1, "descricao": "Picada demais? Toque na poção", "ensina": ["item"], "sugestao": true }
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "mosquito_do_delta",
+              "quantidade": 12,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Espante a nuvem. Ande batendo: o ataque é sozinho"
+        },
+        {
+          "tipo": "usar_habilidade",
+          "botao": "item",
+          "quantidade": 1,
+          "descricao": "Picada demais? Toque na poção",
+          "ensina": [
+            "item"
+          ],
+          "sugestao": true
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "item", "tabela": "loot_normal_missao_delta", "quantidade": 1 }, { "kind": "recurso", "recurso": "comida", "quantidade": 5 }],
-        "grupo": [{ "kind": "xp", "quantidade": 300, "sugestao": true }]
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal_missao_delta",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "comida",
+            "quantidade": 5
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 300,
+            "sugestao": true
+          }
+        ]
       },
-      "requerFlags": ["delta_aprendeu_lutar"],
+      "requerFlags": [
+        "delta_aprendeu_lutar"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["delta_aprendeu_habilidades"],
+      "ligaFlags": [
+        "delta_aprendeu_habilidades"
+      ],
       "sugestao": true,
       "emPiloto": true
     },
@@ -417,90 +775,308 @@
       "name": "Chopindita Barata",
       "cadeia": "delta_1_a_7",
       "dadaPor": "seu_jaco",
-      "nivel": 4,
+      "nivel": 3,
       "regiao": "delta",
       "lugar": "feira_de_pulgas",
       "modo": "solo",
-      "aliadosIA": ["seu_jaco"],
+      "aliadosIA": [
+        "seu_jaco"
+      ],
       "resumo": "Tem um sujeito vendendo chopindita pela metade do preço. Seu Jacó já está com o dedo em riste.",
       "objetivos": [
-        { "tipo": "ir_ate", "lugar": "feira_de_pulgas", "descricao": "Vá até a barraca do vendedor" },
+        {
+          "tipo": "ir_ate",
+          "lugar": "feira_de_pulgas",
+          "descricao": "Vá até a barraca do vendedor"
+        },
         {
           "tipo": "escolher",
           "pergunta": "Chopindita pela metade do preço?",
           "opcoes": [
-            { "id": "comprar", "texto": "Comprar. Oportunidade é oportunidade.", "ligaFlags": ["delta_comprou_chopindita_falsa"], "recompensas": [{ "kind": "desbloqueio", "chave": "pedra_pintada", "descricao": "Uma pedra pintada de amarelo com espuma de sabão" }], "sugestao": true },
-            { "id": "desconfiar", "texto": "Desconfiar. Coisa barata assim tem dono.", "ligaFlags": ["delta_desconfiou_da_chopindita"], "sugestao": true }
+            {
+              "id": "comprar",
+              "texto": "Comprar. Oportunidade é oportunidade.",
+              "ligaFlags": [
+                "delta_comprou_chopindita_falsa"
+              ],
+              "recompensas": [
+                {
+                  "kind": "desbloqueio",
+                  "chave": "pedra_pintada",
+                  "descricao": "Uma pedra pintada de amarelo com espuma de sabão"
+                }
+              ],
+              "sugestao": true
+            },
+            {
+              "id": "desconfiar",
+              "texto": "Desconfiar. Coisa barata assim tem dono.",
+              "ligaFlags": [
+                "delta_desconfiou_da_chopindita"
+              ],
+              "sugestao": true
+            }
           ],
           "descricao": "Decida"
         },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "capanga_do_capataz", "quantidade": 5, "tier": "normal" }, { "inimigo": "capanga_do_capataz", "quantidade": 1, "tier": "elite", "afixos": ["blindado"] }], "descricao": "Os capangas do Capataz vieram cobrar. Saia do círculo vermelho!", "ensina": ["desviar_aviso"] },
-        { "tipo": "usar_habilidade", "botao": "item", "quantidade": 1, "descricao": "Vida baixa? Toque na poção", "ensina": ["item"] }
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "capanga_do_capataz",
+              "quantidade": 5,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "capanga_do_capataz",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "blindado"
+              ]
+            }
+          ],
+          "descricao": "Os capangas do Capataz vieram cobrar. Saia do círculo vermelho!",
+          "ensina": [
+            "desviar_aviso"
+          ]
+        },
+        {
+          "tipo": "usar_habilidade",
+          "botao": "item",
+          "quantidade": 1,
+          "descricao": "Vida baixa? Toque na poção",
+          "ensina": [
+            "item"
+          ]
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "item", "tabela": "loot_elite_delta", "quantidade": 1 }, { "kind": "recurso", "recurso": "pecas", "quantidade": 10 }],
-        "grupo": [{ "kind": "xp", "quantidade": 400, "sugestao": true }]
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_elite_delta",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "pecas",
+            "quantidade": 10
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 400,
+            "sugestao": true
+          }
+        ]
       },
-      "requerFlags": ["delta_aprendeu_habilidades"],
+      "requerFlags": [
+        "delta_aprendeu_habilidades"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["delta_chopindita_resolvida"],
+      "ligaFlags": [
+        "delta_chopindita_resolvida"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["resumo", "objetivos", "recompensas", "aliadosIA", "nivel", "lugar"]
+      "sugestaoCampos": [
+        "resumo",
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "nivel",
+        "lugar"
+      ]
     },
     {
       "id": "delta_06_a_fila_e_o_boleto",
       "name": "A Fila e o Boleto",
       "cadeia": "delta_1_a_7",
       "dadaPor": "seu_jaco",
-      "nivel": 5,
+      "nivel": 3,
       "regiao": "delta",
       "lugar": "posto_do_delta",
       "modo": "solo",
-      "aliadosIA": ["seu_jaco"],
+      "aliadosIA": [
+        "seu_jaco"
+      ],
       "resumo": "Seu Jacó precisa de atendimento no posto. Na fila, chega o cobrador do Capataz com um boleto.",
       "objetivos": [
-        { "tipo": "interagir", "alvo": "fila_do_posto_do_delta", "acao": "entrar_na_fila", "quantidade": 1, "descricao": "Entre na fila do posto" },
-        { "tipo": "usar_controle", "controle": "modo_automatico", "quantidade": 1, "descricao": "Ligue o automático. A fila não anda, mas você luta", "ensina": ["modo_automatico"] },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "cobrador_do_capataz", "quantidade": 4, "tier": "normal" }, { "inimigo": "capanga_do_capataz", "quantidade": 3, "tier": "normal" }], "descricao": "Expulse os cobradores" },
-        { "tipo": "usar_controle", "controle": "reanimar", "quantidade": 1, "descricao": "Seu Jacó caiu! Fique 3 s do lado dele", "ensina": ["reanimar"] }
+        {
+          "tipo": "interagir",
+          "alvo": "fila_do_posto_do_delta",
+          "acao": "entrar_na_fila",
+          "quantidade": 1,
+          "descricao": "Entre na fila do posto"
+        },
+        {
+          "tipo": "usar_controle",
+          "controle": "modo_automatico",
+          "quantidade": 1,
+          "descricao": "Ligue o automático. A fila não anda, mas você luta",
+          "ensina": [
+            "modo_automatico"
+          ]
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "cobrador_do_capataz",
+              "quantidade": 4,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "capanga_do_capataz",
+              "quantidade": 3,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Expulse os cobradores"
+        },
+        {
+          "tipo": "usar_controle",
+          "controle": "reanimar",
+          "quantidade": 1,
+          "descricao": "Seu Jacó caiu! Fique 3 s do lado dele",
+          "ensina": [
+            "reanimar"
+          ]
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "item", "tabela": "loot_normal_missao_delta", "quantidade": 2 }, { "kind": "recurso", "recurso": "comida", "quantidade": 10 }],
-        "grupo": [{ "kind": "xp", "quantidade": 500, "sugestao": true }]
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal_missao_delta",
+            "quantidade": 2
+          },
+          {
+            "kind": "recurso",
+            "recurso": "comida",
+            "quantidade": 10
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 500,
+            "sugestao": true
+          }
+        ]
       },
-      "requerFlags": ["delta_chopindita_resolvida"],
+      "requerFlags": [
+        "delta_chopindita_resolvida"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["delta_boleto_chegou"],
+      "ligaFlags": [
+        "delta_boleto_chegou"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["resumo", "objetivos", "recompensas", "aliadosIA", "nivel"]
+      "sugestaoCampos": [
+        "resumo",
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "nivel"
+      ]
     },
     {
       "id": "delta_07_o_barco_do_vizinho",
       "name": "O Barco do Vizinho",
       "cadeia": "delta_1_a_7",
       "dadaPor": "seu_jaco",
-      "nivel": 7,
+      "nivel": 4,
       "regiao": "delta",
       "lugar": "cais_do_delta",
       "modo": "solo",
-      "aliadosIA": ["seu_jaco"],
+      "aliadosIA": [
+        "seu_jaco"
+      ],
       "resumo": "Bruno Ferro, o Capataz, está levando o barco de um vizinho por uma dívida.",
-      "textoDoc": "No nível 7, o chefe é Bruno Ferro, o Capataz, que está levando o barco de um vizinho por uma dívida.",
+      "textoDoc": "No nível 4, o chefe é Bruno Ferro, o Capataz, que está levando o barco de um vizinho por uma dívida.",
       "objetivos": [
-        { "tipo": "ir_ate", "lugar": "cais_do_delta", "descricao": "Corra para o cais" },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "capanga_do_capataz", "quantidade": 4, "tier": "normal" }, { "inimigo": "cobrador_do_capataz", "quantidade": 2, "tier": "normal" }], "descricao": "Passe pelos capangas" },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "bruno_ferro_chefe", "quantidade": 1, "tier": "chefe" }], "descricao": "Derrote Bruno Ferro. Fuja do aviso no chão", "ensina": ["desviar_aviso"] },
-        { "tipo": "falar", "npc": "seu_jaco", "descricao": "Devolva o barco ao vizinho" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "cais_do_delta",
+          "descricao": "Corra para o cais"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "capanga_do_capataz",
+              "quantidade": 4,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "cobrador_do_capataz",
+              "quantidade": 2,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Passe pelos capangas"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "bruno_ferro_chefe",
+              "quantidade": 1,
+              "tier": "chefe"
+            }
+          ],
+          "descricao": "Derrote Bruno Ferro. Fuja do aviso no chão",
+          "ensina": [
+            "desviar_aviso"
+          ]
+        },
+        {
+          "tipo": "falar",
+          "npc": "seu_jaco",
+          "descricao": "Devolva o barco ao vizinho"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "item", "tabela": "loot_chefe_delta", "quantidade": 1 }, { "kind": "recurso", "recurso": "pecas", "quantidade": 20 }, { "kind": "recurso", "recurso": "chopindita", "quantidade": 3 }],
-        "grupo": [{ "kind": "xp", "quantidade": 800, "sugestao": true }]
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_chefe_delta",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "pecas",
+            "quantidade": 20
+          },
+          {
+            "kind": "recurso",
+            "recurso": "chopindita",
+            "quantidade": 3
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 800,
+            "sugestao": true
+          }
+        ]
       },
-      "requerFlags": ["delta_boleto_chegou"],
+      "requerFlags": [
+        "delta_boleto_chegou"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["delta_bruno_ferro_derrotado"],
+      "ligaFlags": [
+        "delta_bruno_ferro_derrotado"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "aliadosIA"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "aliadosIA"
+      ]
     },
     {
       "id": "delta_patrulha_do_mangue",
@@ -511,17 +1087,54 @@
       "regiao": "delta",
       "lugar": "palafitas_do_delta",
       "modo": "qualquer",
-      "aliadosIA": ["seu_jaco"],
+      "aliadosIA": [
+        "seu_jaco"
+      ],
       "resumo": "Seu Jacó vai pescar e quer o mangue limpo. Repete à vontade.",
       "objetivos": [
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "siri_do_mangue", "quantidade": 8, "tier": "normal" }, { "inimigo": "mosquito_do_delta", "quantidade": 8, "tier": "normal" }], "descricao": "Limpe o mangue" }
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "siri_do_mangue",
+              "quantidade": 8,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "mosquito_do_delta",
+              "quantidade": 8,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Limpe o mangue"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "item", "tabela": "loot_normal_missao_delta", "quantidade": 1 }, { "kind": "recurso", "recurso": "comida", "quantidade": 3 }],
-        "grupo": [{ "kind": "xp", "quantidade": 150 }]
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal_missao_delta",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "comida",
+            "quantidade": 3
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 150
+          }
+        ]
       },
-      "requerFlags": ["delta_aprendeu_lutar"],
-      "bloqueadaPorFlags": ["travessia_feita"],
+      "requerFlags": [
+        "delta_aprendeu_lutar"
+      ],
+      "bloqueadaPorFlags": [
+        "travessia_feita"
+      ],
       "ligaFlags": [],
       "repetivel": true,
       "emPiloto": true,
@@ -532,211 +1145,556 @@
       "name": "A Travessia",
       "cadeia": "travessia",
       "dadaPor": "seu_jaco",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "delta",
       "lugar": "cais_do_delta",
       "modo": "solo",
       "resumo": "Seu Jacó leva você de barco até a ponte.",
       "textoDoc": "Seu Jacó leva você de barco até a ponte. À esquerda, a Margem Esquerda: fumaça de fogueira, tambor e uma assembleia que dá para ouvir do rio. À direita, a Margem Direita: neon, drones e propaganda de plano de saúde pintada no casco do barco.",
       "objetivos": [
-        { "tipo": "falar", "npc": "seu_jaco", "descricao": "Suba no barco do Seu Jacó" },
-        { "tipo": "ir_ate", "regiao": "usina_da_ponte", "deBarco": true, "descricao": "Atravesse até a ponte" },
+        {
+          "tipo": "falar",
+          "npc": "seu_jaco",
+          "descricao": "Suba no barco do Seu Jacó"
+        },
+        {
+          "tipo": "ir_ate",
+          "regiao": "usina_da_ponte",
+          "deBarco": true,
+          "descricao": "Atravesse até a ponte"
+        },
         {
           "tipo": "escolher",
           "pergunta": "De que margem você vai ser?",
           "opcoes": [
-            { "id": "esquerda", "texto": "Margem Esquerda: fumaça de fogueira, tambor e uma assembleia que dá para ouvir do rio.", "ligaFlags": ["margem_esquerda"] },
-            { "id": "direita", "texto": "Margem Direita: neon, drones e propaganda de plano de saúde pintada no casco do barco.", "ligaFlags": ["margem_direita"] }
+            {
+              "id": "esquerda",
+              "texto": "Margem Esquerda: fumaça de fogueira, tambor e uma assembleia que dá para ouvir do rio.",
+              "ligaFlags": [
+                "margem_esquerda"
+              ]
+            },
+            {
+              "id": "direita",
+              "texto": "Margem Direita: neon, drones e propaganda de plano de saúde pintada no casco do barco.",
+              "ligaFlags": [
+                "margem_direita"
+              ]
+            }
           ],
           "descricao": "Escolha a margem"
         }
       ],
-      "recompensas": { "solo": [], "grupo": [] },
-      "requerFlags": ["delta_bruno_ferro_derrotado"],
-      "bloqueadaPorFlags": ["travessia_feita"],
-      "ligaFlags": ["travessia_feita"],
+      "recompensas": {
+        "solo": [],
+        "grupo": []
+      },
+      "requerFlags": [
+        "delta_bruno_ferro_derrotado"
+      ],
+      "bloqueadaPorFlags": [
+        "travessia_feita"
+      ],
+      "ligaFlags": [
+        "travessia_feita"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos"]
+      "sugestaoCampos": [
+        "objetivos"
+      ]
     },
     {
       "id": "roda_01_apresentacao",
       "name": "Apresentação na Roda",
       "cadeia": "esquerda_a_roda",
       "dadaPor": "ilaria_vesta",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "margem_esquerda",
       "lugar": "casa_da_assembleia",
       "margem": "esquerda",
       "modo": "solo",
       "resumo": "A reunião começa às oito e termina quando termina. Você se apresenta e escolhe o seu espírito guia.",
       "objetivos": [
-        { "tipo": "ir_ate", "lugar": "casa_da_assembleia", "descricao": "Vá até a Casa da Assembleia" },
-        { "tipo": "falar", "npc": "ilaria_vesta", "descricao": "Apresente-se na roda" },
-        { "tipo": "escolher_guia", "margem": "esquerda", "descricao": "Escolha o seu espírito guia" },
-        { "tipo": "interagir", "alvo": "quadro_de_instituicoes", "acao": "escolher_instituicao", "quantidade": 1, "descricao": "Escolha a instituição e procure quem recebe a base" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "casa_da_assembleia",
+          "descricao": "Vá até a Casa da Assembleia"
+        },
+        {
+          "tipo": "falar",
+          "npc": "ilaria_vesta",
+          "descricao": "Apresente-se na roda"
+        },
+        {
+          "tipo": "escolher_guia",
+          "margem": "esquerda",
+          "descricao": "Escolha o seu espírito guia"
+        },
+        {
+          "tipo": "interagir",
+          "alvo": "quadro_de_instituicoes",
+          "acao": "escolher_instituicao",
+          "quantidade": 1,
+          "descricao": "Escolha a instituição e procure quem recebe a base"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "recurso", "recurso": "semente", "quantidade": 20 }], "grupo": [] },
-      "requerFlags": ["margem_esquerda"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 20
+          }
+        ],
+        "grupo": []
+      },
+      "requerFlags": [
+        "margem_esquerda"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["roda_apresentado_assembleia", "guia_escolhido"],
+      "ligaFlags": [
+        "roda_apresentado_assembleia",
+        "guia_escolhido"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["dadaPor", "objetivos", "recompensas"]
+      "sugestaoCampos": [
+        "dadaPor",
+        "objetivos",
+        "recompensas"
+      ]
     },
     {
       "id": "entrada_brigada_popular",
       "name": "Entrada na Brigada Popular",
       "cadeia": "entradas",
       "dadaPor": "jacques",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "margem_esquerda",
       "lugar": "sede_brigada_popular",
       "margem": "esquerda",
       "instituicao": "brigada_popular",
       "modo": "solo",
-      "aliadosIA": ["jacques"],
+      "aliadosIA": [
+        "jacques"
+      ],
       "resumo": "Jacques quer um discurso na roda e uma briga de verdade.",
       "textoDoc": "Discurso na roda e uma briga de verdade contra contrabandistas",
       "objetivos": [
-        { "tipo": "ir_ate", "lugar": "sede_brigada_popular", "descricao": "Vá ao galpão de trem da Brigada" },
+        {
+          "tipo": "ir_ate",
+          "lugar": "sede_brigada_popular",
+          "descricao": "Vá ao galpão de trem da Brigada"
+        },
         {
           "tipo": "escolher",
           "pergunta": "Seu discurso na roda:",
           "opcoes": [
-            { "id": "fogo", "texto": "\"Companheiros, a luz é de todos!\"", "ligaFlags": [], "sugestao": true },
-            { "id": "pratico", "texto": "\"Menos ata, mais ação. Depois do café.\"", "ligaFlags": [], "sugestao": true }
+            {
+              "id": "fogo",
+              "texto": "\"Companheiros, a luz é de todos!\"",
+              "ligaFlags": [],
+              "sugestao": true
+            },
+            {
+              "id": "pratico",
+              "texto": "\"Menos ata, mais ação. Depois do café.\"",
+              "ligaFlags": [],
+              "sugestao": true
+            }
           ],
           "descricao": "Faça o discurso na roda"
         },
-        { "tipo": "ir_ate", "regiao": "juncal", "descricao": "Vá até a borda do Juncal" },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "contrabandista", "quantidade": 6, "tier": "normal" }, { "inimigo": "contrabandista", "quantidade": 1, "tier": "elite", "afixos": ["rapido"] }], "regiao": "juncal", "descricao": "Briga de verdade contra contrabandistas" }
+        {
+          "tipo": "ir_ate",
+          "regiao": "juncal",
+          "descricao": "Vá até a borda do Juncal"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "contrabandista",
+              "quantidade": 6,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "contrabandista",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "rapido"
+              ]
+            }
+          ],
+          "regiao": "juncal",
+          "descricao": "Briga de verdade contra contrabandistas"
+        }
       ],
       "recompensas": {
         "solo": [
-          { "kind": "desbloqueio", "chave": "classe", "descricao": "Libera a classe Combatente" },
-          { "kind": "desbloqueio", "chave": "uniforme_instituicao", "descricao": "Uniforme da Brigada Popular" },
-          { "kind": "reputacao", "quantidade": 100, "instituicao": "brigada_popular" },
-          { "kind": "recurso", "recurso": "semente", "quantidade": 50 }
+          {
+            "kind": "desbloqueio",
+            "chave": "classe",
+            "descricao": "Libera a classe Combatente"
+          },
+          {
+            "kind": "desbloqueio",
+            "chave": "uniforme_instituicao",
+            "descricao": "Uniforme da Brigada Popular"
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 100,
+            "instituicao": "brigada_popular"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 50
+          }
         ],
-        "grupo": [{ "kind": "xp", "quantidade": 900 }]
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 900
+          }
+        ]
       },
-      "requerFlags": ["roda_apresentado_assembleia"],
-      "bloqueadaPorFlags": ["entrou_instituicao"],
-      "ligaFlags": ["entrou_instituicao", "entrou_brigada_popular"],
+      "requerFlags": [
+        "roda_apresentado_assembleia"
+      ],
+      "bloqueadaPorFlags": [
+        "entrou_instituicao"
+      ],
+      "ligaFlags": [
+        "entrou_instituicao",
+        "entrou_brigada_popular"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "aliadosIA", "resumo"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "resumo"
+      ]
     },
     {
       "id": "entrada_guarda_comunitaria",
       "name": "Entrada na Guarda Comunitária",
       "cadeia": "entradas",
       "dadaPor": "olga",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "margem_esquerda",
       "lugar": "sede_guarda_comunitaria",
       "margem": "esquerda",
       "instituicao": "guarda_comunitaria",
       "modo": "solo",
-      "aliadosIA": ["olga"],
+      "aliadosIA": [
+        "olga"
+      ],
       "resumo": "Olga te dá uma braçadeira e um prato de sopa. Agora é ronda.",
       "textoDoc": "Uma semana de ronda no quarteirão sem dedurar ninguém à toa",
       "objetivos": [
-        { "tipo": "interagir", "alvo": "guarita", "acao": "fazer_ronda", "quantidade": 7, "descricao": "Uma ronda por dia: passe nas 7 guaritas" },
+        {
+          "tipo": "interagir",
+          "alvo": "guarita",
+          "acao": "fazer_ronda",
+          "quantidade": 7,
+          "descricao": "Uma ronda por dia: passe nas 7 guaritas"
+        },
         {
           "tipo": "escolher",
           "pergunta": "A vizinha plantou couve fora da cota da horta.",
           "opcoes": [
-            { "id": "dedurar", "texto": "Anotar no caderno da comissão.", "ligaFlags": ["guarda_dedurou_a_vizinha"], "recompensas": [{ "kind": "reputacao", "quantidade": -20, "instituicao": "guarda_comunitaria" }], "sugestao": true },
-            { "id": "deixar", "texto": "É couve. Deixa a mulher.", "ligaFlags": [], "recompensas": [{ "kind": "recurso", "recurso": "comida", "quantidade": 5 }], "sugestao": true }
+            {
+              "id": "dedurar",
+              "texto": "Anotar no caderno da comissão.",
+              "ligaFlags": [
+                "guarda_dedurou_a_vizinha"
+              ],
+              "recompensas": [
+                {
+                  "kind": "reputacao",
+                  "quantidade": -20,
+                  "instituicao": "guarda_comunitaria"
+                }
+              ],
+              "sugestao": true
+            },
+            {
+              "id": "deixar",
+              "texto": "É couve. Deixa a mulher.",
+              "ligaFlags": [],
+              "recompensas": [
+                {
+                  "kind": "recurso",
+                  "recurso": "comida",
+                  "quantidade": 5
+                }
+              ],
+              "sugestao": true
+            }
           ],
           "descricao": "Não dedure ninguém à toa"
         },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "contrabandista", "quantidade": 5, "tier": "normal" }], "descricao": "O problema de verdade apareceu no quarteirão" }
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "contrabandista",
+              "quantidade": 5,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "O problema de verdade apareceu no quarteirão"
+        }
       ],
       "recompensas": {
         "solo": [
-          { "kind": "desbloqueio", "chave": "classe", "descricao": "Libera a classe Atirador" },
-          { "kind": "desbloqueio", "chave": "uniforme_instituicao", "descricao": "Uniforme da Guarda Comunitária" },
-          { "kind": "reputacao", "quantidade": 100, "instituicao": "guarda_comunitaria" },
-          { "kind": "recurso", "recurso": "semente", "quantidade": 50 }
+          {
+            "kind": "desbloqueio",
+            "chave": "classe",
+            "descricao": "Libera a classe Atirador"
+          },
+          {
+            "kind": "desbloqueio",
+            "chave": "uniforme_instituicao",
+            "descricao": "Uniforme da Guarda Comunitária"
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 100,
+            "instituicao": "guarda_comunitaria"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 50
+          }
         ],
-        "grupo": [{ "kind": "xp", "quantidade": 900 }]
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 900
+          }
+        ]
       },
-      "requerFlags": ["roda_apresentado_assembleia"],
-      "bloqueadaPorFlags": ["entrou_instituicao"],
-      "ligaFlags": ["entrou_instituicao", "entrou_guarda_comunitaria"],
+      "requerFlags": [
+        "roda_apresentado_assembleia"
+      ],
+      "bloqueadaPorFlags": [
+        "entrou_instituicao"
+      ],
+      "ligaFlags": [
+        "entrou_instituicao",
+        "entrou_guarda_comunitaria"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "aliadosIA", "resumo"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "resumo"
+      ]
     },
     {
       "id": "entrada_escola_dos_saberes",
       "name": "Entrada na Escola dos Saberes",
       "cadeia": "entradas",
       "dadaPor": "seamus",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "juncal",
       "lugar": "mata_do_curupira",
       "margem": "esquerda",
       "instituicao": "escola_dos_saberes",
       "modo": "solo",
-      "aliadosIA": ["guia"],
+      "aliadosIA": [
+        "guia"
+      ],
       "resumo": "Seamus manda você passar a noite na mata. E sair do gramado dele.",
       "textoDoc": "Uma noite na mata com um espírito, sem fugir",
       "objetivos": [
-        { "tipo": "falar", "npc": "seamus", "descricao": "Ouça o Seamus debaixo da figueira" },
-        { "tipo": "ir_ate", "lugar": "mata_do_curupira", "descricao": "Entre na mata ao anoitecer" },
-        { "tipo": "sobreviver", "duracaoS": 180, "ondas": [{ "inimigo": "cobra_do_juncal", "quantidade": 8, "tier": "normal" }, { "inimigo": "cobra_do_juncal", "quantidade": 1, "tier": "elite", "afixos": ["rapido"] }], "naoSairDoRaio": 8, "descricao": "Passe a noite com o seu espírito, sem fugir" },
-        { "tipo": "falar", "npc": "guia", "descricao": "Converse com o seu espírito ao amanhecer" }
+        {
+          "tipo": "falar",
+          "npc": "seamus",
+          "descricao": "Ouça o Seamus debaixo da figueira"
+        },
+        {
+          "tipo": "ir_ate",
+          "lugar": "mata_do_curupira",
+          "descricao": "Entre na mata ao anoitecer"
+        },
+        {
+          "tipo": "sobreviver",
+          "duracaoS": 180,
+          "ondas": [
+            {
+              "inimigo": "cobra_do_juncal",
+              "quantidade": 8,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "cobra_do_juncal",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "rapido"
+              ]
+            }
+          ],
+          "naoSairDoRaio": 8,
+          "descricao": "Passe a noite com o seu espírito, sem fugir"
+        },
+        {
+          "tipo": "falar",
+          "npc": "guia",
+          "descricao": "Converse com o seu espírito ao amanhecer"
+        }
       ],
       "recompensas": {
         "solo": [
-          { "kind": "desbloqueio", "chave": "classe", "descricao": "Libera a classe Elemental" },
-          { "kind": "desbloqueio", "chave": "uniforme_instituicao", "descricao": "Uniforme da Escola dos Saberes" },
-          { "kind": "reputacao", "quantidade": 100, "instituicao": "escola_dos_saberes" },
-          { "kind": "recurso", "recurso": "semente", "quantidade": 50 }
+          {
+            "kind": "desbloqueio",
+            "chave": "classe",
+            "descricao": "Libera a classe Elemental"
+          },
+          {
+            "kind": "desbloqueio",
+            "chave": "uniforme_instituicao",
+            "descricao": "Uniforme da Escola dos Saberes"
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 100,
+            "instituicao": "escola_dos_saberes"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 50
+          }
         ],
-        "grupo": [{ "kind": "xp", "quantidade": 900 }]
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 900
+          }
+        ]
       },
-      "requerFlags": ["roda_apresentado_assembleia"],
-      "bloqueadaPorFlags": ["entrou_instituicao"],
-      "ligaFlags": ["entrou_instituicao", "entrou_escola_dos_saberes"],
+      "requerFlags": [
+        "roda_apresentado_assembleia"
+      ],
+      "bloqueadaPorFlags": [
+        "entrou_instituicao"
+      ],
+      "ligaFlags": [
+        "entrou_instituicao",
+        "entrou_escola_dos_saberes"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "aliadosIA", "resumo", "regiao", "lugar"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "resumo",
+        "regiao",
+        "lugar"
+      ]
     },
     {
       "id": "entrada_trupe_do_povo",
       "name": "Entrada na Trupe do Povo",
       "cadeia": "entradas",
       "dadaPor": "tiao",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "margem_esquerda",
       "lugar": "praca_do_xadrez",
       "margem": "esquerda",
       "instituicao": "trupe_do_povo",
       "modo": "solo",
-      "aliadosIA": ["tiao"],
+      "aliadosIA": [
+        "tiao"
+      ],
       "resumo": "Tião arrumou um palco na praça. A plateia arrumou tomate.",
       "textoDoc": "Estreia no palco da praça com a plateia jogando tomate",
       "objetivos": [
-        { "tipo": "falar", "npc": "tiao", "descricao": "Pegue o figurino com o Tião" },
-        { "tipo": "ir_ate", "lugar": "praca_do_xadrez", "descricao": "Suba no palco da praça" },
-        { "tipo": "sobreviver", "duracaoS": 90, "perigo": "chuva_de_tomate", "naoSairDoRaio": 6, "descricao": "Aguente a estreia: fuja dos tomates" },
-        { "tipo": "usar_habilidade", "botao": "qualquer", "quantidade": 5, "descricao": "Faça o show: use 5 habilidades no palco" }
+        {
+          "tipo": "falar",
+          "npc": "tiao",
+          "descricao": "Pegue o figurino com o Tião"
+        },
+        {
+          "tipo": "ir_ate",
+          "lugar": "praca_do_xadrez",
+          "descricao": "Suba no palco da praça"
+        },
+        {
+          "tipo": "sobreviver",
+          "duracaoS": 90,
+          "perigo": "chuva_de_tomate",
+          "naoSairDoRaio": 6,
+          "descricao": "Aguente a estreia: fuja dos tomates"
+        },
+        {
+          "tipo": "usar_habilidade",
+          "botao": "qualquer",
+          "quantidade": 5,
+          "descricao": "Faça o show: use 5 habilidades no palco"
+        }
       ],
       "recompensas": {
         "solo": [
-          { "kind": "desbloqueio", "chave": "classe", "descricao": "Libera a classe Mascarado" },
-          { "kind": "desbloqueio", "chave": "uniforme_instituicao", "descricao": "Uniforme da Trupe do Povo" },
-          { "kind": "reputacao", "quantidade": 100, "instituicao": "trupe_do_povo" },
-          { "kind": "recurso", "recurso": "comida", "quantidade": 10 },
-          { "kind": "recurso", "recurso": "semente", "quantidade": 50 }
+          {
+            "kind": "desbloqueio",
+            "chave": "classe",
+            "descricao": "Libera a classe Mascarado"
+          },
+          {
+            "kind": "desbloqueio",
+            "chave": "uniforme_instituicao",
+            "descricao": "Uniforme da Trupe do Povo"
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 100,
+            "instituicao": "trupe_do_povo"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "comida",
+            "quantidade": 10
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 50
+          }
         ],
-        "grupo": [{ "kind": "xp", "quantidade": 900 }]
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 900
+          }
+        ]
       },
-      "requerFlags": ["roda_apresentado_assembleia"],
-      "bloqueadaPorFlags": ["entrou_instituicao"],
-      "ligaFlags": ["entrou_instituicao", "entrou_trupe_do_povo"],
+      "requerFlags": [
+        "roda_apresentado_assembleia"
+      ],
+      "bloqueadaPorFlags": [
+        "entrou_instituicao"
+      ],
+      "ligaFlags": [
+        "entrou_instituicao",
+        "entrou_trupe_do_povo"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "aliadosIA", "resumo", "lugar"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "resumo",
+        "lugar"
+      ]
     },
     {
       "id": "roda_02_primeiro_mutirao",
@@ -744,27 +1702,91 @@
       "tipo": "mutirao",
       "cadeia": "esquerda_a_roda",
       "dadaPor": "teodoro_rinaldi",
-      "nivel": 9,
+      "nivel": 6,
       "regiao": "margem_esquerda",
       "lugar": "mutiroes",
       "margem": "esquerda",
       "modo": "grupo",
-      "aliadosIA": ["treinador_da_base"],
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
       "resumo": "Uma família da lista de espera vai ganhar casa hoje, se os bandidos deixarem.",
       "objetivos": [
-        { "tipo": "entregar", "npc": "teodoro_rinaldi", "recurso": "pecas", "quantidade": 10, "descricao": "Leve peças para o mutirão" },
-        { "tipo": "construir", "estrutura": "casa_de_mutirao", "duracaoS": 180, "descricao": "Erga a casa em mutirão" },
-        { "tipo": "sobreviver", "duracaoS": 180, "ondas": [{ "inimigo": "contrabandista", "quantidade": 8, "tier": "normal" }, { "inimigo": "contrabandista", "quantidade": 1, "tier": "elite", "afixos": ["explode_ao_morrer"] }], "descricao": "Segure os bandidos enquanto a casa sobe" }
+        {
+          "tipo": "entregar",
+          "npc": "teodoro_rinaldi",
+          "recurso": "pecas",
+          "quantidade": 10,
+          "descricao": "Leve peças para o mutirão"
+        },
+        {
+          "tipo": "construir",
+          "estrutura": "casa_de_mutirao",
+          "duracaoS": 180,
+          "descricao": "Erga a casa em mutirão"
+        },
+        {
+          "tipo": "sobreviver",
+          "duracaoS": 180,
+          "ondas": [
+            {
+              "inimigo": "contrabandista",
+              "quantidade": 8,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "contrabandista",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "explode_ao_morrer"
+              ]
+            }
+          ],
+          "descricao": "Segure os bandidos enquanto a casa sobe"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "recurso", "recurso": "semente", "quantidade": 30 }, { "kind": "reputacao", "quantidade": 30 }, { "kind": "item", "tabela": "loot_normal", "quantidade": 1 }],
-        "grupo": [{ "kind": "xp", "quantidade": 1000 }]
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 30
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 30
+          },
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1000
+          }
+        ]
       },
-      "requerFlags": ["entrou_instituicao", "roda_apresentado_assembleia"],
+      "requerFlags": [
+        "entrou_instituicao",
+        "roda_apresentado_assembleia"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["roda_primeiro_mutirao"],
+      "ligaFlags": [
+        "roda_primeiro_mutirao"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["dadaPor", "objetivos", "recompensas", "aliadosIA", "resumo", "nivel"]
+      "sugestaoCampos": [
+        "dadaPor",
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "resumo",
+        "nivel"
+      ]
     },
     {
       "id": "roda_03_fila_do_posto",
@@ -772,27 +1794,80 @@
       "tipo": "fila_do_posto",
       "cadeia": "esquerda_a_roda",
       "dadaPor": "ayaan_quispe",
-      "nivel": 10,
+      "nivel": 7,
       "regiao": "margem_esquerda",
       "lugar": "sede_escola_dos_saberes",
       "margem": "esquerda",
       "modo": "solo",
       "resumo": "A vizinha do mutirão está com febre. O posto é grátis; a fila é outra história.",
       "objetivos": [
-        { "tipo": "falar", "npc": "ayaan_quispe", "descricao": "Fale com a Curandeira" },
+        {
+          "tipo": "falar",
+          "npc": "ayaan_quispe",
+          "descricao": "Fale com a Curandeira"
+        },
         {
           "tipo": "escolher",
           "pergunta": "Como você consegue atendimento para a vizinha?",
           "opcoes": [
-            { "id": "labia", "texto": "Lábia: convencer a fila de que febre é emergência.", "ligaFlags": [], "recompensas": [{ "kind": "medidor", "medidor": "opiniao_publica", "delta": 2, "aFavorDe": "esquerda" }] },
-            { "id": "troca", "texto": "Troca: um saco de comida pelo lugar da frente.", "ligaFlags": [], "recompensas": [{ "kind": "reputacao", "quantidade": 10 }] },
-            { "id": "atalho", "texto": "Atalho: a Curandeira tem uma porta dos fundos.", "ligaFlags": [], "recompensas": [{ "kind": "item", "tabela": "loot_normal", "quantidade": 1 }] }
+            {
+              "id": "labia",
+              "texto": "Lábia: convencer a fila de que febre é emergência.",
+              "ligaFlags": [],
+              "recompensas": [
+                {
+                  "kind": "medidor",
+                  "medidor": "opiniao_publica",
+                  "delta": 2,
+                  "aFavorDe": "esquerda"
+                }
+              ]
+            },
+            {
+              "id": "troca",
+              "texto": "Troca: um saco de comida pelo lugar da frente.",
+              "ligaFlags": [],
+              "recompensas": [
+                {
+                  "kind": "reputacao",
+                  "quantidade": 10
+                }
+              ]
+            },
+            {
+              "id": "atalho",
+              "texto": "Atalho: a Curandeira tem uma porta dos fundos.",
+              "ligaFlags": [],
+              "recompensas": [
+                {
+                  "kind": "item",
+                  "tabela": "loot_normal",
+                  "quantidade": 1
+                }
+              ]
+            }
           ],
           "descricao": "Lábia, troca ou atalho"
         }
       ],
-      "recompensas": { "solo": [{ "kind": "recurso", "recurso": "comida", "quantidade": 10 }, { "kind": "recurso", "recurso": "semente", "quantidade": 20 }], "grupo": [] },
-      "requerFlags": ["roda_primeiro_mutirao"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "comida",
+            "quantidade": 10
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 20
+          }
+        ],
+        "grupo": []
+      },
+      "requerFlags": [
+        "roda_primeiro_mutirao"
+      ],
       "bloqueadaPorFlags": [],
       "ligaFlags": [],
       "emPiloto": true,
@@ -804,148 +1879,436 @@
       "tipo": "corrida_contra_o_apagao",
       "cadeia": "esquerda_a_roda",
       "dadaPor": "yusuf_adeyemi",
-      "nivel": 10,
+      "nivel": 7,
       "regiao": "margem_esquerda",
       "lugar": "mutiroes",
       "margem": "esquerda",
       "modo": "grupo",
-      "aliadosIA": ["treinador_da_base"],
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
       "resumo": "A rua do mutirão apagou fora da cota. Yusuf jura que a cota estava em dia.",
       "objetivos": [
-        { "tipo": "interagir", "alvo": "subestacao", "acao": "religar", "quantidade": 3, "descricao": "Religue as 3 subestações antes do bairro apagar" },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "fiscal_da_comissao", "quantidade": 6, "tier": "normal" }, { "inimigo": "fiscal_da_comissao", "quantidade": 1, "tier": "elite", "afixos": ["cura_os_outros"] }], "descricao": "Os fiscais da comissão querem o formulário de religação" }
+        {
+          "tipo": "interagir",
+          "alvo": "subestacao",
+          "acao": "religar",
+          "quantidade": 3,
+          "descricao": "Religue as 3 subestações antes do bairro apagar"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "fiscal_da_comissao",
+              "quantidade": 6,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "fiscal_da_comissao",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "cura_os_outros"
+              ]
+            }
+          ],
+          "descricao": "Os fiscais da comissão querem o formulário de religação"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "medidor", "medidor": "energia", "delta": 10 }, { "kind": "recurso", "recurso": "semente", "quantidade": 30 }, { "kind": "item", "tabela": "loot_normal", "quantidade": 1 }],
-        "grupo": [{ "kind": "xp", "quantidade": 1100 }]
+        "solo": [
+          {
+            "kind": "medidor",
+            "medidor": "energia",
+            "delta": 10
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 30
+          },
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1100
+          }
+        ]
       },
-      "requerFlags": ["roda_primeiro_mutirao"],
+      "requerFlags": [
+        "roda_primeiro_mutirao"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["roda_bairro_religado"],
+      "ligaFlags": [
+        "roda_bairro_religado"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["dadaPor", "objetivos", "recompensas", "aliadosIA", "resumo", "nivel"]
+      "sugestaoCampos": [
+        "dadaPor",
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "resumo",
+        "nivel"
+      ]
     },
     {
       "id": "roda_05_quem_levou_a_luz",
       "name": "Quem Levou a Luz",
       "cadeia": "esquerda_a_roda",
       "dadaPor": "amara_okafor",
-      "nivel": 11,
+      "nivel": 9,
       "regiao": "usina_da_ponte",
       "lugar": "barragem_da_usina",
       "margem": "esquerda",
       "modo": "grupo",
-      "aliadosIA": ["treinador_da_base"],
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
       "resumo": "Siga o cabo da sua rua até a usina e descubra para onde foi a sua cota.",
       "textoDoc": "Descobre que a energia da sua rua foi cortada para a Direita pagar mais caro por ela.",
       "objetivos": [
-        { "tipo": "ir_ate", "lugar": "barragem_da_usina", "descricao": "Siga o cabo até a usina" },
-        { "tipo": "interagir", "alvo": "painel_de_distribuicao", "acao": "ler", "quantidade": 1, "descricao": "Leia o painel de distribuição" },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "mercenario_do_sombra", "quantidade": 4, "tier": "normal" }], "descricao": "Alguém não queria você lendo aquilo" },
-        { "tipo": "falar", "npc": "amara_okafor", "descricao": "Conte tudo na Rádio do Povo" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "barragem_da_usina",
+          "descricao": "Siga o cabo até a usina"
+        },
+        {
+          "tipo": "interagir",
+          "alvo": "painel_de_distribuicao",
+          "acao": "ler",
+          "quantidade": 1,
+          "descricao": "Leia o painel de distribuição"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 4,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Alguém não queria você lendo aquilo"
+        },
+        {
+          "tipo": "falar",
+          "npc": "amara_okafor",
+          "descricao": "Conte tudo na Rádio do Povo"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "medidor", "medidor": "opiniao_publica", "delta": 5, "regiao": "margem_esquerda", "aFavorDe": "esquerda" }, { "kind": "recurso", "recurso": "semente", "quantidade": 40 }, { "kind": "item", "tabela": "loot_elite", "quantidade": 1 }],
-        "grupo": [{ "kind": "xp", "quantidade": 1300 }]
+        "solo": [
+          {
+            "kind": "medidor",
+            "medidor": "opiniao_publica",
+            "delta": 5,
+            "regiao": "margem_esquerda",
+            "aFavorDe": "esquerda"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 40
+          },
+          {
+            "kind": "item",
+            "tabela": "loot_elite",
+            "quantidade": 1
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1300
+          }
+        ]
       },
-      "requerFlags": ["roda_bairro_religado"],
+      "requerFlags": [
+        "roda_bairro_religado"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["roda_energia_cortada_descoberta"],
+      "ligaFlags": [
+        "roda_energia_cortada_descoberta"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["dadaPor", "objetivos", "recompensas", "aliadosIA", "resumo", "nivel"]
+      "sugestaoCampos": [
+        "dadaPor",
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "resumo",
+        "nivel"
+      ]
     },
     {
       "id": "contrato_01_ativacao",
       "name": "Ativação",
       "cadeia": "direita_o_primeiro_contrato",
       "dadaPor": "guia",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "margem_direita",
       "lugar": "torre_do_consorcio",
       "margem": "direita",
       "modo": "solo",
       "resumo": "Sua IA de bolso te ativa. Antes, claro, os termos de uso.",
       "objetivos": [
-        { "tipo": "ir_ate", "lugar": "torre_do_consorcio", "descricao": "Vá até a Torre do Consórcio" },
-        { "tipo": "escolher_guia", "margem": "direita", "descricao": "Sua IA de bolso te ativa: escolha qual" },
-        { "tipo": "interagir", "alvo": "termos_de_uso", "acao": "aceitar", "quantidade": 1, "descricao": "Aceite os termos de uso (214 páginas)", "sugestao": true },
-        { "tipo": "interagir", "alvo": "quadro_de_instituicoes", "acao": "escolher_instituicao", "quantidade": 1, "descricao": "Escolha a instituição e procure quem recebe a base" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "torre_do_consorcio",
+          "descricao": "Vá até a Torre do Consórcio"
+        },
+        {
+          "tipo": "escolher_guia",
+          "margem": "direita",
+          "descricao": "Sua IA de bolso te ativa: escolha qual"
+        },
+        {
+          "tipo": "interagir",
+          "alvo": "termos_de_uso",
+          "acao": "aceitar",
+          "quantidade": 1,
+          "descricao": "Aceite os termos de uso (214 páginas)",
+          "sugestao": true
+        },
+        {
+          "tipo": "interagir",
+          "alvo": "quadro_de_instituicoes",
+          "acao": "escolher_instituicao",
+          "quantidade": 1,
+          "descricao": "Escolha a instituição e procure quem recebe a base"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "recurso", "recurso": "credito", "quantidade": 20 }, { "kind": "score", "delta": 10 }], "grupo": [] },
-      "requerFlags": ["margem_direita"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 20
+          },
+          {
+            "kind": "score",
+            "delta": 10
+          }
+        ],
+        "grupo": []
+      },
+      "requerFlags": [
+        "margem_direita"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["contrato_ia_ativada", "guia_escolhido"],
+      "ligaFlags": [
+        "contrato_ia_ativada",
+        "guia_escolhido"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "resumo"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "resumo"
+      ]
     },
     {
       "id": "entrada_torcida_furia_neon",
       "name": "Entrada na Torcida Fúria Neon",
       "cadeia": "entradas",
       "dadaPor": "edson",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "usina_da_ponte",
       "lugar": "estadio_das_margens",
       "margem": "direita",
       "instituicao": "torcida_furia_neon",
       "modo": "solo",
-      "aliadosIA": ["edson"],
+      "aliadosIA": [
+        "edson"
+      ],
       "resumo": "Edson leva você para a arquibancada. Na saída, quem arma a briga é o cambista do Capataz, não a outra torcida.",
       "textoDoc": "Teste de arquibancada: aguentar 90 minutos de canto e uma briga de saída",
       "objetivos": [
-        { "tipo": "ir_ate", "lugar": "estadio_das_margens", "descricao": "Suba na arquibancada da Fúria Neon" },
-        { "tipo": "sobreviver", "duracaoS": 90, "perigo": "sinalizador_da_arquibancada", "naoSairDoRaio": 6, "descricao": "Aguente os 90 minutos de canto (1 s de jogo = 1 minuto)" },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "capanga_do_capataz", "quantidade": 6, "tier": "normal" }, { "inimigo": "capanga_do_capataz", "quantidade": 1, "tier": "elite", "afixos": ["blindado"] }], "descricao": "Briga de saída contra os cambistas do Capataz" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "estadio_das_margens",
+          "descricao": "Suba na arquibancada da Fúria Neon"
+        },
+        {
+          "tipo": "sobreviver",
+          "duracaoS": 90,
+          "perigo": "sinalizador_da_arquibancada",
+          "naoSairDoRaio": 6,
+          "descricao": "Aguente os 90 minutos de canto (1 s de jogo = 1 minuto)"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "capanga_do_capataz",
+              "quantidade": 6,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "capanga_do_capataz",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "blindado"
+              ]
+            }
+          ],
+          "descricao": "Briga de saída contra os cambistas do Capataz"
+        }
       ],
       "recompensas": {
         "solo": [
-          { "kind": "desbloqueio", "chave": "classe", "descricao": "Libera a classe Combatente" },
-          { "kind": "desbloqueio", "chave": "uniforme_instituicao", "descricao": "Uniforme da Torcida Fúria Neon" },
-          { "kind": "reputacao", "quantidade": 100, "instituicao": "torcida_furia_neon" },
-          { "kind": "recurso", "recurso": "credito", "quantidade": 50 }
+          {
+            "kind": "desbloqueio",
+            "chave": "classe",
+            "descricao": "Libera a classe Combatente"
+          },
+          {
+            "kind": "desbloqueio",
+            "chave": "uniforme_instituicao",
+            "descricao": "Uniforme da Torcida Fúria Neon"
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 100,
+            "instituicao": "torcida_furia_neon"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 50
+          }
         ],
-        "grupo": [{ "kind": "xp", "quantidade": 900 }]
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 900
+          }
+        ]
       },
-      "requerFlags": ["contrato_ia_ativada"],
-      "bloqueadaPorFlags": ["entrou_instituicao"],
-      "ligaFlags": ["entrou_instituicao", "entrou_torcida_furia_neon"],
+      "requerFlags": [
+        "contrato_ia_ativada"
+      ],
+      "bloqueadaPorFlags": [
+        "entrou_instituicao"
+      ],
+      "ligaFlags": [
+        "entrou_instituicao",
+        "entrou_torcida_furia_neon"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "aliadosIA", "resumo", "regiao", "lugar"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "resumo",
+        "regiao",
+        "lugar"
+      ]
     },
     {
       "id": "entrada_pm_do_consorcio",
       "name": "Entrada na PM do Consórcio",
       "cadeia": "entradas",
       "dadaPor": "dusty",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "margem_direita",
       "lugar": "sede_pm_do_consorcio",
       "margem": "direita",
       "instituicao": "pm_do_consorcio",
       "modo": "solo",
-      "aliadosIA": ["dusty"],
+      "aliadosIA": [
+        "dusty"
+      ],
       "resumo": "Dusty aplica o concurso, dá o curso e grava tudo para o canal do batalhão.",
       "textoDoc": "Concurso, curso relâmpago e a assinatura de um contrato que ninguém lê",
       "objetivos": [
-        { "tipo": "interagir", "alvo": "prova_do_concurso", "acao": "responder", "quantidade": 3, "descricao": "Concurso: responda 3 perguntas" },
-        { "tipo": "usar_habilidade", "botao": "qualquer", "quantidade": 6, "descricao": "Curso relâmpago: use 6 habilidades no estande" },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "drone_de_cobranca", "quantidade": 5, "tier": "normal" }], "descricao": "Prova prática: drones de cobrança desgovernados" },
-        { "tipo": "interagir", "alvo": "contrato_da_pm", "acao": "assinar", "quantidade": 1, "descricao": "Assine o contrato. Ninguém lê" }
+        {
+          "tipo": "interagir",
+          "alvo": "prova_do_concurso",
+          "acao": "responder",
+          "quantidade": 3,
+          "descricao": "Concurso: responda 3 perguntas"
+        },
+        {
+          "tipo": "usar_habilidade",
+          "botao": "qualquer",
+          "quantidade": 6,
+          "descricao": "Curso relâmpago: use 6 habilidades no estande"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "drone_de_cobranca",
+              "quantidade": 5,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Prova prática: drones de cobrança desgovernados"
+        },
+        {
+          "tipo": "interagir",
+          "alvo": "contrato_da_pm",
+          "acao": "assinar",
+          "quantidade": 1,
+          "descricao": "Assine o contrato. Ninguém lê"
+        }
       ],
       "recompensas": {
         "solo": [
-          { "kind": "desbloqueio", "chave": "classe", "descricao": "Libera a classe Atirador" },
-          { "kind": "desbloqueio", "chave": "uniforme_instituicao", "descricao": "Uniforme da PM do Consórcio" },
-          { "kind": "reputacao", "quantidade": 100, "instituicao": "pm_do_consorcio" },
-          { "kind": "recurso", "recurso": "credito", "quantidade": 50 }
+          {
+            "kind": "desbloqueio",
+            "chave": "classe",
+            "descricao": "Libera a classe Atirador"
+          },
+          {
+            "kind": "desbloqueio",
+            "chave": "uniforme_instituicao",
+            "descricao": "Uniforme da PM do Consórcio"
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 100,
+            "instituicao": "pm_do_consorcio"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 50
+          }
         ],
-        "grupo": [{ "kind": "xp", "quantidade": 900 }]
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 900
+          }
+        ]
       },
-      "requerFlags": ["contrato_ia_ativada"],
-      "bloqueadaPorFlags": ["entrou_instituicao"],
-      "ligaFlags": ["entrou_instituicao", "entrou_pm_do_consorcio"],
+      "requerFlags": [
+        "contrato_ia_ativada"
+      ],
+      "bloqueadaPorFlags": [
+        "entrou_instituicao"
+      ],
+      "ligaFlags": [
+        "entrou_instituicao",
+        "entrou_pm_do_consorcio"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "aliadosIA", "resumo"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "resumo"
+      ]
     },
     {
       "id": "entrada_universidade_neon",
@@ -953,69 +2316,184 @@
       "tipo": "trote_da_universidade",
       "cadeia": "entradas",
       "dadaPor": "klaus",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "margem_direita",
       "lugar": "sede_universidade_neon",
       "margem": "direita",
       "instituicao": "universidade_neon",
       "modo": "solo",
-      "aliadosIA": ["klaus"],
+      "aliadosIA": [
+        "klaus"
+      ],
       "resumo": "Doktor Klaus aplica o vestibular. O trote foi patenteado. A mensalidade, não perdoa.",
       "textoDoc": "Vestibular, trote e a primeira mensalidade",
       "objetivos": [
-        { "tipo": "interagir", "alvo": "vestibular", "acao": "responder", "quantidade": 3, "descricao": "Vestibular: responda 3 perguntas" },
-        { "tipo": "sobreviver", "duracaoS": 60, "ondas": [{ "inimigo": "drone_de_cobranca", "quantidade": 4, "tier": "normal" }], "perigo": "experimento_do_trote", "descricao": "Sobreviva ao trote" },
-        { "tipo": "pagar", "moeda": "credito", "quantidade": 30, "descricao": "Pague a primeira mensalidade na catraca" }
+        {
+          "tipo": "interagir",
+          "alvo": "vestibular",
+          "acao": "responder",
+          "quantidade": 3,
+          "descricao": "Vestibular: responda 3 perguntas"
+        },
+        {
+          "tipo": "sobreviver",
+          "duracaoS": 60,
+          "ondas": [
+            {
+              "inimigo": "drone_de_cobranca",
+              "quantidade": 4,
+              "tier": "normal"
+            }
+          ],
+          "perigo": "experimento_do_trote",
+          "descricao": "Sobreviva ao trote"
+        },
+        {
+          "tipo": "pagar",
+          "moeda": "credito",
+          "quantidade": 30,
+          "descricao": "Pague a primeira mensalidade na catraca"
+        }
       ],
       "recompensas": {
         "solo": [
-          { "kind": "desbloqueio", "chave": "classe", "descricao": "Libera a classe Elemental" },
-          { "kind": "desbloqueio", "chave": "uniforme_instituicao", "descricao": "Uniforme da Universidade Neon" },
-          { "kind": "reputacao", "quantidade": 100, "instituicao": "universidade_neon" },
-          { "kind": "item", "tabela": "loot_normal", "quantidade": 1 },
-          { "kind": "recurso", "recurso": "credito", "quantidade": 50 }
+          {
+            "kind": "desbloqueio",
+            "chave": "classe",
+            "descricao": "Libera a classe Elemental"
+          },
+          {
+            "kind": "desbloqueio",
+            "chave": "uniforme_instituicao",
+            "descricao": "Uniforme da Universidade Neon"
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 100,
+            "instituicao": "universidade_neon"
+          },
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 50
+          }
         ],
-        "grupo": [{ "kind": "xp", "quantidade": 900 }]
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 900
+          }
+        ]
       },
-      "requerFlags": ["contrato_ia_ativada"],
-      "bloqueadaPorFlags": ["entrou_instituicao"],
-      "ligaFlags": ["entrou_instituicao", "entrou_universidade_neon"],
+      "requerFlags": [
+        "contrato_ia_ativada"
+      ],
+      "bloqueadaPorFlags": [
+        "entrou_instituicao"
+      ],
+      "ligaFlags": [
+        "entrou_instituicao",
+        "entrou_universidade_neon"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "aliadosIA", "resumo"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "resumo"
+      ]
     },
     {
       "id": "entrada_agencia_neon",
       "name": "Entrada na Agência Neon",
       "cadeia": "entradas",
       "dadaPor": "katia",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "margem_direita",
       "lugar": "sede_agencia_neon",
       "margem": "direita",
       "instituicao": "agencia_neon",
       "modo": "solo",
-      "aliadosIA": ["katia"],
+      "aliadosIA": [
+        "katia"
+      ],
       "resumo": "Kátia sorri, pede para você aguardar e entrega um contrato de exclusividade.",
       "textoDoc": "Audição, contrato de exclusividade e cem seguidores em uma hora",
       "objetivos": [
-        { "tipo": "interagir", "alvo": "palco_de_audicao", "acao": "fazer_audicao", "quantidade": 1, "descricao": "Faça a audição" },
-        { "tipo": "interagir", "alvo": "contrato_de_exclusividade", "acao": "assinar", "quantidade": 1, "descricao": "Assine a exclusividade" },
-        { "tipo": "coletar", "chave": "seguidores", "quantidade": 100, "limiteS": 600, "descricao": "Cem seguidores em uma hora (10 min de jogo): lute e passe nos lugares" }
+        {
+          "tipo": "interagir",
+          "alvo": "palco_de_audicao",
+          "acao": "fazer_audicao",
+          "quantidade": 1,
+          "descricao": "Faça a audição"
+        },
+        {
+          "tipo": "interagir",
+          "alvo": "contrato_de_exclusividade",
+          "acao": "assinar",
+          "quantidade": 1,
+          "descricao": "Assine a exclusividade"
+        },
+        {
+          "tipo": "coletar",
+          "chave": "seguidores",
+          "quantidade": 100,
+          "limiteS": 600,
+          "descricao": "Cem seguidores em uma hora (10 min de jogo): lute e passe nos lugares"
+        }
       ],
       "recompensas": {
         "solo": [
-          { "kind": "desbloqueio", "chave": "classe", "descricao": "Libera a classe Mascarado" },
-          { "kind": "desbloqueio", "chave": "uniforme_instituicao", "descricao": "Uniforme da Agência Neon" },
-          { "kind": "reputacao", "quantidade": 100, "instituicao": "agencia_neon" },
-          { "kind": "recurso", "recurso": "credito", "quantidade": 50 }
+          {
+            "kind": "desbloqueio",
+            "chave": "classe",
+            "descricao": "Libera a classe Mascarado"
+          },
+          {
+            "kind": "desbloqueio",
+            "chave": "uniforme_instituicao",
+            "descricao": "Uniforme da Agência Neon"
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 100,
+            "instituicao": "agencia_neon"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 50
+          }
         ],
-        "grupo": [{ "kind": "xp", "quantidade": 900 }]
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 900
+          }
+        ]
       },
-      "requerFlags": ["contrato_ia_ativada"],
-      "bloqueadaPorFlags": ["entrou_instituicao"],
-      "ligaFlags": ["entrou_instituicao", "entrou_agencia_neon"],
+      "requerFlags": [
+        "contrato_ia_ativada"
+      ],
+      "bloqueadaPorFlags": [
+        "entrou_instituicao"
+      ],
+      "ligaFlags": [
+        "entrou_instituicao",
+        "entrou_agencia_neon"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "aliadosIA", "resumo"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "resumo"
+      ]
     },
     {
       "id": "contrato_02_drone_de_cobranca",
@@ -1023,7 +2501,7 @@
       "tipo": "cobranca_implacavel",
       "cadeia": "direita_o_primeiro_contrato",
       "dadaPor": "guia",
-      "nivel": 9,
+      "nivel": 6,
       "regiao": "margem_direita",
       "lugar": "predios_de_capsulas",
       "margem": "direita",
@@ -1034,15 +2512,76 @@
           "tipo": "escolher",
           "pergunta": "O drone quer o boleto do vizinho.",
           "opcoes": [
-            { "id": "negociar", "texto": "Negociar: parcelar em 12 vezes com juros de família.", "ligaFlags": [], "recompensas": [{ "kind": "score", "delta": 30 }] },
-            { "id": "fugir", "texto": "Fugir com o vizinho pela escada de incêndio.", "ligaFlags": [], "recompensas": [{ "kind": "score", "delta": -20 },{ "kind": "item", "tabela": "loot_normal", "quantidade": 1 }] }
+            {
+              "id": "negociar",
+              "texto": "Negociar: parcelar em 12 vezes com juros de família.",
+              "ligaFlags": [],
+              "recompensas": [
+                {
+                  "kind": "score",
+                  "delta": 30
+                }
+              ]
+            },
+            {
+              "id": "fugir",
+              "texto": "Fugir com o vizinho pela escada de incêndio.",
+              "ligaFlags": [],
+              "recompensas": [
+                {
+                  "kind": "score",
+                  "delta": -20
+                },
+                {
+                  "kind": "item",
+                  "tabela": "loot_normal",
+                  "quantidade": 1
+                }
+              ]
+            }
           ],
           "descricao": "Negociar ou fugir"
         },
-        { "tipo": "sobreviver", "duracaoS": 60, "ondas": [{ "inimigo": "drone_de_cobranca", "quantidade": 4, "tier": "normal" }, { "inimigo": "drone_de_cobranca", "quantidade": 1, "tier": "elite", "afixos": ["rapido"] }], "descricao": "O drone não negocia: aguente 60 s" }
+        {
+          "tipo": "sobreviver",
+          "duracaoS": 60,
+          "ondas": [
+            {
+              "inimigo": "drone_de_cobranca",
+              "quantidade": 4,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "drone_de_cobranca",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "rapido"
+              ]
+            }
+          ],
+          "descricao": "O drone não negocia: aguente 60 s"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "recurso", "recurso": "credito", "quantidade": 30 }, { "kind": "recurso", "recurso": "pecas", "quantidade": 10 }], "grupo": [] },
-      "requerFlags": ["entrou_instituicao", "contrato_ia_ativada"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 30
+          },
+          {
+            "kind": "recurso",
+            "recurso": "pecas",
+            "quantidade": 10
+          }
+        ],
+        "grupo": []
+      },
+      "requerFlags": [
+        "entrou_instituicao",
+        "contrato_ia_ativada"
+      ],
       "bloqueadaPorFlags": [],
       "ligaFlags": [],
       "emPiloto": true,
@@ -1053,28 +2592,89 @@
       "name": "O Primeiro Bico",
       "cadeia": "direita_o_primeiro_contrato",
       "dadaPor": "viktor_sahl",
-      "nivel": 10,
+      "nivel": 7,
       "regiao": "juncal",
       "lugar": "trilha_dos_contrabandistas",
       "margem": "direita",
       "modo": "grupo",
-      "aliadosIA": ["treinador_da_base"],
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
       "resumo": "Bico para a Sahl Energia: recuperar a carga de baterias que sumiu no Juncal. Pagamento em até 90 dias.",
       "objetivos": [
-        { "tipo": "ir_ate", "lugar": "trilha_dos_contrabandistas", "descricao": "Vá até a trilha do Juncal" },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "contrabandista", "quantidade": 6, "tier": "normal" }, { "inimigo": "cao_de_guarda_do_capataz", "quantidade": 2, "tier": "normal" }], "descricao": "Tire a carga dos contrabandistas" },
-        { "tipo": "coletar", "chave": "carga_de_baterias", "quantidade": 3, "descricao": "Pegue as 3 caixas de bateria" },
-        { "tipo": "entregar", "npc": "viktor_sahl", "chave": "carga_de_baterias", "quantidade": 3, "descricao": "Entregue a carga na Torre" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "trilha_dos_contrabandistas",
+          "descricao": "Vá até a trilha do Juncal"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "contrabandista",
+              "quantidade": 6,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "cao_de_guarda_do_capataz",
+              "quantidade": 2,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Tire a carga dos contrabandistas"
+        },
+        {
+          "tipo": "coletar",
+          "chave": "carga_de_baterias",
+          "quantidade": 3,
+          "descricao": "Pegue as 3 caixas de bateria"
+        },
+        {
+          "tipo": "entregar",
+          "npc": "viktor_sahl",
+          "chave": "carga_de_baterias",
+          "quantidade": 3,
+          "descricao": "Entregue a carga na Torre"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "recurso", "recurso": "credito", "quantidade": 60 }, { "kind": "item", "tabela": "loot_normal", "quantidade": 1 }],
-        "grupo": [{ "kind": "xp", "quantidade": 1100 }]
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 60
+          },
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1100
+          }
+        ]
       },
-      "requerFlags": ["entrou_instituicao", "contrato_ia_ativada"],
+      "requerFlags": [
+        "entrou_instituicao",
+        "contrato_ia_ativada"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["contrato_primeiro_bico_sahl"],
+      "ligaFlags": [
+        "contrato_primeiro_bico_sahl"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "aliadosIA", "resumo", "nivel", "regiao", "lugar"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "resumo",
+        "nivel",
+        "regiao",
+        "lugar"
+      ]
     },
     {
       "id": "contrato_04_desconto_na_capsula",
@@ -1082,51 +2682,144 @@
       "tipo": "corrida_contra_o_apagao",
       "cadeia": "direita_o_primeiro_contrato",
       "dadaPor": "guia",
-      "nivel": 11,
+      "nivel": 9,
       "regiao": "margem_direita",
       "lugar": "predios_de_capsulas",
       "margem": "direita",
       "modo": "grupo",
-      "aliadosIA": ["treinador_da_base"],
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
       "resumo": "O bloco de cápsulas apagou. Quando a luz volta, o app mostra o extrato do bico.",
       "textoDoc": "Descobre que o seu pagamento já vem descontado do aluguel da cápsula.",
       "objetivos": [
-        { "tipo": "interagir", "alvo": "subestacao", "acao": "religar", "quantidade": 3, "descricao": "Religue as 3 subestações do bloco" },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "drone_de_cobranca", "quantidade": 6, "tier": "normal" }, { "inimigo": "drone_de_cobranca", "quantidade": 1, "tier": "elite", "afixos": ["cura_os_outros"] }], "descricao": "Drones de cobrança aproveitam o escuro" },
-        { "tipo": "interagir", "alvo": "extrato_do_app", "acao": "ler", "quantidade": 1, "descricao": "Abra o extrato do pagamento" }
+        {
+          "tipo": "interagir",
+          "alvo": "subestacao",
+          "acao": "religar",
+          "quantidade": 3,
+          "descricao": "Religue as 3 subestações do bloco"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "drone_de_cobranca",
+              "quantidade": 6,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "drone_de_cobranca",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "cura_os_outros"
+              ]
+            }
+          ],
+          "descricao": "Drones de cobrança aproveitam o escuro"
+        },
+        {
+          "tipo": "interagir",
+          "alvo": "extrato_do_app",
+          "acao": "ler",
+          "quantidade": 1,
+          "descricao": "Abra o extrato do pagamento"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "medidor", "medidor": "energia", "delta": 10 }, { "kind": "recurso", "recurso": "credito", "quantidade": 40 }, { "kind": "item", "tabela": "loot_elite", "quantidade": 1 }],
-        "grupo": [{ "kind": "xp", "quantidade": 1300 }]
+        "solo": [
+          {
+            "kind": "medidor",
+            "medidor": "energia",
+            "delta": 10
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 40
+          },
+          {
+            "kind": "item",
+            "tabela": "loot_elite",
+            "quantidade": 1
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1300
+          }
+        ]
       },
-      "requerFlags": ["contrato_primeiro_bico_sahl"],
+      "requerFlags": [
+        "contrato_primeiro_bico_sahl"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["contrato_desconto_capsula"],
+      "ligaFlags": [
+        "contrato_desconto_capsula"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["dadaPor", "objetivos", "recompensas", "aliadosIA", "resumo", "nivel"]
+      "sugestaoCampos": [
+        "dadaPor",
+        "objetivos",
+        "recompensas",
+        "aliadosIA",
+        "resumo",
+        "nivel"
+      ]
     },
     {
       "id": "expedicao_galerias_esquerda",
       "name": "Expedição nas Galerias",
       "tipo": "expedicao_na_masmorra",
       "dadaPor": "lazzaro_prati",
-      "nivel": 10,
+      "nivel": 7,
       "regiao": "usina_da_ponte",
       "lugar": "entrada_galerias_da_usina",
       "margem": "esquerda",
       "modo": "grupo",
       "resumo": "Lazzaro jura que os mercenários das galerias são da Direita. Desça e prove.",
       "objetivos": [
-        { "tipo": "entrar_masmorra", "masmorra": "galerias_da_usina", "descricao": "Desça às Galerias da Usina" },
-        { "tipo": "vencer_andar", "masmorra": "galerias_da_usina", "andar": 5, "descricao": "Desarme a Bomba Descontrolada no andar 5" }
+        {
+          "tipo": "entrar_masmorra",
+          "masmorra": "galerias_da_usina",
+          "descricao": "Desça às Galerias da Usina"
+        },
+        {
+          "tipo": "vencer_andar",
+          "masmorra": "galerias_da_usina",
+          "andar": 5,
+          "descricao": "Desarme a Bomba Descontrolada no andar 5"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "recurso", "recurso": "semente", "quantidade": 80 }, { "kind": "reputacao", "quantidade": 40 }],
-        "grupo": [{ "kind": "xp", "quantidade": 1500 }]
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 80
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 40
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1500
+          }
+        ]
       },
-      "requerFlags": ["entrou_instituicao", "margem_esquerda"],
+      "requerFlags": [
+        "entrou_instituicao",
+        "margem_esquerda"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["galerias_bomba_desarmada"],
+      "ligaFlags": [
+        "galerias_bomba_desarmada"
+      ],
       "repetivel": true,
       "emPiloto": true,
       "sugestao": true
@@ -1136,23 +2829,52 @@
       "name": "Expedição nas Galerias",
       "tipo": "expedicao_na_masmorra",
       "dadaPor": "rolf_halvorsen",
-      "nivel": 10,
+      "nivel": 7,
       "regiao": "usina_da_ponte",
       "lugar": "entrada_galerias_da_usina",
       "margem": "direita",
       "modo": "grupo",
       "resumo": "Rolf só ataca quando tem certeza. Ele tem certeza de que você vai descer primeiro.",
       "objetivos": [
-        { "tipo": "entrar_masmorra", "masmorra": "galerias_da_usina", "descricao": "Desça às Galerias da Usina" },
-        { "tipo": "vencer_andar", "masmorra": "galerias_da_usina", "andar": 5, "descricao": "Desarme a Bomba Descontrolada no andar 5" }
+        {
+          "tipo": "entrar_masmorra",
+          "masmorra": "galerias_da_usina",
+          "descricao": "Desça às Galerias da Usina"
+        },
+        {
+          "tipo": "vencer_andar",
+          "masmorra": "galerias_da_usina",
+          "andar": 5,
+          "descricao": "Desarme a Bomba Descontrolada no andar 5"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "recurso", "recurso": "credito", "quantidade": 80 }, { "kind": "reputacao", "quantidade": 40 }],
-        "grupo": [{ "kind": "xp", "quantidade": 1500 }]
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 80
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 40
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1500
+          }
+        ]
       },
-      "requerFlags": ["entrou_instituicao", "margem_direita"],
+      "requerFlags": [
+        "entrou_instituicao",
+        "margem_direita"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["galerias_bomba_desarmada"],
+      "ligaFlags": [
+        "galerias_bomba_desarmada"
+      ],
       "repetivel": true,
       "emPiloto": true,
       "sugestao": true
@@ -1162,20 +2884,45 @@
       "name": "Negócio com o Capataz",
       "tipo": "negocio_com_o_capataz",
       "dadaPor": "bruno_ferro",
-      "nivel": 9,
+      "nivel": 6,
       "regiao": "juncal",
       "lugar": "trilha_dos_contrabandistas",
       "modo": "solo",
       "resumo": "Bruno Ferro não guarda rancor do barco. Negócio é negócio.",
       "objetivos": [
-        { "tipo": "ir_ate", "lugar": "trilha_dos_contrabandistas", "descricao": "Encontre o Capataz na trilha" },
-        { "tipo": "debater", "oponente": "bruno_ferro", "rodadas": 3, "descricao": "Barganhe a chopindita" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "trilha_dos_contrabandistas",
+          "descricao": "Encontre o Capataz na trilha"
+        },
+        {
+          "tipo": "debater",
+          "oponente": "bruno_ferro",
+          "rodadas": 3,
+          "descricao": "Barganhe a chopindita"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "recurso", "recurso": "chopindita", "quantidade": 5 }, { "kind": "preco", "preco": "chopindita_contrabando", "variacaoPct": 15, "sentido": "conforme_resultado", "regiao": "juncal" }],
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "chopindita",
+            "quantidade": 5
+          },
+          {
+            "kind": "preco",
+            "preco": "chopindita_contrabando",
+            "variacaoPct": 15,
+            "sentido": "conforme_resultado",
+            "regiao": "juncal"
+          }
+        ],
         "grupo": []
       },
-      "requerFlags": ["travessia_feita", "entrou_instituicao"],
+      "requerFlags": [
+        "travessia_feita",
+        "entrou_instituicao"
+      ],
       "bloqueadaPorFlags": [],
       "ligaFlags": [],
       "repetivel": true,
@@ -1186,21 +2933,60 @@
       "id": "patrulha_da_rua_esquerda",
       "name": "Patrulha da Rua",
       "dadaPor": "quadro_de_missoes",
-      "nivel": 8,
+      "nivel": 5,
       "nivelMax": 19,
       "regiao": "margem_esquerda",
       "margem": "esquerda",
       "modo": "qualquer",
-      "aliadosIA": ["treinador_da_base"],
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
       "resumo": "A comissão de fiscalização mandou fiscais demais. Alguém precisa fiscalizar os fiscais.",
       "objetivos": [
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "fiscal_da_comissao", "quantidade": 10, "tier": "normal" }, { "inimigo": "fiscal_da_comissao", "quantidade": 1, "tier": "elite", "afixos": ["blindado"] }], "descricao": "Patrulhe a rua" }
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "fiscal_da_comissao",
+              "quantidade": 10,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "fiscal_da_comissao",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "blindado"
+              ]
+            }
+          ],
+          "descricao": "Patrulhe a rua"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "item", "tabela": "loot_normal", "quantidade": 1 }, { "kind": "recurso", "recurso": "semente", "quantidade": 15 }],
-        "grupo": [{ "kind": "xp", "quantidade": 600 }]
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 15
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 600
+          }
+        ]
       },
-      "requerFlags": ["entrou_instituicao", "margem_esquerda"],
+      "requerFlags": [
+        "entrou_instituicao",
+        "margem_esquerda"
+      ],
       "bloqueadaPorFlags": [],
       "ligaFlags": [],
       "repetivel": true,
@@ -1211,21 +2997,60 @@
       "id": "patrulha_da_rua_direita",
       "name": "Patrulha da Rua",
       "dadaPor": "quadro_de_missoes",
-      "nivel": 8,
+      "nivel": 5,
       "nivelMax": 19,
       "regiao": "margem_direita",
       "margem": "direita",
       "modo": "qualquer",
-      "aliadosIA": ["treinador_da_base"],
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
       "resumo": "Os drones de cobrança estão cobrando até poste. Derrube alguns antes que cobrem você.",
       "objetivos": [
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "drone_de_cobranca", "quantidade": 10, "tier": "normal" }, { "inimigo": "drone_de_cobranca", "quantidade": 1, "tier": "elite", "afixos": ["explode_ao_morrer"] }], "descricao": "Patrulhe a rua" }
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "drone_de_cobranca",
+              "quantidade": 10,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "drone_de_cobranca",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "explode_ao_morrer"
+              ]
+            }
+          ],
+          "descricao": "Patrulhe a rua"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "item", "tabela": "loot_normal", "quantidade": 1 }, { "kind": "recurso", "recurso": "credito", "quantidade": 15 }],
-        "grupo": [{ "kind": "xp", "quantidade": 600 }]
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 15
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 600
+          }
+        ]
       },
-      "requerFlags": ["entrou_instituicao", "margem_direita"],
+      "requerFlags": [
+        "entrou_instituicao",
+        "margem_direita"
+      ],
       "bloqueadaPorFlags": [],
       "ligaFlags": [],
       "repetivel": true,
@@ -1237,27 +3062,80 @@
       "name": "Mutirão da Casa Própria",
       "tipo": "mutirao",
       "dadaPor": "quadro_de_missoes",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "margem_esquerda",
       "lugar": "mutiroes",
       "margem": "esquerda",
       "modo": "grupo",
-      "aliadosIA": ["treinador_da_base"],
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
       "resumo": "Três vizinhos, os materiais e muita paciência: a sua casa sai hoje, se os bandidos deixarem.",
       "objetivos": [
-        { "tipo": "entregar", "npc": "teodoro_rinaldi", "recurso": "pecas", "quantidade": 30, "descricao": "Leve as peças para o canteiro" },
-        { "tipo": "entregar", "npc": "teodoro_rinaldi", "recurso": "comida", "quantidade": 20, "descricao": "Leve a comida do mutirão" },
-        { "tipo": "construir", "estrutura": "casa_de_mutirao", "duracaoS": 300, "descricao": "Erga a casa em mutirão" },
-        { "tipo": "sobreviver", "duracaoS": 300, "ondas": [{ "inimigo": "contrabandista", "quantidade": 8, "tier": "normal" }, { "inimigo": "contrabandista", "quantidade": 1, "tier": "elite", "afixos": ["explode_ao_morrer"] }], "descricao": "Segure os bandidos enquanto a casa sobe" }
+        {
+          "tipo": "entregar",
+          "npc": "teodoro_rinaldi",
+          "recurso": "pecas",
+          "quantidade": 30,
+          "descricao": "Leve as peças para o canteiro"
+        },
+        {
+          "tipo": "entregar",
+          "npc": "teodoro_rinaldi",
+          "recurso": "comida",
+          "quantidade": 20,
+          "descricao": "Leve a comida do mutirão"
+        },
+        {
+          "tipo": "construir",
+          "estrutura": "casa_de_mutirao",
+          "duracaoS": 300,
+          "descricao": "Erga a casa em mutirão"
+        },
+        {
+          "tipo": "sobreviver",
+          "duracaoS": 300,
+          "ondas": [
+            {
+              "inimigo": "contrabandista",
+              "quantidade": 8,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "contrabandista",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "explode_ao_morrer"
+              ]
+            }
+          ],
+          "descricao": "Segure os bandidos enquanto a casa sobe"
+        }
       ],
       "recompensas": {
         "solo": [
-          { "kind": "desbloqueio", "chave": "casa_propria", "descricao": "A casa de mutirão fica com quem puxou o mutirão e entregou os materiais (housing.json, mutirao.casaVaiPara)" },
-          { "kind": "reputacao", "quantidade": 80 }
+          {
+            "kind": "desbloqueio",
+            "chave": "casa_propria",
+            "descricao": "A casa de mutirão fica com quem puxou o mutirão e entregou os materiais (housing.json, mutirao.casaVaiPara)"
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 80
+          }
         ],
-        "grupo": [{ "kind": "xp", "quantidade": 1000 }]
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1000
+          }
+        ]
       },
-      "requerFlags": ["entrou_instituicao", "margem_esquerda"],
+      "requerFlags": [
+        "entrou_instituicao",
+        "margem_esquerda"
+      ],
       "bloqueadaPorFlags": [],
       "ligaFlags": [],
       "repetivel": true,
@@ -1269,20 +3147,58 @@
       "name": "Ordem do Dia: Obra na Ponte",
       "tipo": "ordens_do_comando",
       "dadaPor": "ia_de_faccao",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "usina_da_ponte",
       "modo": "qualquer",
-      "aliadosIA": ["treinador_da_base"],
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
       "resumo": "A liderança decidiu: esta semana se constrói. A torre sobe na ponte, e quem reclamar segura a escada.",
       "objetivos": [
-        { "tipo": "construir", "estrutura": "torre_de_radio", "duracaoS": 120, "descricao": "Erga a torre de rádio da margem na ponte" },
-        { "tipo": "sobreviver", "duracaoS": 120, "ondas": [{ "inimigo": "mercenario_do_sombra", "quantidade": 6, "tier": "normal" }], "descricao": "Os mercenários do Sombra querem a obra parada" }
+        {
+          "tipo": "construir",
+          "estrutura": "torre_de_radio",
+          "duracaoS": 120,
+          "descricao": "Erga a torre de rádio da margem na ponte"
+        },
+        {
+          "tipo": "sobreviver",
+          "duracaoS": 120,
+          "ondas": [
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 6,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Os mercenários do Sombra querem a obra parada"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "medidor", "medidor": "influencia", "delta": 3, "regiao": "usina_da_ponte", "aFavorDe": "propria_margem" }, { "kind": "item", "tabela": "loot_normal", "quantidade": 1 }],
-        "grupo": [{ "kind": "xp", "quantidade": 600 }]
+        "solo": [
+          {
+            "kind": "medidor",
+            "medidor": "influencia",
+            "delta": 3,
+            "regiao": "usina_da_ponte",
+            "aFavorDe": "propria_margem"
+          },
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 600
+          }
+        ]
       },
-      "requerFlags": ["entrou_instituicao"],
+      "requerFlags": [
+        "entrou_instituicao"
+      ],
       "bloqueadaPorFlags": [],
       "ligaFlags": [],
       "repetivel": true,
@@ -1295,20 +3211,66 @@
       "name": "Ordem do Dia: Segurar o Posto",
       "tipo": "ordens_do_comando",
       "dadaPor": "ia_de_faccao",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "usina_da_ponte",
       "modo": "qualquer",
-      "aliadosIA": ["treinador_da_base"],
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
       "resumo": "A liderança decidiu: esta semana se defende. O posto da margem na ponte não sai do lugar, e você também não.",
       "objetivos": [
-        { "tipo": "ir_ate", "regiao": "usina_da_ponte", "descricao": "Vá até o posto da sua margem na ponte" },
-        { "tipo": "sobreviver", "duracaoS": 180, "ondas": [{ "inimigo": "mercenario_do_sombra", "quantidade": 8, "tier": "normal" }, { "inimigo": "mercenario_do_sombra", "quantidade": 1, "tier": "elite", "afixos": ["blindado"] }], "naoSairDoRaio": 8, "descricao": "Segure o posto contra os mercenários contratados pela outra margem" }
+        {
+          "tipo": "ir_ate",
+          "regiao": "usina_da_ponte",
+          "descricao": "Vá até o posto da sua margem na ponte"
+        },
+        {
+          "tipo": "sobreviver",
+          "duracaoS": 180,
+          "ondas": [
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 8,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "blindado"
+              ]
+            }
+          ],
+          "naoSairDoRaio": 8,
+          "descricao": "Segure o posto contra os mercenários contratados pela outra margem"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "medidor", "medidor": "influencia", "delta": 2, "regiao": "usina_da_ponte", "aFavorDe": "propria_margem" }, { "kind": "item", "tabela": "loot_normal", "quantidade": 1 }],
-        "grupo": [{ "kind": "xp", "quantidade": 600 }]
+        "solo": [
+          {
+            "kind": "medidor",
+            "medidor": "influencia",
+            "delta": 2,
+            "regiao": "usina_da_ponte",
+            "aFavorDe": "propria_margem"
+          },
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 600
+          }
+        ]
       },
-      "requerFlags": ["entrou_instituicao"],
+      "requerFlags": [
+        "entrou_instituicao"
+      ],
       "bloqueadaPorFlags": [],
       "ligaFlags": [],
       "repetivel": true,
@@ -1321,20 +3283,67 @@
       "name": "Ordem do Dia: Tomar o Posto",
       "tipo": "ordens_do_comando",
       "dadaPor": "ia_de_faccao",
-      "nivel": 8,
+      "nivel": 5,
       "regiao": "usina_da_ponte",
       "modo": "grupo",
-      "aliadosIA": ["treinador_da_base"],
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
       "resumo": "A liderança decidiu: esta semana se invade. O posto da outra margem tem guarda paga; a sua margem tem você.",
       "objetivos": [
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "mercenario_do_sombra", "quantidade": 8, "tier": "normal" }, { "inimigo": "mercenario_do_sombra", "quantidade": 1, "tier": "elite", "afixos": ["rapido"] }], "regiao": "usina_da_ponte", "descricao": "Tire os mercenários que guardam o posto da outra margem" },
-        { "tipo": "interagir", "alvo": "posto_de_controle_rival", "acao": "colar_cartaz", "quantidade": 1, "descricao": "Cole o cartaz da sua margem no posto" }
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 8,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "rapido"
+              ]
+            }
+          ],
+          "regiao": "usina_da_ponte",
+          "descricao": "Tire os mercenários que guardam o posto da outra margem"
+        },
+        {
+          "tipo": "interagir",
+          "alvo": "posto_de_controle_rival",
+          "acao": "colar_cartaz",
+          "quantidade": 1,
+          "descricao": "Cole o cartaz da sua margem no posto"
+        }
       ],
       "recompensas": {
-        "solo": [{ "kind": "medidor", "medidor": "influencia", "delta": 4, "regiao": "usina_da_ponte", "aFavorDe": "propria_margem" }, { "kind": "item", "tabela": "loot_elite", "quantidade": 1 }],
-        "grupo": [{ "kind": "xp", "quantidade": 800 }]
+        "solo": [
+          {
+            "kind": "medidor",
+            "medidor": "influencia",
+            "delta": 4,
+            "regiao": "usina_da_ponte",
+            "aFavorDe": "propria_margem"
+          },
+          {
+            "kind": "item",
+            "tabela": "loot_elite",
+            "quantidade": 1
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 800
+          }
+        ]
       },
-      "requerFlags": ["entrou_instituicao"],
+      "requerFlags": [
+        "entrou_instituicao"
+      ],
       "bloqueadaPorFlags": [],
       "ligaFlags": [],
       "repetivel": true,
@@ -1347,94 +3356,236 @@
       "name": "A Ala",
       "cadeia": "escolha_da_ala",
       "dadaPor": "treinador_da_base",
-      "nivel": 12,
+      "nivel": 10,
       "regiao": "margem_esquerda",
       "margem": "esquerda",
       "modo": "solo",
       "resumo": "Quem treinou a sua base te leva para conhecer as três alas.",
       "objetivos": [
-        { "tipo": "falar", "npc": "treinador_da_base", "descricao": "Fale com quem treinou a sua base" },
-        { "tipo": "escolher_ala", "descricao": "Escolha a sua ala" },
-        { "tipo": "falar", "npc": "treinador_da_ala", "descricao": "Conheça o seu treinador" },
-        { "tipo": "usar_habilidade", "botao": "1", "quantidade": 3, "descricao": "Treine a habilidade marca 1" },
-        { "tipo": "usar_habilidade", "botao": "2", "quantidade": 3, "descricao": "Treine a habilidade marca 2" }
+        {
+          "tipo": "falar",
+          "npc": "treinador_da_base",
+          "descricao": "Fale com quem treinou a sua base"
+        },
+        {
+          "tipo": "escolher_ala",
+          "descricao": "Escolha a sua ala"
+        },
+        {
+          "tipo": "falar",
+          "npc": "treinador_da_ala",
+          "descricao": "Conheça o seu treinador"
+        },
+        {
+          "tipo": "usar_habilidade",
+          "botao": "1",
+          "quantidade": 3,
+          "descricao": "Treine a habilidade marca 1"
+        },
+        {
+          "tipo": "usar_habilidade",
+          "botao": "2",
+          "quantidade": 3,
+          "descricao": "Treine a habilidade marca 2"
+        }
       ],
       "recompensas": {
         "solo": [
-          { "kind": "desbloqueio", "chave": "traje_aprendiz", "descricao": "Traje de aprendiz da ala" },
-          { "kind": "desbloqueio", "chave": "bordao_emote", "descricao": "O bordão do treinador como emote" },
-          { "kind": "reputacao", "quantidade": 50 }
+          {
+            "kind": "desbloqueio",
+            "chave": "traje_aprendiz",
+            "descricao": "Traje de aprendiz da ala"
+          },
+          {
+            "kind": "desbloqueio",
+            "chave": "bordao_emote",
+            "descricao": "O bordão do treinador como emote"
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 50
+          },
+          {
+            "kind": "item",
+            "slotDaClasse": "arma",
+            "raridade": "comum",
+            "sugestao": true
+          }
         ],
         "grupo": []
       },
-      "requerFlags": ["entrou_instituicao", "margem_esquerda"],
-      "bloqueadaPorFlags": ["ala_escolhida"],
-      "ligaFlags": ["ala_escolhida"],
+      "requerFlags": [
+        "entrou_instituicao",
+        "margem_esquerda"
+      ],
+      "bloqueadaPorFlags": [
+        "ala_escolhida"
+      ],
+      "ligaFlags": [
+        "ala_escolhida"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "resumo"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "resumo"
+      ]
     },
     {
       "id": "escolha_da_ala_direita",
       "name": "A Ala",
       "cadeia": "escolha_da_ala",
       "dadaPor": "treinador_da_base",
-      "nivel": 12,
+      "nivel": 10,
       "regiao": "margem_direita",
       "margem": "direita",
       "modo": "solo",
       "resumo": "Seu contrato foi renovado com upgrade de ala. Leia as letras miúdas depois.",
       "objetivos": [
-        { "tipo": "falar", "npc": "treinador_da_base", "descricao": "Fale com quem treinou a sua base" },
-        { "tipo": "escolher_ala", "descricao": "Escolha a sua ala" },
-        { "tipo": "falar", "npc": "treinador_da_ala", "descricao": "Conheça o seu treinador" },
-        { "tipo": "usar_habilidade", "botao": "1", "quantidade": 3, "descricao": "Treine a habilidade marca 1" },
-        { "tipo": "usar_habilidade", "botao": "2", "quantidade": 3, "descricao": "Treine a habilidade marca 2" }
+        {
+          "tipo": "falar",
+          "npc": "treinador_da_base",
+          "descricao": "Fale com quem treinou a sua base"
+        },
+        {
+          "tipo": "escolher_ala",
+          "descricao": "Escolha a sua ala"
+        },
+        {
+          "tipo": "falar",
+          "npc": "treinador_da_ala",
+          "descricao": "Conheça o seu treinador"
+        },
+        {
+          "tipo": "usar_habilidade",
+          "botao": "1",
+          "quantidade": 3,
+          "descricao": "Treine a habilidade marca 1"
+        },
+        {
+          "tipo": "usar_habilidade",
+          "botao": "2",
+          "quantidade": 3,
+          "descricao": "Treine a habilidade marca 2"
+        }
       ],
       "recompensas": {
         "solo": [
-          { "kind": "desbloqueio", "chave": "traje_aprendiz", "descricao": "Traje de aprendiz da ala" },
-          { "kind": "desbloqueio", "chave": "bordao_emote", "descricao": "O bordão do treinador como emote" },
-          { "kind": "reputacao", "quantidade": 50 }
+          {
+            "kind": "desbloqueio",
+            "chave": "traje_aprendiz",
+            "descricao": "Traje de aprendiz da ala"
+          },
+          {
+            "kind": "desbloqueio",
+            "chave": "bordao_emote",
+            "descricao": "O bordão do treinador como emote"
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 50
+          },
+          {
+            "kind": "item",
+            "slotDaClasse": "arma",
+            "raridade": "comum",
+            "sugestao": true
+          }
         ],
         "grupo": []
       },
-      "requerFlags": ["entrou_instituicao", "margem_direita"],
-      "bloqueadaPorFlags": ["ala_escolhida"],
-      "ligaFlags": ["ala_escolhida"],
+      "requerFlags": [
+        "entrou_instituicao",
+        "margem_direita"
+      ],
+      "bloqueadaPorFlags": [
+        "ala_escolhida"
+      ],
+      "ligaFlags": [
+        "ala_escolhida"
+      ],
       "emPiloto": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "resumo"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "resumo"
+      ]
     },
     {
       "id": "licenca_01_a_mina_na_mata",
       "name": "A Mina na Mata",
       "cadeia": "esquerda_a_licenca",
       "dadaPor": "teodoro_rinaldi",
-      "nivel": 13,
+      "nivel": 11,
       "regiao": "margem_esquerda",
       "lugar": "casa_da_assembleia",
       "margem": "esquerda",
       "modo": "qualquer",
       "resumo": "A Sahl Energia quer abrir uma mina na mata. A comissão de licenças está dividida.",
       "objetivos": [
-        { "tipo": "falar", "npc": "teodoro_rinaldi", "descricao": "Ouça o Teodoro: negociar" },
-        { "tipo": "falar", "npc": "lazzaro_prati", "descricao": "Ouça o Lazzaro: guerra" },
+        {
+          "tipo": "falar",
+          "npc": "teodoro_rinaldi",
+          "descricao": "Ouça o Teodoro: negociar"
+        },
+        {
+          "tipo": "falar",
+          "npc": "lazzaro_prati",
+          "descricao": "Ouça o Lazzaro: guerra"
+        },
         {
           "tipo": "escolher",
           "pergunta": "Teodoro quer negociar, Lazzaro quer guerra.",
           "opcoes": [
-            { "id": "teodoro", "texto": "Negociar com a Sahl, se limparem o rio.", "ligaFlags": ["licenca_lado_teodoro"] },
-            { "id": "lazzaro", "texto": "Guerra. Nenhuma máquina entra na mata.", "ligaFlags": ["licenca_lado_lazzaro"] }
+            {
+              "id": "teodoro",
+              "texto": "Negociar com a Sahl, se limparem o rio.",
+              "ligaFlags": [
+                "licenca_lado_teodoro"
+              ]
+            },
+            {
+              "id": "lazzaro",
+              "texto": "Guerra. Nenhuma máquina entra na mata.",
+              "ligaFlags": [
+                "licenca_lado_lazzaro"
+              ]
+            }
           ],
           "descricao": "Escolha um lado. Muda as missões do grupo"
         }
       ],
-      "recompensas": { "solo": [{ "kind": "reputacao", "quantidade": 30 }], "grupo": [] },
-      "requerFlags": ["ala_escolhida", "roda_energia_cortada_descoberta"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "reputacao",
+            "quantidade": 30
+          },
+          {
+            "kind": "item",
+            "slotDaClasse": "cabeca",
+            "raridade": "comum",
+            "sugestao": true
+          }
+        ],
+        "grupo": []
+      },
+      "requerFlags": [
+        "ala_escolhida",
+        "roda_energia_cortada_descoberta"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["licenca_mina_proposta"],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "nivel", "dadaPor"]
+      "ligaFlags": [
+        "licenca_mina_proposta"
+      ],
+      "emPiloto": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "nivel",
+        "dadaPor",
+        "resumo"
+      ]
     },
     {
       "id": "licenca_02a_negociar",
@@ -1442,21 +3593,54 @@
       "tipo": "debate_na_radio",
       "cadeia": "esquerda_a_licenca",
       "dadaPor": "teodoro_rinaldi",
-      "nivel": 14,
+      "nivel": 12,
       "regiao": "usina_da_ponte",
       "margem": "esquerda",
       "modo": "solo",
-      "resumo": "Esboço: debate na rádio contra a consultora da Sahl.",
+      "resumo": "debate na rádio contra a consultora da Sahl.",
       "objetivos": [
-        { "tipo": "debater", "oponente": "ingrid_holm", "rodadas": 5, "descricao": "Vença o debate na rádio" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "cambio_da_ponte",
+          "descricao": "Leve a proposta do Teodoro até o câmbio da Ponte"
+        },
+        {
+          "tipo": "sobreviver",
+          "duracaoS": 45,
+          "ondas": [
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 4,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "A segurança da Sahl não gostou da proposta: aguente 45 s"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "medidor", "medidor": "opiniao_publica", "delta": 5, "aFavorDe": "esquerda" }], "grupo": [] },
-      "requerFlags": ["licenca_lado_teodoro"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "medidor",
+            "medidor": "opiniao_publica",
+            "delta": 5,
+            "aFavorDe": "esquerda"
+          }
+        ],
+        "grupo": []
+      },
+      "requerFlags": [
+        "licenca_lado_teodoro"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["licenca_acordo_proposto"],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestao": true
+      "ligaFlags": [
+        "licenca_acordo_proposto"
+      ],
+      "emPiloto": true,
+      "sugestao": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "resumo"
+      ]
     },
     {
       "id": "licenca_02b_guerra",
@@ -1464,22 +3648,57 @@
       "tipo": "sabotagem_silenciosa",
       "cadeia": "esquerda_a_licenca",
       "dadaPor": "lazzaro_prati",
-      "nivel": 14,
+      "nivel": 12,
       "regiao": "juncal",
       "margem": "esquerda",
       "modo": "grupo",
-      "resumo": "Esboço: sabotar as máquinas da Sahl no Juncal.",
+      "resumo": "sabotar as máquinas da Sahl no Juncal.",
       "objetivos": [
-        { "tipo": "interagir", "alvo": "maquinario_da_sahl", "acao": "sabotar", "quantidade": 3, "descricao": "Sabote as 3 máquinas" },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "cao_de_guarda_do_capataz", "quantidade": 6, "tier": "normal" }], "descricao": "Os cães do Capataz guardam as máquinas" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "mata_do_curupira",
+          "descricao": "Chegue às máquinas da Sahl na mata"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "cao_de_guarda_do_capataz",
+              "quantidade": 6,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Os cães do Capataz guardam as máquinas"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "item", "tabela": "loot_elite", "quantidade": 1 }], "grupo": [{ "kind": "xp", "quantidade": 2000 }] },
-      "requerFlags": ["licenca_lado_lazzaro"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_elite",
+            "quantidade": 1
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 2000
+          }
+        ]
+      },
+      "requerFlags": [
+        "licenca_lado_lazzaro"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["licenca_maquinas_sabotadas"],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestao": true
+      "ligaFlags": [
+        "licenca_maquinas_sabotadas"
+      ],
+      "emPiloto": true,
+      "sugestao": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "resumo"
+      ]
     },
     {
       "id": "licenca_03_sem_quorum",
@@ -1487,45 +3706,134 @@
       "tipo": "assembleia_sem_fim",
       "cadeia": "esquerda_a_licenca",
       "dadaPor": "ilaria_vesta",
-      "nivel": 15,
+      "nivel": 13,
       "regiao": "margem_esquerda",
       "lugar": "casa_da_assembleia",
       "margem": "esquerda",
       "modo": "solo",
-      "resumo": "Esboço: a comissão está parada há dois anos por falta de quórum.",
+      "resumo": "a comissão está parada há dois anos por falta de quórum.",
       "textoDoc": "No caminho, você descobre que a comissão está parada há dois anos por falta de quórum.",
       "objetivos": [
-        { "tipo": "debater", "oponente": "comissao_de_licencas", "rodadas": 7, "descricao": "Vença a comissão que avalia a comissão antes do amanhecer" }
+        {
+          "tipo": "falar",
+          "npc": "teodoro_rinaldi",
+          "descricao": "Pergunte ao Teodoro por que a comissão não decide"
+        },
+        {
+          "tipo": "escolher",
+          "pergunta": "A comissão está parada há dois anos por falta de quórum.",
+          "opcoes": [
+            {
+              "id": "convocar",
+              "texto": "Convocar a vizinhança de porta em porta.",
+              "ligaFlags": []
+            },
+            {
+              "id": "ata",
+              "texto": "Escrever a ata da reunião que nunca aconteceu.",
+              "ligaFlags": []
+            }
+          ],
+          "descricao": "Resolva o quórum"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "reputacao", "quantidade": 50 }], "grupo": [] },
-      "requerFlags": ["licenca_mina_proposta"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "reputacao",
+            "quantidade": 50
+          },
+          {
+            "kind": "item",
+            "slotDaClasse": "calcado",
+            "raridade": "comum",
+            "sugestao": true
+          }
+        ],
+        "grupo": []
+      },
+      "requerFlags": [
+        "licenca_mina_proposta"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["licenca_comissao_sem_quorum"],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "dadaPor", "nivel"]
+      "ligaFlags": [
+        "licenca_comissao_sem_quorum"
+      ],
+      "emPiloto": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "dadaPor",
+        "nivel",
+        "resumo"
+      ]
     },
     {
       "id": "rio_turvo_01_agua_turva",
       "name": "Água Turva",
       "cadeia": "esquerda_o_rio_turvo",
       "dadaPor": "guia",
-      "nivel": 16,
-      "regiao": "rio_claro",
+      "nivel": 15,
+      "regiao": "usina_da_ponte",
       "margem": "esquerda",
       "modo": "grupo",
-      "resumo": "Esboço: o rio fica turvo e o Encanto falha.",
+      "resumo": "o rio fica turvo e o Encanto falha.",
       "objetivos": [
-        { "tipo": "coletar", "chave": "amostra_de_agua", "quantidade": 5, "descricao": "Colete amostras da água" },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "enguia_eletrica", "quantidade": 8, "tier": "normal" }], "descricao": "Enguias elétricas no rio" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "barragem_da_usina",
+          "descricao": "Desça o rio até a barragem da Usina"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 5,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "blindado"
+              ]
+            }
+          ],
+          "descricao": "Quem guarda a água turva não quer visita"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "item", "tabela": "loot_elite", "quantidade": 1 }], "grupo": [{ "kind": "xp", "quantidade": 2500 }] },
-      "requerFlags": ["licenca_comissao_sem_quorum"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_elite",
+            "quantidade": 1
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 2500
+          }
+        ]
+      },
+      "requerFlags": [
+        "licenca_comissao_sem_quorum"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["rio_turvo_investigando"],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "dadaPor"]
+      "ligaFlags": [
+        "rio_turvo_investigando"
+      ],
+      "emPiloto": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "dadaPor",
+        "resumo"
+      ],
+      "lugar": "barragem_da_usina"
     },
     {
       "id": "rio_turvo_02_tres_mil_atas",
@@ -1533,76 +3841,205 @@
       "tipo": "expedicao_na_masmorra",
       "cadeia": "esquerda_o_rio_turvo",
       "dadaPor": "guia",
-      "nivel": 17,
+      "nivel": 16,
       "regiao": "margem_esquerda",
       "lugar": "casa_da_assembleia",
       "margem": "esquerda",
       "modo": "grupo",
-      "resumo": "Esboço: o relatório da barragem está no porão do Cartório, embaixo de três mil atas.",
+      "resumo": "o relatório da barragem está no porão do Cartório, embaixo de três mil atas.",
       "objetivos": [
-        { "tipo": "entrar_masmorra", "masmorra": "cartorio_da_assembleia", "descricao": "Desça ao Cartório da Assembleia" },
-        { "tipo": "vencer_andar", "masmorra": "cartorio_da_assembleia", "andar": 5, "descricao": "Vença o Relator" },
-        { "tipo": "coletar", "chave": "relatorio_da_barragem", "quantidade": 1, "descricao": "Ache o relatório embaixo das atas" }
+        {
+          "tipo": "entrar_masmorra",
+          "masmorra": "galerias_da_usina",
+          "descricao": "Desça às Galerias atrás do arquivo da barragem"
+        },
+        {
+          "tipo": "vencer_andar",
+          "masmorra": "galerias_da_usina",
+          "andar": 3,
+          "descricao": "Ache o relatório no andar 3"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "item", "tabela": "loot_chefe", "quantidade": 1 }], "grupo": [{ "kind": "xp", "quantidade": 3000 }] },
-      "requerFlags": ["rio_turvo_investigando"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_chefe",
+            "quantidade": 1
+          },
+          {
+            "kind": "item",
+            "slotDaClasse": "adorno",
+            "raridade": "comum",
+            "sugestao": true
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 3000
+          }
+        ]
+      },
+      "requerFlags": [
+        "rio_turvo_investigando"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["relatorio_da_barragem_achado"],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "dadaPor"]
+      "ligaFlags": [
+        "relatorio_da_barragem_achado"
+      ],
+      "emPiloto": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "dadaPor",
+        "resumo"
+      ]
     },
     {
       "id": "rio_turvo_03_o_cabo",
       "name": "O Cabo que Sobe a Serra",
       "cadeia": "esquerda_o_rio_turvo",
       "dadaPor": "guia",
-      "nivel": 18,
+      "nivel": 17,
       "regiao": "usina_da_ponte",
       "margem": "esquerda",
       "modo": "grupo",
-      "resumo": "Esboço: pela primeira vez, você vê um cabo que sobe a Serra.",
+      "resumo": "pela primeira vez, você vê um cabo que sobe a Serra.",
       "objetivos": [
-        { "tipo": "interagir", "alvo": "cabo_escondido", "acao": "seguir", "quantidade": 1, "lugar": "barragem_da_usina", "descricao": "Siga o cabo por baixo da ponte" },
-        { "tipo": "ir_ate", "regiao": "serra_da_chopindita", "descricao": "Veja para onde ele sobe" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "barragem_da_usina",
+          "descricao": "Siga o cabo por baixo da ponte"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 5,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "blindado"
+              ]
+            }
+          ],
+          "descricao": "Tem gente paga para ninguém seguir o cabo"
+        },
+        {
+          "tipo": "ir_ate",
+          "lugar": "marco_do_tenente_vidal",
+          "descricao": "Do marco, veja o cabo subir a Serra"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "desbloqueio", "chave": "pista_de_historia", "quantidade": 1, "descricao": "O cabo da ponte" }], "grupo": [{ "kind": "xp", "quantidade": 3000 }] },
-      "requerFlags": ["relatorio_da_barragem_achado"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "desbloqueio",
+            "chave": "pista_de_historia",
+            "quantidade": 1,
+            "descricao": "O cabo da ponte"
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 3000
+          }
+        ]
+      },
+      "requerFlags": [
+        "relatorio_da_barragem_achado"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["cabo_da_serra_visto"],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "dadaPor"]
+      "ligaFlags": [
+        "cabo_da_serra_visto"
+      ],
+      "emPiloto": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "dadaPor",
+        "resumo"
+      ]
     },
     {
       "id": "mata_01_abrir_caminho",
       "name": "Abrir Caminho",
       "cadeia": "direita_a_mata_fechada",
       "dadaPor": "viktor_sahl",
-      "nivel": 13,
+      "nivel": 11,
       "regiao": "juncal",
       "lugar": "mata_do_curupira",
       "margem": "direita",
       "modo": "grupo",
       "resumo": "A Sahl manda você abrir caminho na mata para uma mina, e você conhece quem mora lá.",
       "objetivos": [
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "cobra_do_juncal", "quantidade": 8, "tier": "normal" }], "descricao": "Abra a trilha" },
-        { "tipo": "falar", "npc": "curupira", "descricao": "Conheça quem mora na mata" }
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "cobra_do_juncal",
+              "quantidade": 8,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Abra a trilha"
+        },
+        {
+          "tipo": "falar",
+          "npc": "curupira",
+          "descricao": "Conheça quem mora na mata"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "recurso", "recurso": "credito", "quantidade": 80 }], "grupo": [{ "kind": "xp", "quantidade": 2000 }] },
-      "requerFlags": ["ala_escolhida", "contrato_desconto_capsula"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 80
+          },
+          {
+            "kind": "item",
+            "slotDaClasse": "cabeca",
+            "raridade": "comum",
+            "sugestao": true
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 2000
+          }
+        ]
+      },
+      "requerFlags": [
+        "ala_escolhida",
+        "contrato_desconto_capsula"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["mata_moradores_conhecidos"],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "nivel"]
+      "ligaFlags": [
+        "mata_moradores_conhecidos"
+      ],
+      "emPiloto": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "nivel",
+        "resumo"
+      ]
     },
     {
       "id": "mata_02_a_escolha",
       "name": "A Empresa ou a Mata",
       "cadeia": "direita_a_mata_fechada",
       "dadaPor": "guia",
-      "nivel": 14,
+      "nivel": 12,
       "regiao": "juncal",
       "margem": "direita",
       "modo": "qualquer",
@@ -1612,84 +4049,246 @@
           "tipo": "escolher",
           "pergunta": "Quem você ajuda?",
           "opcoes": [
-            { "id": "empresa", "texto": "A empresa. Meta é meta.", "ligaFlags": ["mata_lado_empresa"] },
-            { "id": "mata", "texto": "A mata. Tem gente morando aqui.", "ligaFlags": ["mata_lado_mata"] },
-            { "id": "os_dois", "texto": "Os dois. Alguém tem que negociar.", "ligaFlags": ["mata_lado_os_dois"] }
+            {
+              "id": "empresa",
+              "texto": "A empresa. Meta é meta.",
+              "ligaFlags": [
+                "mata_lado_empresa"
+              ]
+            },
+            {
+              "id": "mata",
+              "texto": "A mata. Tem gente morando aqui.",
+              "ligaFlags": [
+                "mata_lado_mata"
+              ]
+            },
+            {
+              "id": "os_dois",
+              "texto": "Os dois. Alguém tem que negociar.",
+              "ligaFlags": [
+                "mata_lado_os_dois"
+              ]
+            }
           ],
           "descricao": "Escolha. Muda as missões do grupo"
         }
       ],
-      "recompensas": { "solo": [], "grupo": [] },
-      "requerFlags": ["mata_moradores_conhecidos"],
+      "recompensas": {
+        "solo": [],
+        "grupo": []
+      },
+      "requerFlags": [
+        "mata_moradores_conhecidos"
+      ],
       "bloqueadaPorFlags": [],
       "ligaFlags": [],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestaoCampos": ["objetivos", "dadaPor", "nivel"]
+      "emPiloto": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "dadaPor",
+        "nivel",
+        "resumo"
+      ]
     },
     {
       "id": "mata_03a_a_mina",
       "name": "A Mina da Sahl",
       "cadeia": "direita_a_mata_fechada",
       "dadaPor": "viktor_sahl",
-      "nivel": 15,
+      "nivel": 13,
       "regiao": "juncal",
       "margem": "direita",
       "modo": "grupo",
-      "resumo": "Esboço: escoltar as máquinas da Sahl até o veio.",
+      "resumo": "escoltar as máquinas da Sahl até o veio.",
       "objetivos": [
-        { "tipo": "escoltar", "npc": "viktor_sahl", "ate": "mata_do_curupira", "descricao": "Escolte o maquinário até o veio" },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "cobra_do_juncal", "quantidade": 10, "tier": "normal" }], "descricao": "A mata reage" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "trilha_dos_contrabandistas",
+          "descricao": "Leve o Viktor Sahl até o lugar da mina"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "cobra_do_juncal",
+              "quantidade": 10,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "A mata reage"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "recurso", "recurso": "credito", "quantidade": 150 }, { "kind": "score", "delta": 20 }], "grupo": [{ "kind": "xp", "quantidade": 2500 }] },
-      "requerFlags": ["mata_lado_empresa"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 150
+          },
+          {
+            "kind": "score",
+            "delta": 20
+          },
+          {
+            "kind": "item",
+            "slotDaClasse": "calcado",
+            "raridade": "comum",
+            "sugestao": true
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 2500
+          }
+        ]
+      },
+      "requerFlags": [
+        "mata_lado_empresa"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["mata_mina_aberta"],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestao": true
+      "ligaFlags": [
+        "mata_mina_aberta"
+      ],
+      "emPiloto": true,
+      "sugestao": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "resumo",
+        "recompensas"
+      ]
     },
     {
       "id": "mata_03b_a_mata",
       "name": "A Mata Fica",
       "cadeia": "direita_a_mata_fechada",
       "dadaPor": "curupira",
-      "nivel": 15,
+      "nivel": 13,
       "regiao": "juncal",
       "margem": "direita",
       "modo": "grupo",
-      "resumo": "Esboço: segurar os mercenários contratados para limpar a mata.",
+      "resumo": "segurar os mercenários contratados para limpar a mata.",
       "objetivos": [
-        { "tipo": "sobreviver", "duracaoS": 180, "ondas": [{ "inimigo": "mercenario_do_sombra", "quantidade": 8, "tier": "normal" }], "descricao": "Segure os mercenários" }
+        {
+          "tipo": "sobreviver",
+          "duracaoS": 180,
+          "ondas": [
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 8,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Segure os mercenários"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "medidor", "medidor": "poluicao", "delta": -1, "regiao": "juncal" }, { "kind": "score", "delta": -20 }], "grupo": [{ "kind": "xp", "quantidade": 2500 }] },
-      "requerFlags": ["mata_lado_mata"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "medidor",
+            "medidor": "poluicao",
+            "delta": -1,
+            "regiao": "juncal"
+          },
+          {
+            "kind": "score",
+            "delta": -20
+          },
+          {
+            "kind": "item",
+            "slotDaClasse": "calcado",
+            "raridade": "comum",
+            "sugestao": true
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 2500
+          }
+        ]
+      },
+      "requerFlags": [
+        "mata_lado_mata"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["mata_protegida"],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestao": true
+      "ligaFlags": [
+        "mata_protegida"
+      ],
+      "emPiloto": true,
+      "sugestao": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "resumo",
+        "recompensas"
+      ]
     },
     {
       "id": "mata_03c_os_dois",
       "name": "Mesa no Meio do Mato",
       "cadeia": "direita_a_mata_fechada",
       "dadaPor": "klara_lindqvist",
-      "nivel": 15,
+      "nivel": 13,
       "regiao": "juncal",
       "margem": "direita",
       "modo": "solo",
-      "resumo": "Esboço: negociar uma mina pequena que não suje o rio.",
+      "resumo": "negociar uma mina pequena que não suje o rio.",
       "objetivos": [
-        { "tipo": "debater", "oponente": "viktor_sahl", "rodadas": 5, "descricao": "Convença a Sahl a encolher a mina" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "mata_do_curupira",
+          "descricao": "Sente a empresa e a mata na mesma mesa"
+        },
+        {
+          "tipo": "escolher",
+          "pergunta": "O Curupira e a Sahl querem o mesmo chão.",
+          "opcoes": [
+            {
+              "id": "meia_mina",
+              "texto": "Mina pequena, com a mata de fiscal.",
+              "ligaFlags": []
+            },
+            {
+              "id": "adiar",
+              "texto": "Marcar outra reunião. Com coffee break.",
+              "ligaFlags": []
+            }
+          ],
+          "descricao": "Feche o acordo"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "medidor", "medidor": "opiniao_publica", "delta": 5, "aFavorDe": "direita" }], "grupo": [] },
-      "requerFlags": ["mata_lado_os_dois"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "medidor",
+            "medidor": "opiniao_publica",
+            "delta": 5,
+            "aFavorDe": "direita"
+          },
+          {
+            "kind": "item",
+            "slotDaClasse": "calcado",
+            "raridade": "comum",
+            "sugestao": true
+          }
+        ],
+        "grupo": []
+      },
+      "requerFlags": [
+        "mata_lado_os_dois"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["mata_acordo_dos_dois"],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestao": true
+      "ligaFlags": [
+        "mata_acordo_dos_dois"
+      ],
+      "emPiloto": true,
+      "sugestao": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "resumo",
+        "recompensas"
+      ]
     },
     {
       "id": "dinheiro_01_apagao",
@@ -1697,67 +4296,201 @@
       "tipo": "corrida_contra_o_apagao",
       "cadeia": "direita_siga_o_dinheiro",
       "dadaPor": "rolf_halvorsen",
-      "nivel": 16,
+      "nivel": 15,
       "regiao": "margem_direita",
       "margem": "direita",
       "modo": "grupo",
-      "resumo": "Esboço: um apagão derruba metade da Direita.",
+      "resumo": "um apagão derruba metade da Direita.",
       "objetivos": [
-        { "tipo": "interagir", "alvo": "subestacao", "acao": "religar", "quantidade": 5, "descricao": "Religue 5 subestações" },
-        { "tipo": "derrotar", "inimigos": [{ "inimigo": "drone_de_cobranca", "quantidade": 10, "tier": "normal" }], "descricao": "Drones sem dono no escuro" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "ferro_velho",
+          "descricao": "A subestação do bairro fica atrás do ferro-velho"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "drone_de_cobranca",
+              "quantidade": 5,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "drone_de_cobranca",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "blindado"
+              ]
+            }
+          ],
+          "descricao": "Os drones cobram a luz que não entregaram"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "medidor", "medidor": "energia", "delta": 20 }], "grupo": [{ "kind": "xp", "quantidade": 2500 }] },
-      "requerFlags": ["ala_escolhida", "contrato_desconto_capsula"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "medidor",
+            "medidor": "energia",
+            "delta": 20
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 2500
+          }
+        ]
+      },
+      "requerFlags": [
+        "ala_escolhida",
+        "contrato_desconto_capsula"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["dinheiro_apagao_enfrentado"],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "dadaPor"]
+      "ligaFlags": [
+        "dinheiro_apagao_enfrentado"
+      ],
+      "emPiloto": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "dadaPor",
+        "resumo"
+      ],
+      "lugar": "ferro_velho"
     },
     {
       "id": "dinheiro_02_custo_nao_previsto",
       "name": "Custo Não Previsto",
       "cadeia": "direita_siga_o_dinheiro",
       "dadaPor": "klara_lindqvist",
-      "nivel": 17,
+      "nivel": 16,
       "regiao": "margem_direita",
       "lugar": "torre_do_consorcio",
       "margem": "direita",
       "modo": "solo",
-      "resumo": "Esboço: com Klara Lindqvist, siga o dinheiro da energia.",
+      "resumo": "com Klara Lindqvist, siga o dinheiro da energia.",
       "objetivos": [
-        { "tipo": "falar", "npc": "klara_lindqvist", "descricao": "Encontre a Klara na Agência" },
-        { "tipo": "interagir", "alvo": "arquivo_da_diretoria", "acao": "ler", "quantidade": 1, "lugar": "torre_do_consorcio", "descricao": "Ache o relatório arquivado como custo não previsto" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "torre_do_consorcio",
+          "descricao": "Busque o relatório arquivado na Torre"
+        },
+        {
+          "tipo": "entrar_masmorra",
+          "masmorra": "galerias_da_usina",
+          "descricao": "O arquivo morto fica nas Galerias"
+        },
+        {
+          "tipo": "vencer_andar",
+          "masmorra": "galerias_da_usina",
+          "andar": 3,
+          "descricao": "Ache o relatório no andar 3"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "desbloqueio", "chave": "pista_de_historia", "quantidade": 1, "descricao": "O relatório arquivado" }], "grupo": [] },
-      "requerFlags": ["dinheiro_apagao_enfrentado"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "desbloqueio",
+            "chave": "pista_de_historia",
+            "quantidade": 1,
+            "descricao": "O relatório arquivado"
+          },
+          {
+            "kind": "item",
+            "slotDaClasse": "adorno",
+            "raridade": "comum",
+            "sugestao": true
+          }
+        ],
+        "grupo": []
+      },
+      "requerFlags": [
+        "dinheiro_apagao_enfrentado"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["dinheiro_klara_aliada", "relatorio_arquivado_achado"],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "lugar"]
+      "ligaFlags": [
+        "dinheiro_klara_aliada",
+        "relatorio_arquivado_achado"
+      ],
+      "emPiloto": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "lugar",
+        "resumo"
+      ]
     },
     {
       "id": "dinheiro_03_o_cabo",
       "name": "O Mesmo Cabo",
       "cadeia": "direita_siga_o_dinheiro",
       "dadaPor": "klara_lindqvist",
-      "nivel": 18,
+      "nivel": 17,
       "regiao": "usina_da_ponte",
       "margem": "direita",
       "modo": "grupo",
-      "resumo": "Esboço: o mesmo cabo subindo a Serra.",
+      "resumo": "o mesmo cabo subindo a Serra.",
       "objetivos": [
-        { "tipo": "interagir", "alvo": "cabo_escondido", "acao": "seguir", "quantidade": 1, "lugar": "barragem_da_usina", "descricao": "Siga o cabo por baixo da ponte" },
-        { "tipo": "ir_ate", "regiao": "serra_da_chopindita", "descricao": "Veja para onde ele sobe" }
+        {
+          "tipo": "ir_ate",
+          "lugar": "barragem_da_usina",
+          "descricao": "Siga o cabo por baixo da ponte"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 5,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "blindado"
+              ]
+            }
+          ],
+          "descricao": "Tem gente paga para ninguém seguir o cabo"
+        },
+        {
+          "tipo": "ir_ate",
+          "lugar": "marco_do_tenente_vidal",
+          "descricao": "Do marco, veja o cabo subir a Serra"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "desbloqueio", "chave": "pista_de_historia", "quantidade": 1, "descricao": "O cabo da ponte" }], "grupo": [{ "kind": "xp", "quantidade": 3000 }] },
-      "requerFlags": ["relatorio_arquivado_achado"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "desbloqueio",
+            "chave": "pista_de_historia",
+            "quantidade": 1,
+            "descricao": "O cabo da ponte"
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 3000
+          }
+        ]
+      },
+      "requerFlags": [
+        "relatorio_arquivado_achado"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["cabo_da_serra_visto"],
-      "emPiloto": false,
-      "esboco": true,
-      "sugestaoCampos": ["objetivos", "recompensas"]
+      "ligaFlags": [
+        "cabo_da_serra_visto"
+      ],
+      "emPiloto": true,
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "resumo"
+      ]
     },
     {
       "id": "lideres_esquerda",
@@ -1765,24 +4498,60 @@
       "tipo": "infiltracao_com_disfarce",
       "cadeia": "os_lideres",
       "dadaPor": "guia",
-      "nivel": 19,
+      "nivel": 18,
       "regiao": "margem_esquerda",
       "lugar": "casa_da_assembleia",
       "margem": "esquerda",
       "modo": "solo",
       "resumo": "Esboço: Nayra dá a ordem da guerra no telão; você espiona Kenji do outro lado.",
       "objetivos": [
-        { "tipo": "interagir", "alvo": "telao", "acao": "assistir", "quantidade": 1, "descricao": "Ouça a ordem da guerra" },
-        { "tipo": "ir_ate", "lugar": "torre_do_consorcio", "descricao": "Entre disfarçado na Torre do Consórcio" },
-        { "tipo": "interagir", "alvo": "telao", "acao": "espionar", "quantidade": 1, "lugar": "torre_do_consorcio", "descricao": "Espione o discurso do Kenji" }
+        {
+          "tipo": "interagir",
+          "alvo": "telao",
+          "acao": "assistir",
+          "quantidade": 1,
+          "descricao": "Ouça a ordem da guerra"
+        },
+        {
+          "tipo": "ir_ate",
+          "lugar": "torre_do_consorcio",
+          "descricao": "Entre disfarçado na Torre do Consórcio"
+        },
+        {
+          "tipo": "interagir",
+          "alvo": "telao",
+          "acao": "espionar",
+          "quantidade": 1,
+          "lugar": "torre_do_consorcio",
+          "descricao": "Espione o discurso do Kenji"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "desbloqueio", "chave": "arena_da_ponte", "descricao": "Libera a Arena da Ponte no nível 20" }], "grupo": [] },
-      "requerFlags": ["cabo_da_serra_visto", "margem_esquerda"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "desbloqueio",
+            "chave": "arena_da_ponte",
+            "descricao": "Libera a Arena da Ponte no nível 20"
+          }
+        ],
+        "grupo": []
+      },
+      "requerFlags": [
+        "cabo_da_serra_visto",
+        "margem_esquerda"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["lideres_ordem_da_guerra", "lider_rival_espionado"],
+      "ligaFlags": [
+        "lideres_ordem_da_guerra",
+        "lider_rival_espionado"
+      ],
       "emPiloto": false,
       "esboco": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "dadaPor"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "dadaPor"
+      ]
     },
     {
       "id": "lideres_direita",
@@ -1790,24 +4559,258 @@
       "tipo": "infiltracao_com_disfarce",
       "cadeia": "os_lideres",
       "dadaPor": "guia",
-      "nivel": 19,
+      "nivel": 18,
       "regiao": "margem_direita",
       "lugar": "torre_do_consorcio",
       "margem": "direita",
       "modo": "solo",
       "resumo": "Esboço: Kenji dá a ordem da guerra no telão; você espiona Nayra do outro lado.",
       "objetivos": [
-        { "tipo": "interagir", "alvo": "telao", "acao": "assistir", "quantidade": 1, "descricao": "Ouça a ordem da guerra" },
-        { "tipo": "ir_ate", "lugar": "casa_da_assembleia", "descricao": "Entre disfarçado na Casa da Assembleia" },
-        { "tipo": "interagir", "alvo": "telao", "acao": "espionar", "quantidade": 1, "lugar": "casa_da_assembleia", "descricao": "Espione o discurso da Nayra" }
+        {
+          "tipo": "interagir",
+          "alvo": "telao",
+          "acao": "assistir",
+          "quantidade": 1,
+          "descricao": "Ouça a ordem da guerra"
+        },
+        {
+          "tipo": "ir_ate",
+          "lugar": "casa_da_assembleia",
+          "descricao": "Entre disfarçado na Casa da Assembleia"
+        },
+        {
+          "tipo": "interagir",
+          "alvo": "telao",
+          "acao": "espionar",
+          "quantidade": 1,
+          "lugar": "casa_da_assembleia",
+          "descricao": "Espione o discurso da Nayra"
+        }
       ],
-      "recompensas": { "solo": [{ "kind": "desbloqueio", "chave": "arena_da_ponte", "descricao": "Libera a Arena da Ponte no nível 20" }], "grupo": [] },
-      "requerFlags": ["cabo_da_serra_visto", "margem_direita"],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "desbloqueio",
+            "chave": "arena_da_ponte",
+            "descricao": "Libera a Arena da Ponte no nível 20"
+          }
+        ],
+        "grupo": []
+      },
+      "requerFlags": [
+        "cabo_da_serra_visto",
+        "margem_direita"
+      ],
       "bloqueadaPorFlags": [],
-      "ligaFlags": ["lideres_ordem_da_guerra", "lider_rival_espionado"],
+      "ligaFlags": [
+        "lideres_ordem_da_guerra",
+        "lider_rival_espionado"
+      ],
       "emPiloto": false,
       "esboco": true,
-      "sugestaoCampos": ["objetivos", "recompensas", "dadaPor"]
+      "sugestaoCampos": [
+        "objetivos",
+        "recompensas",
+        "dadaPor"
+      ]
+    },
+    {
+      "id": "cabeceira_da_ponte_esquerda",
+      "name": "A Cabeceira da Ponte",
+      "cadeia": "a_cabeceira",
+      "dadaPor": "seu_jaco",
+      "nivel": 19,
+      "regiao": "usina_da_ponte",
+      "lugar": "marco_do_tenente_vidal",
+      "margem": "esquerda",
+      "modo": "grupo",
+      "resumo": "O Seu Jacó te espera no pé da Ponte. De lá de cima, a outra margem parece igualzinha à sua, só que com outra cor.",
+      "objetivos": [
+        {
+          "tipo": "falar",
+          "npc": "seu_jaco",
+          "descricao": "Encontre o Seu Jacó no pé da Ponte"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 6,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "blindado"
+              ]
+            }
+          ],
+          "descricao": "Os homens do Sombra fecharam a cabeceira"
+        },
+        {
+          "tipo": "ir_ate",
+          "lugar": "marco_do_tenente_vidal",
+          "descricao": "Suba até o marco, na cabeceira"
+        },
+        {
+          "tipo": "escolher",
+          "pergunta": "Lá de cima dá para ver a Margem Direita inteira.",
+          "opcoes": [
+            {
+              "id": "ficar",
+              "texto": "A minha margem é a minha margem.",
+              "ligaFlags": []
+            },
+            {
+              "id": "pensar",
+              "texto": "E se eu atravessasse de vez?",
+              "ligaFlags": [
+                "pensou_em_trocar_de_lado"
+              ]
+            }
+          ],
+          "descricao": "Olhe para o outro lado"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "slotDaClasse": "peito",
+            "raridade": "comum",
+            "sugestao": true
+          },
+          {
+            "kind": "desbloqueio",
+            "chave": "troca_de_lado",
+            "descricao": "Troca de lado liberada: fale com o Seu Jacó no cais quando quiser atravessar de vez",
+            "sugestao": true
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 80
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 4000
+          }
+        ]
+      },
+      "requerFlags": [
+        "cabo_da_serra_visto",
+        "margem_esquerda"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "troca_de_lado_liberada",
+        "conjunto_da_classe_completo"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "cabeceira_da_ponte_direita",
+      "name": "A Cabeceira da Ponte",
+      "cadeia": "a_cabeceira",
+      "dadaPor": "seu_jaco",
+      "nivel": 19,
+      "regiao": "usina_da_ponte",
+      "lugar": "marco_do_tenente_vidal",
+      "margem": "direita",
+      "modo": "grupo",
+      "resumo": "O Seu Jacó te espera no pé da Ponte. De lá de cima, a outra margem parece igualzinha à sua, só que com outra cor.",
+      "objetivos": [
+        {
+          "tipo": "falar",
+          "npc": "seu_jaco",
+          "descricao": "Encontre o Seu Jacó no pé da Ponte"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 6,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "blindado"
+              ]
+            }
+          ],
+          "descricao": "Os homens do Sombra fecharam a cabeceira"
+        },
+        {
+          "tipo": "ir_ate",
+          "lugar": "marco_do_tenente_vidal",
+          "descricao": "Suba até o marco, na cabeceira"
+        },
+        {
+          "tipo": "escolher",
+          "pergunta": "Lá de cima dá para ver a Margem Esquerda inteira.",
+          "opcoes": [
+            {
+              "id": "ficar",
+              "texto": "A minha margem é a minha margem.",
+              "ligaFlags": []
+            },
+            {
+              "id": "pensar",
+              "texto": "E se eu atravessasse de vez?",
+              "ligaFlags": [
+                "pensou_em_trocar_de_lado"
+              ]
+            }
+          ],
+          "descricao": "Olhe para o outro lado"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "slotDaClasse": "peito",
+            "raridade": "comum",
+            "sugestao": true
+          },
+          {
+            "kind": "desbloqueio",
+            "chave": "troca_de_lado",
+            "descricao": "Troca de lado liberada: fale com o Seu Jacó no cais quando quiser atravessar de vez",
+            "sugestao": true
+          },
+          {
+            "kind": "reputacao",
+            "quantidade": 80
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 4000
+          }
+        ]
+      },
+      "requerFlags": [
+        "cabo_da_serra_visto",
+        "margem_direita"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "troca_de_lado_liberada",
+        "conjunto_da_classe_completo"
+      ],
+      "emPiloto": true,
+      "sugestao": true
     }
   ],
   "perigos": [
@@ -1818,7 +4821,17 @@
       "avisoMs": 900,
       "intervaloS": 3,
       "raio": 2,
-      "efeitos": [{ "kind": "dano", "mult": 0.3 }, { "kind": "lentidao", "pct": 20, "duracaoMs": 1500 }],
+      "efeitos": [
+        {
+          "kind": "dano",
+          "mult": 0.3
+        },
+        {
+          "kind": "lentidao",
+          "pct": 20,
+          "duracaoMs": 1500
+        }
+      ],
       "sugestao": true
     },
     {
@@ -1828,7 +4841,12 @@
       "avisoMs": 1000,
       "intervaloS": 6,
       "raio": 2,
-      "efeitos": [{ "kind": "dano", "mult": 0.4 }],
+      "efeitos": [
+        {
+          "kind": "dano",
+          "mult": 0.4
+        }
+      ],
       "sugestao": true
     },
     {
@@ -1838,7 +4856,17 @@
       "avisoMs": 1000,
       "intervaloS": 5,
       "raio": 2.5,
-      "efeitos": [{ "kind": "dano", "mult": 0.5 }, { "kind": "controle", "cc": "atordoar", "duracaoMs": 1000 }],
+      "efeitos": [
+        {
+          "kind": "dano",
+          "mult": 0.5
+        },
+        {
+          "kind": "controle",
+          "cc": "atordoar",
+          "duracaoMs": 1000
+        }
+      ],
       "sugestao": true
     }
   ]

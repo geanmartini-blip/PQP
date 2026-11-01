@@ -2,129 +2,503 @@
   "slots": [
     {
       "id": "cabeca",
-      "name": "Cabeça",
+      "name": "Capacete",
       "costumaDar": "Precisão, foco e resistência a controle",
-      "statsBase": ["accuracy", "ccResist"],
+      "statsBase": [
+        "accuracy",
+        "ccResist"
+      ],
       "poolExtras": [
-        { "stat": "accuracy", "min": 3, "max": 6 },
-        { "stat": "ccResist", "min": 4, "max": 8 },
-        { "stat": "crit", "min": 2, "max": 4 },
-        { "stat": "ccDuration", "min": 5, "max": 10 },
-        { "stat": "buffDuration", "min": 5, "max": 10 },
-        { "stat": "resourceRegen", "min": 3, "max": 6 }
+        {
+          "stat": "accuracy",
+          "min": 3,
+          "max": 6
+        },
+        {
+          "stat": "ccResist",
+          "min": 4,
+          "max": 8
+        },
+        {
+          "stat": "crit",
+          "min": 2,
+          "max": 4
+        },
+        {
+          "stat": "ccDuration",
+          "min": 5,
+          "max": 10
+        },
+        {
+          "stat": "buffDuration",
+          "min": 5,
+          "max": 10
+        },
+        {
+          "stat": "resourceRegen",
+          "min": 3,
+          "max": 6
+        }
       ],
       "escondeCabelo": true,
       "leitura": "Precisão é accuracy; resistência a controle é ccResist; foco é a regeneração do recurso da classe (resourceRegen), que entra só como atributo extra do raro.",
-      "sugestaoCampos": ["statsBase", "poolExtras", "leitura"]
+      "sugestaoCampos": [
+        "statsBase",
+        "poolExtras",
+        "leitura",
+        "name"
+      ]
     },
     {
       "id": "peito",
-      "name": "Peito",
-      "costumaDar": "Vida e defesa",
-      "statsBase": ["hp", "defense"],
-      "poolExtras": [
-        { "stat": "hp", "min": 3, "max": 6 },
-        { "stat": "defense", "min": 3, "max": 6 },
-        { "stat": "damageTaken", "min": -4, "max": -2 },
-        { "stat": "healingTaken", "min": 5, "max": 10 },
-        { "stat": "shield", "min": 5, "max": 10 }
+      "name": "Armadura",
+      "costumaDar": "Vida, defesa, esquiva e recurso da classe (a calça vem junto)",
+      "statsBase": [
+        "hp",
+        "defense",
+        "evasion",
+        "resourceMax"
       ],
-      "sugestaoCampos": ["statsBase", "poolExtras"]
-    },
-    {
-      "id": "calca",
-      "name": "Calça",
-      "costumaDar": "Esquiva e recurso da classe",
-      "statsBase": ["evasion", "resourceMax"],
       "poolExtras": [
-        { "stat": "evasion", "min": 2, "max": 4 },
-        { "stat": "resourceMax", "min": 3, "max": 6 },
-        { "stat": "resourceRegen", "min": 4, "max": 8 },
-        { "stat": "resourceCost", "min": -6, "max": -3 }
+        {
+          "stat": "hp",
+          "min": 3,
+          "max": 6
+        },
+        {
+          "stat": "defense",
+          "min": 3,
+          "max": 6
+        },
+        {
+          "stat": "damageTaken",
+          "min": -4,
+          "max": -2
+        },
+        {
+          "stat": "healingTaken",
+          "min": 5,
+          "max": 10
+        },
+        {
+          "stat": "shield",
+          "min": 5,
+          "max": 10
+        },
+        {
+          "stat": "evasion",
+          "min": 2,
+          "max": 4
+        },
+        {
+          "stat": "resourceMax",
+          "min": 3,
+          "max": 6
+        },
+        {
+          "stat": "resourceRegen",
+          "min": 4,
+          "max": 8
+        },
+        {
+          "stat": "resourceCost",
+          "min": -6,
+          "max": -3
+        }
       ],
-      "sugestaoCampos": ["statsBase", "poolExtras"]
+      "sugestaoCampos": [
+        "statsBase",
+        "poolExtras",
+        "name",
+        "costumaDar"
+      ]
     },
     {
       "id": "arma",
       "name": "Arma",
       "costumaDar": "Dano e tipo de ataque",
-      "statsBase": ["damage"],
-      "poolExtras": [
-        { "stat": "damage", "min": 3, "max": 6 },
-        { "stat": "attack", "min": 3, "max": 6 },
-        { "stat": "crit", "min": 2, "max": 4 },
-        { "stat": "critDamage", "min": 8, "max": 15 },
-        { "stat": "areaSize", "min": 5, "max": 10 }
+      "statsBase": [
+        "damage"
       ],
-      "sugestaoCampos": ["statsBase", "poolExtras"]
+      "poolExtras": [
+        {
+          "stat": "damage",
+          "min": 3,
+          "max": 6
+        },
+        {
+          "stat": "attack",
+          "min": 3,
+          "max": 6
+        },
+        {
+          "stat": "crit",
+          "min": 2,
+          "max": 4
+        },
+        {
+          "stat": "critDamage",
+          "min": 8,
+          "max": 15
+        },
+        {
+          "stat": "areaSize",
+          "min": 5,
+          "max": 10
+        }
+      ],
+      "sugestaoCampos": [
+        "statsBase",
+        "poolExtras"
+      ]
     },
     {
       "id": "calcado",
       "name": "Calçado",
       "costumaDar": "Velocidade de ataque, de recarga e de deslocamento",
-      "statsBase": ["attackSpeed", "cooldownSpeed", "moveSpeed"],
-      "poolExtras": [
-        { "stat": "moveSpeed", "min": 3, "max": 6 },
-        { "stat": "attackSpeed", "min": 2, "max": 5 },
-        { "stat": "cooldownSpeed", "min": 2, "max": 5 },
-        { "stat": "specialCharge", "min": 4, "max": 8 }
+      "statsBase": [
+        "attackSpeed",
+        "cooldownSpeed",
+        "moveSpeed"
       ],
-      "sugestaoCampos": ["statsBase", "poolExtras"]
+      "poolExtras": [
+        {
+          "stat": "moveSpeed",
+          "min": 3,
+          "max": 6
+        },
+        {
+          "stat": "attackSpeed",
+          "min": 2,
+          "max": 5
+        },
+        {
+          "stat": "cooldownSpeed",
+          "min": 2,
+          "max": 5
+        },
+        {
+          "stat": "specialCharge",
+          "min": 4,
+          "max": 8
+        }
+      ],
+      "sugestaoCampos": [
+        "statsBase",
+        "poolExtras"
+      ]
     },
     {
       "id": "adorno",
-      "name": "Adorno",
+      "name": "Adereço",
       "costumaDar": "Um efeito especial; só cabe um",
       "statsBase": [],
       "poolExtras": [
-        { "stat": "ccDuration", "min": 5, "max": 10 },
-        { "stat": "healing", "min": 5, "max": 10 },
-        { "stat": "specialCharge", "min": 4, "max": 8 },
-        { "stat": "buffDuration", "min": 5, "max": 10 },
-        { "stat": "loot", "min": 5, "max": 10 }
+        {
+          "stat": "ccDuration",
+          "min": 5,
+          "max": 10
+        },
+        {
+          "stat": "healing",
+          "min": 5,
+          "max": 10
+        },
+        {
+          "stat": "specialCharge",
+          "min": 4,
+          "max": 8
+        },
+        {
+          "stat": "buffDuration",
+          "min": 5,
+          "max": 10
+        },
+        {
+          "stat": "loot",
+          "min": 5,
+          "max": 10
+        }
       ],
       "efeitoEspecial": true,
-      "sugestaoCampos": ["poolExtras"]
+      "sugestaoCampos": [
+        "poolExtras",
+        "name"
+      ]
     }
   ],
   "raridades": [
-    { "id": "comum", "name": "Comum", "efeito": "Atributos base.", "visual": "Comum é simples.", "atributosExtras": { "min": 0, "max": 0 }, "sufixoArte": "comum", "cor": "#c9c9c9", "sugestaoCampos": ["sufixoArte", "cor"] },
-    { "id": "raro", "name": "Raro", "efeito": "1 ou 2 atributos extras.", "visual": "Raro ganha detalhe.", "atributosExtras": { "min": 1, "max": 2 }, "chanceSegundoExtra": 0.35, "sufixoArte": "raro", "cor": "#4aa3ff", "sugestaoCampos": ["chanceSegundoExtra", "sufixoArte", "cor"] },
-    { "id": "unico", "name": "Único", "efeito": "Muda ou libera uma habilidade.", "visual": "Único tem visual próprio.", "atributosExtras": { "min": 0, "max": 0 }, "sufixoArte": "unico", "cor": "#e8a33a", "sugestaoCampos": ["atributosExtras", "sufixoArte", "cor"] },
-    { "id": "set", "name": "Set", "efeito": "Bônus por peças.", "visual": "Set completo muda a silhueta.", "atributosExtras": { "min": 0, "max": 0 }, "sufixoArte": "set", "cor": "#5fd16b", "sugestaoCampos": ["atributosExtras", "sufixoArte", "cor"] }
+    {
+      "id": "comum",
+      "name": "Comum",
+      "efeito": "Atributos base.",
+      "visual": "Comum é simples.",
+      "atributosExtras": {
+        "min": 0,
+        "max": 0
+      },
+      "sufixoArte": "comum",
+      "cor": "#c9c9c9",
+      "sugestaoCampos": [
+        "sufixoArte",
+        "cor"
+      ]
+    },
+    {
+      "id": "raro",
+      "name": "Raro",
+      "efeito": "1 ou 2 atributos extras.",
+      "visual": "Raro ganha detalhe.",
+      "atributosExtras": {
+        "min": 1,
+        "max": 2
+      },
+      "chanceSegundoExtra": 0.35,
+      "sufixoArte": "raro",
+      "cor": "#4aa3ff",
+      "sugestaoCampos": [
+        "chanceSegundoExtra",
+        "sufixoArte",
+        "cor"
+      ]
+    },
+    {
+      "id": "unico",
+      "name": "Único",
+      "efeito": "Muda ou libera uma habilidade.",
+      "visual": "Único tem visual próprio.",
+      "atributosExtras": {
+        "min": 0,
+        "max": 0
+      },
+      "sufixoArte": "unico",
+      "cor": "#e8a33a",
+      "sugestaoCampos": [
+        "atributosExtras",
+        "sufixoArte",
+        "cor"
+      ]
+    },
+    {
+      "id": "set",
+      "name": "Set",
+      "efeito": "Bônus por peças.",
+      "visual": "Set completo muda a silhueta.",
+      "atributosExtras": {
+        "min": 0,
+        "max": 0
+      },
+      "sufixoArte": "set",
+      "cor": "#5fd16b",
+      "sugestaoCampos": [
+        "atributosExtras",
+        "sufixoArte",
+        "cor"
+      ]
+    }
   ],
   "atributosBase": {
     "descricao": "Atributos dos itens-base, em % sobre o atributo do personagem. O raro soma 1 ou 2 extras do poolExtras do slot. Itens do Delta (nível 1 a 7) valem a metade, arredondada para cima. Benzimento e calibração multiplicam estes valores.",
     "porSlot": {
       "cabeca": {
-        "comum": [{ "stat": "accuracy", "pct": 5 }, { "stat": "ccResist", "pct": 5 }],
-        "raro": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }],
-        "unico": [{ "stat": "accuracy", "pct": 7 }, { "stat": "ccResist", "pct": 7 }],
-        "set": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }]
+        "comum": [
+          {
+            "stat": "accuracy",
+            "pct": 5
+          },
+          {
+            "stat": "ccResist",
+            "pct": 5
+          }
+        ],
+        "raro": [
+          {
+            "stat": "accuracy",
+            "pct": 6
+          },
+          {
+            "stat": "ccResist",
+            "pct": 6
+          }
+        ],
+        "unico": [
+          {
+            "stat": "accuracy",
+            "pct": 7
+          },
+          {
+            "stat": "ccResist",
+            "pct": 7
+          }
+        ],
+        "set": [
+          {
+            "stat": "accuracy",
+            "pct": 6
+          },
+          {
+            "stat": "ccResist",
+            "pct": 6
+          }
+        ]
       },
       "peito": {
-        "comum": [{ "stat": "hp", "pct": 6 }, { "stat": "defense", "pct": 5 }],
-        "raro": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }],
-        "unico": [{ "stat": "hp", "pct": 9 }, { "stat": "defense", "pct": 7 }],
-        "set": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }]
-      },
-      "calca": {
-        "comum": [{ "stat": "evasion", "pct": 3 }, { "stat": "resourceMax", "pct": 5 }],
-        "raro": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }],
-        "unico": [{ "stat": "evasion", "pct": 5 }, { "stat": "resourceMax", "pct": 7 }],
-        "set": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }]
+        "comum": [
+          {
+            "stat": "hp",
+            "pct": 6
+          },
+          {
+            "stat": "defense",
+            "pct": 5
+          },
+          {
+            "stat": "evasion",
+            "pct": 3
+          },
+          {
+            "stat": "resourceMax",
+            "pct": 5
+          }
+        ],
+        "raro": [
+          {
+            "stat": "hp",
+            "pct": 8
+          },
+          {
+            "stat": "defense",
+            "pct": 6
+          },
+          {
+            "stat": "evasion",
+            "pct": 4
+          },
+          {
+            "stat": "resourceMax",
+            "pct": 6
+          }
+        ],
+        "unico": [
+          {
+            "stat": "hp",
+            "pct": 9
+          },
+          {
+            "stat": "defense",
+            "pct": 7
+          },
+          {
+            "stat": "evasion",
+            "pct": 5
+          },
+          {
+            "stat": "resourceMax",
+            "pct": 7
+          }
+        ],
+        "set": [
+          {
+            "stat": "hp",
+            "pct": 8
+          },
+          {
+            "stat": "defense",
+            "pct": 6
+          },
+          {
+            "stat": "evasion",
+            "pct": 4
+          },
+          {
+            "stat": "resourceMax",
+            "pct": 6
+          }
+        ]
       },
       "arma": {
-        "comum": [{ "stat": "damage", "pct": 6 }],
-        "raro": [{ "stat": "damage", "pct": 8 }],
-        "unico": [{ "stat": "damage", "pct": 9 }],
-        "set": [{ "stat": "damage", "pct": 8 }]
+        "comum": [
+          {
+            "stat": "damage",
+            "pct": 6
+          }
+        ],
+        "raro": [
+          {
+            "stat": "damage",
+            "pct": 8
+          }
+        ],
+        "unico": [
+          {
+            "stat": "damage",
+            "pct": 9
+          }
+        ],
+        "set": [
+          {
+            "stat": "damage",
+            "pct": 8
+          }
+        ]
       },
       "calcado": {
-        "comum": [{ "stat": "attackSpeed", "pct": 3 }, { "stat": "cooldownSpeed", "pct": 3 }, { "stat": "moveSpeed", "pct": 4 }],
-        "raro": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }],
-        "unico": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 6 }],
-        "set": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }]
+        "comum": [
+          {
+            "stat": "attackSpeed",
+            "pct": 3
+          },
+          {
+            "stat": "cooldownSpeed",
+            "pct": 3
+          },
+          {
+            "stat": "moveSpeed",
+            "pct": 4
+          }
+        ],
+        "raro": [
+          {
+            "stat": "attackSpeed",
+            "pct": 4
+          },
+          {
+            "stat": "cooldownSpeed",
+            "pct": 4
+          },
+          {
+            "stat": "moveSpeed",
+            "pct": 5
+          }
+        ],
+        "unico": [
+          {
+            "stat": "attackSpeed",
+            "pct": 4
+          },
+          {
+            "stat": "cooldownSpeed",
+            "pct": 4
+          },
+          {
+            "stat": "moveSpeed",
+            "pct": 6
+          }
+        ],
+        "set": [
+          {
+            "stat": "attackSpeed",
+            "pct": 4
+          },
+          {
+            "stat": "cooldownSpeed",
+            "pct": 4
+          },
+          {
+            "stat": "moveSpeed",
+            "pct": 5
+          }
+        ]
       },
       "adorno": {
         "comum": [],
@@ -156,17 +530,29 @@
       "sugestao": true
     },
     "materiaisPorMargem": {
-      "esquerda": ["madeira", "ferro", "couro", "palha"],
-      "direita": ["alta_tecnologia"]
+      "esquerda": [
+        "madeira",
+        "ferro",
+        "couro",
+        "palha"
+      ],
+      "direita": [
+        "alta_tecnologia"
+      ]
     },
     "mirante": {
       "descricao": "Itens que misturam Encanto e máquina e só existem lá em cima.",
       "material": "misto",
       "ondeCai": "Só nas alas do Mirante (endgame.json, mirante.alas); não aparecem em loja nem nas tabelas do piloto.",
       "foraDoPiloto": true,
-      "sugestaoCampos": ["material", "ondeCai"]
+      "sugestaoCampos": [
+        "material",
+        "ondeCai"
+      ]
     },
-    "sugestaoCampos": ["resolucaoVisual"]
+    "sugestaoCampos": [
+      "resolucaoVisual"
+    ]
   },
   "visualPorArquetipo": {
     "peao_brabo": {
@@ -174,12 +560,46 @@
       "margem": "esquerda",
       "silhueta": "Chapéu e fivela",
       "slots": {
-        "cabeca": { "comum": "Chapéu de palha de aba larga", "raro": "Chapéu maior que o corpo", "chaveArte": "peao_brabo_cabeca", "sugestaoCampos": ["comum"] },
-        "peito": { "comum": "Camisa xadrez aberta", "raro": "Camisa xadrez aberta com franja de couro e um touro bordado", "chaveArte": "peao_brabo_peito", "sugestaoCampos": ["raro"] },
-        "calca": { "comum": "Calça jeans surrada de vaqueiro", "raro": "Calça de rodeio", "chaveArte": "peao_brabo_calca", "sugestaoCampos": ["comum"] },
-        "arma": { "comum": "Manopla de couro cru com corda enrolada", "raro": "Laço benzido girando", "chaveArte": "peao_brabo_arma", "sugestaoCampos": ["comum"] },
-        "calcado": { "comum": "Botina", "raro": "Botina de couro com espora de ferro", "chaveArte": "peao_brabo_calcado", "sugestaoCampos": ["raro"] },
-        "adorno": { "comum": "Dente de touro num cordão de couro", "raro": "Touro-espírito translúcido bufando atrás", "chaveArte": "peao_brabo_adorno", "sugestaoCampos": ["comum"] }
+        "cabeca": {
+          "comum": "Chapéu de palha de aba larga",
+          "raro": "Chapéu maior que o corpo",
+          "chaveArte": "peao_brabo_cabeca",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "peito": {
+          "comum": "Camisa xadrez aberta; calça jeans surrada de vaqueiro",
+          "raro": "Camisa xadrez aberta com franja de couro e um touro bordado; calça de rodeio",
+          "chaveArte": "peao_brabo_peito",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "arma": {
+          "comum": "Manopla de couro cru com corda enrolada",
+          "raro": "Laço benzido girando",
+          "chaveArte": "peao_brabo_arma",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "calcado": {
+          "comum": "Botina",
+          "raro": "Botina de couro com espora de ferro",
+          "chaveArte": "peao_brabo_calcado",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "adorno": {
+          "comum": "Dente de touro num cordão de couro",
+          "raro": "Touro-espírito translúcido bufando atrás",
+          "chaveArte": "peao_brabo_adorno",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        }
       }
     },
     "iogue_furioso": {
@@ -187,194 +607,608 @@
       "margem": "esquerda",
       "silhueta": "Coque e tapetinho de yoga enrolado nas costas",
       "slots": {
-        "cabeca": { "comum": "Coque preso com palito de madeira", "raro": "Coque, veia pulsando na testa e medidor de calma do verde ao vermelho", "chaveArte": "iogue_furioso_cabeca", "sugestaoCampos": ["comum"] },
-        "peito": { "comum": "Roupa de linho", "raro": "Roupa de linho com um braço de tigre saindo pela manga", "chaveArte": "iogue_furioso_peito", "sugestaoCampos": ["raro"] },
-        "calca": { "comum": "Calça de linho folgada", "raro": "Calça de linho com listras de tigre que aparecem na raiva", "chaveArte": "iogue_furioso_calca", "sugestao": true },
-        "arma": { "comum": "Faixas de couro nas mãos", "raro": "Garras de tigre-espírito por cima das faixas", "chaveArte": "iogue_furioso_arma", "sugestao": true },
-        "calcado": { "comum": "Pés descalços com tornozeleira de palha", "raro": "Pés descalços que deixam pegadas de tigre brilhando", "chaveArte": "iogue_furioso_calcado", "sugestao": true },
-        "adorno": { "comum": "Garrafinha de kombucha na cintura", "raro": "Lótus flutuando com aura azul", "chaveArte": "iogue_furioso_adorno" }
+        "cabeca": {
+          "comum": "Coque preso com palito de madeira",
+          "raro": "Coque, veia pulsando na testa e medidor de calma do verde ao vermelho",
+          "chaveArte": "iogue_furioso_cabeca",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "peito": {
+          "comum": "Roupa de linho; calça de linho folgada",
+          "raro": "Roupa de linho com um braço de tigre saindo pela manga; calça de linho com listras de tigre que aparecem na raiva",
+          "chaveArte": "iogue_furioso_peito",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "arma": {
+          "comum": "Faixas de couro nas mãos",
+          "raro": "Garras de tigre-espírito por cima das faixas",
+          "chaveArte": "iogue_furioso_arma",
+          "sugestao": true
+        },
+        "calcado": {
+          "comum": "Pés descalços com tornozeleira de palha",
+          "raro": "Pés descalços que deixam pegadas de tigre brilhando",
+          "chaveArte": "iogue_furioso_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Garrafinha de kombucha na cintura",
+          "raro": "Lótus flutuando com aura azul",
+          "chaveArte": "iogue_furioso_adorno"
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "cidadao_revolucionario": {
       "classe": "combatente",
       "margem": "esquerda",
       "silhueta": "Boina e cachecol de três cores",
       "slots": {
-        "cabeca": { "comum": "Boina", "raro": "Boina com broche de muda de planta, por cima do bigode fino", "chaveArte": "cidadao_revolucionario_cabeca", "sugestaoCampos": ["raro"] },
-        "peito": { "comum": "Camisa listrada", "raro": "Camisa listrada com cachecol de três cores", "chaveArte": "cidadao_revolucionario_peito" },
-        "calca": { "comum": "Calça de couro com suspensório", "raro": "Calça de couro com a lista de reivindicações enrolada arrastando no chão", "chaveArte": "cidadao_revolucionario_calca", "sugestaoCampos": ["comum"] },
-        "arma": { "comum": "Megafone de lata reciclada", "raro": "Megafone, com a xícara erguida na outra mão", "chaveArte": "cidadao_revolucionario_arma" },
-        "calcado": { "comum": "Sapato de couro gasto", "raro": "Sapato de couro com polaina de barricada", "chaveArte": "cidadao_revolucionario_calcado", "sugestao": true },
-        "adorno": { "comum": "Xícara de café sempre na mão", "raro": "Placa GREVE pronta para fincar no chão", "chaveArte": "cidadao_revolucionario_adorno" }
+        "cabeca": {
+          "comum": "Boina",
+          "raro": "Boina com broche de muda de planta, por cima do bigode fino",
+          "chaveArte": "cidadao_revolucionario_cabeca",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "peito": {
+          "comum": "Camisa listrada; calça de couro com suspensório",
+          "raro": "Camisa listrada com cachecol de três cores; calça de couro com a lista de reivindicações enrolada arrastando no chão",
+          "chaveArte": "cidadao_revolucionario_peito"
+        },
+        "arma": {
+          "comum": "Megafone de lata reciclada",
+          "raro": "Megafone, com a xícara erguida na outra mão",
+          "chaveArte": "cidadao_revolucionario_arma"
+        },
+        "calcado": {
+          "comum": "Sapato de couro gasto",
+          "raro": "Sapato de couro com polaina de barricada",
+          "chaveArte": "cidadao_revolucionario_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Xícara de café sempre na mão",
+          "raro": "Placa GREVE pronta para fincar no chão",
+          "chaveArte": "cidadao_revolucionario_adorno"
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "babushka": {
       "classe": "atirador",
       "margem": "esquerda",
       "silhueta": "Lenço florido e casaco de pele falsa enorme",
       "slots": {
-        "cabeca": { "comum": "Lenço florido", "raro": "Lenço florido com barrado de crochê", "chaveArte": "babushka_cabeca", "sugestaoCampos": ["raro"] },
-        "peito": { "comum": "Casaco de lã", "raro": "Casaco de pele falsa enorme", "chaveArte": "babushka_peito", "sugestaoCampos": ["comum"] },
-        "calca": { "comum": "Saia de lã comprida", "raro": "Saia de lã com rolo de massa na cintura", "chaveArte": "babushka_calca", "sugestaoCampos": ["comum"] },
-        "arma": { "comum": "Espingarda benzida", "raro": "Espingarda benzida com um ramo de flores no cano e mira de crochê", "chaveArte": "babushka_arma" },
-        "calcado": { "comum": "Chinelo de lã", "raro": "Bota de feltro forrada", "chaveArte": "babushka_calcado", "sugestao": true },
-        "adorno": { "comum": "Sacola de feira com pão", "raro": "Sacola de feira com pão e um prato de sopa sempre quente", "chaveArte": "babushka_adorno", "sugestaoCampos": ["raro"] }
+        "cabeca": {
+          "comum": "Lenço florido",
+          "raro": "Lenço florido com barrado de crochê",
+          "chaveArte": "babushka_cabeca",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "peito": {
+          "comum": "Casaco de lã; saia de lã comprida",
+          "raro": "Casaco de pele falsa enorme; saia de lã com rolo de massa na cintura",
+          "chaveArte": "babushka_peito",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "arma": {
+          "comum": "Espingarda benzida",
+          "raro": "Espingarda benzida com um ramo de flores no cano e mira de crochê",
+          "chaveArte": "babushka_arma"
+        },
+        "calcado": {
+          "comum": "Chinelo de lã",
+          "raro": "Bota de feltro forrada",
+          "chaveArte": "babushka_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Sacola de feira com pão",
+          "raro": "Sacola de feira com pão e um prato de sopa sempre quente",
+          "chaveArte": "babushka_adorno",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "arqueiro_das_estepes": {
       "classe": "atirador",
       "margem": "esquerda",
       "silhueta": "Chapéu de pele pontudo e arco recurvo",
       "slots": {
-        "cabeca": { "comum": "Chapéu de pele pontudo", "raro": "Chapéu de pele pontudo com pluma de águia-espírito", "chaveArte": "arqueiro_das_estepes_cabeca", "sugestaoCampos": ["raro"] },
-        "peito": { "comum": "Casaco de couro de montaria", "raro": "Casaco de couro com placas de ferro costuradas", "chaveArte": "arqueiro_das_estepes_peito", "sugestao": true },
-        "calca": { "comum": "Calça de couro de montaria", "raro": "Calça de couro com aljava presa na coxa", "chaveArte": "arqueiro_das_estepes_calca", "sugestao": true },
-        "arma": { "comum": "Arco recurvo", "raro": "Arco recurvo com flechas de pena verde que deixam rastro", "chaveArte": "arqueiro_das_estepes_arma", "sugestaoCampos": ["raro"] },
-        "calcado": { "comum": "Bota de couro de cano alto", "raro": "Bota de cano alto arrastando no chão, de quem galopa num pônei baixo demais", "chaveArte": "arqueiro_das_estepes_calcado", "sugestaoCampos": ["comum"] },
-        "adorno": { "comum": "Rédea de couro do pônei-espírito", "raro": "Pônei-espírito pequeno demais para ele, com cara de quem quer pedir demissão", "chaveArte": "arqueiro_das_estepes_adorno", "sugestaoCampos": ["comum"] }
+        "cabeca": {
+          "comum": "Chapéu de pele pontudo",
+          "raro": "Chapéu de pele pontudo com pluma de águia-espírito",
+          "chaveArte": "arqueiro_das_estepes_cabeca",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "peito": {
+          "comum": "Casaco de couro de montaria; calça de couro de montaria",
+          "raro": "Casaco de couro com placas de ferro costuradas; calça de couro com aljava presa na coxa",
+          "chaveArte": "arqueiro_das_estepes_peito",
+          "sugestao": true
+        },
+        "arma": {
+          "comum": "Arco recurvo",
+          "raro": "Arco recurvo com flechas de pena verde que deixam rastro",
+          "chaveArte": "arqueiro_das_estepes_arma",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "calcado": {
+          "comum": "Bota de couro de cano alto",
+          "raro": "Bota de cano alto arrastando no chão, de quem galopa num pônei baixo demais",
+          "chaveArte": "arqueiro_das_estepes_calcado",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "adorno": {
+          "comum": "Rédea de couro do pônei-espírito",
+          "raro": "Pônei-espírito pequeno demais para ele, com cara de quem quer pedir demissão",
+          "chaveArte": "arqueiro_das_estepes_adorno",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "cacador_de_crocodilo": {
       "classe": "atirador",
       "margem": "esquerda",
       "silhueta": "Chapéu safári e bermuda cáqui",
       "slots": {
-        "cabeca": { "comum": "Chapéu safári", "raro": "Chapéu safári com dentes de crocodilo", "chaveArte": "cacador_de_crocodilo_cabeca" },
-        "peito": { "comum": "Camisa cáqui de bolsos", "raro": "Camisa de 14 bolsos", "chaveArte": "cacador_de_crocodilo_peito", "sugestaoCampos": ["comum"] },
-        "calca": { "comum": "Bermuda cáqui", "raro": "Bermuda cáqui com curativo nas duas pernas", "chaveArte": "cacador_de_crocodilo_calca", "sugestaoCampos": ["raro"] },
-        "arma": { "comum": "Espingarda velha de madeira", "raro": "Espingarda velha com laço de captura benzido", "chaveArte": "cacador_de_crocodilo_arma", "sugestao": true },
-        "calcado": { "comum": "Bota de trilha enlameada", "raro": "Bota de trilha com marca de mordida", "chaveArte": "cacador_de_crocodilo_calcado", "sugestao": true },
-        "adorno": { "comum": "Curativo pelo corpo todo", "raro": "Crocodilo-espírito pendurado no chapéu, mordendo", "chaveArte": "cacador_de_crocodilo_adorno", "sugestaoCampos": ["raro"] }
+        "cabeca": {
+          "comum": "Chapéu safári",
+          "raro": "Chapéu safári com dentes de crocodilo",
+          "chaveArte": "cacador_de_crocodilo_cabeca"
+        },
+        "peito": {
+          "comum": "Camisa cáqui de bolsos; bermuda cáqui",
+          "raro": "Camisa de 14 bolsos; bermuda cáqui com curativo nas duas pernas",
+          "chaveArte": "cacador_de_crocodilo_peito",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "arma": {
+          "comum": "Espingarda velha de madeira",
+          "raro": "Espingarda velha com laço de captura benzido",
+          "chaveArte": "cacador_de_crocodilo_arma",
+          "sugestao": true
+        },
+        "calcado": {
+          "comum": "Bota de trilha enlameada",
+          "raro": "Bota de trilha com marca de mordida",
+          "chaveArte": "cacador_de_crocodilo_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Curativo pelo corpo todo",
+          "raro": "Crocodilo-espírito pendurado no chapéu, mordendo",
+          "chaveArte": "cacador_de_crocodilo_adorno",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "druida_rabugento": {
       "classe": "elemental",
       "margem": "esquerda",
       "silhueta": "Barba que arrasta no chão e cajado",
       "slots": {
-        "cabeca": { "comum": "Coroa de musgo", "raro": "Coroa de musgo e um passarinho que fez ninho na barba e reclama junto", "chaveArte": "druida_rabugento_cabeca", "sugestaoCampos": ["comum"] },
-        "peito": { "comum": "Túnica de musgo", "raro": "Túnica de musgo com líquen dourado", "chaveArte": "druida_rabugento_peito", "sugestaoCampos": ["raro"] },
-        "calca": { "comum": "Calça de estopa", "raro": "Calça de estopa com raízes subindo pela perna", "chaveArte": "druida_rabugento_calca", "sugestao": true },
-        "arma": { "comum": "Cajado de madeira", "raro": "Cajado com a placa SAIA DA GRAMA", "chaveArte": "druida_rabugento_arma", "sugestaoCampos": ["comum"] },
-        "calcado": { "comum": "Sandália de pedra", "raro": "Sandália de pedra com grama crescendo em volta", "chaveArte": "druida_rabugento_calcado", "sugestaoCampos": ["raro"] },
-        "adorno": { "comum": "Pedrinha de menir pendurada", "raro": "Menir-totem em miniatura flutuando atrás", "chaveArte": "druida_rabugento_adorno", "sugestao": true }
+        "cabeca": {
+          "comum": "Coroa de musgo",
+          "raro": "Coroa de musgo e um passarinho que fez ninho na barba e reclama junto",
+          "chaveArte": "druida_rabugento_cabeca",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "peito": {
+          "comum": "Túnica de musgo; calça de estopa",
+          "raro": "Túnica de musgo com líquen dourado; calça de estopa com raízes subindo pela perna",
+          "chaveArte": "druida_rabugento_peito",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "arma": {
+          "comum": "Cajado de madeira",
+          "raro": "Cajado com a placa SAIA DA GRAMA",
+          "chaveArte": "druida_rabugento_arma",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "calcado": {
+          "comum": "Sandália de pedra",
+          "raro": "Sandália de pedra com grama crescendo em volta",
+          "chaveArte": "druida_rabugento_calcado",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "adorno": {
+          "comum": "Pedrinha de menir pendurada",
+          "raro": "Menir-totem em miniatura flutuando atrás",
+          "chaveArte": "druida_rabugento_adorno",
+          "sugestao": true
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "bruxa_do_trovao": {
       "classe": "elemental",
       "margem": "esquerda",
       "silhueta": "Tranças e capacete de chifres",
       "slots": {
-        "cabeca": { "comum": "Capacete de chifres com etiqueta RÉPLICA", "raro": "Capacete de chifres com faísca saindo das pontas", "chaveArte": "bruxa_do_trovao_cabeca", "sugestaoCampos": ["raro"] },
-        "peito": { "comum": "Corpete de couro de taverna", "raro": "Corpete de couro com runas de raio", "chaveArte": "bruxa_do_trovao_peito", "sugestao": true },
-        "calca": { "comum": "Saia de couro com cinto de ferro", "raro": "Saia de couro com fivela de martelo", "chaveArte": "bruxa_do_trovao_calca", "sugestao": true },
-        "arma": { "comum": "Chifre de beber", "raro": "Chifre de beber transbordando faísca", "chaveArte": "bruxa_do_trovao_arma" },
-        "calcado": { "comum": "Bota de pele", "raro": "Bota de pele que solta faísca a cada soluço", "chaveArte": "bruxa_do_trovao_calcado", "sugestao": true },
-        "adorno": { "comum": "Tranças com contas de ferro", "raro": "Bochechas sempre vermelhas e uma nuvenzinha de chuva particular", "chaveArte": "bruxa_do_trovao_adorno", "sugestao": true }
+        "cabeca": {
+          "comum": "Capacete de chifres com etiqueta RÉPLICA",
+          "raro": "Capacete de chifres com faísca saindo das pontas",
+          "chaveArte": "bruxa_do_trovao_cabeca",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "peito": {
+          "comum": "Corpete de couro de taverna; saia de couro com cinto de ferro",
+          "raro": "Corpete de couro com runas de raio; saia de couro com fivela de martelo",
+          "chaveArte": "bruxa_do_trovao_peito",
+          "sugestao": true
+        },
+        "arma": {
+          "comum": "Chifre de beber",
+          "raro": "Chifre de beber transbordando faísca",
+          "chaveArte": "bruxa_do_trovao_arma"
+        },
+        "calcado": {
+          "comum": "Bota de pele",
+          "raro": "Bota de pele que solta faísca a cada soluço",
+          "chaveArte": "bruxa_do_trovao_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Tranças com contas de ferro",
+          "raro": "Bochechas sempre vermelhas e uma nuvenzinha de chuva particular",
+          "chaveArte": "bruxa_do_trovao_adorno",
+          "sugestao": true
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "curandeira_dos_andes": {
       "classe": "elemental",
       "margem": "esquerda",
       "silhueta": "Poncho colorido e chapéu de aba",
       "slots": {
-        "cabeca": { "comum": "Chapéu de aba", "raro": "Chapéu de aba com pompom e flor da nascente", "chaveArte": "curandeira_dos_andes_cabeca", "sugestaoCampos": ["raro"] },
-        "peito": { "comum": "Poncho colorido", "raro": "Poncho colorido bordado com lhamas", "chaveArte": "curandeira_dos_andes_peito", "sugestaoCampos": ["raro"] },
-        "calca": { "comum": "Saia de lã listrada", "raro": "Saia de lã com bolsos de erva", "chaveArte": "curandeira_dos_andes_calca", "sugestao": true },
-        "arma": { "comum": "Balde de Água da Nascente", "raro": "Balde de Água da Nascente que nunca esvazia", "chaveArte": "curandeira_dos_andes_arma", "sugestaoCampos": ["raro"] },
-        "calcado": { "comum": "Sandália de couro", "raro": "Sandália de couro com tornozeleira de sementes", "chaveArte": "curandeira_dos_andes_calcado", "sugestao": true },
-        "adorno": { "comum": "Senha de fila Nº 347", "raro": "Totem de lhama de madeira em miniatura", "chaveArte": "curandeira_dos_andes_adorno" }
+        "cabeca": {
+          "comum": "Chapéu de aba",
+          "raro": "Chapéu de aba com pompom e flor da nascente",
+          "chaveArte": "curandeira_dos_andes_cabeca",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "peito": {
+          "comum": "Poncho colorido; saia de lã listrada",
+          "raro": "Poncho colorido bordado com lhamas; saia de lã com bolsos de erva",
+          "chaveArte": "curandeira_dos_andes_peito",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "arma": {
+          "comum": "Balde de Água da Nascente",
+          "raro": "Balde de Água da Nascente que nunca esvazia",
+          "chaveArte": "curandeira_dos_andes_arma",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "calcado": {
+          "comum": "Sandália de couro",
+          "raro": "Sandália de couro com tornozeleira de sementes",
+          "chaveArte": "curandeira_dos_andes_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Senha de fila Nº 347",
+          "raro": "Totem de lhama de madeira em miniatura",
+          "chaveArte": "curandeira_dos_andes_adorno"
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "luchador_sagrado": {
       "classe": "mascarado",
       "margem": "esquerda",
       "silhueta": "Máscara de luchador e capa feita de cortina de teatro",
       "slots": {
-        "cabeca": { "comum": "Máscara de luchador", "raro": "Máscara de luchador com raio dourado e um olho de espírito que pisca na testa", "chaveArte": "luchador_sagrado_cabeca" },
-        "peito": { "comum": "Capa feita de cortina de teatro", "raro": "Capa de cortina com franja dourada e estrelas bordadas", "chaveArte": "luchador_sagrado_peito", "sugestaoCampos": ["raro"] },
-        "calca": { "comum": "Calça de lycra de ringue", "raro": "Calça de lycra com raio dourado na lateral", "chaveArte": "luchador_sagrado_calca", "sugestao": true },
-        "arma": { "comum": "Faixas de ringue nos punhos", "raro": "Luvas de ringue com relâmpago-espírito", "chaveArte": "luchador_sagrado_arma", "sugestao": true },
-        "calcado": { "comum": "Botas de ringue", "raro": "Botas brilhantes", "chaveArte": "luchador_sagrado_calcado", "sugestaoCampos": ["comum"] },
-        "adorno": { "comum": "Cinturão de papelão", "raro": "Cinturão de papelão pintado de dourado, quase de verdade", "chaveArte": "luchador_sagrado_adorno", "sugestaoCampos": ["raro"] }
+        "cabeca": {
+          "comum": "Máscara de luchador",
+          "raro": "Máscara de luchador com raio dourado e um olho de espírito que pisca na testa",
+          "chaveArte": "luchador_sagrado_cabeca"
+        },
+        "peito": {
+          "comum": "Capa feita de cortina de teatro; calça de lycra de ringue",
+          "raro": "Capa de cortina com franja dourada e estrelas bordadas; calça de lycra com raio dourado na lateral",
+          "chaveArte": "luchador_sagrado_peito",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "arma": {
+          "comum": "Faixas de ringue nos punhos",
+          "raro": "Luvas de ringue com relâmpago-espírito",
+          "chaveArte": "luchador_sagrado_arma",
+          "sugestao": true
+        },
+        "calcado": {
+          "comum": "Botas de ringue",
+          "raro": "Botas brilhantes",
+          "chaveArte": "luchador_sagrado_calcado",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "adorno": {
+          "comum": "Cinturão de papelão",
+          "raro": "Cinturão de papelão pintado de dourado, quase de verdade",
+          "chaveArte": "luchador_sagrado_adorno",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "diva_da_opera": {
       "classe": "mascarado",
       "margem": "esquerda",
       "silhueta": "Peruca alta e máscara veneziana",
       "slots": {
-        "cabeca": { "comum": "Máscara veneziana", "raro": "Peruca alta com um passarinho dentro", "chaveArte": "diva_da_opera_cabeca" },
-        "peito": { "comum": "Corpete de veludo", "raro": "Vestido que ocupa dois tiles", "chaveArte": "diva_da_opera_peito", "sugestaoCampos": ["comum"] },
-        "calca": { "comum": "Saia de armação", "raro": "Saia de armação que arrasta os aliados que passam perto", "chaveArte": "diva_da_opera_calca", "sugestaoCampos": ["comum"] },
-        "arma": { "comum": "Leque", "raro": "Leque de penas com varetas de ferro", "chaveArte": "diva_da_opera_arma", "sugestaoCampos": ["raro"] },
-        "calcado": { "comum": "Sapato de salto de palco", "raro": "Sapato de salto com fivela de cristal falso", "chaveArte": "diva_da_opera_calcado", "sugestao": true },
-        "adorno": { "comum": "Buquê de flores murchas", "raro": "Buquê da reverência, sempre fresco", "chaveArte": "diva_da_opera_adorno", "sugestao": true }
+        "cabeca": {
+          "comum": "Máscara veneziana",
+          "raro": "Peruca alta com um passarinho dentro",
+          "chaveArte": "diva_da_opera_cabeca"
+        },
+        "peito": {
+          "comum": "Corpete de veludo; saia de armação",
+          "raro": "Vestido que ocupa dois tiles; saia de armação que arrasta os aliados que passam perto",
+          "chaveArte": "diva_da_opera_peito",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "arma": {
+          "comum": "Leque",
+          "raro": "Leque de penas com varetas de ferro",
+          "chaveArte": "diva_da_opera_arma",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "calcado": {
+          "comum": "Sapato de salto de palco",
+          "raro": "Sapato de salto com fivela de cristal falso",
+          "chaveArte": "diva_da_opera_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Buquê de flores murchas",
+          "raro": "Buquê da reverência, sempre fresco",
+          "chaveArte": "diva_da_opera_adorno",
+          "sugestao": true
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "malandro": {
       "classe": "mascarado",
       "margem": "esquerda",
       "silhueta": "Terno branco e chapéu de palha",
       "slots": {
-        "cabeca": { "comum": "Chapéu de palha", "raro": "Chapéu de palha com fita vinho", "chaveArte": "malandro_cabeca", "sugestaoCampos": ["raro"] },
-        "peito": { "comum": "Terno branco", "raro": "Terno branco impecável, que nunca suja, nem no esgoto", "chaveArte": "malandro_peito" },
-        "calca": { "comum": "Calça branca de linho", "raro": "Calça branca vincada que nunca amassa", "chaveArte": "malandro_calca", "sugestao": true },
-        "arma": { "comum": "Palito no canto da boca", "raro": "Bengala de madeira com castão de ferro", "chaveArte": "malandro_arma", "sugestao": true },
-        "calcado": { "comum": "Sapato bicolor", "raro": "Sapato bicolor envernizado que brilha no gingado", "chaveArte": "malandro_calcado", "sugestaoCampos": ["raro"] },
-        "adorno": { "comum": "Cordão", "raro": "Cordão com uma Semente dourada pendurada", "chaveArte": "malandro_adorno", "sugestaoCampos": ["raro"] }
+        "cabeca": {
+          "comum": "Chapéu de palha",
+          "raro": "Chapéu de palha com fita vinho",
+          "chaveArte": "malandro_cabeca",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "peito": {
+          "comum": "Terno branco; calça branca de linho",
+          "raro": "Terno branco impecável, que nunca suja, nem no esgoto; calça branca vincada que nunca amassa",
+          "chaveArte": "malandro_peito"
+        },
+        "arma": {
+          "comum": "Palito no canto da boca",
+          "raro": "Bengala de madeira com castão de ferro",
+          "chaveArte": "malandro_arma",
+          "sugestao": true
+        },
+        "calcado": {
+          "comum": "Sapato bicolor",
+          "raro": "Sapato bicolor envernizado que brilha no gingado",
+          "chaveArte": "malandro_calcado",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "adorno": {
+          "comum": "Cordão",
+          "raro": "Cordão com uma Semente dourada pendurada",
+          "chaveArte": "malandro_adorno",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "sumo_cibernetico": {
       "classe": "combatente",
       "margem": "direita",
       "silhueta": "Barriga hidráulica e coque com antena",
       "slots": {
-        "cabeca": { "comum": "Coque com antena", "raro": "Coque com antena e luz de alerta girando", "chaveArte": "sumo_cibernetico_cabeca", "sugestaoCampos": ["raro"] },
-        "peito": { "comum": "Barriga hidráulica cromada", "raro": "Barriga hidráulica com manômetro e o aviso MANTENHA DISTÂNCIA", "chaveArte": "sumo_cibernetico_peito" },
-        "calca": { "comum": "Mawashi de LED", "raro": "Mawashi de LED com pistões nas laterais", "chaveArte": "sumo_cibernetico_calca", "sugestaoCampos": ["raro"] },
-        "arma": { "comum": "Luvas de pistão", "raro": "Luvas de pistão soltando vapor", "chaveArte": "sumo_cibernetico_arma", "sugestao": true },
-        "calcado": { "comum": "Tornozeleira hidráulica", "raro": "Pés de pistão com vapor saindo na pisada de sumô", "chaveArte": "sumo_cibernetico_calcado", "sugestaoCampos": ["comum"] },
-        "adorno": { "comum": "Lata de energético no cinto", "raro": "Cinto de energia", "chaveArte": "sumo_cibernetico_adorno", "sugestaoCampos": ["comum"] }
+        "cabeca": {
+          "comum": "Coque com antena",
+          "raro": "Coque com antena e luz de alerta girando",
+          "chaveArte": "sumo_cibernetico_cabeca",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "peito": {
+          "comum": "Barriga hidráulica cromada; mawashi de LED",
+          "raro": "Barriga hidráulica com manômetro e o aviso MANTENHA DISTÂNCIA; mawashi de LED com pistões nas laterais",
+          "chaveArte": "sumo_cibernetico_peito"
+        },
+        "arma": {
+          "comum": "Luvas de pistão",
+          "raro": "Luvas de pistão soltando vapor",
+          "chaveArte": "sumo_cibernetico_arma",
+          "sugestao": true
+        },
+        "calcado": {
+          "comum": "Tornozeleira hidráulica",
+          "raro": "Pés de pistão com vapor saindo na pisada de sumô",
+          "chaveArte": "sumo_cibernetico_calcado",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "adorno": {
+          "comum": "Lata de energético no cinto",
+          "raro": "Cinto de energia",
+          "chaveArte": "sumo_cibernetico_adorno",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "o_fiel": {
       "classe": "combatente",
       "margem": "direita",
       "silhueta": "Viseira e manoplas nas cores do Neon FC",
       "slots": {
-        "cabeca": { "comum": "Viseira", "raro": "Viseira com LED de torcida e a cicatriz na sobrancelha à mostra", "chaveArte": "o_fiel_cabeca", "sugestaoCampos": ["raro"] },
-        "peito": { "comum": "Regata", "raro": "Regata com FIEL ATÉ O BOLETO nas costas", "chaveArte": "o_fiel_peito" },
-        "calca": { "comum": "Bermuda de torcida", "raro": "Bermuda de torcida com faixa de LED roxo-neon", "chaveArte": "o_fiel_calca", "sugestao": true },
-        "arma": { "comum": "Manoplas", "raro": "Manoplas pintadas nas cores do Neon FC", "chaveArte": "o_fiel_arma" },
-        "calcado": { "comum": "Tênis de mola", "raro": "Tênis de mola de invasão de campo, com rastro de grama", "chaveArte": "o_fiel_calcado", "sugestaoCampos": ["raro"] },
-        "adorno": { "comum": "Cachecol", "raro": "Sinalizador na mão", "chaveArte": "o_fiel_adorno" }
+        "cabeca": {
+          "comum": "Viseira",
+          "raro": "Viseira com LED de torcida e a cicatriz na sobrancelha à mostra",
+          "chaveArte": "o_fiel_cabeca",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "peito": {
+          "comum": "Regata; bermuda de torcida",
+          "raro": "Regata com FIEL ATÉ O BOLETO nas costas; bermuda de torcida com faixa de LED roxo-neon",
+          "chaveArte": "o_fiel_peito"
+        },
+        "arma": {
+          "comum": "Manoplas",
+          "raro": "Manoplas pintadas nas cores do Neon FC",
+          "chaveArte": "o_fiel_arma"
+        },
+        "calcado": {
+          "comum": "Tênis de mola",
+          "raro": "Tênis de mola de invasão de campo, com rastro de grama",
+          "chaveArte": "o_fiel_calcado",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "adorno": {
+          "comum": "Cachecol",
+          "raro": "Sinalizador na mão",
+          "chaveArte": "o_fiel_adorno"
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "monstro_da_academia": {
       "classe": "combatente",
       "margem": "direita",
       "silhueta": "Braços gigantes e pernas finas de quem pulou o treino de perna",
       "slots": {
-        "cabeca": { "comum": "Boné de academia", "raro": "Boné com contador de curtidas subindo", "chaveArte": "monstro_da_academia_cabeca", "sugestao": true },
-        "peito": { "comum": "Regata cavada", "raro": "Regata cavada e bíceps com contador de curtidas subindo", "chaveArte": "monstro_da_academia_peito", "sugestaoCampos": ["comum"] },
-        "calca": { "comum": "Bermuda de academia", "raro": "Bermuda de compressão que não esconde as pernas de palito", "chaveArte": "monstro_da_academia_calca", "sugestao": true },
-        "arma": { "comum": "Luva de academia", "raro": "Luva de academia com halter de holograma", "chaveArte": "monstro_da_academia_arma", "sugestao": true },
-        "calcado": { "comum": "Tênis de corrida", "raro": "Tênis com LED que pisca a cada BORA", "chaveArte": "monstro_da_academia_calcado", "sugestao": true },
-        "adorno": { "comum": "Galão de água", "raro": "Pau de selfie com a live ligada", "chaveArte": "monstro_da_academia_adorno" }
+        "cabeca": {
+          "comum": "Boné de academia",
+          "raro": "Boné com contador de curtidas subindo",
+          "chaveArte": "monstro_da_academia_cabeca",
+          "sugestao": true
+        },
+        "peito": {
+          "comum": "Regata cavada; bermuda de academia",
+          "raro": "Regata cavada e bíceps com contador de curtidas subindo; bermuda de compressão que não esconde as pernas de palito",
+          "chaveArte": "monstro_da_academia_peito",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "arma": {
+          "comum": "Luva de academia",
+          "raro": "Luva de academia com halter de holograma",
+          "chaveArte": "monstro_da_academia_arma",
+          "sugestao": true
+        },
+        "calcado": {
+          "comum": "Tênis de corrida",
+          "raro": "Tênis com LED que pisca a cada BORA",
+          "chaveArte": "monstro_da_academia_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Galão de água",
+          "raro": "Pau de selfie com a live ligada",
+          "chaveArte": "monstro_da_academia_adorno"
+        }
       }
     },
     "tropa_de_choque": {
@@ -382,124 +1216,393 @@
       "margem": "direita",
       "silhueta": "Armadura de choque e escudo HOJE NÃO",
       "slots": {
-        "cabeca": { "comum": "Capacete de choque", "raro": "Capacete de choque e óculos escuros à noite", "chaveArte": "tropa_de_choque_cabeca", "sugestaoCampos": ["comum"] },
-        "peito": { "comum": "Armadura de choque", "raro": "Armadura de choque com o escudo escrito HOJE NÃO", "chaveArte": "tropa_de_choque_peito" },
-        "calca": { "comum": "Calça tática acolchoada", "raro": "Calça tática com joelheira de neon", "chaveArte": "tropa_de_choque_calca", "sugestao": true },
-        "arma": { "comum": "Escopeta inteligente", "raro": "Escopeta inteligente com lanterna de balada", "chaveArte": "tropa_de_choque_arma", "sugestaoCampos": ["raro"] },
-        "calcado": { "comum": "Coturno", "raro": "Coturno de segurança com biqueira cromada", "chaveArte": "tropa_de_choque_calcado", "sugestao": true },
-        "adorno": { "comum": "Prancheta da lista", "raro": "Cordão de isolamento de veludo vermelho, de balada", "chaveArte": "tropa_de_choque_adorno" }
+        "cabeca": {
+          "comum": "Capacete de choque",
+          "raro": "Capacete de choque e óculos escuros à noite",
+          "chaveArte": "tropa_de_choque_cabeca",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "peito": {
+          "comum": "Armadura de choque; calça tática acolchoada",
+          "raro": "Armadura de choque com o escudo escrito HOJE NÃO; calça tática com joelheira de neon",
+          "chaveArte": "tropa_de_choque_peito"
+        },
+        "arma": {
+          "comum": "Escopeta inteligente",
+          "raro": "Escopeta inteligente com lanterna de balada",
+          "chaveArte": "tropa_de_choque_arma",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "calcado": {
+          "comum": "Coturno",
+          "raro": "Coturno de segurança com biqueira cromada",
+          "chaveArte": "tropa_de_choque_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Prancheta da lista",
+          "raro": "Cordão de isolamento de veludo vermelho, de balada",
+          "chaveArte": "tropa_de_choque_adorno"
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "cowboy_cromado": {
       "classe": "atirador",
       "margem": "direita",
       "silhueta": "Chapéu com GPS e braço cromado",
       "slots": {
-        "cabeca": { "comum": "Chapéu de cowboy", "raro": "Chapéu com GPS piscando", "chaveArte": "cowboy_cromado_cabeca", "sugestaoCampos": ["comum"] },
-        "peito": { "comum": "Colete de couro sintético", "raro": "Colete com o braço cromado à mostra", "chaveArte": "cowboy_cromado_peito", "sugestaoCampos": ["comum"] },
-        "calca": { "comum": "Calça jeans com fivela de LED", "raro": "Calça com coldre duplo iluminado", "chaveArte": "cowboy_cromado_calca", "sugestao": true },
-        "arma": { "comum": "Revólver inteligente", "raro": "Revólver com mira laser", "chaveArte": "cowboy_cromado_arma" },
-        "calcado": { "comum": "Bota de cowboy", "raro": "Bota com espora de LED", "chaveArte": "cowboy_cromado_calcado", "sugestaoCampos": ["comum"] },
-        "adorno": { "comum": "Lenço no pescoço", "raro": "O próprio projetor de planta seca de faroeste rolando", "chaveArte": "cowboy_cromado_adorno", "sugestaoCampos": ["comum"] }
+        "cabeca": {
+          "comum": "Chapéu de cowboy",
+          "raro": "Chapéu com GPS piscando",
+          "chaveArte": "cowboy_cromado_cabeca",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "peito": {
+          "comum": "Colete de couro sintético; calça jeans com fivela de LED",
+          "raro": "Colete com o braço cromado à mostra; calça com coldre duplo iluminado",
+          "chaveArte": "cowboy_cromado_peito",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "arma": {
+          "comum": "Revólver inteligente",
+          "raro": "Revólver com mira laser",
+          "chaveArte": "cowboy_cromado_arma"
+        },
+        "calcado": {
+          "comum": "Bota de cowboy",
+          "raro": "Bota com espora de LED",
+          "chaveArte": "cowboy_cromado_calcado",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "adorno": {
+          "comum": "Lenço no pescoço",
+          "raro": "O próprio projetor de planta seca de faroeste rolando",
+          "chaveArte": "cowboy_cromado_adorno",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "diretor_de_nollywood": {
       "classe": "atirador",
       "margem": "direita",
       "silhueta": "Boné virado e drones-câmera em órbita",
       "slots": {
-        "cabeca": { "comum": "Boné virado", "raro": "Boné virado com fone de set", "chaveArte": "diretor_de_nollywood_cabeca", "sugestaoCampos": ["raro"] },
-        "peito": { "comum": "Colete de produção cheio de bolsos", "raro": "Colete de produção com crachá de diretor escrito errado", "chaveArte": "diretor_de_nollywood_peito", "sugestao": true },
-        "calca": { "comum": "Calça cargo de set", "raro": "Calça cargo com rolo de fita crepe pendurado", "chaveArte": "diretor_de_nollywood_calca", "sugestao": true },
-        "arma": { "comum": "Claquete", "raro": "Claquete e megafone", "chaveArte": "diretor_de_nollywood_arma" },
-        "calcado": { "comum": "Tênis de set", "raro": "Tênis de set com rodinhas para travelling", "chaveArte": "diretor_de_nollywood_calcado", "sugestao": true },
-        "adorno": { "comum": "Um drone-câmera em órbita", "raro": "Dois drones-câmera em órbita", "chaveArte": "diretor_de_nollywood_adorno" }
+        "cabeca": {
+          "comum": "Boné virado",
+          "raro": "Boné virado com fone de set",
+          "chaveArte": "diretor_de_nollywood_cabeca",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "peito": {
+          "comum": "Colete de produção cheio de bolsos; calça cargo de set",
+          "raro": "Colete de produção com crachá de diretor escrito errado; calça cargo com rolo de fita crepe pendurado",
+          "chaveArte": "diretor_de_nollywood_peito",
+          "sugestao": true
+        },
+        "arma": {
+          "comum": "Claquete",
+          "raro": "Claquete e megafone",
+          "chaveArte": "diretor_de_nollywood_arma"
+        },
+        "calcado": {
+          "comum": "Tênis de set",
+          "raro": "Tênis de set com rodinhas para travelling",
+          "chaveArte": "diretor_de_nollywood_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Um drone-câmera em órbita",
+          "raro": "Dois drones-câmera em órbita",
+          "chaveArte": "diretor_de_nollywood_adorno"
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "engenheira_de_gambiarra": {
       "classe": "elemental",
       "margem": "direita",
       "silhueta": "Óculos de solda e fita prata em tudo",
       "slots": {
-        "cabeca": { "comum": "Óculos de solda", "raro": "Óculos de solda com lanterna de geladeira", "chaveArte": "engenheira_de_gambiarra_cabeca", "sugestaoCampos": ["raro"] },
-        "peito": { "comum": "Macacão sujo de graxa", "raro": "Macacão sujo de graxa com lacre GARANTIA VIOLADA", "chaveArte": "engenheira_de_gambiarra_peito" },
-        "calca": { "comum": "Calça de macacão remendada com fita prata", "raro": "Calça de macacão com cinto de ferramentas", "chaveArte": "engenheira_de_gambiarra_calca", "sugestaoCampos": ["raro"] },
-        "arma": { "comum": "Chave de fenda soltando faísca", "raro": "Chave de fenda com ventilador acoplado", "chaveArte": "engenheira_de_gambiarra_arma", "sugestaoCampos": ["raro"] },
-        "calcado": { "comum": "Bota de segurança", "raro": "Bota de segurança com rodinhas de skate", "chaveArte": "engenheira_de_gambiarra_calcado", "sugestao": true },
-        "adorno": { "comum": "Rolo de fita prata no cinto", "raro": "Robô de geladeira com rodinhas de skate em miniatura", "chaveArte": "engenheira_de_gambiarra_adorno", "sugestaoCampos": ["comum"] }
+        "cabeca": {
+          "comum": "Óculos de solda",
+          "raro": "Óculos de solda com lanterna de geladeira",
+          "chaveArte": "engenheira_de_gambiarra_cabeca",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "peito": {
+          "comum": "Macacão sujo de graxa; calça de macacão remendada com fita prata",
+          "raro": "Macacão sujo de graxa com lacre GARANTIA VIOLADA; calça de macacão com cinto de ferramentas",
+          "chaveArte": "engenheira_de_gambiarra_peito"
+        },
+        "arma": {
+          "comum": "Chave de fenda soltando faísca",
+          "raro": "Chave de fenda com ventilador acoplado",
+          "chaveArte": "engenheira_de_gambiarra_arma",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "calcado": {
+          "comum": "Bota de segurança",
+          "raro": "Bota de segurança com rodinhas de skate",
+          "chaveArte": "engenheira_de_gambiarra_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Rolo de fita prata no cinto",
+          "raro": "Robô de geladeira com rodinhas de skate em miniatura",
+          "chaveArte": "engenheira_de_gambiarra_adorno",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "doktor_klaus": {
       "classe": "elemental",
       "margem": "direita",
       "silhueta": "Cabelo arrepiado de eletricidade e bobina de Tesla nas costas",
       "slots": {
-        "cabeca": { "comum": "Óculos de proteção", "raro": "Óculos de proteção e cabelo arrepiado de eletricidade pegando fogo nas pontas", "chaveArte": "doktor_klaus_cabeca", "sugestaoCampos": ["raro"] },
-        "peito": { "comum": "Jaleco chamuscado", "raro": "Jaleco chamuscado com a patente carimbada no bolso", "chaveArte": "doktor_klaus_peito", "sugestaoCampos": ["raro"] },
-        "calca": { "comum": "Calça social queimada na barra", "raro": "Calça social com cabos de cobre costurados", "chaveArte": "doktor_klaus_calca", "sugestao": true },
-        "arma": { "comum": "Bobina de mão", "raro": "Bobina de mão sem certificação", "chaveArte": "doktor_klaus_arma", "sugestao": true },
-        "calcado": { "comum": "Sapato com sola de borracha", "raro": "Sapato com fio de aterramento arrastando", "chaveArte": "doktor_klaus_calcado", "sugestao": true },
-        "adorno": { "comum": "Bobina de Tesla nas costas", "raro": "Placa nas costas: 0 DIAS SEM ACIDENTE", "chaveArte": "doktor_klaus_adorno" }
+        "cabeca": {
+          "comum": "Óculos de proteção",
+          "raro": "Óculos de proteção e cabelo arrepiado de eletricidade pegando fogo nas pontas",
+          "chaveArte": "doktor_klaus_cabeca",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "peito": {
+          "comum": "Jaleco chamuscado; calça social queimada na barra",
+          "raro": "Jaleco chamuscado com a patente carimbada no bolso; calça social com cabos de cobre costurados",
+          "chaveArte": "doktor_klaus_peito",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "arma": {
+          "comum": "Bobina de mão",
+          "raro": "Bobina de mão sem certificação",
+          "chaveArte": "doktor_klaus_arma",
+          "sugestao": true
+        },
+        "calcado": {
+          "comum": "Sapato com sola de borracha",
+          "raro": "Sapato com fio de aterramento arrastando",
+          "chaveArte": "doktor_klaus_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Bobina de Tesla nas costas",
+          "raro": "Placa nas costas: 0 DIAS SEM ACIDENTE",
+          "chaveArte": "doktor_klaus_adorno"
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "coach_de_bem_estar": {
       "classe": "elemental",
       "margem": "direita",
       "silhueta": "Viseira e garrafa d'água gigante",
       "slots": {
-        "cabeca": { "comum": "Viseira", "raro": "Viseira com crachá COACH QUÂNTICA CERTIFICADA", "chaveArte": "coach_de_bem_estar_cabeca" },
-        "peito": { "comum": "Top de ginástica", "raro": "Top de ginástica com aura de nanobots rosa", "chaveArte": "coach_de_bem_estar_peito", "sugestaoCampos": ["comum"] },
-        "calca": { "comum": "Legging", "raro": "Legging com estampa de gráfico de performance", "chaveArte": "coach_de_bem_estar_calca", "sugestaoCampos": ["raro"] },
-        "arma": { "comum": "Garrafa d'água gigante", "raro": "Garrafa d'água gigante com infusor de nanobots", "chaveArte": "coach_de_bem_estar_arma", "sugestaoCampos": ["raro"] },
-        "calcado": { "comum": "Tênis de corrida", "raro": "Tênis com contador de passos que comemora sozinho", "chaveArte": "coach_de_bem_estar_calcado", "sugestao": true },
-        "adorno": { "comum": "Cartão do plano Bronze", "raro": "Cartão dourado do plano Ouro", "chaveArte": "coach_de_bem_estar_adorno", "sugestaoCampos": ["comum"] }
+        "cabeca": {
+          "comum": "Viseira",
+          "raro": "Viseira com crachá COACH QUÂNTICA CERTIFICADA",
+          "chaveArte": "coach_de_bem_estar_cabeca"
+        },
+        "peito": {
+          "comum": "Top de ginástica; legging",
+          "raro": "Top de ginástica com aura de nanobots rosa; legging com estampa de gráfico de performance",
+          "chaveArte": "coach_de_bem_estar_peito",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "arma": {
+          "comum": "Garrafa d'água gigante",
+          "raro": "Garrafa d'água gigante com infusor de nanobots",
+          "chaveArte": "coach_de_bem_estar_arma",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "calcado": {
+          "comum": "Tênis de corrida",
+          "raro": "Tênis com contador de passos que comemora sozinho",
+          "chaveArte": "coach_de_bem_estar_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Cartão do plano Bronze",
+          "raro": "Cartão dourado do plano Ouro",
+          "chaveArte": "coach_de_bem_estar_adorno",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "atendente_imortal": {
       "classe": "mascarado",
       "margem": "direita",
       "silhueta": "Headset e cadeira de escritório com rodinhas",
       "slots": {
-        "cabeca": { "comum": "Headset", "raro": "Headset com a luz EM ATENDIMENTO sempre acesa", "chaveArte": "atendente_imortal_cabeca", "sugestaoCampos": ["raro"] },
-        "peito": { "comum": "Camisa social com crachá", "raro": "Camisa social com escudo holográfico AGUARDE no braço", "chaveArte": "atendente_imortal_peito", "sugestaoCampos": ["comum"] },
-        "calca": { "comum": "Calça social de escritório", "raro": "Calça social com chaveiro de crachás vencidos", "chaveArte": "atendente_imortal_calca", "sugestao": true },
-        "arma": { "comum": "Escudo holográfico", "raro": "Escudo holográfico com barra de carregamento travada em 99%", "chaveArte": "atendente_imortal_arma" },
-        "calcado": { "comum": "Sapato social", "raro": "Cadeira de escritório com rodinhas em que ela anda", "chaveArte": "atendente_imortal_calcado", "sugestaoCampos": ["comum"] },
-        "adorno": { "comum": "Caneca de café", "raro": "Caneca MELHOR ATENDENTE DO MÊS — 2071", "chaveArte": "atendente_imortal_adorno", "sugestaoCampos": ["comum"] }
+        "cabeca": {
+          "comum": "Headset",
+          "raro": "Headset com a luz EM ATENDIMENTO sempre acesa",
+          "chaveArte": "atendente_imortal_cabeca",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "peito": {
+          "comum": "Camisa social com crachá; calça social de escritório",
+          "raro": "Camisa social com escudo holográfico AGUARDE no braço; calça social com chaveiro de crachás vencidos",
+          "chaveArte": "atendente_imortal_peito",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "arma": {
+          "comum": "Escudo holográfico",
+          "raro": "Escudo holográfico com barra de carregamento travada em 99%",
+          "chaveArte": "atendente_imortal_arma"
+        },
+        "calcado": {
+          "comum": "Sapato social",
+          "raro": "Cadeira de escritório com rodinhas em que ela anda",
+          "chaveArte": "atendente_imortal_calcado",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "adorno": {
+          "comum": "Caneca de café",
+          "raro": "Caneca MELHOR ATENDENTE DO MÊS — 2071",
+          "chaveArte": "atendente_imortal_adorno",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "hacker_da_aldeia": {
       "classe": "mascarado",
       "margem": "direita",
       "silhueta": "Moletom com grafismo da aldeia e fones",
       "slots": {
-        "cabeca": { "comum": "Fones", "raro": "Fones com antena de roteador", "chaveArte": "hacker_da_aldeia_cabeca", "sugestaoCampos": ["raro"] },
-        "peito": { "comum": "Moletom liso", "raro": "Moletom com grafismo da aldeia em pixel", "chaveArte": "hacker_da_aldeia_peito", "sugestaoCampos": ["comum"] },
-        "calca": { "comum": "Calça de moletom", "raro": "Calça de moletom com cabos de rede na cintura", "chaveArte": "hacker_da_aldeia_calca", "sugestao": true },
-        "arma": { "comum": "Notebook", "raro": "Notebook com adesivo FIBRA ÓTICA NA ALDEIA", "chaveArte": "hacker_da_aldeia_arma" },
-        "calcado": { "comum": "Chinelo de dedo", "raro": "Chinelo com LED verde de código subindo", "chaveArte": "hacker_da_aldeia_calcado", "sugestao": true },
-        "adorno": { "comum": "Roteador pendurado no ombro", "raro": "Rede de dormir com roteador pendurado", "chaveArte": "hacker_da_aldeia_adorno", "sugestaoCampos": ["comum"] }
+        "cabeca": {
+          "comum": "Fones",
+          "raro": "Fones com antena de roteador",
+          "chaveArte": "hacker_da_aldeia_cabeca",
+          "sugestaoCampos": [
+            "raro"
+          ]
+        },
+        "peito": {
+          "comum": "Moletom liso; calça de moletom",
+          "raro": "Moletom com grafismo da aldeia em pixel; calça de moletom com cabos de rede na cintura",
+          "chaveArte": "hacker_da_aldeia_peito",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "arma": {
+          "comum": "Notebook",
+          "raro": "Notebook com adesivo FIBRA ÓTICA NA ALDEIA",
+          "chaveArte": "hacker_da_aldeia_arma"
+        },
+        "calcado": {
+          "comum": "Chinelo de dedo",
+          "raro": "Chinelo com LED verde de código subindo",
+          "chaveArte": "hacker_da_aldeia_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Roteador pendurado no ombro",
+          "raro": "Rede de dormir com roteador pendurado",
+          "chaveArte": "hacker_da_aldeia_adorno",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        }
       },
-      "sugestaoCampos": ["silhueta"]
+      "sugestaoCampos": [
+        "silhueta"
+      ]
     },
     "idol": {
       "classe": "mascarado",
       "margem": "direita",
       "silhueta": "Franja e caixas de som",
       "slots": {
-        "cabeca": { "comum": "Cabelo pastel de franja perfeita", "raro": "Franja perfeita com microfone de headset", "chaveArte": "idol_cabeca" },
-        "peito": { "comum": "Jaqueta de ensaio", "raro": "Jaqueta brilhante", "chaveArte": "idol_peito", "sugestaoCampos": ["comum"] },
-        "calca": { "comum": "Calça de ensaio", "raro": "Calça brilhante de palco", "chaveArte": "idol_calca", "sugestaoCampos": ["comum"] },
-        "arma": { "comum": "Microfone de mão", "raro": "Microfone que solta ondas sonoras de coração", "chaveArte": "idol_arma", "sugestao": true },
-        "calcado": { "comum": "Tênis de dança", "raro": "Tênis de dança com luz que segue a coreografia", "chaveArte": "idol_calcado", "sugestao": true },
-        "adorno": { "comum": "Uma caixa de som voadora", "raro": "Caixas de som voadoras e bastões de luz de fãs-holograma", "chaveArte": "idol_adorno", "sugestaoCampos": ["comum"] }
+        "cabeca": {
+          "comum": "Cabelo pastel de franja perfeita",
+          "raro": "Franja perfeita com microfone de headset",
+          "chaveArte": "idol_cabeca"
+        },
+        "peito": {
+          "comum": "Jaqueta de ensaio; calça de ensaio",
+          "raro": "Jaqueta brilhante; calça brilhante de palco",
+          "chaveArte": "idol_peito",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        },
+        "arma": {
+          "comum": "Microfone de mão",
+          "raro": "Microfone que solta ondas sonoras de coração",
+          "chaveArte": "idol_arma",
+          "sugestao": true
+        },
+        "calcado": {
+          "comum": "Tênis de dança",
+          "raro": "Tênis de dança com luz que segue a coreografia",
+          "chaveArte": "idol_calcado",
+          "sugestao": true
+        },
+        "adorno": {
+          "comum": "Uma caixa de som voadora",
+          "raro": "Caixas de som voadoras e bastões de luz de fãs-holograma",
+          "chaveArte": "idol_adorno",
+          "sugestaoCampos": [
+            "comum"
+          ]
+        }
       }
     }
   },
@@ -508,173 +1611,2776 @@
     "name": "Benzimento",
     "margem": "esquerda",
     "comoGanha": "Itens da Esquerda crescem com benzimento, ganho com reputação e lições.",
-    "onde": ["casa_da_assembleia", "brigada_popular", "guarda_comunitaria", "escola_dos_saberes", "trupe_do_povo"],
-    "nivelMaxPorRaridade": { "comum": 3, "raro": 5, "unico": 5, "set": 5 },
+    "onde": [
+      "casa_da_assembleia",
+      "brigada_popular",
+      "guarda_comunitaria",
+      "escola_dos_saberes",
+      "trupe_do_povo"
+    ],
+    "nivelMaxPorRaridade": {
+      "comum": 3,
+      "raro": 5,
+      "unico": 5,
+      "set": 5
+    },
     "aceitaItensDoDelta": true,
     "niveis": [
-      { "nivel": 1, "bonusStatsPct": 8, "reputacaoMin": 50, "licoesMin": 1, "filaS": 30 },
-      { "nivel": 2, "bonusStatsPct": 16, "reputacaoMin": 150, "licoesMin": 3, "filaS": 60 },
-      { "nivel": 3, "bonusStatsPct": 24, "reputacaoMin": 400, "licoesMin": 6, "filaS": 180 },
-      { "nivel": 4, "bonusStatsPct": 32, "reputacaoMin": 800, "licoesMin": 10, "filaS": 600 },
-      { "nivel": 5, "bonusStatsPct": 40, "reputacaoMin": 1500, "licoesMin": 15, "filaS": 1800 }
+      {
+        "nivel": 1,
+        "bonusStatsPct": 8,
+        "reputacaoMin": 50,
+        "licoesMin": 1,
+        "filaS": 30
+      },
+      {
+        "nivel": 2,
+        "bonusStatsPct": 16,
+        "reputacaoMin": 150,
+        "licoesMin": 3,
+        "filaS": 60
+      },
+      {
+        "nivel": 3,
+        "bonusStatsPct": 24,
+        "reputacaoMin": 400,
+        "licoesMin": 6,
+        "filaS": 180
+      },
+      {
+        "nivel": 4,
+        "bonusStatsPct": 32,
+        "reputacaoMin": 800,
+        "licoesMin": 10,
+        "filaS": 600
+      },
+      {
+        "nivel": 5,
+        "bonusStatsPct": 40,
+        "reputacaoMin": 1500,
+        "licoesMin": 15,
+        "filaS": 1800
+      }
     ],
     "descricao": "Não custa moeda: a benzedeira olha a sua reputação na margem e as lições que você aprendeu nos Lugares que ensinam, e não gasta nenhuma das duas. É grátis e tem fila; o item continua usável enquanto espera.",
-    "sugestaoCampos": ["onde", "nivelMaxPorRaridade", "aceitaItensDoDelta", "niveis", "descricao"]
+    "sugestaoCampos": [
+      "onde",
+      "nivelMaxPorRaridade",
+      "aceitaItensDoDelta",
+      "niveis",
+      "descricao"
+    ]
   },
   "calibracao": {
     "id": "calibracao",
     "name": "Calibração",
     "margem": "direita",
     "comoGanha": "Itens da Direita crescem com calibração, paga em Crédito.",
-    "onde": ["torre_do_consorcio", "torcida_furia_neon", "pm_do_consorcio", "universidade_neon", "agencia_neon"],
-    "nivelMaxPorRaridade": { "comum": 3, "raro": 5, "unico": 5, "set": 5 },
+    "onde": [
+      "torre_do_consorcio",
+      "torcida_furia_neon",
+      "pm_do_consorcio",
+      "universidade_neon",
+      "agencia_neon"
+    ],
+    "nivelMaxPorRaridade": {
+      "comum": 3,
+      "raro": 5,
+      "unico": 5,
+      "set": 5
+    },
     "aceitaItensDoDelta": true,
     "niveis": [
-      { "nivel": 1, "bonusStatsPct": 8, "custoCredito": 50 },
-      { "nivel": 2, "bonusStatsPct": 16, "custoCredito": 100 },
-      { "nivel": 3, "bonusStatsPct": 24, "custoCredito": 200 },
-      { "nivel": 4, "bonusStatsPct": 32, "custoCredito": 400 },
-      { "nivel": 5, "bonusStatsPct": 40, "custoCredito": 800 }
+      {
+        "nivel": 1,
+        "bonusStatsPct": 8,
+        "custoCredito": 50
+      },
+      {
+        "nivel": 2,
+        "bonusStatsPct": 16,
+        "custoCredito": 100
+      },
+      {
+        "nivel": 3,
+        "bonusStatsPct": 24,
+        "custoCredito": 200
+      },
+      {
+        "nivel": 4,
+        "bonusStatsPct": 32,
+        "custoCredito": 400
+      },
+      {
+        "nivel": 5,
+        "bonusStatsPct": 40,
+        "custoCredito": 800
+      }
     ],
     "descricao": "Paga em Crédito e sai na hora, sem fila. Taxa de conveniência inclusa e não reembolsável. Na região em apagão, o item calibrado perde força junto com o resto da Direita.",
-    "sugestaoCampos": ["onde", "nivelMaxPorRaridade", "aceitaItensDoDelta", "niveis", "descricao"]
+    "sugestaoCampos": [
+      "onde",
+      "nivelMaxPorRaridade",
+      "aceitaItensDoDelta",
+      "niveis",
+      "descricao"
+    ]
   },
   "itens": [
-    { "id": "cabeca_combatente_esquerda_comum", "name": "Boina de Couro Cru", "slot": "cabeca", "rarity": "comum", "classLock": "combatente", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 5 }, { "stat": "ccResist", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "cabeca_combatente_esquerda_raro", "name": "Boina de Couro Costurada na Roda", "slot": "cabeca", "rarity": "raro", "classLock": "combatente", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "peito_combatente_esquerda_comum", "name": "Colete de Couro de Galpão", "slot": "peito", "rarity": "comum", "classLock": "combatente", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 6 }, { "stat": "defense", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "peito_combatente_esquerda_raro", "name": "Colete de Couro com Placas de Ferro", "slot": "peito", "rarity": "raro", "classLock": "combatente", "margem": "esquerda", "material": "ferro", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "calca_combatente_esquerda_comum", "name": "Calça de Couro Remendada", "slot": "calca", "rarity": "comum", "classLock": "combatente", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 3 }, { "stat": "resourceMax", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "calca_combatente_esquerda_raro", "name": "Calça de Couro com Joelheira de Ferro", "slot": "calca", "rarity": "raro", "classLock": "combatente", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "arma_combatente_esquerda_comum", "name": "Manopla de Ferro Velho", "slot": "arma", "rarity": "comum", "classLock": "combatente", "margem": "esquerda", "material": "ferro", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 6 }], "tipoAtaque": "impacto", "ataqueBasico": "basico_combatente", "precoBase": 40, "sugestao": true },
-    { "id": "arma_combatente_esquerda_raro", "name": "Manopla de Ferro Forjada no Mutirão", "slot": "arma", "rarity": "raro", "classLock": "combatente", "margem": "esquerda", "material": "ferro", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 8 }], "tipoAtaque": "impacto", "ataqueBasico": "basico_combatente", "precoBase": 160, "sugestao": true },
-    { "id": "calcado_combatente_esquerda_comum", "name": "Botina de Couro", "slot": "calcado", "rarity": "comum", "classLock": "combatente", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 3 }, { "stat": "cooldownSpeed", "pct": 3 }, { "stat": "moveSpeed", "pct": 4 }], "precoBase": 40, "sugestao": true },
-    { "id": "calcado_combatente_esquerda_raro", "name": "Botina de Couro com Biqueira de Ferro", "slot": "calcado", "rarity": "raro", "classLock": "combatente", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "precoBase": 160, "sugestao": true },
-    { "id": "adorno_combatente_esquerda_comum", "name": "Amuleto de Palha Trançada", "slot": "adorno", "rarity": "comum", "classLock": "combatente", "margem": "esquerda", "material": "palha", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_derrotar", "efeitos": [{ "kind": "cura", "pctVidaMax": 3, "target": "self" }] }, "efeitoTexto": "Ao derrotar um inimigo, cura 3% da vida.", "precoBase": 40, "sugestao": true },
-    { "id": "adorno_combatente_esquerda_raro", "name": "Amuleto de Palha com Semente Viva", "slot": "adorno", "rarity": "raro", "classLock": "combatente", "margem": "esquerda", "material": "palha", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_derrotar", "efeitos": [{ "kind": "cura", "pctVidaMax": 5, "target": "self" }] }, "efeitoTexto": "Ao derrotar um inimigo, cura 5% da vida.", "precoBase": 160, "sugestao": true },
-
-    { "id": "cabeca_combatente_direita_comum", "name": "Viseira Hidráulica", "slot": "cabeca", "rarity": "comum", "classLock": "combatente", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 5 }, { "stat": "ccResist", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "cabeca_combatente_direita_raro", "name": "Viseira Hidráulica com Placar ao Vivo", "slot": "cabeca", "rarity": "raro", "classLock": "combatente", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "peito_combatente_direita_comum", "name": "Peitoral de Pistão", "slot": "peito", "rarity": "comum", "classLock": "combatente", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 6 }, { "stat": "defense", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "peito_combatente_direita_raro", "name": "Peitoral de Pistão Cromado", "slot": "peito", "rarity": "raro", "classLock": "combatente", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "calca_combatente_direita_comum", "name": "Calça com Amortecedor", "slot": "calca", "rarity": "comum", "classLock": "combatente", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 3 }, { "stat": "resourceMax", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "calca_combatente_direita_raro", "name": "Calça com Amortecedor Turbo", "slot": "calca", "rarity": "raro", "classLock": "combatente", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "arma_combatente_direita_comum", "name": "Manopla Hidráulica", "slot": "arma", "rarity": "comum", "classLock": "combatente", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 6 }], "tipoAtaque": "impacto", "ataqueBasico": "basico_combatente", "precoBase": 40, "sugestao": true },
-    { "id": "arma_combatente_direita_raro", "name": "Manopla Hidráulica de Dupla Pressão", "slot": "arma", "rarity": "raro", "classLock": "combatente", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 8 }], "tipoAtaque": "impacto", "ataqueBasico": "basico_combatente", "precoBase": 160, "sugestao": true },
-    { "id": "calcado_combatente_direita_comum", "name": "Tênis de Mola", "slot": "calcado", "rarity": "comum", "classLock": "combatente", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 3 }, { "stat": "cooldownSpeed", "pct": 3 }, { "stat": "moveSpeed", "pct": 4 }], "precoBase": 40, "sugestaoCampos": ["stats", "precoBase", "nivelMin"] },
-    { "id": "calcado_combatente_direita_raro", "name": "Tênis de Mola Edição de Final de Campeonato", "slot": "calcado", "rarity": "raro", "classLock": "combatente", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "precoBase": 160, "sugestao": true },
-    { "id": "adorno_combatente_direita_comum", "name": "Chip de Grito de Torcida", "slot": "adorno", "rarity": "comum", "classLock": "combatente", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_derrotar", "efeitos": [{ "kind": "cura", "pctVidaMax": 3, "target": "self" }] }, "efeitoTexto": "Ao derrotar um inimigo, cura 3% da vida.", "precoBase": 40, "sugestao": true },
-    { "id": "adorno_combatente_direita_raro", "name": "Chip de Grito com Patrocínio Master", "slot": "adorno", "rarity": "raro", "classLock": "combatente", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_derrotar", "efeitos": [{ "kind": "cura", "pctVidaMax": 5, "target": "self" }] }, "efeitoTexto": "Ao derrotar um inimigo, cura 5% da vida.", "precoBase": 160, "sugestao": true },
-
-    { "id": "cabeca_atirador_esquerda_comum", "name": "Chapéu de Palha do Vigia", "slot": "cabeca", "rarity": "comum", "classLock": "atirador", "margem": "esquerda", "material": "palha", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 5 }, { "stat": "ccResist", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "cabeca_atirador_esquerda_raro", "name": "Chapéu de Palha com Aba de Couro", "slot": "cabeca", "rarity": "raro", "classLock": "atirador", "margem": "esquerda", "material": "palha", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "peito_atirador_esquerda_comum", "name": "Colete de Couro da Ronda", "slot": "peito", "rarity": "comum", "classLock": "atirador", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 6 }, { "stat": "defense", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "peito_atirador_esquerda_raro", "name": "Colete de Couro com Placas de Ferro Batido", "slot": "peito", "rarity": "raro", "classLock": "atirador", "margem": "esquerda", "material": "ferro", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "calca_atirador_esquerda_comum", "name": "Calça de Couro com Bolso de Munição", "slot": "calca", "rarity": "comum", "classLock": "atirador", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 3 }, { "stat": "resourceMax", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "calca_atirador_esquerda_raro", "name": "Calça de Couro com Cartucheira Dupla", "slot": "calca", "rarity": "raro", "classLock": "atirador", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "arma_atirador_esquerda_comum", "name": "Espingarda Velha de Madeira", "slot": "arma", "rarity": "comum", "classLock": "atirador", "margem": "esquerda", "material": "madeira", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 6 }], "tipoAtaque": "perfurante", "ataqueBasico": "basico_atirador", "precoBase": 40, "sugestao": true },
-    { "id": "arma_atirador_esquerda_raro", "name": "Espingarda de Cano Duplo de Ferro", "slot": "arma", "rarity": "raro", "classLock": "atirador", "margem": "esquerda", "material": "ferro", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 8 }], "tipoAtaque": "perfurante", "ataqueBasico": "basico_atirador", "precoBase": 160, "sugestao": true },
-    { "id": "calcado_atirador_esquerda_comum", "name": "Chinelo de Couro de Ronda", "slot": "calcado", "rarity": "comum", "classLock": "atirador", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 3 }, { "stat": "cooldownSpeed", "pct": 3 }, { "stat": "moveSpeed", "pct": 4 }], "precoBase": 40, "sugestao": true },
-    { "id": "calcado_atirador_esquerda_raro", "name": "Bota de Couro de Ronda Longa", "slot": "calcado", "rarity": "raro", "classLock": "atirador", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "precoBase": 160, "sugestao": true },
-    { "id": "adorno_atirador_esquerda_comum", "name": "Apito de Madeira", "slot": "adorno", "rarity": "comum", "classLock": "atirador", "margem": "esquerda", "material": "madeira", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_critar", "efeitos": [{ "kind": "recurso", "pct": 3, "target": "self" }] }, "efeitoTexto": "Cada crítico devolve 3% da Munição.", "precoBase": 40, "sugestao": true },
-    { "id": "adorno_atirador_esquerda_raro", "name": "Apito de Madeira Entalhado com Olho", "slot": "adorno", "rarity": "raro", "classLock": "atirador", "margem": "esquerda", "material": "madeira", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_critar", "efeitos": [{ "kind": "recurso", "pct": 5, "target": "self" }] }, "efeitoTexto": "Cada crítico devolve 5% da Munição.", "precoBase": 160, "sugestao": true },
-
-    { "id": "cabeca_atirador_direita_comum", "name": "Capacete com Câmera Corporal", "slot": "cabeca", "rarity": "comum", "classLock": "atirador", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 5 }, { "stat": "ccResist", "pct": 5 }], "precoBase": 40, "descricao": "A luz da câmera está sempre apagada.", "sugestao": true },
-    { "id": "cabeca_atirador_direita_raro", "name": "Capacete Tático com Mira Assistida", "slot": "cabeca", "rarity": "raro", "classLock": "atirador", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "peito_atirador_direita_comum", "name": "Colete Premium com QR Code", "slot": "peito", "rarity": "comum", "classLock": "atirador", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 6 }, { "stat": "defense", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "peito_atirador_direita_raro", "name": "Colete Antibalas Plano Prata", "slot": "peito", "rarity": "raro", "classLock": "atirador", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "calca_atirador_direita_comum", "name": "Calça Tática com Carregador", "slot": "calca", "rarity": "comum", "classLock": "atirador", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 3 }, { "stat": "resourceMax", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "calca_atirador_direita_raro", "name": "Calça Tática com Carregador Inteligente", "slot": "calca", "rarity": "raro", "classLock": "atirador", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "arma_atirador_direita_comum", "name": "Revólver Inteligente", "slot": "arma", "rarity": "comum", "classLock": "atirador", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 6 }], "tipoAtaque": "perfurante", "ataqueBasico": "basico_atirador", "precoBase": 40, "sugestaoCampos": ["stats", "precoBase", "nivelMin"] },
-    { "id": "arma_atirador_direita_raro", "name": "Escopeta Inteligente com Assinatura", "slot": "arma", "rarity": "raro", "classLock": "atirador", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 8 }], "tipoAtaque": "perfurante", "ataqueBasico": "basico_atirador", "precoBase": 160, "sugestao": true },
-    { "id": "calcado_atirador_direita_comum", "name": "Coturno com Amortecedor", "slot": "calcado", "rarity": "comum", "classLock": "atirador", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 3 }, { "stat": "cooldownSpeed", "pct": 3 }, { "stat": "moveSpeed", "pct": 4 }], "precoBase": 40, "sugestao": true },
-    { "id": "calcado_atirador_direita_raro", "name": "Coturno com Propulsor de Perseguição", "slot": "calcado", "rarity": "raro", "classLock": "atirador", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "precoBase": 160, "sugestao": true },
-    { "id": "adorno_atirador_direita_comum", "name": "Drone de Ombro", "slot": "adorno", "rarity": "comum", "classLock": "atirador", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_critar", "efeitos": [{ "kind": "recurso", "pct": 3, "target": "self" }] }, "efeitoTexto": "Cada crítico devolve 3% da Munição.", "precoBase": 40, "sugestao": true },
-    { "id": "adorno_atirador_direita_raro", "name": "Drone de Ombro com Zoom Pago", "slot": "adorno", "rarity": "raro", "classLock": "atirador", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_critar", "efeitos": [{ "kind": "recurso", "pct": 5, "target": "self" }] }, "efeitoTexto": "Cada crítico devolve 5% da Munição.", "precoBase": 160, "sugestao": true },
-
-    { "id": "cabeca_elemental_esquerda_comum", "name": "Coroa de Palha Trançada", "slot": "cabeca", "rarity": "comum", "classLock": "elemental", "margem": "esquerda", "material": "palha", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 5 }, { "stat": "ccResist", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "cabeca_elemental_esquerda_raro", "name": "Coroa de Palha com Flor Desperta", "slot": "cabeca", "rarity": "raro", "classLock": "elemental", "margem": "esquerda", "material": "palha", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "peito_elemental_esquerda_comum", "name": "Túnica de Estopa", "slot": "peito", "rarity": "comum", "classLock": "elemental", "margem": "esquerda", "material": "palha", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 6 }, { "stat": "defense", "pct": 5 }], "precoBase": 40, "sugestaoCampos": ["material", "stats", "precoBase", "nivelMin"] },
-    { "id": "peito_elemental_esquerda_raro", "name": "Túnica de Estopa Bordada com Raiz", "slot": "peito", "rarity": "raro", "classLock": "elemental", "margem": "esquerda", "material": "palha", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "calca_elemental_esquerda_comum", "name": "Calça de Couro Macio do Aprendiz", "slot": "calca", "rarity": "comum", "classLock": "elemental", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 3 }, { "stat": "resourceMax", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "calca_elemental_esquerda_raro", "name": "Calça de Couro com Bolsos de Semente", "slot": "calca", "rarity": "raro", "classLock": "elemental", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "arma_elemental_esquerda_comum", "name": "Cajado de Madeira", "slot": "arma", "rarity": "comum", "classLock": "elemental", "margem": "esquerda", "material": "madeira", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 6 }], "tipoAtaque": "energia", "ataqueBasico": "basico_elemental", "precoBase": 40, "sugestao": true },
-    { "id": "arma_elemental_esquerda_raro", "name": "Cajado de Madeira de Figueira", "slot": "arma", "rarity": "raro", "classLock": "elemental", "margem": "esquerda", "material": "madeira", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 8 }], "tipoAtaque": "energia", "ataqueBasico": "basico_elemental", "precoBase": 160, "sugestao": true },
-    { "id": "calcado_elemental_esquerda_comum", "name": "Sandália de Couro", "slot": "calcado", "rarity": "comum", "classLock": "elemental", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 3 }, { "stat": "cooldownSpeed", "pct": 3 }, { "stat": "moveSpeed", "pct": 4 }], "precoBase": 40, "sugestao": true },
-    { "id": "calcado_elemental_esquerda_raro", "name": "Sandália de Couro com Sola de Casca", "slot": "calcado", "rarity": "raro", "classLock": "elemental", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "precoBase": 160, "sugestao": true },
-    { "id": "adorno_elemental_esquerda_comum", "name": "Pingente de Madeira", "slot": "adorno", "rarity": "comum", "classLock": "elemental", "margem": "esquerda", "material": "madeira", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_usar_habilidade", "recargaS": 10, "efeitos": [{ "kind": "escudo", "pctVidaMax": 4, "duracaoMs": 3000, "target": "self" }] }, "efeitoTexto": "Ao usar uma habilidade, ganha escudo de 4% da vida por 3 s; recarga de 10 s.", "precoBase": 40, "sugestao": true },
-    { "id": "adorno_elemental_esquerda_raro", "name": "Pingente de Madeira com Chopindita Crua", "slot": "adorno", "rarity": "raro", "classLock": "elemental", "margem": "esquerda", "material": "madeira", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_usar_habilidade", "recargaS": 10, "efeitos": [{ "kind": "escudo", "pctVidaMax": 6, "duracaoMs": 3000, "target": "self" }] }, "efeitoTexto": "Ao usar uma habilidade, ganha escudo de 6% da vida por 3 s; recarga de 10 s.", "precoBase": 160, "sugestao": true },
-
-    { "id": "cabeca_elemental_direita_comum", "name": "Óculos de Laboratório", "slot": "cabeca", "rarity": "comum", "classLock": "elemental", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 5 }, { "stat": "ccResist", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "cabeca_elemental_direita_raro", "name": "Óculos de Laboratório com Realidade Aumentada", "slot": "cabeca", "rarity": "raro", "classLock": "elemental", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "peito_elemental_direita_comum", "name": "Jaleco Antiestático", "slot": "peito", "rarity": "comum", "classLock": "elemental", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 6 }, { "stat": "defense", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "peito_elemental_direita_raro", "name": "Jaleco Antiestático com Patente Pendente", "slot": "peito", "rarity": "raro", "classLock": "elemental", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "calca_elemental_direita_comum", "name": "Calça com Bateria de Bolso", "slot": "calca", "rarity": "comum", "classLock": "elemental", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 3 }, { "stat": "resourceMax", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "calca_elemental_direita_raro", "name": "Calça com Bateria de Bolso Dupla", "slot": "calca", "rarity": "raro", "classLock": "elemental", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "arma_elemental_direita_comum", "name": "Bobina de Mão", "slot": "arma", "rarity": "comum", "classLock": "elemental", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 6 }], "tipoAtaque": "energia", "ataqueBasico": "basico_elemental", "precoBase": 40, "sugestao": true },
-    { "id": "arma_elemental_direita_raro", "name": "Bobina de Mão Sem Certificação", "slot": "arma", "rarity": "raro", "classLock": "elemental", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 8 }], "tipoAtaque": "energia", "ataqueBasico": "basico_elemental", "precoBase": 160, "sugestao": true },
-    { "id": "calcado_elemental_direita_comum", "name": "Tênis Condutor", "slot": "calcado", "rarity": "comum", "classLock": "elemental", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 3 }, { "stat": "cooldownSpeed", "pct": 3 }, { "stat": "moveSpeed", "pct": 4 }], "precoBase": 40, "sugestao": true },
-    { "id": "calcado_elemental_direita_raro", "name": "Tênis Condutor com Aterramento Opcional", "slot": "calcado", "rarity": "raro", "classLock": "elemental", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "precoBase": 160, "sugestao": true },
-    { "id": "adorno_elemental_direita_comum", "name": "Pendrive de Fórmulas", "slot": "adorno", "rarity": "comum", "classLock": "elemental", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_usar_habilidade", "recargaS": 10, "efeitos": [{ "kind": "escudo", "pctVidaMax": 4, "duracaoMs": 3000, "target": "self" }] }, "efeitoTexto": "Ao usar uma habilidade, ganha escudo de 4% da vida por 3 s; recarga de 10 s.", "precoBase": 40, "sugestao": true },
-    { "id": "adorno_elemental_direita_raro", "name": "Pendrive de Fórmulas Patenteadas", "slot": "adorno", "rarity": "raro", "classLock": "elemental", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_usar_habilidade", "recargaS": 10, "efeitos": [{ "kind": "escudo", "pctVidaMax": 6, "duracaoMs": 3000, "target": "self" }] }, "efeitoTexto": "Ao usar uma habilidade, ganha escudo de 6% da vida por 3 s; recarga de 10 s.", "precoBase": 160, "sugestao": true },
-
-    { "id": "cabeca_mascarado_esquerda_comum", "name": "Máscara de Madeira Pintada", "slot": "cabeca", "rarity": "comum", "classLock": "mascarado", "margem": "esquerda", "material": "madeira", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 5 }, { "stat": "ccResist", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "cabeca_mascarado_esquerda_raro", "name": "Máscara de Madeira com Espírito Cochilando", "slot": "cabeca", "rarity": "raro", "classLock": "mascarado", "margem": "esquerda", "material": "madeira", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "peito_mascarado_esquerda_comum", "name": "Gibão de Couro de Palco", "slot": "peito", "rarity": "comum", "classLock": "mascarado", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 6 }, { "stat": "defense", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "peito_mascarado_esquerda_raro", "name": "Gibão de Couro com Franja Dourada", "slot": "peito", "rarity": "raro", "classLock": "mascarado", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "calca_mascarado_esquerda_comum", "name": "Calça de Couro de Ensaio", "slot": "calca", "rarity": "comum", "classLock": "mascarado", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 3 }, { "stat": "resourceMax", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "calca_mascarado_esquerda_raro", "name": "Calça de Couro de Estreia", "slot": "calca", "rarity": "raro", "classLock": "mascarado", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "arma_mascarado_esquerda_comum", "name": "Leque de Madeira", "slot": "arma", "rarity": "comum", "classLock": "mascarado", "margem": "esquerda", "material": "madeira", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 6 }], "tipoAtaque": "espirito", "ataqueBasico": "basico_mascarado", "precoBase": 40, "sugestao": true },
-    { "id": "arma_mascarado_esquerda_raro", "name": "Leque de Madeira com Varetas de Ferro", "slot": "arma", "rarity": "raro", "classLock": "mascarado", "margem": "esquerda", "material": "ferro", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 8 }], "tipoAtaque": "espirito", "ataqueBasico": "basico_mascarado", "precoBase": 160, "sugestao": true },
-    { "id": "calcado_mascarado_esquerda_comum", "name": "Sapatilha de Couro", "slot": "calcado", "rarity": "comum", "classLock": "mascarado", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 3 }, { "stat": "cooldownSpeed", "pct": 3 }, { "stat": "moveSpeed", "pct": 4 }], "precoBase": 40, "sugestao": true },
-    { "id": "calcado_mascarado_esquerda_raro", "name": "Sapatilha de Couro Bicolor", "slot": "calcado", "rarity": "raro", "classLock": "mascarado", "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "precoBase": 160, "sugestao": true },
-    { "id": "adorno_mascarado_esquerda_comum", "name": "Fita de Palha da Sorte", "slot": "adorno", "rarity": "comum", "classLock": "mascarado", "margem": "esquerda", "material": "palha", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_aplicar_controle", "recargaS": 6, "efeitos": [{ "kind": "reforco", "stat": "damage", "pct": 8, "duracaoMs": 4000, "target": "self" }] }, "efeitoTexto": "Ao aplicar um controle, +8% de dano por 4 s; recarga de 6 s.", "precoBase": 40, "sugestao": true },
-    { "id": "adorno_mascarado_esquerda_raro", "name": "Fita de Palha com Guizo de Ferro", "slot": "adorno", "rarity": "raro", "classLock": "mascarado", "margem": "esquerda", "material": "palha", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_aplicar_controle", "recargaS": 6, "efeitos": [{ "kind": "reforco", "stat": "damage", "pct": 12, "duracaoMs": 4000, "target": "self" }] }, "efeitoTexto": "Ao aplicar um controle, +12% de dano por 4 s; recarga de 6 s.", "precoBase": 160, "sugestao": true },
-
-    { "id": "cabeca_mascarado_direita_comum", "name": "Headset de Atendimento", "slot": "cabeca", "rarity": "comum", "classLock": "mascarado", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 5 }, { "stat": "ccResist", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "cabeca_mascarado_direita_raro", "name": "Headset com Cancelamento de Cliente", "slot": "cabeca", "rarity": "raro", "classLock": "mascarado", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "peito_mascarado_direita_comum", "name": "Jaqueta de Holograma", "slot": "peito", "rarity": "comum", "classLock": "mascarado", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 6 }, { "stat": "defense", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "peito_mascarado_direita_raro", "name": "Jaqueta de Holograma com Brilho Premium", "slot": "peito", "rarity": "raro", "classLock": "mascarado", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "calca_mascarado_direita_comum", "name": "Calça de LED", "slot": "calca", "rarity": "comum", "classLock": "mascarado", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 3 }, { "stat": "resourceMax", "pct": 5 }], "precoBase": 40, "sugestao": true },
-    { "id": "calca_mascarado_direita_raro", "name": "Calça de LED com Pulso de Engajamento", "slot": "calca", "rarity": "raro", "classLock": "mascarado", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }], "precoBase": 160, "sugestao": true },
-    { "id": "arma_mascarado_direita_comum", "name": "Microfone de Holograma", "slot": "arma", "rarity": "comum", "classLock": "mascarado", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 6 }], "tipoAtaque": "espirito", "ataqueBasico": "basico_mascarado", "precoBase": 40, "sugestao": true },
-    { "id": "arma_mascarado_direita_raro", "name": "Microfone de Holograma com Autotune", "slot": "arma", "rarity": "raro", "classLock": "mascarado", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "damage", "pct": 8 }], "tipoAtaque": "espirito", "ataqueBasico": "basico_mascarado", "precoBase": 160, "sugestao": true },
-    { "id": "calcado_mascarado_direita_comum", "name": "Tênis de Palco", "slot": "calcado", "rarity": "comum", "classLock": "mascarado", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 3 }, { "stat": "cooldownSpeed", "pct": 3 }, { "stat": "moveSpeed", "pct": 4 }], "precoBase": 40, "sugestao": true },
-    { "id": "calcado_mascarado_direita_raro", "name": "Tênis de Palco com Luz de Contrato", "slot": "calcado", "rarity": "raro", "classLock": "mascarado", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "precoBase": 160, "sugestao": true },
-    { "id": "adorno_mascarado_direita_comum", "name": "Ring Light de Ombro", "slot": "adorno", "rarity": "comum", "classLock": "mascarado", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_aplicar_controle", "recargaS": 6, "efeitos": [{ "kind": "reforco", "stat": "damage", "pct": 8, "duracaoMs": 4000, "target": "self" }] }, "efeitoTexto": "Ao aplicar um controle, +8% de dano por 4 s; recarga de 6 s.", "precoBase": 40, "sugestaoCampos": ["efeito", "efeitoTexto", "precoBase", "nivelMin"] },
-    { "id": "adorno_mascarado_direita_raro", "name": "Ring Light de Ombro com Filtro Pago", "slot": "adorno", "rarity": "raro", "classLock": "mascarado", "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "ao_aplicar_controle", "recargaS": 6, "efeitos": [{ "kind": "reforco", "stat": "damage", "pct": 12, "duracaoMs": 4000, "target": "self" }] }, "efeitoTexto": "Ao aplicar um controle, +12% de dano por 4 s; recarga de 6 s.", "precoBase": 160, "sugestao": true },
-
-    { "id": "cabeca_geral_esquerda_comum", "name": "Chapéu de Palha do Povo", "slot": "cabeca", "rarity": "comum", "classLock": null, "margem": "esquerda", "material": "palha", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 5 }, { "stat": "ccResist", "pct": 5 }], "precoBase": 35, "sugestao": true },
-    { "id": "cabeca_geral_esquerda_raro", "name": "Chapéu de Palha da Feira Grande", "slot": "cabeca", "rarity": "raro", "classLock": null, "margem": "esquerda", "material": "palha", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }], "precoBase": 140, "sugestao": true },
-    { "id": "peito_geral_esquerda_comum", "name": "Camisa de Couro de Mutirão", "slot": "peito", "rarity": "comum", "classLock": null, "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 6 }, { "stat": "defense", "pct": 5 }], "precoBase": 35, "sugestao": true },
-    { "id": "peito_geral_esquerda_raro", "name": "Camisa de Couro com Remendo de Ferro", "slot": "peito", "rarity": "raro", "classLock": null, "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "precoBase": 140, "sugestao": true },
-    { "id": "calca_geral_esquerda_comum", "name": "Calça de Couro de Feira", "slot": "calca", "rarity": "comum", "classLock": null, "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 3 }, { "stat": "resourceMax", "pct": 5 }], "precoBase": 35, "sugestao": true },
-    { "id": "calca_geral_esquerda_raro", "name": "Calça de Couro de Mutirão Dobrado", "slot": "calca", "rarity": "raro", "classLock": null, "margem": "esquerda", "material": "couro", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }], "precoBase": 140, "sugestao": true },
-    { "id": "calcado_geral_esquerda_comum", "name": "Alpargata de Palha", "slot": "calcado", "rarity": "comum", "classLock": null, "margem": "esquerda", "material": "palha", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 3 }, { "stat": "cooldownSpeed", "pct": 3 }, { "stat": "moveSpeed", "pct": 4 }], "precoBase": 35, "sugestao": true },
-    { "id": "calcado_geral_esquerda_raro", "name": "Alpargata de Palha com Sola de Couro", "slot": "calcado", "rarity": "raro", "classLock": null, "margem": "esquerda", "material": "palha", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "precoBase": 140, "sugestao": true },
-    { "id": "adorno_geral_esquerda_comum", "name": "Patuá de Madeira", "slot": "adorno", "rarity": "comum", "classLock": null, "margem": "esquerda", "material": "madeira", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "pouca_vida", "limiarPct": 30, "recargaS": 30, "efeitos": [{ "kind": "escudo", "pctVidaMax": 8, "duracaoMs": 3000, "target": "self" }] }, "efeitoTexto": "Ao cair abaixo de 30% de vida, escudo de 8% da vida por 3 s; recarga de 30 s.", "precoBase": 35, "sugestao": true },
-    { "id": "adorno_geral_esquerda_raro", "name": "Patuá de Madeira com Erva da Curandeira", "slot": "adorno", "rarity": "raro", "classLock": null, "margem": "esquerda", "material": "madeira", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "pouca_vida", "limiarPct": 30, "recargaS": 30, "efeitos": [{ "kind": "escudo", "pctVidaMax": 12, "duracaoMs": 3000, "target": "self" }] }, "efeitoTexto": "Ao cair abaixo de 30% de vida, escudo de 12% da vida por 3 s; recarga de 30 s.", "precoBase": 140, "sugestao": true },
-
-    { "id": "cabeca_geral_direita_comum", "name": "Boné de Assinatura", "slot": "cabeca", "rarity": "comum", "classLock": null, "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 5 }, { "stat": "ccResist", "pct": 5 }], "precoBase": 35, "descricao": "Renova sozinho todo ciclo. Ninguém sabe cancelar.", "sugestao": true },
-    { "id": "cabeca_geral_direita_raro", "name": "Boné de Assinatura Plano Ouro", "slot": "cabeca", "rarity": "raro", "classLock": null, "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "accuracy", "pct": 6 }, { "stat": "ccResist", "pct": 6 }], "precoBase": 140, "sugestao": true },
-    { "id": "peito_geral_direita_comum", "name": "Camiseta Inteligente", "slot": "peito", "rarity": "comum", "classLock": null, "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 6 }, { "stat": "defense", "pct": 5 }], "precoBase": 35, "sugestao": true },
-    { "id": "peito_geral_direita_raro", "name": "Camiseta Inteligente com Termostato", "slot": "peito", "rarity": "raro", "classLock": null, "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "hp", "pct": 8 }, { "stat": "defense", "pct": 6 }], "precoBase": 140, "sugestao": true },
-    { "id": "calca_geral_direita_comum", "name": "Calça de Aplicativo", "slot": "calca", "rarity": "comum", "classLock": null, "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 3 }, { "stat": "resourceMax", "pct": 5 }], "precoBase": 35, "sugestao": true },
-    { "id": "calca_geral_direita_raro", "name": "Calça de Aplicativo Sem Anúncio", "slot": "calca", "rarity": "raro", "classLock": null, "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "evasion", "pct": 4 }, { "stat": "resourceMax", "pct": 6 }], "precoBase": 140, "sugestao": true },
-    { "id": "calcado_geral_direita_comum", "name": "Tênis de Entrega", "slot": "calcado", "rarity": "comum", "classLock": null, "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 3 }, { "stat": "cooldownSpeed", "pct": 3 }, { "stat": "moveSpeed", "pct": 4 }], "precoBase": 35, "sugestao": true },
-    { "id": "calcado_geral_direita_raro", "name": "Tênis de Entrega com Bônus de Meta", "slot": "calcado", "rarity": "raro", "classLock": null, "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [{ "stat": "attackSpeed", "pct": 4 }, { "stat": "cooldownSpeed", "pct": 4 }, { "stat": "moveSpeed", "pct": 5 }], "precoBase": 140, "sugestao": true },
-    { "id": "adorno_geral_direita_comum", "name": "Pulseira de Score", "slot": "adorno", "rarity": "comum", "classLock": null, "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "pouca_vida", "limiarPct": 30, "recargaS": 30, "efeitos": [{ "kind": "escudo", "pctVidaMax": 8, "duracaoMs": 3000, "target": "self" }] }, "efeitoTexto": "Ao cair abaixo de 30% de vida, escudo de 8% da vida por 3 s; recarga de 30 s.", "precoBase": 35, "sugestao": true },
-    { "id": "adorno_geral_direita_raro", "name": "Pulseira de Score Dourada", "slot": "adorno", "rarity": "raro", "classLock": null, "margem": "direita", "material": "alta_tecnologia", "nivelMin": 8, "stats": [], "efeito": { "kind": "gatilho", "trigger": "pouca_vida", "limiarPct": 30, "recargaS": 30, "efeitos": [{ "kind": "escudo", "pctVidaMax": 12, "duracaoMs": 3000, "target": "self" }] }, "efeitoTexto": "Ao cair abaixo de 30% de vida, escudo de 12% da vida por 3 s; recarga de 30 s.", "precoBase": 140, "sugestao": true },
-
-    { "id": "cabeca_geral_delta_comum", "name": "Chapéu de Palha Furado", "slot": "cabeca", "rarity": "comum", "classLock": null, "margem": null, "material": "palha", "nivelMin": 1, "stats": [{ "stat": "accuracy", "pct": 3 }, { "stat": "ccResist", "pct": 3 }], "precoBase": 20, "sugestao": true },
-    { "id": "cabeca_geral_delta_raro", "name": "Chapéu de Palha Furado Remendado pelo Seu Jacó", "slot": "cabeca", "rarity": "raro", "classLock": null, "margem": null, "material": "palha", "nivelMin": 3, "stats": [{ "stat": "accuracy", "pct": 3 }, { "stat": "ccResist", "pct": 3 }], "precoBase": 80, "sugestao": true },
-    { "id": "peito_geral_delta_comum", "name": "Camiseta “Lembrança do Delta”", "slot": "peito", "rarity": "comum", "classLock": null, "margem": null, "material": null, "nivelMin": 1, "stats": [{ "stat": "hp", "pct": 3 }, { "stat": "defense", "pct": 3 }], "precoBase": 20, "descricao": "Roupa inicial do Delta, em 6 cores.", "sugestaoCampos": ["stats", "precoBase"] },
-    { "id": "peito_geral_delta_raro", "name": "Camiseta “Lembrança do Delta” Autografada", "slot": "peito", "rarity": "raro", "classLock": null, "margem": null, "material": null, "nivelMin": 3, "stats": [{ "stat": "hp", "pct": 4 }, { "stat": "defense", "pct": 3 }], "precoBase": 80, "descricao": "O autógrafo é do Seu Jacó, com a caneta que falha.", "sugestao": true },
-    { "id": "calca_geral_delta_comum", "name": "Bermuda do Delta", "slot": "calca", "rarity": "comum", "classLock": null, "margem": null, "material": null, "nivelMin": 1, "stats": [{ "stat": "evasion", "pct": 2 }, { "stat": "resourceMax", "pct": 3 }], "precoBase": 20, "descricao": "Roupa inicial do Delta, em 6 cores.", "sugestaoCampos": ["name", "stats", "precoBase"] },
-    { "id": "calca_geral_delta_raro", "name": "Bermuda do Delta com Bolso de Anzol", "slot": "calca", "rarity": "raro", "classLock": null, "margem": null, "material": null, "nivelMin": 3, "stats": [{ "stat": "evasion", "pct": 2 }, { "stat": "resourceMax", "pct": 3 }], "precoBase": 80, "sugestao": true },
-    { "id": "calcado_geral_delta_comum", "name": "Chinelo do Delta", "slot": "calcado", "rarity": "comum", "classLock": null, "margem": null, "material": null, "nivelMin": 1, "stats": [{ "stat": "attackSpeed", "pct": 2 }, { "stat": "cooldownSpeed", "pct": 2 }, { "stat": "moveSpeed", "pct": 2 }], "precoBase": 20, "descricao": "Roupa inicial do Delta, em 6 cores.", "sugestaoCampos": ["name", "stats", "precoBase"] },
-    { "id": "calcado_geral_delta_raro", "name": "Chinelo do Delta com Tira Reforçada", "slot": "calcado", "rarity": "raro", "classLock": null, "margem": null, "material": null, "nivelMin": 3, "stats": [{ "stat": "attackSpeed", "pct": 2 }, { "stat": "cooldownSpeed", "pct": 2 }, { "stat": "moveSpeed", "pct": 3 }], "precoBase": 80, "sugestao": true },
-    { "id": "adorno_geral_delta_comum", "name": "Anzol da Sorte", "slot": "adorno", "rarity": "comum", "classLock": null, "margem": null, "material": "ferro", "nivelMin": 1, "stats": [], "efeito": { "kind": "gatilho", "trigger": "pouca_vida", "limiarPct": 30, "recargaS": 30, "efeitos": [{ "kind": "escudo", "pctVidaMax": 5, "duracaoMs": 3000, "target": "self" }] }, "efeitoTexto": "Ao cair abaixo de 30% de vida, escudo de 5% da vida por 3 s; recarga de 30 s.", "precoBase": 20, "sugestao": true },
-    { "id": "adorno_geral_delta_raro", "name": "Anzol da Sorte do Bagre de Estimação", "slot": "adorno", "rarity": "raro", "classLock": null, "margem": null, "material": "ferro", "nivelMin": 3, "stats": [], "efeito": { "kind": "gatilho", "trigger": "pouca_vida", "limiarPct": 30, "recargaS": 30, "efeitos": [{ "kind": "escudo", "pctVidaMax": 8, "duracaoMs": 3000, "target": "self" }] }, "efeitoTexto": "Ao cair abaixo de 30% de vida, escudo de 8% da vida por 3 s; recarga de 30 s.", "precoBase": 80, "descricao": "O bagre do balde do Seu Jacó jura que é dele.", "sugestao": true }
+    {
+      "id": "cabeca_combatente_esquerda_comum",
+      "name": "Boina de Couro Cru",
+      "slot": "cabeca",
+      "rarity": "comum",
+      "classLock": "combatente",
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 5
+        },
+        {
+          "stat": "ccResist",
+          "pct": 5
+        }
+      ],
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_combatente_esquerda_raro",
+      "name": "Boina de Couro Costurada na Roda",
+      "slot": "cabeca",
+      "rarity": "raro",
+      "classLock": "combatente",
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 6
+        },
+        {
+          "stat": "ccResist",
+          "pct": 6
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "peito_combatente_esquerda_comum",
+      "name": "Colete de Couro de Galpão",
+      "slot": "peito",
+      "rarity": "comum",
+      "classLock": "combatente",
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 6
+        },
+        {
+          "stat": "defense",
+          "pct": 5
+        },
+        {
+          "stat": "evasion",
+          "pct": 3
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 5
+        }
+      ],
+      "precoBase": 80,
+      "sugestao": true
+    },
+    {
+      "id": "peito_combatente_esquerda_raro",
+      "name": "Colete de Couro com Placas de Ferro",
+      "slot": "peito",
+      "rarity": "raro",
+      "classLock": "combatente",
+      "margem": "esquerda",
+      "material": "ferro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 8
+        },
+        {
+          "stat": "defense",
+          "pct": 6
+        },
+        {
+          "stat": "evasion",
+          "pct": 4
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 6
+        }
+      ],
+      "precoBase": 320,
+      "sugestao": true
+    },
+    {
+      "id": "arma_combatente_esquerda_comum",
+      "name": "Manopla de Ferro Velho",
+      "slot": "arma",
+      "rarity": "comum",
+      "classLock": "combatente",
+      "margem": "esquerda",
+      "material": "ferro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 6
+        }
+      ],
+      "tipoAtaque": "impacto",
+      "ataqueBasico": "basico_combatente",
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "arma_combatente_esquerda_raro",
+      "name": "Manopla de Ferro Forjada no Mutirão",
+      "slot": "arma",
+      "rarity": "raro",
+      "classLock": "combatente",
+      "margem": "esquerda",
+      "material": "ferro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 8
+        }
+      ],
+      "tipoAtaque": "impacto",
+      "ataqueBasico": "basico_combatente",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_combatente_esquerda_comum",
+      "name": "Botina de Couro",
+      "slot": "calcado",
+      "rarity": "comum",
+      "classLock": "combatente",
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 4
+        }
+      ],
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_combatente_esquerda_raro",
+      "name": "Botina de Couro com Biqueira de Ferro",
+      "slot": "calcado",
+      "rarity": "raro",
+      "classLock": "combatente",
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 5
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_combatente_esquerda_comum",
+      "name": "Amuleto de Palha Trançada",
+      "slot": "adorno",
+      "rarity": "comum",
+      "classLock": "combatente",
+      "margem": "esquerda",
+      "material": "palha",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_derrotar",
+        "efeitos": [
+          {
+            "kind": "cura",
+            "pctVidaMax": 3,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao derrotar um inimigo, cura 3% da vida.",
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_combatente_esquerda_raro",
+      "name": "Amuleto de Palha com Semente Viva",
+      "slot": "adorno",
+      "rarity": "raro",
+      "classLock": "combatente",
+      "margem": "esquerda",
+      "material": "palha",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_derrotar",
+        "efeitos": [
+          {
+            "kind": "cura",
+            "pctVidaMax": 5,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao derrotar um inimigo, cura 5% da vida.",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_combatente_direita_comum",
+      "name": "Viseira Hidráulica",
+      "slot": "cabeca",
+      "rarity": "comum",
+      "classLock": "combatente",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 5
+        },
+        {
+          "stat": "ccResist",
+          "pct": 5
+        }
+      ],
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_combatente_direita_raro",
+      "name": "Viseira Hidráulica com Placar ao Vivo",
+      "slot": "cabeca",
+      "rarity": "raro",
+      "classLock": "combatente",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 6
+        },
+        {
+          "stat": "ccResist",
+          "pct": 6
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "peito_combatente_direita_comum",
+      "name": "Peitoral de Pistão",
+      "slot": "peito",
+      "rarity": "comum",
+      "classLock": "combatente",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 6
+        },
+        {
+          "stat": "defense",
+          "pct": 5
+        },
+        {
+          "stat": "evasion",
+          "pct": 3
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 5
+        }
+      ],
+      "precoBase": 80,
+      "sugestao": true
+    },
+    {
+      "id": "peito_combatente_direita_raro",
+      "name": "Peitoral de Pistão Cromado",
+      "slot": "peito",
+      "rarity": "raro",
+      "classLock": "combatente",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 8
+        },
+        {
+          "stat": "defense",
+          "pct": 6
+        },
+        {
+          "stat": "evasion",
+          "pct": 4
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 6
+        }
+      ],
+      "precoBase": 320,
+      "sugestao": true
+    },
+    {
+      "id": "arma_combatente_direita_comum",
+      "name": "Manopla Hidráulica",
+      "slot": "arma",
+      "rarity": "comum",
+      "classLock": "combatente",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 6
+        }
+      ],
+      "tipoAtaque": "impacto",
+      "ataqueBasico": "basico_combatente",
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "arma_combatente_direita_raro",
+      "name": "Manopla Hidráulica de Dupla Pressão",
+      "slot": "arma",
+      "rarity": "raro",
+      "classLock": "combatente",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 8
+        }
+      ],
+      "tipoAtaque": "impacto",
+      "ataqueBasico": "basico_combatente",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_combatente_direita_comum",
+      "name": "Tênis de Mola",
+      "slot": "calcado",
+      "rarity": "comum",
+      "classLock": "combatente",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 4
+        }
+      ],
+      "precoBase": 40,
+      "sugestaoCampos": [
+        "stats",
+        "precoBase",
+        "nivelMin"
+      ]
+    },
+    {
+      "id": "calcado_combatente_direita_raro",
+      "name": "Tênis de Mola Edição de Final de Campeonato",
+      "slot": "calcado",
+      "rarity": "raro",
+      "classLock": "combatente",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 5
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_combatente_direita_comum",
+      "name": "Chip de Grito de Torcida",
+      "slot": "adorno",
+      "rarity": "comum",
+      "classLock": "combatente",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_derrotar",
+        "efeitos": [
+          {
+            "kind": "cura",
+            "pctVidaMax": 3,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao derrotar um inimigo, cura 3% da vida.",
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_combatente_direita_raro",
+      "name": "Chip de Grito com Patrocínio Master",
+      "slot": "adorno",
+      "rarity": "raro",
+      "classLock": "combatente",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_derrotar",
+        "efeitos": [
+          {
+            "kind": "cura",
+            "pctVidaMax": 5,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao derrotar um inimigo, cura 5% da vida.",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_atirador_esquerda_comum",
+      "name": "Chapéu de Palha do Vigia",
+      "slot": "cabeca",
+      "rarity": "comum",
+      "classLock": "atirador",
+      "margem": "esquerda",
+      "material": "palha",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 5
+        },
+        {
+          "stat": "ccResist",
+          "pct": 5
+        }
+      ],
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_atirador_esquerda_raro",
+      "name": "Chapéu de Palha com Aba de Couro",
+      "slot": "cabeca",
+      "rarity": "raro",
+      "classLock": "atirador",
+      "margem": "esquerda",
+      "material": "palha",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 6
+        },
+        {
+          "stat": "ccResist",
+          "pct": 6
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "peito_atirador_esquerda_comum",
+      "name": "Colete de Couro da Ronda",
+      "slot": "peito",
+      "rarity": "comum",
+      "classLock": "atirador",
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 6
+        },
+        {
+          "stat": "defense",
+          "pct": 5
+        },
+        {
+          "stat": "evasion",
+          "pct": 3
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 5
+        }
+      ],
+      "precoBase": 80,
+      "sugestao": true
+    },
+    {
+      "id": "peito_atirador_esquerda_raro",
+      "name": "Colete de Couro com Placas de Ferro Batido",
+      "slot": "peito",
+      "rarity": "raro",
+      "classLock": "atirador",
+      "margem": "esquerda",
+      "material": "ferro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 8
+        },
+        {
+          "stat": "defense",
+          "pct": 6
+        },
+        {
+          "stat": "evasion",
+          "pct": 4
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 6
+        }
+      ],
+      "precoBase": 320,
+      "sugestao": true
+    },
+    {
+      "id": "arma_atirador_esquerda_comum",
+      "name": "Espingarda Velha de Madeira",
+      "slot": "arma",
+      "rarity": "comum",
+      "classLock": "atirador",
+      "margem": "esquerda",
+      "material": "madeira",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 6
+        }
+      ],
+      "tipoAtaque": "perfurante",
+      "ataqueBasico": "basico_atirador",
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "arma_atirador_esquerda_raro",
+      "name": "Espingarda de Cano Duplo de Ferro",
+      "slot": "arma",
+      "rarity": "raro",
+      "classLock": "atirador",
+      "margem": "esquerda",
+      "material": "ferro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 8
+        }
+      ],
+      "tipoAtaque": "perfurante",
+      "ataqueBasico": "basico_atirador",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_atirador_esquerda_comum",
+      "name": "Chinelo de Couro de Ronda",
+      "slot": "calcado",
+      "rarity": "comum",
+      "classLock": "atirador",
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 4
+        }
+      ],
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_atirador_esquerda_raro",
+      "name": "Bota de Couro de Ronda Longa",
+      "slot": "calcado",
+      "rarity": "raro",
+      "classLock": "atirador",
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 5
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_atirador_esquerda_comum",
+      "name": "Apito de Madeira",
+      "slot": "adorno",
+      "rarity": "comum",
+      "classLock": "atirador",
+      "margem": "esquerda",
+      "material": "madeira",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_critar",
+        "efeitos": [
+          {
+            "kind": "recurso",
+            "pct": 3,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Cada crítico devolve 3% da Munição.",
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_atirador_esquerda_raro",
+      "name": "Apito de Madeira Entalhado com Olho",
+      "slot": "adorno",
+      "rarity": "raro",
+      "classLock": "atirador",
+      "margem": "esquerda",
+      "material": "madeira",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_critar",
+        "efeitos": [
+          {
+            "kind": "recurso",
+            "pct": 5,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Cada crítico devolve 5% da Munição.",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_atirador_direita_comum",
+      "name": "Capacete com Câmera Corporal",
+      "slot": "cabeca",
+      "rarity": "comum",
+      "classLock": "atirador",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 5
+        },
+        {
+          "stat": "ccResist",
+          "pct": 5
+        }
+      ],
+      "precoBase": 40,
+      "descricao": "A luz da câmera está sempre apagada.",
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_atirador_direita_raro",
+      "name": "Capacete Tático com Mira Assistida",
+      "slot": "cabeca",
+      "rarity": "raro",
+      "classLock": "atirador",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 6
+        },
+        {
+          "stat": "ccResist",
+          "pct": 6
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "peito_atirador_direita_comum",
+      "name": "Colete Premium com QR Code",
+      "slot": "peito",
+      "rarity": "comum",
+      "classLock": "atirador",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 6
+        },
+        {
+          "stat": "defense",
+          "pct": 5
+        },
+        {
+          "stat": "evasion",
+          "pct": 3
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 5
+        }
+      ],
+      "precoBase": 80,
+      "sugestao": true
+    },
+    {
+      "id": "peito_atirador_direita_raro",
+      "name": "Colete Antibalas Plano Prata",
+      "slot": "peito",
+      "rarity": "raro",
+      "classLock": "atirador",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 8
+        },
+        {
+          "stat": "defense",
+          "pct": 6
+        },
+        {
+          "stat": "evasion",
+          "pct": 4
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 6
+        }
+      ],
+      "precoBase": 320,
+      "sugestao": true
+    },
+    {
+      "id": "arma_atirador_direita_comum",
+      "name": "Revólver Inteligente",
+      "slot": "arma",
+      "rarity": "comum",
+      "classLock": "atirador",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 6
+        }
+      ],
+      "tipoAtaque": "perfurante",
+      "ataqueBasico": "basico_atirador",
+      "precoBase": 40,
+      "sugestaoCampos": [
+        "stats",
+        "precoBase",
+        "nivelMin"
+      ]
+    },
+    {
+      "id": "arma_atirador_direita_raro",
+      "name": "Escopeta Inteligente com Assinatura",
+      "slot": "arma",
+      "rarity": "raro",
+      "classLock": "atirador",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 8
+        }
+      ],
+      "tipoAtaque": "perfurante",
+      "ataqueBasico": "basico_atirador",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_atirador_direita_comum",
+      "name": "Coturno com Amortecedor",
+      "slot": "calcado",
+      "rarity": "comum",
+      "classLock": "atirador",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 4
+        }
+      ],
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_atirador_direita_raro",
+      "name": "Coturno com Propulsor de Perseguição",
+      "slot": "calcado",
+      "rarity": "raro",
+      "classLock": "atirador",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 5
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_atirador_direita_comum",
+      "name": "Drone de Ombro",
+      "slot": "adorno",
+      "rarity": "comum",
+      "classLock": "atirador",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_critar",
+        "efeitos": [
+          {
+            "kind": "recurso",
+            "pct": 3,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Cada crítico devolve 3% da Munição.",
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_atirador_direita_raro",
+      "name": "Drone de Ombro com Zoom Pago",
+      "slot": "adorno",
+      "rarity": "raro",
+      "classLock": "atirador",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_critar",
+        "efeitos": [
+          {
+            "kind": "recurso",
+            "pct": 5,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Cada crítico devolve 5% da Munição.",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_elemental_esquerda_comum",
+      "name": "Coroa de Palha Trançada",
+      "slot": "cabeca",
+      "rarity": "comum",
+      "classLock": "elemental",
+      "margem": "esquerda",
+      "material": "palha",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 5
+        },
+        {
+          "stat": "ccResist",
+          "pct": 5
+        }
+      ],
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_elemental_esquerda_raro",
+      "name": "Coroa de Palha com Flor Desperta",
+      "slot": "cabeca",
+      "rarity": "raro",
+      "classLock": "elemental",
+      "margem": "esquerda",
+      "material": "palha",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 6
+        },
+        {
+          "stat": "ccResist",
+          "pct": 6
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "peito_elemental_esquerda_comum",
+      "name": "Túnica de Estopa",
+      "slot": "peito",
+      "rarity": "comum",
+      "classLock": "elemental",
+      "margem": "esquerda",
+      "material": "palha",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 6
+        },
+        {
+          "stat": "defense",
+          "pct": 5
+        },
+        {
+          "stat": "evasion",
+          "pct": 3
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 5
+        }
+      ],
+      "precoBase": 80,
+      "sugestaoCampos": [
+        "material",
+        "stats",
+        "precoBase",
+        "nivelMin"
+      ]
+    },
+    {
+      "id": "peito_elemental_esquerda_raro",
+      "name": "Túnica de Estopa Bordada com Raiz",
+      "slot": "peito",
+      "rarity": "raro",
+      "classLock": "elemental",
+      "margem": "esquerda",
+      "material": "palha",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 8
+        },
+        {
+          "stat": "defense",
+          "pct": 6
+        },
+        {
+          "stat": "evasion",
+          "pct": 4
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 6
+        }
+      ],
+      "precoBase": 320,
+      "sugestao": true
+    },
+    {
+      "id": "arma_elemental_esquerda_comum",
+      "name": "Cajado de Madeira",
+      "slot": "arma",
+      "rarity": "comum",
+      "classLock": "elemental",
+      "margem": "esquerda",
+      "material": "madeira",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 6
+        }
+      ],
+      "tipoAtaque": "energia",
+      "ataqueBasico": "basico_elemental",
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "arma_elemental_esquerda_raro",
+      "name": "Cajado de Madeira de Figueira",
+      "slot": "arma",
+      "rarity": "raro",
+      "classLock": "elemental",
+      "margem": "esquerda",
+      "material": "madeira",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 8
+        }
+      ],
+      "tipoAtaque": "energia",
+      "ataqueBasico": "basico_elemental",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_elemental_esquerda_comum",
+      "name": "Sandália de Couro",
+      "slot": "calcado",
+      "rarity": "comum",
+      "classLock": "elemental",
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 4
+        }
+      ],
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_elemental_esquerda_raro",
+      "name": "Sandália de Couro com Sola de Casca",
+      "slot": "calcado",
+      "rarity": "raro",
+      "classLock": "elemental",
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 5
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_elemental_esquerda_comum",
+      "name": "Pingente de Madeira",
+      "slot": "adorno",
+      "rarity": "comum",
+      "classLock": "elemental",
+      "margem": "esquerda",
+      "material": "madeira",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_usar_habilidade",
+        "recargaS": 10,
+        "efeitos": [
+          {
+            "kind": "escudo",
+            "pctVidaMax": 4,
+            "duracaoMs": 3000,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao usar uma habilidade, ganha escudo de 4% da vida por 3 s; recarga de 10 s.",
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_elemental_esquerda_raro",
+      "name": "Pingente de Madeira com Chopindita Crua",
+      "slot": "adorno",
+      "rarity": "raro",
+      "classLock": "elemental",
+      "margem": "esquerda",
+      "material": "madeira",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_usar_habilidade",
+        "recargaS": 10,
+        "efeitos": [
+          {
+            "kind": "escudo",
+            "pctVidaMax": 6,
+            "duracaoMs": 3000,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao usar uma habilidade, ganha escudo de 6% da vida por 3 s; recarga de 10 s.",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_elemental_direita_comum",
+      "name": "Óculos de Laboratório",
+      "slot": "cabeca",
+      "rarity": "comum",
+      "classLock": "elemental",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 5
+        },
+        {
+          "stat": "ccResist",
+          "pct": 5
+        }
+      ],
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_elemental_direita_raro",
+      "name": "Óculos de Laboratório com Realidade Aumentada",
+      "slot": "cabeca",
+      "rarity": "raro",
+      "classLock": "elemental",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 6
+        },
+        {
+          "stat": "ccResist",
+          "pct": 6
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "peito_elemental_direita_comum",
+      "name": "Jaleco Antiestático",
+      "slot": "peito",
+      "rarity": "comum",
+      "classLock": "elemental",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 6
+        },
+        {
+          "stat": "defense",
+          "pct": 5
+        },
+        {
+          "stat": "evasion",
+          "pct": 3
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 5
+        }
+      ],
+      "precoBase": 80,
+      "sugestao": true
+    },
+    {
+      "id": "peito_elemental_direita_raro",
+      "name": "Jaleco Antiestático com Patente Pendente",
+      "slot": "peito",
+      "rarity": "raro",
+      "classLock": "elemental",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 8
+        },
+        {
+          "stat": "defense",
+          "pct": 6
+        },
+        {
+          "stat": "evasion",
+          "pct": 4
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 6
+        }
+      ],
+      "precoBase": 320,
+      "sugestao": true
+    },
+    {
+      "id": "arma_elemental_direita_comum",
+      "name": "Bobina de Mão",
+      "slot": "arma",
+      "rarity": "comum",
+      "classLock": "elemental",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 6
+        }
+      ],
+      "tipoAtaque": "energia",
+      "ataqueBasico": "basico_elemental",
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "arma_elemental_direita_raro",
+      "name": "Bobina de Mão Sem Certificação",
+      "slot": "arma",
+      "rarity": "raro",
+      "classLock": "elemental",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 8
+        }
+      ],
+      "tipoAtaque": "energia",
+      "ataqueBasico": "basico_elemental",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_elemental_direita_comum",
+      "name": "Tênis Condutor",
+      "slot": "calcado",
+      "rarity": "comum",
+      "classLock": "elemental",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 4
+        }
+      ],
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_elemental_direita_raro",
+      "name": "Tênis Condutor com Aterramento Opcional",
+      "slot": "calcado",
+      "rarity": "raro",
+      "classLock": "elemental",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 5
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_elemental_direita_comum",
+      "name": "Pendrive de Fórmulas",
+      "slot": "adorno",
+      "rarity": "comum",
+      "classLock": "elemental",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_usar_habilidade",
+        "recargaS": 10,
+        "efeitos": [
+          {
+            "kind": "escudo",
+            "pctVidaMax": 4,
+            "duracaoMs": 3000,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao usar uma habilidade, ganha escudo de 4% da vida por 3 s; recarga de 10 s.",
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_elemental_direita_raro",
+      "name": "Pendrive de Fórmulas Patenteadas",
+      "slot": "adorno",
+      "rarity": "raro",
+      "classLock": "elemental",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_usar_habilidade",
+        "recargaS": 10,
+        "efeitos": [
+          {
+            "kind": "escudo",
+            "pctVidaMax": 6,
+            "duracaoMs": 3000,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao usar uma habilidade, ganha escudo de 6% da vida por 3 s; recarga de 10 s.",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_mascarado_esquerda_comum",
+      "name": "Máscara de Madeira Pintada",
+      "slot": "cabeca",
+      "rarity": "comum",
+      "classLock": "mascarado",
+      "margem": "esquerda",
+      "material": "madeira",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 5
+        },
+        {
+          "stat": "ccResist",
+          "pct": 5
+        }
+      ],
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_mascarado_esquerda_raro",
+      "name": "Máscara de Madeira com Espírito Cochilando",
+      "slot": "cabeca",
+      "rarity": "raro",
+      "classLock": "mascarado",
+      "margem": "esquerda",
+      "material": "madeira",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 6
+        },
+        {
+          "stat": "ccResist",
+          "pct": 6
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "peito_mascarado_esquerda_comum",
+      "name": "Gibão de Couro de Palco",
+      "slot": "peito",
+      "rarity": "comum",
+      "classLock": "mascarado",
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 6
+        },
+        {
+          "stat": "defense",
+          "pct": 5
+        },
+        {
+          "stat": "evasion",
+          "pct": 3
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 5
+        }
+      ],
+      "precoBase": 80,
+      "sugestao": true
+    },
+    {
+      "id": "peito_mascarado_esquerda_raro",
+      "name": "Gibão de Couro com Franja Dourada",
+      "slot": "peito",
+      "rarity": "raro",
+      "classLock": "mascarado",
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 8
+        },
+        {
+          "stat": "defense",
+          "pct": 6
+        },
+        {
+          "stat": "evasion",
+          "pct": 4
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 6
+        }
+      ],
+      "precoBase": 320,
+      "sugestao": true
+    },
+    {
+      "id": "arma_mascarado_esquerda_comum",
+      "name": "Leque de Madeira",
+      "slot": "arma",
+      "rarity": "comum",
+      "classLock": "mascarado",
+      "margem": "esquerda",
+      "material": "madeira",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 6
+        }
+      ],
+      "tipoAtaque": "espirito",
+      "ataqueBasico": "basico_mascarado",
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "arma_mascarado_esquerda_raro",
+      "name": "Leque de Madeira com Varetas de Ferro",
+      "slot": "arma",
+      "rarity": "raro",
+      "classLock": "mascarado",
+      "margem": "esquerda",
+      "material": "ferro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 8
+        }
+      ],
+      "tipoAtaque": "espirito",
+      "ataqueBasico": "basico_mascarado",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_mascarado_esquerda_comum",
+      "name": "Sapatilha de Couro",
+      "slot": "calcado",
+      "rarity": "comum",
+      "classLock": "mascarado",
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 4
+        }
+      ],
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_mascarado_esquerda_raro",
+      "name": "Sapatilha de Couro Bicolor",
+      "slot": "calcado",
+      "rarity": "raro",
+      "classLock": "mascarado",
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 5
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_mascarado_esquerda_comum",
+      "name": "Fita de Palha da Sorte",
+      "slot": "adorno",
+      "rarity": "comum",
+      "classLock": "mascarado",
+      "margem": "esquerda",
+      "material": "palha",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_aplicar_controle",
+        "recargaS": 6,
+        "efeitos": [
+          {
+            "kind": "reforco",
+            "stat": "damage",
+            "pct": 8,
+            "duracaoMs": 4000,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao aplicar um controle, +8% de dano por 4 s; recarga de 6 s.",
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_mascarado_esquerda_raro",
+      "name": "Fita de Palha com Guizo de Ferro",
+      "slot": "adorno",
+      "rarity": "raro",
+      "classLock": "mascarado",
+      "margem": "esquerda",
+      "material": "palha",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_aplicar_controle",
+        "recargaS": 6,
+        "efeitos": [
+          {
+            "kind": "reforco",
+            "stat": "damage",
+            "pct": 12,
+            "duracaoMs": 4000,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao aplicar um controle, +12% de dano por 4 s; recarga de 6 s.",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_mascarado_direita_comum",
+      "name": "Headset de Atendimento",
+      "slot": "cabeca",
+      "rarity": "comum",
+      "classLock": "mascarado",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 5
+        },
+        {
+          "stat": "ccResist",
+          "pct": 5
+        }
+      ],
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_mascarado_direita_raro",
+      "name": "Headset com Cancelamento de Cliente",
+      "slot": "cabeca",
+      "rarity": "raro",
+      "classLock": "mascarado",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 6
+        },
+        {
+          "stat": "ccResist",
+          "pct": 6
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "peito_mascarado_direita_comum",
+      "name": "Jaqueta de Holograma",
+      "slot": "peito",
+      "rarity": "comum",
+      "classLock": "mascarado",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 6
+        },
+        {
+          "stat": "defense",
+          "pct": 5
+        },
+        {
+          "stat": "evasion",
+          "pct": 3
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 5
+        }
+      ],
+      "precoBase": 80,
+      "sugestao": true
+    },
+    {
+      "id": "peito_mascarado_direita_raro",
+      "name": "Jaqueta de Holograma com Brilho Premium",
+      "slot": "peito",
+      "rarity": "raro",
+      "classLock": "mascarado",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 8
+        },
+        {
+          "stat": "defense",
+          "pct": 6
+        },
+        {
+          "stat": "evasion",
+          "pct": 4
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 6
+        }
+      ],
+      "precoBase": 320,
+      "sugestao": true
+    },
+    {
+      "id": "arma_mascarado_direita_comum",
+      "name": "Microfone de Holograma",
+      "slot": "arma",
+      "rarity": "comum",
+      "classLock": "mascarado",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 6
+        }
+      ],
+      "tipoAtaque": "espirito",
+      "ataqueBasico": "basico_mascarado",
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "arma_mascarado_direita_raro",
+      "name": "Microfone de Holograma com Autotune",
+      "slot": "arma",
+      "rarity": "raro",
+      "classLock": "mascarado",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "damage",
+          "pct": 8
+        }
+      ],
+      "tipoAtaque": "espirito",
+      "ataqueBasico": "basico_mascarado",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_mascarado_direita_comum",
+      "name": "Tênis de Palco",
+      "slot": "calcado",
+      "rarity": "comum",
+      "classLock": "mascarado",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 4
+        }
+      ],
+      "precoBase": 40,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_mascarado_direita_raro",
+      "name": "Tênis de Palco com Luz de Contrato",
+      "slot": "calcado",
+      "rarity": "raro",
+      "classLock": "mascarado",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 5
+        }
+      ],
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_mascarado_direita_comum",
+      "name": "Ring Light de Ombro",
+      "slot": "adorno",
+      "rarity": "comum",
+      "classLock": "mascarado",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_aplicar_controle",
+        "recargaS": 6,
+        "efeitos": [
+          {
+            "kind": "reforco",
+            "stat": "damage",
+            "pct": 8,
+            "duracaoMs": 4000,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao aplicar um controle, +8% de dano por 4 s; recarga de 6 s.",
+      "precoBase": 40,
+      "sugestaoCampos": [
+        "efeito",
+        "efeitoTexto",
+        "precoBase",
+        "nivelMin"
+      ]
+    },
+    {
+      "id": "adorno_mascarado_direita_raro",
+      "name": "Ring Light de Ombro com Filtro Pago",
+      "slot": "adorno",
+      "rarity": "raro",
+      "classLock": "mascarado",
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "ao_aplicar_controle",
+        "recargaS": 6,
+        "efeitos": [
+          {
+            "kind": "reforco",
+            "stat": "damage",
+            "pct": 12,
+            "duracaoMs": 4000,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao aplicar um controle, +12% de dano por 4 s; recarga de 6 s.",
+      "precoBase": 160,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_geral_esquerda_comum",
+      "name": "Chapéu de Palha do Povo",
+      "slot": "cabeca",
+      "rarity": "comum",
+      "classLock": null,
+      "margem": "esquerda",
+      "material": "palha",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 5
+        },
+        {
+          "stat": "ccResist",
+          "pct": 5
+        }
+      ],
+      "precoBase": 35,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_geral_esquerda_raro",
+      "name": "Chapéu de Palha da Feira Grande",
+      "slot": "cabeca",
+      "rarity": "raro",
+      "classLock": null,
+      "margem": "esquerda",
+      "material": "palha",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 6
+        },
+        {
+          "stat": "ccResist",
+          "pct": 6
+        }
+      ],
+      "precoBase": 140,
+      "sugestao": true
+    },
+    {
+      "id": "peito_geral_esquerda_comum",
+      "name": "Camisa de Couro de Mutirão",
+      "slot": "peito",
+      "rarity": "comum",
+      "classLock": null,
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 6
+        },
+        {
+          "stat": "defense",
+          "pct": 5
+        },
+        {
+          "stat": "evasion",
+          "pct": 3
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 5
+        }
+      ],
+      "precoBase": 70,
+      "sugestao": true
+    },
+    {
+      "id": "peito_geral_esquerda_raro",
+      "name": "Camisa de Couro com Remendo de Ferro",
+      "slot": "peito",
+      "rarity": "raro",
+      "classLock": null,
+      "margem": "esquerda",
+      "material": "couro",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 8
+        },
+        {
+          "stat": "defense",
+          "pct": 6
+        },
+        {
+          "stat": "evasion",
+          "pct": 4
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 6
+        }
+      ],
+      "precoBase": 280,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_geral_esquerda_comum",
+      "name": "Alpargata de Palha",
+      "slot": "calcado",
+      "rarity": "comum",
+      "classLock": null,
+      "margem": "esquerda",
+      "material": "palha",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 4
+        }
+      ],
+      "precoBase": 35,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_geral_esquerda_raro",
+      "name": "Alpargata de Palha com Sola de Couro",
+      "slot": "calcado",
+      "rarity": "raro",
+      "classLock": null,
+      "margem": "esquerda",
+      "material": "palha",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 5
+        }
+      ],
+      "precoBase": 140,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_geral_esquerda_comum",
+      "name": "Patuá de Madeira",
+      "slot": "adorno",
+      "rarity": "comum",
+      "classLock": null,
+      "margem": "esquerda",
+      "material": "madeira",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "pouca_vida",
+        "limiarPct": 30,
+        "recargaS": 30,
+        "efeitos": [
+          {
+            "kind": "escudo",
+            "pctVidaMax": 8,
+            "duracaoMs": 3000,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao cair abaixo de 30% de vida, escudo de 8% da vida por 3 s; recarga de 30 s.",
+      "precoBase": 35,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_geral_esquerda_raro",
+      "name": "Patuá de Madeira com Erva da Curandeira",
+      "slot": "adorno",
+      "rarity": "raro",
+      "classLock": null,
+      "margem": "esquerda",
+      "material": "madeira",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "pouca_vida",
+        "limiarPct": 30,
+        "recargaS": 30,
+        "efeitos": [
+          {
+            "kind": "escudo",
+            "pctVidaMax": 12,
+            "duracaoMs": 3000,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao cair abaixo de 30% de vida, escudo de 12% da vida por 3 s; recarga de 30 s.",
+      "precoBase": 140,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_geral_direita_comum",
+      "name": "Boné de Assinatura",
+      "slot": "cabeca",
+      "rarity": "comum",
+      "classLock": null,
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 5
+        },
+        {
+          "stat": "ccResist",
+          "pct": 5
+        }
+      ],
+      "precoBase": 35,
+      "descricao": "Renova sozinho todo ciclo. Ninguém sabe cancelar.",
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_geral_direita_raro",
+      "name": "Boné de Assinatura Plano Ouro",
+      "slot": "cabeca",
+      "rarity": "raro",
+      "classLock": null,
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 6
+        },
+        {
+          "stat": "ccResist",
+          "pct": 6
+        }
+      ],
+      "precoBase": 140,
+      "sugestao": true
+    },
+    {
+      "id": "peito_geral_direita_comum",
+      "name": "Camiseta Inteligente",
+      "slot": "peito",
+      "rarity": "comum",
+      "classLock": null,
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 6
+        },
+        {
+          "stat": "defense",
+          "pct": 5
+        },
+        {
+          "stat": "evasion",
+          "pct": 3
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 5
+        }
+      ],
+      "precoBase": 70,
+      "sugestao": true
+    },
+    {
+      "id": "peito_geral_direita_raro",
+      "name": "Camiseta Inteligente com Termostato",
+      "slot": "peito",
+      "rarity": "raro",
+      "classLock": null,
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 8
+        },
+        {
+          "stat": "defense",
+          "pct": 6
+        },
+        {
+          "stat": "evasion",
+          "pct": 4
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 6
+        }
+      ],
+      "precoBase": 280,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_geral_direita_comum",
+      "name": "Tênis de Entrega",
+      "slot": "calcado",
+      "rarity": "comum",
+      "classLock": null,
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 3
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 4
+        }
+      ],
+      "precoBase": 35,
+      "sugestao": true
+    },
+    {
+      "id": "calcado_geral_direita_raro",
+      "name": "Tênis de Entrega com Bônus de Meta",
+      "slot": "calcado",
+      "rarity": "raro",
+      "classLock": null,
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 4
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 5
+        }
+      ],
+      "precoBase": 140,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_geral_direita_comum",
+      "name": "Pulseira de Score",
+      "slot": "adorno",
+      "rarity": "comum",
+      "classLock": null,
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "pouca_vida",
+        "limiarPct": 30,
+        "recargaS": 30,
+        "efeitos": [
+          {
+            "kind": "escudo",
+            "pctVidaMax": 8,
+            "duracaoMs": 3000,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao cair abaixo de 30% de vida, escudo de 8% da vida por 3 s; recarga de 30 s.",
+      "precoBase": 35,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_geral_direita_raro",
+      "name": "Pulseira de Score Dourada",
+      "slot": "adorno",
+      "rarity": "raro",
+      "classLock": null,
+      "margem": "direita",
+      "material": "alta_tecnologia",
+      "nivelMin": 5,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "pouca_vida",
+        "limiarPct": 30,
+        "recargaS": 30,
+        "efeitos": [
+          {
+            "kind": "escudo",
+            "pctVidaMax": 12,
+            "duracaoMs": 3000,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao cair abaixo de 30% de vida, escudo de 12% da vida por 3 s; recarga de 30 s.",
+      "precoBase": 140,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_geral_delta_comum",
+      "name": "Chapéu de Palha Furado",
+      "slot": "cabeca",
+      "rarity": "comum",
+      "classLock": null,
+      "margem": null,
+      "material": "palha",
+      "nivelMin": 1,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 3
+        },
+        {
+          "stat": "ccResist",
+          "pct": 3
+        }
+      ],
+      "precoBase": 20,
+      "sugestao": true
+    },
+    {
+      "id": "cabeca_geral_delta_raro",
+      "name": "Chapéu de Palha Furado Remendado pelo Seu Jacó",
+      "slot": "cabeca",
+      "rarity": "raro",
+      "classLock": null,
+      "margem": null,
+      "material": "palha",
+      "nivelMin": 2,
+      "stats": [
+        {
+          "stat": "accuracy",
+          "pct": 3
+        },
+        {
+          "stat": "ccResist",
+          "pct": 3
+        }
+      ],
+      "precoBase": 80,
+      "sugestao": true
+    },
+    {
+      "id": "peito_geral_delta_comum",
+      "name": "Camiseta “Lembrança do Delta”",
+      "slot": "peito",
+      "rarity": "comum",
+      "classLock": null,
+      "margem": null,
+      "material": null,
+      "nivelMin": 1,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 3
+        },
+        {
+          "stat": "defense",
+          "pct": 3
+        },
+        {
+          "stat": "evasion",
+          "pct": 2
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 3
+        }
+      ],
+      "precoBase": 40,
+      "descricao": "Roupa inicial do Delta, em 6 cores.",
+      "sugestaoCampos": [
+        "stats",
+        "precoBase"
+      ]
+    },
+    {
+      "id": "peito_geral_delta_raro",
+      "name": "Camiseta “Lembrança do Delta” Autografada",
+      "slot": "peito",
+      "rarity": "raro",
+      "classLock": null,
+      "margem": null,
+      "material": null,
+      "nivelMin": 2,
+      "stats": [
+        {
+          "stat": "hp",
+          "pct": 4
+        },
+        {
+          "stat": "defense",
+          "pct": 3
+        },
+        {
+          "stat": "evasion",
+          "pct": 2
+        },
+        {
+          "stat": "resourceMax",
+          "pct": 3
+        }
+      ],
+      "precoBase": 160,
+      "descricao": "O autógrafo é do Seu Jacó, com a caneta que falha.",
+      "sugestao": true
+    },
+    {
+      "id": "calcado_geral_delta_comum",
+      "name": "Chinelo do Delta",
+      "slot": "calcado",
+      "rarity": "comum",
+      "classLock": null,
+      "margem": null,
+      "material": null,
+      "nivelMin": 1,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 2
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 2
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 2
+        }
+      ],
+      "precoBase": 20,
+      "descricao": "Roupa inicial do Delta, em 6 cores.",
+      "sugestaoCampos": [
+        "name",
+        "stats",
+        "precoBase"
+      ]
+    },
+    {
+      "id": "calcado_geral_delta_raro",
+      "name": "Chinelo do Delta com Tira Reforçada",
+      "slot": "calcado",
+      "rarity": "raro",
+      "classLock": null,
+      "margem": null,
+      "material": null,
+      "nivelMin": 2,
+      "stats": [
+        {
+          "stat": "attackSpeed",
+          "pct": 2
+        },
+        {
+          "stat": "cooldownSpeed",
+          "pct": 2
+        },
+        {
+          "stat": "moveSpeed",
+          "pct": 3
+        }
+      ],
+      "precoBase": 80,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_geral_delta_comum",
+      "name": "Anzol da Sorte",
+      "slot": "adorno",
+      "rarity": "comum",
+      "classLock": null,
+      "margem": null,
+      "material": "ferro",
+      "nivelMin": 1,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "pouca_vida",
+        "limiarPct": 30,
+        "recargaS": 30,
+        "efeitos": [
+          {
+            "kind": "escudo",
+            "pctVidaMax": 5,
+            "duracaoMs": 3000,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao cair abaixo de 30% de vida, escudo de 5% da vida por 3 s; recarga de 30 s.",
+      "precoBase": 20,
+      "sugestao": true
+    },
+    {
+      "id": "adorno_geral_delta_raro",
+      "name": "Anzol da Sorte do Bagre de Estimação",
+      "slot": "adorno",
+      "rarity": "raro",
+      "classLock": null,
+      "margem": null,
+      "material": "ferro",
+      "nivelMin": 2,
+      "stats": [],
+      "efeito": {
+        "kind": "gatilho",
+        "trigger": "pouca_vida",
+        "limiarPct": 30,
+        "recargaS": 30,
+        "efeitos": [
+          {
+            "kind": "escudo",
+            "pctVidaMax": 8,
+            "duracaoMs": 3000,
+            "target": "self"
+          }
+        ]
+      },
+      "efeitoTexto": "Ao cair abaixo de 30% de vida, escudo de 8% da vida por 3 s; recarga de 30 s.",
+      "precoBase": 80,
+      "descricao": "O bagre do balde do Seu Jacó jura que é dele.",
+      "sugestao": true
+    }
   ]
 }

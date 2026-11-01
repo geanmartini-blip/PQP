@@ -185,12 +185,12 @@ function build(): AsciiMapDef {
     ...subestacoes.map(([x, y], i) => mk(`subestacao_direita_${i + 1}`, 'porta', x + 2, y + 1, 'subestacao', { interagir: 'subestacao', acao: 'religar', lugar: 'predios_de_capsulas' })),
 
     // bandos da margem (drones de cobrança, nível 10 a 12) e elites
-    bando('bando_drone_universidade', 'drone_de_cobranca', 3, 10, 30, 58),
-    bando('bando_drone_pm', 'drone_de_cobranca', 2, 10, 86, 58),
-    bando('bando_drone_hospital', 'drone_de_cobranca', 3, 10, 11, 72),
-    bando('bando_drone_beira', 'drone_de_cobranca', 4, 11, 95, 72),
-    bando('bando_drone_ponte', 'drone_de_cobranca', 3, 11, 44, 118),
-    bando('bando_drone_ferro_velho', 'drone_de_cobranca', 3, 12, 24, 141),
+    bando('bando_drone_universidade', 'drone_de_cobranca', 3, 7, 30, 58),
+    bando('bando_drone_pm', 'drone_de_cobranca', 2, 7, 86, 58),
+    bando('bando_drone_hospital', 'drone_de_cobranca', 3, 7, 11, 72),
+    bando('bando_drone_beira', 'drone_de_cobranca', 4, 9, 95, 72),
+    bando('bando_drone_ponte', 'drone_de_cobranca', 3, 9, 44, 118),
+    bando('bando_drone_ferro_velho', 'drone_de_cobranca', 3, 10, 24, 141),
     mk('elite_drone_explosivo', 'inimigo', 30, 20, 'drone_de_cobranca', { tier: 'elite', affixes: ['explode_ao_morrer'], level: 12 }),
     mk('elite_drone_das_capsulas', 'inimigo', 80, 146, 'drone_de_cobranca', { tier: 'elite', affixes: ['cura_os_outros'], level: 12 }),
   ];

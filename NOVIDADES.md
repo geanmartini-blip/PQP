@@ -3,6 +3,13 @@
 O jogo mostra a seção da versão atual uma vez, na primeira abertura depois de atualizar. Cada versão
 é um título `## vX.Y` com itens curtos em `- `.
 
+## v0.3
+- Jornada nova: o Bruno Ferro chega no nível 4, a balsa é no 5 e a ala no 10.
+- Até o 19, a história vai chegando perto da Ponte, e a missão da cabeceira libera a troca de lado.
+- As missões do 11 ao 19 agora dão para jogar, nas duas margens.
+- Conjunto da classe: as missões dão as 5 peças, e a calça entrou na armadura.
+- Luta com menos correria no começo: golpes mais lentos e mais fortes, com animação própria.
+
 ## v0.2
 - Arte nova em teste: o Peão Brabo e a Idol ganharam bonecos novos, bem mais caprichados.
 - Câmera mais perto do personagem.

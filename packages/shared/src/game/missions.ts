@@ -235,7 +235,14 @@ export function applyRewards(rec: PlayerRecord, rewards: readonly Reward[], g?: 
       }
       case 'item': {
         const q = w.quantidade ?? 1;
-        if (w.item) {
+        const classItem = w.slotDaClasse && rec.class && rec.side ? `${w.slotDaClasse}_${rec.class}_${rec.side}_${w.raridade ?? 'comum'}` : undefined;
+        if (w.slotDaClasse) {
+          // a peça só existe depois da travessia; quem não tem classe não ganha nada aqui
+          if (classItem && getData().items.itens.some((i) => i.id === classItem)) {
+            rec.inventory.push(classItem);
+            r.itens.push(classItem);
+          }
+        } else if (w.item) {
           for (let i = 0; i < q; i++) {
             rec.inventory.push(w.item);
             r.itens.push(w.item);

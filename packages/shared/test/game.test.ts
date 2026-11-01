@@ -268,20 +268,20 @@ describe('XP só em grupo', () => {
     expect(stepN(w3, 2).some((e) => e.t === 'xp' && e.dst === p3.id)).toBe(true);
   });
 
-  it('teto do Delta: o nível para no 7 até o Bruno Ferro (registro e simulação)', () => {
+  it('teto do Delta: o nível para no 4 até o Bruno Ferro (registro e simulação)', () => {
     const rec = created();
     gainXp(rec, 100000);
-    expect(rec.level).toBe(7);
-    expect(levelCapOf(rec)).toBe(7);
+    expect(rec.level).toBe(4);
+    expect(levelCapOf(rec)).toBe(4);
     const map = { id: 'a', width: 30, height: 30, tiles: new Uint8Array(900).fill(1), regions: [], markers: [] };
     const w = createWorld(map, 3);
-    const e = spawnPlayer(w, { name: 'N', archetypeId: 'delta', level: 7, x: 5, y: 5, levelCap: 7, deltaRookie: true });
+    const e = spawnPlayer(w, { name: 'N', archetypeId: 'delta', level: 4, x: 5, y: 5, levelCap: 4, deltaRookie: true });
     for (let i = 0; i < 5; i++) {
       const b = spawnEnemy(w, 'bruno_ferro_chefe', 6, 5);
       dealDamage(w, e, b, 0, { raw: b.hp + 1 });
       stepN(w, 2);
     }
-    expect(e.level).toBe(7);
+    expect(e.level).toBe(4);
     expect(e.xp).toBeGreaterThan(0);
   });
 
@@ -290,7 +290,7 @@ describe('XP só em grupo', () => {
     const r = gainXp(rec, xpTotalFor(4));
     expect(rec.level).toBe(4);
     expect(r.niveis).toEqual([2, 3, 4]);
-    expect(r.desbloqueios.map((d) => d.controle)).toEqual(['troca_de_alvo', 'item', 'aviso_no_chao']);
+    expect(r.desbloqueios.map((d) => d.controle)).toEqual(['troca_de_alvo', 'item', 'aviso_no_chao', 'reanimar', 'modo_automatico']);
     expect(controlesLiberados(rec)).toEqual(expect.arrayContaining(['joystick', 'alvo_e_basico', 'item']));
     expect(controlesLiberados(rec)).not.toContain('habilidades');
   });
@@ -313,8 +313,8 @@ describe('cadeia do Delta', () => {
     expect(rec.story_flags).not.toContain('delta_comprou_chopindita_falsa');
     const D = getData();
     for (const id of D.missions.cadeias.find((c) => c.id === 'delta_1_a_7')!.missoes) expect(rec.missions.concluidas).toContain(id);
-    // derrotar o Bruno libera a travessia: nível 8 e estágio travessia, com a missão já ativa
-    expect(rec.level).toBe(8);
+    // derrotar o Bruno libera a travessia: nível 5 e estágio travessia, com a missão já ativa
+    expect(rec.level).toBe(5);
     expect(rec.stage).toBe('travessia');
     expect(rec.missions.ativas).toContain('travessia_08');
     // recompensas: materiais (solo) e itens para rolar
@@ -463,7 +463,7 @@ describe('registro do jogador', () => {
 
   it('Fase 1 no Delta continua no Delta e passa pela criação', () => {
     const rec = migratePlayerRecord({ id: 'd', name: 'Novato', data: { archetypeId: 'delta', level: 9 } });
-    expect(rec).toMatchObject({ stage: 'delta', level: 7, criado: false, side: null, class: null });
+    expect(rec).toMatchObject({ stage: 'delta', level: 4, criado: false, side: null, class: null });
     const lixo = migratePlayerRecord('lixo', 'fallback');
     expect(lixo.id).toBe('fallback');
     expect(lixo.stage).toBe('delta');

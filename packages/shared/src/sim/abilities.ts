@@ -64,7 +64,7 @@ import { angleTo, dist, facingAngle, facingFrom, inCone, pointSegDist } from './
 import { getHook } from './hooks';
 import { moveBody } from './movement';
 import { spawnLoot, spawnSummon } from './spawn';
-import { basicIntervalTicks } from './stats';
+import { basicIntervalTicks, ritmoMult } from './stats';
 import { canSee, nearestVisibleHostile } from './targeting';
 import { msToTicks, type Entity, type GroundZone, type Team, type Telegraph, type Vec, type World } from './types';
 import { emit, historicalPos, newId } from './world';
@@ -1052,9 +1052,11 @@ export function doBasicAttack(w: World, e: Entity): void {
     if (dealDamage(w, e, t, Number(tr?.data?.['tirosExtrasMult'] ?? 0.5), { abilityId: a.id, ranged, basic: true }) > 0) hits++;
   }
   if (hits > 0) {
-    addSpecialPts(e, bal().especial.porAcertoBasico);
+    // v0.3: golpe mais lento vale mais Especial e recurso, para o ritmo do começo não mudar a conta
+    const rm = ritmoMult(e.level);
+    addSpecialPts(e, bal().especial.porAcertoBasico * rm);
     const res = resourceDef(e);
-    if (res?.ganhoPorAcertoBasico) e.resource = Math.min(resourceMaxOf(e), e.resource + res.ganhoPorAcertoBasico);
+    if (res?.ganhoPorAcertoBasico) e.resource = Math.min(resourceMaxOf(e), e.resource + res.ganhoPorAcertoBasico * rm);
   }
 }
 

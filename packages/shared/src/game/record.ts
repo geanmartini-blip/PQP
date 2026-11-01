@@ -7,7 +7,8 @@ import type { Resource } from '../schema/world';
 import type { DoctrineCard } from '../sim/types';
 import { defaultAppearance } from './appearance';
 import { lookOf } from './visual';
-import { canChooseArchetype, loadoutOf, type LoadoutView } from './ala';
+import { ALA_LEVEL, canChooseArchetype, loadoutOf, type LoadoutView } from './ala';
+import { DELTA_MAX_LEVEL, TRAVESSIA_LEVEL } from './progression';
 import { pendingTalentLevels } from './talents';
 import { unlockedEmotes } from './trainers';
 import { faixaScore } from './economy';
@@ -129,6 +130,9 @@ export function migratePlayerRecord(raw: unknown, fallbackId = 'jogador'): Playe
     for (const k of ['story_flags', 'inventory', 'talent_picks', 'unlocks'] as const) rec[k] = strArr(r[k]);
     rec.counters = isObj(r['counters']) ? (r['counters'] as Record<string, number>) : {};
     rec.equipment = isObj(r['equipment']) ? (r['equipment'] as Record<string, string>) : {};
+    // v0.3: a calça entrou na armadura; item que não existe mais sai do save
+    delete rec.equipment['calca'];
+    rec.inventory = rec.inventory.filter((id) => !/^calca_.*_(comum|raro)$/.test(id));
     rec.resources = isObj(r['resources']) ? (r['resources'] as Partial<Record<Resource, number>>) : {};
     // Fase 4: casa e carteira (registro sem esses campos ganha os padrões)
     rec.home = isObj(r['home']) && typeof r['home']['tipo'] === 'string' ? migrateHome(r['home']) : null;
@@ -172,13 +176,13 @@ export function migratePlayerRecord(raw: unknown, fallbackId = 'jogador'): Playe
       slot3_ability: slot3 && c?.abilities.includes(slot3) ? slot3 : (c?.slot3Padrao ?? null),
       botoes: c ? [...c.loadoutPreAla.botoes] : [],
     };
-    rec.level = Math.max(rec.level, arch ? 12 : 8);
+    rec.level = Math.max(rec.level, arch ? ALA_LEVEL : TRAVESSIA_LEVEL);
     rec.criado = true;
     rec.story_flags = ['delta_bruno_ferro_derrotado', 'travessia_feita', `margem_${side}`];
     rec.missions.concluidas = deltaChainMissions();
   } else {
-    // ainda no Delta: o teto do Delta é o 7 (o 8 só vem com o Bruno Ferro)
-    rec.level = Math.min(rec.level, 7);
+    // ainda no Delta: o teto do Delta é o 4 (o 5 só vem com o Bruno Ferro)
+    rec.level = Math.min(rec.level, DELTA_MAX_LEVEL);
   }
   // aparência da Fase 1 (camelCase) e paleta por número (0..2 na ala, 0..5 no Delta)
   const pals = paletteListFor(rec);

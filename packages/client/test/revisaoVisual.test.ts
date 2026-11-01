@@ -89,13 +89,13 @@ describe('faixa de mensagens (Z2)', () => {
 
 describe('rastreador compacto (Z1)', () => {
   it('na margem, a missão do Delta que ficou para trás não aparece', () => {
-    const delta = D.missions.missoes.find((m) => m.regiao === 'delta' && m.nivel < 8)!;
+    const delta = D.missions.missoes.find((m) => m.regiao === 'delta' && m.nivel < 5)!;
     const outra = D.missions.missoes.find((m) => m.id === 'travessia_08')!;
     const a = (id: string) => ({ id, name: id, resumo: '', objetivo: 'obj ' + id, indice: 0, total: 1, feito: 0, meta: 1 });
     const ms = { ativas: [a(delta.id), a(outra.id)], objetivo: 'obj delta', alvo: null };
     expect(trackedMission(ms, 'delta')).toEqual({ a: ms.ativas[0], first: true });
     expect(trackedMission(ms, 'margem')).toEqual({ a: ms.ativas[1], first: false });
-    // no barco também (a da travessia, do nível 8, continua)
+    // no barco também (a da travessia, do nível 5, continua)
     expect(trackedMission(ms, 'travessia')).toEqual({ a: ms.ativas[1], first: false });
     expect(trackedMission({ ativas: [a(delta.id)], objetivo: null, alvo: null }, 'margem')).toBeNull();
   });

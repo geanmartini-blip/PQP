@@ -27,6 +27,7 @@ import {
 } from './entity';
 import { dist } from './geom';
 import { moveBody } from './movement';
+import { ritmoMult } from './stats';
 import { condStatPts, talentPassivesOf } from './passiveDefs';
 import { msToTicks, type Entity, type StatusInstance, type World } from './types';
 import { emit, newId } from './world';
@@ -314,6 +315,8 @@ export const creditId = (src: Entity) => (src.kind === 'summon' && src.ownerId !
  */
 export function dealDamage(w: World, src: Entity, dst: Entity, mult: number, opts: DamageOpts = {}): number {
   if (!isDamageable(dst)) return 0;
+  // v0.3: o básico do começo é mais lento e bate mais forte na mesma conta (stats.ritmoMult)
+  if (opts.basic && opts.raw === undefined) mult *= ritmoMult(src.level);
   if (!opts.friendlyFire && !opts.reflected && !isHostile(src, dst)) return 0;
   const imune = firstStatus(dst, 'imune');
   if (imune && (imune.data?.['aDano'] === true || (opts.ranged && imune.data?.['aDanoDistancia'] === true))) {

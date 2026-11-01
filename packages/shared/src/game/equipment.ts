@@ -23,6 +23,7 @@ import {
   itemNivel,
   itemStatsOf,
   itemVisualText,
+  ITEM_SLOTS,
   NIVEL_KEY,
   nivelMaxDoItem,
   processoDoItem,
@@ -330,6 +331,18 @@ export interface ItensView {
   total: Record<string, number>;
   filtro: Raridade;
   vendaAutomatica: boolean;
+}
+
+/**
+ * v0.3, conjunto da classe: quais dos 5 slots estão com peça da classe e da margem do jogador. Com as
+ * 5, o boneco vira a versão inicial da ala (parecido com o líder, como o Peão Brabo). Sugestão.
+ */
+export function conjuntoDaClasse(rec: PlayerRecord): { pecas: ItemSlotId[]; completo: boolean } {
+  const pecas = ITEM_SLOTS.filter((s) => {
+    const d = rec.equipment[s] ? itemDefOf(rec.equipment[s]!) : undefined;
+    return !!d && !!rec.class && d.def.classLock === rec.class && (('margem' in d.def ? d.def.margem : null) ?? rec.side) === rec.side;
+  });
+  return { pecas, completo: pecas.length === ITEM_SLOTS.length };
 }
 
 export function itensView(rec: PlayerRecord): ItensView {

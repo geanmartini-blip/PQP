@@ -204,15 +204,15 @@ function build(): AsciiMapDef {
     ...subestacoes.map(([x, y], i) => mk(`subestacao_esquerda_${i + 1}`, 'porta', x + 2, y + 1, 'subestacao', { interagir: 'subestacao', acao: 'religar', lugar: 'mutiroes' })),
 
     // bandos da margem (fiscais da comissão, nível 10 a 12) e elites
-    bando('bando_fiscal_oeste', 'fiscal_da_comissao', 2, 10, 24, 56),
-    bando('bando_fiscal_murais', 'fiscal_da_comissao', 3, 10, 76, 52),
-    bando('bando_fiscal_biblioteca', 'fiscal_da_comissao', 2, 11, 16, 118),
-    bando('bando_fiscal_beira_rio', 'fiscal_da_comissao', 3, 11, 80, 118),
-    bando('bando_fiscal_hortas', 'fiscal_da_comissao', 3, 12, 76, 138),
+    bando('bando_fiscal_oeste', 'fiscal_da_comissao', 2, 7, 24, 56),
+    bando('bando_fiscal_murais', 'fiscal_da_comissao', 3, 7, 76, 52),
+    bando('bando_fiscal_biblioteca', 'fiscal_da_comissao', 2, 9, 16, 118),
+    bando('bando_fiscal_beira_rio', 'fiscal_da_comissao', 3, 9, 80, 118),
+    bando('bando_fiscal_hortas', 'fiscal_da_comissao', 3, 10, 76, 138),
     mk('elite_fiscal_blindado', 'inimigo', 30, 64, 'fiscal_da_comissao', { tier: 'elite', affixes: ['blindado'], level: 12 }),
     mk('elite_fiscal_da_religacao', 'inimigo', 84, 126, 'fiscal_da_comissao', { tier: 'elite', affixes: ['cura_os_outros'], level: 12 }),
     // SUGESTÃO: contrabandistas (região juncal em enemies.json) descem até a borda da mata
-    bando('bando_contrabandista_borda', 'contrabandista', 3, 9, 78, 14, { sugestao: true }),
+    bando('bando_contrabandista_borda', 'contrabandista', 3, 6, 78, 14, { sugestao: true }),
   ];
 
   c.scatter('T', 0.05, 101, ':', cellsOf(markers), 2);

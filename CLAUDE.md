@@ -114,11 +114,16 @@ duas coisas. Não existe final.
 - Câmbio na ponte; contrabando pelo Juncal; moradia decorável para cada jogador.
 
 ## Etapas do jogador
-- 1 a 7: Delta. Cria o personagem e começa sem lado e sem classe; tutorial dos
-  controles; chefe Bruno Ferro no 7.
-- 8: Travessia; escolhe a margem e entra numa instituição, que define a classe; recebe o
-  guia (espírito ou IA de bolso).
-- 12: escolhe a ala, que é o arquétipo, e passa a treinar com o treinador dela.
+(v0.3, a pedido do usuário; detalhes em docs/Jornada.md)
+- 1 a 4: Delta. Cria o personagem e começa sem lado e sem classe; introdução e tutorial
+  dos controles; chefe Bruno Ferro no 4.
+- 5: a balsa do Seu Jacó; escolhe a margem e entra numa instituição, que define a
+  classe; recebe o guia (espírito ou IA de bolso).
+- 10: escolhe a ala, que é o arquétipo, treina com o treinador dela e ganha a 1ª peça
+  do conjunto da classe.
+- 11 a 19: a história chega cada vez mais perto da Ponte, sem acontecer nela. No 19, a
+  cabeceira da Ponte dá a última peça do conjunto (vira a versão inicial da ala) e
+  libera a troca de lado.
 - 20: Arena da Ponte, Noite Escura e Acordo. Depois: invasões ao Mirante, masmorras,
   colossos e arenas nos níveis 40 e 60.
 
@@ -150,7 +155,7 @@ outra ala; 55: guia; 60: lenda; depois, um a mais a cada 5 níveis. Listas em Si
 - Colossos e alas do Mirante com vida compartilhada por dias, fase nova a cada hora,
   instâncias de até 20.
 - Guerra só em arenas (níveis 20, 40 e 60), das 21h às 23h, temporada mensal.
-- 6 slots de item; comum, raro, único e set. Cargos por margem no ciclo semanal; IA de
+- 5 slots de item (capacete, armadura com a calça, arma, calçado, adereço); comum, raro, único e set. Cargos por margem no ciclo semanal; IA de
   personalidade nas vagas. Pontos de controle por influência; saque máximo de 20%.
 
 ## Modelo de dados mínimo
@@ -169,9 +174,9 @@ outra ala; 55: guia; 60: lenda; depois, um a mais a cada 5 níveis. Listas em Si
   lesson, story_flag, cycle, world_event, event_log
 
 ## Escopo do piloto
-1. Delta (1 a 7) com tutorial dos controles e o chefe Bruno Ferro.
+1. Delta (1 a 4) com tutorial dos controles e o chefe Bruno Ferro.
 2. Criação de personagem zoeira e Máquina de Visual.
-3. Travessia no 8, duas margens, 2 QGs e as 8 instituições com missão de entrada.
+3. Balsa no 5, duas margens, 2 QGs e as 8 instituições com missão de entrada.
 4. As 16 habilidades de classe, os 24 arquétipos com trajes de aprendiz e veterano, e
    os 24 treinadores NPC com falas e bordões, tudo dirigido por dados.
 5. Combate em tempo real completo, com modo automático, auto-caminho e saque

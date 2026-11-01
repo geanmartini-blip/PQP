@@ -59,7 +59,7 @@ describe('FileStore', () => {
     const b = await s.getOrCreatePlayer('tok-fase1-delta');
     expect(b.data.stage).toBe('delta');
     expect(b.data.criado).toBe(false);
-    expect(b.data.level).toBe(5);
+    expect(b.data.level).toBe(4);
     expect(s.migrated).toBe(2);
     await s.flush();
     const disk = JSON.parse(readFileSync(file, 'utf8'));

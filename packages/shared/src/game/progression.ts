@@ -17,8 +17,9 @@ import { emptyResult, type GameResult, type GroupCtx, type PlayerRecord, type Un
 
 /** story_flag que libera a travessia (Bruno Ferro derrotado). */
 export const FLAG_BRUNO = 'delta_bruno_ferro_derrotado';
-export const DELTA_MAX_LEVEL = 7;
-export const TRAVESSIA_LEVEL = 8;
+/** v0.3: o Delta vai do 1 ao 4 (Bruno Ferro no 4) e a balsa é no 5. */
+export const DELTA_MAX_LEVEL = 4;
+export const TRAVESSIA_LEVEL = 5;
 
 /** XP para sair do nível e chegar no próximo: round(50 × n^1,6), sem teto (progression.xp.formula). */
 export function xpToNextLevel(level: number): number {

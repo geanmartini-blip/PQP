@@ -163,8 +163,8 @@ function rareTrim(p: Pix, side: string, rarity: ItemRarity): void {
 /** Partes que servem de peça para cada slot, na ordem (a calça do Sumô é o mawashi da cintura). */
 const SLOT_PART_ALT: Record<string, string[]> = {
   cabeca: ['cabeca', 'rosto'],
-  peito: ['torso'],
-  calca: ['pernas', 'cintura'],
+  // v0.3: a armadura leva a calça junto (a calça do Sumô é o mawashi da cintura)
+  peito: ['torso', 'pernas', 'cintura'],
   arma: ['mao_principal', 'mao_secundaria'],
   calcado: ['pes'],
 };

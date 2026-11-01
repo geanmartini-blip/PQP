@@ -123,9 +123,21 @@ export function moveSpeedOf(e: Entity): number {
   return e.stats.moveSpeed * axisBonus(e, 'moveSpeed') * (1 - slow / 100);
 }
 
-/** Intervalo do ataque básico em ticks (mínimo 4 ticks = 200 ms). */
+/**
+ * v0.3, ritmo do começo (balance.combate.ritmoInicial): até `cheioAteNivel` o básico é `mult` vezes
+ * mais lento e mais forte; cai em linha até 1 no `normalNoNivel`. O dano por segundo não muda, só a
+ * luta fica menos picotada. Vale para jogador e inimigo pelo nível da entidade.
+ */
+export function ritmoMult(level: number): number {
+  const r = bal().combate.ritmoInicial;
+  if (!r || level >= r.normalNoNivel) return 1;
+  if (level <= r.cheioAteNivel) return r.mult;
+  return 1 + (r.mult - 1) * ((r.normalNoNivel - level) / (r.normalNoNivel - r.cheioAteNivel));
+}
+
+/** Intervalo do ataque básico em ticks (mínimo 4 ticks = 200 ms), já com o ritmo do começo. */
 export function basicIntervalTicks(e: Entity): number {
-  return Math.max(4, Math.round(e.stats.attackIntervalMs / axisBonus(e, 'attackSpeed') / 50));
+  return Math.max(4, Math.round((e.stats.attackIntervalMs * ritmoMult(e.level ?? 1)) / axisBonus(e, 'attackSpeed') / 50));
 }
 
 /** Quantos segundos de recarga andam por segundo: fator da Velocidade × reforços de recarga. */

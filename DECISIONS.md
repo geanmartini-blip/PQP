@@ -276,6 +276,51 @@ O registro completo está em `decisoes/fase5-masmorra.md`. Os pontos principais:
   - O visual da criação de personagem: as camadas tipo Habbo não combinam com bonecos prontos, então
     a criação precisa de uma decisão própria.
 
+## v0.3: jornada do 1 ao 20, conjunto da classe e ritmo (2026-11-01)
+- **Pedido do usuário:**
+  - Delta e criação do 1 ao 5, com a balsa no fim;
+  - ala e 1º item da classe no 10;
+  - a história vai chegando perto da Ponte até o 20;
+  - perto do 20, a troca de lado e o último item do conjunto.
+- **Marcos:** o Delta vai até o 4 (Bruno Ferro no 4), a balsa é no 5 e a ala no 10.
+  - Os níveis antigos foram remapeados nas missões, nos inimigos, nos bandos dos mapas e nos itens:
+    7→4, 8→5, 12→10, 19→18.
+  - O nível de referência dos atributos continua 8, que é só uma conta de tabela.
+- **Missões do 11 ao 17:** eram esboço e ficaram jogáveis.
+  - "Debater", objetos que não existem e regiões fora do mapa (Rio Claro, Serra) viraram objetivos que
+    o motor já tem: ir até um lugar, derrotar, sobreviver, escolher e masmorra.
+  - Os Líderes (18) continuam esboço.
+  - A missão nova "A Cabeceira da Ponte" (19), uma para cada margem, dá a armadura e o desbloqueio
+    `troca_de_lado`.
+  - A troca de lado em si (mudar de margem, instituição e ala) fica para a v0.4. Está em PENDENTE.md.
+- **Slots:** a calça entrou no peito, agora "Armadura". Cada armadura somou os atributos e o preço da
+  calça do mesmo par, então o balanceamento não muda.
+  - Cabeça virou Capacete e Adorno virou Adereço. Os ids continuam os mesmos (`cabeca`, `peito`,
+    `adorno`).
+  - Os sets perderam a peça de calça, e o bônus maior passou para o novo total de peças.
+  - Os 2 únicos de calça viraram armadura.
+  - Save antigo perde a calça equipada.
+- **Recompensa `slotDaClasse`:** dá a peça `${slot}_${classe}_${margem}_${raridade}`.
+  `conjuntoDaClasse(rec)` diz quando as 5 estão vestidas. O cliente ainda usa o boneco do líder
+  sempre que ele existe (Peão e Idol), porque o boneco base do PixelLab não foi gerado.
+- **Ritmo:** em `balance.combate.ritmoInicial`, o básico é 1,4x mais lento e 1,4x mais forte até o 10 e
+  cai em linha até 1 no 20. Vale para jogador e inimigo.
+  - Para a conta do Especial e do recurso por acerto não mudar, cada acerto vale 1,4x.
+  - Testei 1,6, mas os tanques e a cura passavam de 55%.
+  - A Engenheira de Gambiarra já passava de 55% no nível 10 antes do ritmo. Ela ficou com:
+    - Barreira com 5% de vida (era 8%) e 13 s para se refazer;
+    - Robô com 7% de vida (era 12%), provocar a cada 8 s em raio 2.
+- **Animação de golpe:** feita por código no `EntityView`, para qualquer folha. O boneco recua, dá o
+  bote na direção do alvo e achata no impacto (380 ms no básico). Os quadros de golpe do PixelLab
+  substituem isso quando houver gerações.
+- **Simulador (nível 8):**
+  - 1 contra 1, n=60: no máximo 55,4% (Babushka), dentro do ruído da amostra; com n=60 e ritmo 1,35,
+    nenhum passou.
+  - A trava do teste (grupo, semente 3) passa.
+  - O modo grupo com n=60 no terminal já tinha alertas antes do ritmo.
+- **PixelLab:** o trial tem 4 gerações. O cenário e os bonecos novos esperam o plano pago; a estimativa
+  está em PROGRESS.md.
+
 ## Sugestões (o que não está nos docs)
 Lista mantida por fase. Tudo aqui pode ser trocado pelos autores.
 

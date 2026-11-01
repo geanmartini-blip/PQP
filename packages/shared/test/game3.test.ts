@@ -231,15 +231,15 @@ describe('instituições: as 8 missões de entrada', () => {
   });
 });
 
-describe('ala no nível 12', () => {
-  it('pede entrada na instituição e nível 12; recusa ala de outra classe e de outra instituição', () => {
+describe('ala no nível 10', () => {
+  it('pede entrada na instituição e nível 10; recusa ala de outra classe e de outra instituição', () => {
     const sem = crossed('esquerda', 'brigada_popular');
-    raiseToLevel(sem, 12);
+    raiseToLevel(sem, 10);
     expect(canChooseArchetype(sem).ok).toBe(false); // sem a missão de entrada
     const rec = entered('brigada_popular');
-    rec.level = 11;
-    expect(chooseArchetype(rec, 'peao_brabo').ok).toBe(false); // nível 11
-    raiseToLevel(rec, 12);
+    rec.level = 9;
+    expect(chooseArchetype(rec, 'peao_brabo').ok).toBe(false); // nível 9
+    raiseToLevel(rec, 10);
     // classe errada (Babushka é Atirador)
     const errada = chooseArchetype(rec, 'babushka');
     expect(errada.ok).toBe(false);
@@ -258,7 +258,7 @@ describe('ala no nível 12', () => {
 
   it('missão A Ala: quem recebe a base dá, a escolha sai no diálogo, o treinador da ala conversa e libera o bordão', () => {
     const rec = entered('brigada_popular');
-    raiseToLevel(rec, 12);
+    raiseToLevel(rec, 10);
     const d0 = talkTo(rec, 'jacques');
     expect(d0.dialogo.missaoAla).toMatchObject({ id: 'escolha_da_ala_esquerda', estado: 'disponivel' });
     expect(dialogOptions(rec, 'jacques').map((o) => o.id)).toContain('aceitar:escolha_da_ala_esquerda');
@@ -277,9 +277,9 @@ describe('ala no nível 12', () => {
     expect(rec.unlocks).toEqual(expect.arrayContaining(['traje_aprendiz', 'bordao_emote']));
   });
 
-  it('A Ala não abre antes do 12 (sem a tolerância de nível)', () => {
+  it('A Ala não abre antes do 10 (sem a tolerância de nível)', () => {
     const rec = entered('brigada_popular');
-    rec.level = 10;
+    rec.level = 8;
     expect(dialogOptions(rec, 'jacques').map((o) => o.id)).not.toContain('aceitar:escolha_da_ala_esquerda');
   });
 

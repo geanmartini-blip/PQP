@@ -32,7 +32,7 @@ export const ENCOUNTER_TUNING = {
   maxPorJanela: 2,
   chancePersonagemIa: 0.6,
   chanceCoop: 0.5,
-  nivelIa: [12, 15] as const,
+  nivelIa: [10, 15] as const,
   distanciaDaChegada: 8,
 };
 

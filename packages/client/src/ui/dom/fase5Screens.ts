@@ -104,7 +104,7 @@ export interface Fase5Frame {
   bossOn?: boolean;
 }
 
-const SLOTS = ['cabeca', 'peito', 'calca', 'arma', 'calcado', 'adorno'] as const;
+const SLOTS = ['cabeca', 'peito', 'arma', 'calcado', 'adorno'] as const;
 
 export class Fase5Ui {
   private modal: HTMLDivElement | null = null;

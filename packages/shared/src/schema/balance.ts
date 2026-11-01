@@ -216,6 +216,11 @@ export const BalanceFile = z
         doutrinaCartasMax: z.number().int().positive(),
         pocaoAutoAbaixoPct: z.number(),
         intervaloAtaqueBasicoBaseS: z.number().positive(),
+        /** v0.3: no começo do jogo o básico bate mais forte e mais devagar (mesmo dano por segundo). */
+        ritmoInicial: z
+          .object({ mult: z.number().min(1), cheioAteNivel: z.number().int().positive(), normalNoNivel: z.number().int().positive() })
+          .strict()
+          .optional(),
         regenForaDeCombate: z.object({ aposMs: z.number().int().positive(), pctVidaPorS: z.number().positive() }).strict(),
         raioColetaSaqueTiles: z.number().positive(),
         description: z.string().optional(),

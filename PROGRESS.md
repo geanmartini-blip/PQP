@@ -19,6 +19,58 @@ Comandos rodam com `. .\scripts\env.ps1` antes (Node e Git portáteis).
 ## PILOTO: as 5 fases estão concluídas
 O que falta depende dos autores ou de aparelho: ver PENDENTE.md. Para rodar, ver README.md.
 
+### v0.3: jornada nova do 1 ao 20, conjunto da classe, ritmo do combate e arte nova — EM ANDAMENTO
+Plano:
+1. **Jornada** (pronta). A história e as missões estão em `docs/Jornada.md`:
+   - Delta do 1 ao 4, com o Bruno Ferro no 4;
+   - balsa no 5, com a escolha da margem, da instituição e do guia;
+   - missões do 5 ao 9;
+   - ala no 10;
+   - A Licença e A Mata Fechada do 11 ao 13;
+   - O Rio Turvo e Siga o Dinheiro do 15 ao 17;
+   - a cabeceira da Ponte no 19, que libera a troca de lado.
+   As missões do 11 ao 17 eram esboço e ficaram jogáveis com objetivos que o motor já tem.
+2. **Itens** (pronto):
+   - 5 slots: capacete, armadura (com a calça), arma, calçado e adereço;
+   - as missões dão as 5 peças da classe;
+   - `conjuntoDaClasse` diz quando o boneco vira a versão inicial da ala.
+3. **Combate** (pronto):
+   - ritmo do começo: o básico é 1,4x mais lento e mais forte até o 10 e volta ao normal no 20;
+   - o Especial e o recurso por acerto foram compensados;
+   - animação de golpe em qualquer folha (preparo, bote e impacto);
+   - a Engenheira de Gambiarra perdeu um pouco nas invocações.
+4. **Arte do PixelLab** (espera o plano pago, porque o trial tem 4 gerações):
+   - o boneco base;
+   - os estágios do conjunto por ala;
+   - o golpe;
+   - o cenário.
+   A lista está abaixo.
+5. Testes, build, NOVIDADES da v0.3, versão 0.3.0 e commit, sem push.
+
+Visual dos itens:
+- O jogador nasce com o **boneco base** do PixelLab, um corpo neutro com variações de pele e cabelo
+  por paleta.
+- Cada peça muda a sua parte no estilo da ala:
+  - o capacete e a arma são camadas por cima do boneco base, com `edit_image` nas 4 direções e
+    acompanhando a cabeça e a mão quadro a quadro;
+  - a armadura muda o corpo, por isso vira um estado do boneco (`create_character_state` ou
+    `transfer_outfit`).
+- Com as 5 peças, o boneco vira o **líder da ala**, que é o mesmo sprite do treinador, reaproveitado.
+
+Assets do PixelLab, em estimativa de gerações (~12 por boneco com 8 direções e andar, +4 de golpe):
+
+| O quê | Gerações |
+|---|---|
+| Boneco base (8 direções, andar, golpe) | ~16 |
+| 24 líderes de ala, que também servem de treinador (12 + 4 de golpe cada) | ~384 (Peão e Idol já feitos: ~360) |
+| 24 estágios de "meio conjunto", a armadura vestida | ~288 |
+| Camadas de capacete e arma por ala (4 direções × 2 slots) | ~192 |
+| NPCs da história (~15) | ~180 |
+| Inimigos (~20) e chefes (3) | ~290 |
+| Cenário: tilesets (~10), props (~80) e prédios (~20) | ~150 |
+| **Total do jogo inteiro** | **~1.450** |
+| **Mínimo para a v0.3 ficar na arte nova no começo**: boneco base, golpe do Peão e da Idol, tilesets e props do Delta e da balsa | **~75** |
+
 ### v0.1: app instalável offline (PWA) no GitHub Pages — CONCLUÍDA
 - `npm run build:app` (base `VITE_BASE`, `/PQP/` no Pages): offline e solo por padrão, manifest,
   ícones em pixel art (`scripts/gerar-icones.mjs`), service worker escrito à mão com pré-cache de

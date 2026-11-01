@@ -60,7 +60,7 @@ describe('equipar e desequipar', () => {
     expect(equipar(r, 'peito_combatente_esquerda_comum').ok).toBe(true);
     expect(r.equipment['peito']).toBe('peito_combatente_esquerda_comum');
     expect(r.inventory).not.toContain('peito_combatente_esquerda_comum');
-    expect(equipmentStats(r)).toEqual({ hp: 6, defense: 5 });
+    expect(equipmentStats(r)).toEqual({ hp: 6, defense: 5, evasion: 3, resourceMax: 5 });
 
     // no combate: vida máxima +6% e defesa +5% (stats.pct)
     const w = createWorld(arena(), 1);
@@ -93,15 +93,15 @@ describe('equipar e desequipar', () => {
     expect(simSpawnExtrasOf(r).equipment).toBeUndefined();
   });
 
-  it('6 slots, um de cada: a arma não ocupa o lugar da cabeça', () => {
+  it('5 slots (a calça entrou na armadura), um de cada: a arma não ocupa o lugar da cabeça', () => {
     const r = rec('peao_brabo');
-    const ids = ['cabeca', 'peito', 'calca', 'arma', 'calcado', 'adorno'].map((s) => `${s}_combatente_esquerda_comum`);
+    const ids = ['cabeca', 'peito', 'arma', 'calcado', 'adorno'].map((s) => `${s}_combatente_esquerda_comum`);
     dar(r, ...ids);
     for (const id of ids) expect(equipar(r, id).ok).toBe(true);
-    expect(Object.keys(r.equipment).sort()).toEqual(['adorno', 'arma', 'cabeca', 'calca', 'calcado', 'peito']);
+    expect(Object.keys(r.equipment).sort()).toEqual(['adorno', 'arma', 'cabeca', 'calcado', 'peito']);
     expect(r.inventory).toEqual([]);
     const v = itensView(r);
-    expect(Object.keys(v.equipados).length).toBe(6);
+    expect(Object.keys(v.equipados).length).toBe(5);
   });
 
   it('class_lock: item de outra classe não veste; sem classe veste; nível mínimo', () => {

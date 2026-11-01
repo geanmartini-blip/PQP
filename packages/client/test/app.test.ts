@@ -155,18 +155,18 @@ describe('atalhos de dev no servidor local', () => {
     expect(s2.rec!.level).toBe(12);
   });
 
-  it('?dev_mapa=juncal sozinho: margem Esquerda, nível 8, nasce no Juncal', () => {
+  it('?dev_mapa=juncal sozinho: margem Esquerda, nível 5, nasce no Juncal', () => {
     const { s } = start({ mapId: 'juncal' }, 'tok_dev_juncal');
     expect(s.rec!.stage).toBe('margem');
     expect(s.rec!.side).toBe('esquerda');
-    expect(s.rec!.level).toBe(8);
+    expect(s.rec!.level).toBe(5);
     expect(s.mapId).toBe('juncal');
   });
 
-  it('?dev_nivel=5: continua no Delta, no nível 5', () => {
-    const { s } = start({ level: 5 }, 'tok_dev_delta');
+  it('?dev_nivel=3: continua no Delta, no nível 3', () => {
+    const { s } = start({ level: 3 }, 'tok_dev_delta');
     expect(s.rec!.stage).toBe('delta');
-    expect(s.rec!.level).toBe(5);
+    expect(s.rec!.level).toBe(3);
     expect(s.mapId).toBe('delta');
   });
 

@@ -149,7 +149,7 @@ describe('servidor local: travessia de barco', () => {
     const s = new LocalServer({ store: memStore(), noEnemies: true, encounters: false, devTravessia: true });
     s.receive(MSG.hello, { token: 'tok_barco_dev', name: 'Zé' });
     s.receive(GAME_MSG.criarPersonagem, { name: 'Zé Dev', appearance: okLook() });
-    expect(s.rec!.level).toBe(8);
+    expect(s.rec!.level).toBe(5);
     expect(s.rec!.story_flags).toContain(FLAG_BRUNO);
     nearJaco(s);
     s.take();

@@ -3,6 +3,16 @@
 O piloto roda inteiro no PC e no celular pela rede local sem nada desta lista. Cada item diz o que
 falta e onde a integração já está pronta.
 
+## 0. PixelLab: plano pago (v0.3)
+- O trial tem só 4 gerações e roda uma por vez. O cenário novo, o boneco base, os estágios do conjunto
+  por ala e os quadros de golpe esperam um plano pago.
+- Estimativa em PROGRESS.md, na seção v0.3: ~75 gerações para o começo do jogo (Delta e balsa) e
+  ~1.450 para o jogo inteiro.
+- Depois de gerar o boneco base, o `WorldScene.sheetFor` passa a usar o líder da ala só quando
+  `conjuntoDaClasse(rec).completo`.
+- A troca de lado em si (mudar de margem, instituição e ala) fica para a v0.4. A missão da cabeceira já
+  libera `troca_de_lado`.
+
 ## 1. Supabase: conta, chaves e migrations
 - **Criar o projeto** no Supabase. Pode ser o plano grátis no piloto.
 - **Variáveis de ambiente do servidor**, só no servidor e nunca no cliente:

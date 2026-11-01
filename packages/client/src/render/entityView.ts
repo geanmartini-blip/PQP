@@ -78,6 +78,8 @@ export class EntityView {
   private anim: AnimName | '' = '';
   private dir = 0;
   private actionUntil = 0;
+  private actionAt = 0;
+  private baseScale = 1;
   private actionAnim: AnimName = 'basico';
   private lastFl = 0;
   private barW = 24;
@@ -198,6 +200,7 @@ export class EntityView {
     this.originY = m?.originY ?? 1;
     this.sprite.setTexture(key);
     this.sprite.setScale(sc);
+    this.baseScale = sc;
     this.sprite.setOrigin(m?.originX ?? 0.5, this.originY);
     this.anim = '';
     if (m?.fx) {
@@ -273,15 +276,36 @@ export class EntityView {
   /** Um golpe ou habilidade começou: toca uma vez a animação. */
   playAction(anim: AnimName, now: number, durMs = 350): void {
     this.actionAnim = anim;
+    this.actionAt = now;
     this.actionUntil = now + durMs;
     this.anim = '';
+  }
+
+  /**
+   * v0.3: o golpe tem corpo próprio em qualquer folha (as do PixelLab só têm o andar): recua um
+   * pouco, avança na direção do alvo e achata no impacto. Dir 0 baixo, 1 esquerda, 2 cima, 3 direita.
+   */
+  private actionPose(now: number): void {
+    const dur = this.actionUntil - this.actionAt;
+    const t = dur > 0 && now < this.actionUntil ? (now - this.actionAt) / dur : 1;
+    let push = 0, squash = 0;
+    if (t < 1) {
+      // 0-30% preparo (recua), 30-55% bote, 55-100% volta
+      push = t < 0.3 ? -1.5 * (t / 0.3) : t < 0.55 ? -1.5 + 7.5 * ((t - 0.3) / 0.25) : 6 * (1 - (t - 0.55) / 0.45);
+      squash = t >= 0.3 && t < 0.7 ? Math.sin(((t - 0.3) / 0.4) * Math.PI) * 0.12 : 0;
+    }
+    const d = this.dir;
+    const ox = d === 1 ? -push : d === 3 ? push : 0;
+    const oy = d === 0 ? push * 0.6 : d === 2 ? -push * 0.6 : 0;
+    this.sprite.setPosition(this.px + ox, this.py + oy);
+    this.sprite.setScale(this.baseScale * (1 + squash), this.baseScale * (1 - squash));
   }
 
   /** Escolhe a animação pelos flags e pelo movimento. */
   animate(now: number, facing: number, moving: boolean, fl: number): void {
     if (this.isFx) return;
     // borda de subida do "atacando": um golpe novo
-    if (fl & FL.atacando && !(this.lastFl & FL.atacando) && now >= this.actionUntil) this.playAction('basico', now, 260);
+    if (fl & FL.atacando && !(this.lastFl & FL.atacando) && now >= this.actionUntil) this.playAction('basico', now, 380);
     this.lastFl = fl;
     let anim: AnimName;
     if (fl & FL.caido || this.dying) anim = 'derrota';
@@ -295,6 +319,7 @@ export class EntityView {
       this.anim = anim;
       this.dir = dir;
     }
+    if (now < this.actionUntil + 50 && !(fl & FL.caido) && !this.dying) this.actionPose(now);
     this.statusFx(fl, now);
   }
 

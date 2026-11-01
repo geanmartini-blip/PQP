@@ -136,10 +136,12 @@
     "doutrinaCartasMax": 5,
     "pocaoAutoAbaixoPct": 30,
     "intervaloAtaqueBasicoBaseS": 1,
+    "ritmoInicial": { "mult": 1.4, "cheioAteNivel": 10, "normalNoNivel": 20 },
     "regenForaDeCombate": { "aposMs": 5000, "pctVidaPorS": 4 },
     "raioColetaSaqueTiles": 1.5,
     "description": "Controles: atordoar, prender, silenciar, derrubar, cegar, confundir e tontura duram de 1 a 2 s na habilidade e dão imunidade de 4 s ao mesmo alvo depois, para não dar para encadear um no outro. Provocar tem regra própria: até 4 s e sem imunidade, porque o provocado continua agindo. Exceção do doc: controle que acaba no primeiro golpe (Protocolo Infinito, 6 s) vai até controleQuebravelMaxMs e também dá imunidade. Bônus de talento, ala ou ccDuration (ex.: \"o controle dura o dobro\", Ilusão Total) podem passar de 2 s, até controleComBonusMaxMs. Chefes não recebem controle: viram lentidão de chefeLentidaoPct. Aliado caído fica 30 s no chão; se ninguém levantar, volta no QG.",
-    "sugestaoCampos": ["controlesComLimite", "chefeLentidaoPct", "provocarMaxMs", "provocarDaImunidade", "controleQuebravelMaxMs", "controleComBonusMaxMs", "levantarRaioTiles", "levantarVidaPct", "intervaloAtaqueBasicoBaseS", "regenForaDeCombate", "raioColetaSaqueTiles", "description"]
+    "sugestaoCampos": ["controlesComLimite", "chefeLentidaoPct", "provocarMaxMs", "provocarDaImunidade", "controleQuebravelMaxMs", "controleComBonusMaxMs", "levantarRaioTiles", "levantarVidaPct", "intervaloAtaqueBasicoBaseS",
+      "ritmoInicial", "regenForaDeCombate", "raioColetaSaqueTiles", "description"]
   },
   "especial": {
     "cargaMax": 100,

@@ -3,6 +3,7 @@
  * topo e qual missão o rastreador compacto mostra.
  */
 import { getData } from '@pqp/shared';
+import { TRAVESSIA_LEVEL } from '@pqp/shared/game/progression';
 import type { S2C_MissaoEstado } from '@pqp/shared/net';
 import type { Toast } from '../game/gameState';
 
@@ -34,8 +35,8 @@ export function trackedMission(ms: S2C_MissaoEstado | null, stage: string | unde
   const D = getData();
   for (const [i, a] of ms.ativas.entries()) {
     const m = D.missionsById.get(a.id);
-    // as do Delta de 1 a 7 (a da travessia, do nível 8, também é do Delta e continua valendo)
-    if (stage !== undefined && stage !== 'delta' && m?.regiao === 'delta' && m.nivel < 8) continue;
+    // as do Delta de 1 a 4 (a da balsa, do nível 5, também é do Delta e continua valendo)
+    if (stage !== undefined && stage !== 'delta' && m?.regiao === 'delta' && m.nivel < TRAVESSIA_LEVEL) continue;
     return { a, first: i === 0 };
   }
   return null;
