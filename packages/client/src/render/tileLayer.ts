@@ -21,7 +21,7 @@ import { isDungeonMapId } from '../game/dungeonMap';
 import { MATO_FRAMES, OVERLAY_FRAMES, overlayKind, renderTerrain, styleOfRegion, type Style, type TerrainSource, TREE_BASE_Y, TREE_H } from '../art/terrain';
 import { hashInt } from '../art/noise';
 import { treeFrame } from '../art/tiles';
-import { desenhaPlChao, plArvoreFrame, plArvores, usaPlChao } from '../art/plChao';
+import { desenhaPlChao, PL_POR_CIMA, plArvoreFrame, plArvores, usaPlChao } from '../art/plChao';
 import { DEPTH } from './depth';
 
 export const GRID_KEY = 'tiles_grid';
@@ -226,7 +226,21 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
     uploadPix(scene, key, pix);
     if (plChao) {
       const ct = scene.textures.get(key) as Phaser.Textures.CanvasTexture;
-      desenhaPlChao(scene, ct.getContext(), map, tx0, ty0, tw, th);
+      // objetos (pedra, cerca, porta): o mesmo bloco sem eles, para recortar só o desenho do objeto
+      const temObjeto = (() => {
+        for (let y = ty0; y < ty0 + th; y++) for (let x = tx0; x < tx0 + tw; x++) if (PL_POR_CIMA.has(map.tiles[y * W + x]!)) return true;
+        return false;
+      })();
+      // no lugar do objeto, o chão do vizinho de baixo (ou de cima), para o resto da célula não mudar
+      const chaoSob = (x: number, y: number): number => {
+        for (const dy of [1, -1]) {
+          const t = src.tile(x, y + dy);
+          if (!PL_POR_CIMA.has(t)) return t;
+        }
+        return Tile.Grama;
+      };
+      const semObjeto = temObjeto ? renderTerrain({ ...src, tile: (x, y) => (PL_POR_CIMA.has(src.tile(x, y)) ? chaoSob(x, y) : src.tile(x, y)) }, tx0, ty0, tw, th) : undefined;
+      desenhaPlChao(scene, ct.getContext(), map, tx0, ty0, tw, th, semObjeto?.data);
       ct.refresh();
     }
     const img = scene.add.image(tx0 * TILE_PX, ty0 * TILE_PX, key).setOrigin(0, 0).setDepth(DEPTH.floor);

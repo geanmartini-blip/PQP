@@ -21,6 +21,9 @@ const PARES = [
   ['9db0115c-7a5b-4c76-9058-20bd4ed328af', 'terra', 'madeira'],
   ['a74bc1ab-d96a-44df-8183-53e700c10c6b', 'areia', 'madeira'],
   ['343ad250-7520-41a4-ac34-8ede06e506aa', 'funda', 'areia'],
+  ['66daec64-86f5-41c6-9349-bd52c0b944b2', 'madeira', 'parede'],
+  ['5fe3ab74-5bac-4d6d-aadd-8c4564bc59fd', 'grama', 'parede'],
+  ['564f4d00-ee0d-4dea-a33a-19fcf8286ce4', 'terra', 'parede'],
 ];
 const API = 'https://api.pixellab.ai/mcp/tilesets';
 const OUT_IMG = 'packages/client/public/pl/chao';

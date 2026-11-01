@@ -45,8 +45,11 @@ Plano:
      `tools/art/pl-chao.mjs`), e 2 árvores do mangue;
    - pronto: o jogador sem o conjunto completo é o boneco base; com as 5 peças, o boneco da ala
      (`look.outfit.conjunto`), quando a ala já tem boneco do PixelLab;
-   - falta: paredes e barracos, props, inimigos, NPCs, as margens e os estágios do conjunto por ala.
-   Gasto até aqui: 270 gerações (os tilesets "pro" custam 15 cada). A lista está abaixo.
+   - pronto: paredes das palafitas (tileset baixo de tábua e zinco), Seu Jacó, Bruno Ferro, capanga e
+     cobrador (andar e golpe), siri e mosquito (desenho único, sem direção);
+   - falta: props (barco, rede, caixote, toldo), Toninho e vendedores, as margens e os estágios do
+     conjunto por ala.
+   Gasto até aqui: 476 gerações (tileset "pro" custa 15, boneco "pro" 25). A lista está abaixo.
 5. Testes, build, NOVIDADES da v0.3, versão 0.3.0 e commit, sem push.
 
 Visual dos itens:

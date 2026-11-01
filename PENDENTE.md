@@ -5,12 +5,14 @@ falta e onde a integração já está pronta.
 
 ## 0. PixelLab (v0.3)
 - Plano Pixel Apprentice assinado em 2026-11-01: 2.000 gerações por mês, até 8 tarefas ao mesmo
-  tempo. Na v0.3 já foram 270: boneco base, golpes, 15 tilesets do chão e 2 árvores.
+  tempo. Na v0.3 já foram 476: boneco base, golpes, 18 tilesets do chão e das paredes, 2 árvores,
+  Seu Jacó, Bruno Ferro, capanga, cobrador, siri e mosquito.
 - **O boneco base é um só.** A criação zoeira (corpo, pele, cabelo) ainda não aparece no mundo: todo
   mundo que não completou o conjunto usa o mesmo boneco. Para mostrar a criação, faltam variações do
   boneco base (estados do PixelLab por corpo e tom de pele) ou camadas por cima dele.
 - As alas sem boneco do PixelLab (22 de 24) mostram o boneco base mesmo com o conjunto completo.
-- Falta gerar: paredes e barracos do Delta, props, inimigos, NPCs, as margens, a Usina e o Juncal.
+- Falta gerar: props do Delta, Toninho e vendedores, as margens, a Usina e o Juncal. O Bruno Ferro
+  chefe usa o mesmo tamanho do NPC (sem a escala maior do chefe antigo).
 - A troca de lado em si (mudar de margem, instituição e ala) fica para a v0.4. A missão da cabeceira já
   libera `troca_de_lado`.
 

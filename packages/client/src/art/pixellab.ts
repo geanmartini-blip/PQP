@@ -35,11 +35,15 @@ const golpeKey = (f: string, d: string, i: number) => `pl_${f}_golpe_${d}_${i}`;
 /** Põe na fila de carga os quadros de todos os bonecos do PixelLab (chamar no preload). */
 export function preloadPixellab(scene: Phaser.Scene): void {
   const base = import.meta.env.BASE_URL;
-  for (const f of new Set([...Object.values(PL_ARCHETYPES), PL_BASE]))
+  for (const f of PL_BICHOS) scene.load.image(`pl_${f}_obj`, `${base}pl/${f}/obj.png`);
+  const bonecos = new Set([...Object.values(PL_ARCHETYPES), PL_BASE, ...Object.values(PL_NPCS), ...Object.values(PL_INIMIGOS)]);
+  for (const f of bonecos) {
+    if (PL_BICHOS.has(f)) continue;
     for (const d of DIR_NAMES) {
       for (let i = 0; i < WALK; i++) scene.load.image(frameKey(f, d, i), `${base}pl/${f}/${d}_${i}.png`);
-      for (let i = 0; i < GOLPE; i++) scene.load.image(golpeKey(f, d, i), `${base}pl/${f}/golpe_${d}_${i}.png`);
+      if (!PL_SEM_GOLPE.has(f)) for (let i = 0; i < GOLPE; i++) scene.load.image(golpeKey(f, d, i), `${base}pl/${f}/golpe_${d}_${i}.png`);
     }
+  }
 }
 
 /** Pasta do boneco do PixelLab para este visual de jogador (ala com conjunto completo, senão o base). */
@@ -50,7 +54,56 @@ export function plBonecoDe(look: CharacterLook): string {
 
 /** Folha do PixelLab deste visual de jogador, ou undefined se o boneco ainda não foi carregado. */
 export function pixellabSheet(scene: Phaser.Scene, look: CharacterLook): string | undefined {
-  const f = plBonecoDe(look);
+  return folhaBoneco(scene, plBonecoDe(look));
+}
+
+/**
+ * v0.3: NPCs e inimigos do Delta com boneco do PixelLab (pasta em public/pl/). Os bichos (siri e
+ * mosquito) são um desenho só, sem direção: a folha repete o quadro e o EntityView dá o bote.
+ */
+export const PL_NPCS: Record<string, string> = { seu_jaco: 'jaco', bruno_ferro: 'bruno' };
+export const PL_INIMIGOS: Record<string, string> = {
+  bruno_ferro_chefe: 'bruno',
+  capanga_do_capataz: 'capanga',
+  cobrador_do_capataz: 'cobrador',
+  siri_do_mangue: 'siri',
+  mosquito_do_delta: 'mosquito',
+};
+const PL_BICHOS: ReadonlySet<string> = new Set(['siri', 'mosquito']);
+/** NPCs que não lutam: só o andar */
+const PL_SEM_GOLPE: ReadonlySet<string> = new Set(['jaco']);
+
+/** Folha do PixelLab de um NPC ou inimigo, ou undefined se ele não tem (ou ainda não carregou). */
+export function pixellabEntSheet(scene: Phaser.Scene, kind: 'npc' | 'inimigo', id: string): string | undefined {
+  const f = (kind === 'npc' ? PL_NPCS : PL_INIMIGOS)[id];
+  if (!f) return undefined;
+  return PL_BICHOS.has(f) ? folhaBicho(scene, f) : folhaBoneco(scene, f);
+}
+
+function folhaBicho(scene: Phaser.Scene, f: string): string | undefined {
+  const key = `pl_${f}`;
+  if (scene.textures.exists(key)) return key;
+  const src = `pl_${f}_obj`;
+  if (!scene.textures.exists(src)) return undefined;
+  const im = scene.textures.get(src).getSourceImage() as HTMLImageElement;
+  const tex = scene.textures.createCanvas(key, im.width * 2, im.height);
+  if (!tex) return undefined;
+  // quadro 0 parado, quadro 1 um pixel acima (o bicho pula ou bate asa)
+  tex.getContext().drawImage(im, 0, 0);
+  tex.getContext().drawImage(im, im.width, -1);
+  const anims: Partial<Record<AnimName, number>> = {};
+  for (const anim of Object.keys(ANIMS) as AnimName[]) {
+    anims[anim] = ANIMS[anim];
+    for (let dir = 0; dir < DIR_NAMES.length; dir++)
+      for (let i = 0; i < ANIMS[anim]; i++) tex.add(`${anim}_${dir}_${i}`, 0, (i & 1) * im.width, 0, im.width, im.height);
+  }
+  tex.refresh();
+  tex.setFilter(Phaser.Textures.FilterMode.NEAREST);
+  registerSheet(scene, { key, frameW: im.width, frameH: im.height, originX: 0.5, originY: 0.9, anims, scale: PL_SCALE });
+  return key;
+}
+
+function folhaBoneco(scene: Phaser.Scene, f: string): string | undefined {
   const key = `pl_${f}`;
   if (scene.textures.exists(key)) return key;
   if (!scene.textures.exists(frameKey(f, 'south', 0))) return undefined;

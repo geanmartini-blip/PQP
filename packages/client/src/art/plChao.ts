@@ -14,7 +14,7 @@ import man from './plChao.json';
 export const PL_CHAO_MAPS: ReadonlySet<string> = new Set(['delta', 'barco_travessia']);
 
 /** terrenos do PixelLab, do mais baixo ao mais alto (a ordem decide quem é "upper" num vértice) */
-const ORDEM = ['funda', 'rasa', 'lama', 'areia', 'grama', 'terra', 'madeira'] as const;
+const ORDEM = ['funda', 'rasa', 'lama', 'areia', 'grama', 'terra', 'madeira', 'parede'] as const;
 type Terreno = (typeof ORDEM)[number];
 const NIVEL: Record<string, number> = Object.fromEntries(ORDEM.map((t, i) => [t, i]));
 
@@ -30,11 +30,12 @@ const CHAO_DE: Partial<Record<number, Terreno>> = {
   [Tile.Pedra]: 'grama',
   [Tile.Terra]: 'terra',
   [Tile.Madeira]: 'madeira',
+  [Tile.Parede]: 'parede',
   [Tile.Cerca]: 'madeira',
   [Tile.Porta]: 'madeira',
 };
 /** tiles com chão do PixelLab embaixo, mas o desenho procedural (objeto) por cima */
-const POR_CIMA: ReadonlySet<number> = new Set([Tile.Cerca, Tile.Porta, Tile.Pedra]);
+export const PL_POR_CIMA: ReadonlySet<number> = new Set([Tile.Cerca, Tile.Porta, Tile.Pedra]);
 
 interface Par {
   lower: Terreno;
@@ -123,9 +124,20 @@ export function escolheTile(cantos: readonly Terreno[]): { key: string; x: numbe
 
 /**
  * Desenha o chão do PixelLab no bloco (tx0, ty0, tw, th) por cima do canvas do terreno procedural,
- * deixando as células sem terreno do PixelLab (e os objetos de POR_CIMA) como estavam.
+ * deixando as células sem terreno do PixelLab como estavam. Nos objetos de PL_POR_CIMA, volta só o
+ * desenho do objeto: os pixels em que o bloco procedural difere de `semObjeto` (o mesmo bloco com o
+ * objeto trocado por chão, RGBA do mesmo tamanho).
  */
-export function desenhaPlChao(scene: Phaser.Scene, ctx: CanvasRenderingContext2D, map: TileMap, tx0: number, ty0: number, tw: number, th: number): void {
+export function desenhaPlChao(
+  scene: Phaser.Scene,
+  ctx: CanvasRenderingContext2D,
+  map: TileMap,
+  tx0: number,
+  ty0: number,
+  tw: number,
+  th: number,
+  semObjeto?: Uint8ClampedArray,
+): void {
   const W = map.width;
   const H = map.height;
   const proc = document.createElement('canvas');
@@ -155,14 +167,35 @@ export function desenhaPlChao(scene: Phaser.Scene, ctx: CanvasRenderingContext2D
         ctx.restore();
       } else ctx.drawImage(img, esc.x, esc.y, T, T, dx, dy, T, T);
     }
-  // objetos e células sem chão do PixelLab: volta o desenho procedural da célula
+  // células sem chão do PixelLab: volta o desenho procedural da célula
   for (let y = ty0; y < ty0 + th; y++)
     for (let x = tx0; x < tx0 + tw; x++) {
-      const t = tile(x, y);
-      if (CHAO_DE[t] !== undefined && !POR_CIMA.has(t)) continue;
+      if (CHAO_DE[tile(x, y)] !== undefined) continue;
       const sx = (x - tx0) * T;
       const sy = (y - ty0) * T;
       ctx.clearRect(sx, sy, T, T);
       ctx.drawImage(proc, sx, sy, T, T, sx, sy, T, T);
     }
+  // objetos: só os pixels do objeto (o que difere do bloco sem ele)
+  if (!semObjeto) return;
+  const W2 = tw * T;
+  const procData = pctx.getImageData(0, 0, W2, th * T).data;
+  const out = ctx.getImageData(0, 0, W2, th * T);
+  let mudou = false;
+  for (let y = ty0; y < ty0 + th; y++)
+    for (let x = tx0; x < tx0 + tw; x++) {
+      if (!PL_POR_CIMA.has(tile(x, y))) continue;
+      // o objeto pode passar um pouco da célula (pedra alta, porta): olha a célula e a de cima
+      for (let py = Math.max(0, (y - ty0 - 1) * T); py < (y - ty0 + 1) * T; py++)
+        for (let px = (x - tx0) * T; px < (x - tx0 + 1) * T; px++) {
+          const i = (py * W2 + px) * 4;
+          if (procData[i] === semObjeto[i] && procData[i + 1] === semObjeto[i + 1] && procData[i + 2] === semObjeto[i + 2]) continue;
+          out.data[i] = procData[i]!;
+          out.data[i + 1] = procData[i + 1]!;
+          out.data[i + 2] = procData[i + 2]!;
+          out.data[i + 3] = 255;
+          mudou = true;
+        }
+    }
+  if (mudou) ctx.putImageData(out, 0, 0);
 }

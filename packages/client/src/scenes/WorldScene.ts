@@ -12,7 +12,7 @@ import { getData } from '@pqp/shared';
 import { hasLineOfSight, isBoatRoom } from '@pqp/shared/map';
 import { SIM_TUNING, type CombatEvent, type Vec } from '@pqp/shared/sim';
 import { archetypeLook, asCharacterLook, coneKeyFor, defaultLook, sheetMeta, TILE_PX } from '../art/index';
-import { pixellabSheet } from '../art/pixellab';
+import { pixellabEntSheet, pixellabSheet } from '../art/pixellab';
 import { lookKey, type ArtLook } from '../art/character';
 import type { CharacterLook } from '../art/contract';
 import { FL, type ClientEnt } from '../game/clientWorld';
@@ -272,9 +272,9 @@ export class WorldScene extends Phaser.Scene {
         return pixellabSheet(this, look) ?? this.playerSheet(look);
       }
       case 'n':
-        return art.npcSheet(this, id);
+        return pixellabEntSheet(this, 'npc', id) ?? art.npcSheet(this, id);
       case 'e':
-        return art.enemySheet(this, id, e.fl & FL.chefe ? 'chefe' : e.fl & FL.elite ? 'elite' : 'normal');
+        return pixellabEntSheet(this, 'inimigo', id) ?? art.enemySheet(this, id, e.fl & FL.chefe ? 'chefe' : e.fl & FL.elite ? 'elite' : 'normal');
       case 's': {
         const side = (e.lk as { side?: string } | undefined)?.side === 'direita' ? 'direita' : 'esquerda';
         return art.summonSheet(this, id, side);

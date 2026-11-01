@@ -5,11 +5,10 @@ O jogo mostra a seção da versão atual uma vez, na primeira abertura depois de
 
 ## v0.3
 - Jornada nova: o Bruno Ferro chega no nível 4, a balsa é no 5 e a ala no 10.
-- Até o 19, a história vai chegando perto da Ponte, e a missão da cabeceira libera a troca de lado.
-- As missões do 11 ao 19 agora dão para jogar, nas duas margens.
+- Do 11 ao 19, as missões vão chegando perto da Ponte; a da cabeceira libera a troca de lado.
 - Conjunto da classe: as missões dão as 5 peças, e a calça entrou na armadura.
 - Luta com menos correria no começo: golpes mais lentos e mais fortes, com animação própria.
-- Arte nova no Delta e na balsa: chão, água, mangue e árvores, e o boneco base de quem está começando.
+- Arte nova no Delta: chão, casas, árvores, o boneco base, o Seu Jacó e o Bruno Ferro com a turma.
 
 ## v0.2
 - Arte nova em teste: o Peão Brabo e a Idol ganharam bonecos novos, bem mais caprichados.
