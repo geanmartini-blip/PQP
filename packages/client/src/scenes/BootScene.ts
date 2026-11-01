@@ -11,6 +11,7 @@ import { getData } from '@pqp/shared';
 import { archetypeLook, createArt, defaultLook } from '../art/index';
 import type { ArtApi } from '../art/contract';
 import { preloadPixellab } from '../art/pixellab';
+import { preloadPlChao } from '../art/plChao';
 import type { ClientConfig } from '../config';
 import type { GameClient } from '../game/GameClient';
 import { createRuntime, makeBaseTransport } from '../game/runtime';
@@ -34,6 +35,7 @@ export class BootScene extends Phaser.Scene {
 
   preload(): void {
     preloadPixellab(this);
+    preloadPlChao(this);
   }
 
   create(): void {

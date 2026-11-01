@@ -3,13 +3,14 @@
 O piloto roda inteiro no PC e no celular pela rede local sem nada desta lista. Cada item diz o que
 falta e onde a integração já está pronta.
 
-## 0. PixelLab: plano pago (v0.3)
-- O trial tem só 4 gerações e roda uma por vez. O cenário novo, o boneco base, os estágios do conjunto
-  por ala e os quadros de golpe esperam um plano pago.
-- Estimativa em PROGRESS.md, na seção v0.3: ~75 gerações para o começo do jogo (Delta e balsa) e
-  ~1.450 para o jogo inteiro.
-- Depois de gerar o boneco base, o `WorldScene.sheetFor` passa a usar o líder da ala só quando
-  `conjuntoDaClasse(rec).completo`.
+## 0. PixelLab (v0.3)
+- Plano Pixel Apprentice assinado em 2026-11-01: 2.000 gerações por mês, até 8 tarefas ao mesmo
+  tempo. Na v0.3 já foram 270: boneco base, golpes, 15 tilesets do chão e 2 árvores.
+- **O boneco base é um só.** A criação zoeira (corpo, pele, cabelo) ainda não aparece no mundo: todo
+  mundo que não completou o conjunto usa o mesmo boneco. Para mostrar a criação, faltam variações do
+  boneco base (estados do PixelLab por corpo e tom de pele) ou camadas por cima dele.
+- As alas sem boneco do PixelLab (22 de 24) mostram o boneco base mesmo com o conjunto completo.
+- Falta gerar: paredes e barracos do Delta, props, inimigos, NPCs, as margens, a Usina e o Juncal.
 - A troca de lado em si (mudar de margem, instituição e ala) fica para a v0.4. A missão da cabeceira já
   libera `troca_de_lado`.
 

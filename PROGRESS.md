@@ -39,12 +39,14 @@ Plano:
    - o Especial e o recurso por acerto foram compensados;
    - animação de golpe em qualquer folha (preparo, bote e impacto);
    - a Engenheira de Gambiarra perdeu um pouco nas invocações.
-4. **Arte do PixelLab** (espera o plano pago, porque o trial tem 4 gerações):
-   - o boneco base;
-   - os estágios do conjunto por ala;
-   - o golpe;
-   - o cenário.
-   A lista está abaixo.
+4. **Arte do PixelLab** (plano Pixel Apprentice desde 2026-11-01, 2.000 gerações por mês):
+   - pronto: boneco base com andar e golpe (`public/pl/base`); golpe do Peão e da Idol;
+   - pronto: chão do Delta e da balsa, 15 tilesets Wang de 32 px em grade dupla (`art/plChao.ts`,
+     `tools/art/pl-chao.mjs`), e 2 árvores do mangue;
+   - pronto: o jogador sem o conjunto completo é o boneco base; com as 5 peças, o boneco da ala
+     (`look.outfit.conjunto`), quando a ala já tem boneco do PixelLab;
+   - falta: paredes e barracos, props, inimigos, NPCs, as margens e os estágios do conjunto por ala.
+   Gasto até aqui: 270 gerações (os tilesets "pro" custam 15 cada). A lista está abaixo.
 5. Testes, build, NOVIDADES da v0.3, versão 0.3.0 e commit, sem push.
 
 Visual dos itens:

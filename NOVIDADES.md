@@ -9,6 +9,7 @@ O jogo mostra a seção da versão atual uma vez, na primeira abertura depois de
 - As missões do 11 ao 19 agora dão para jogar, nas duas margens.
 - Conjunto da classe: as missões dão as 5 peças, e a calça entrou na armadura.
 - Luta com menos correria no começo: golpes mais lentos e mais fortes, com animação própria.
+- Arte nova no Delta e na balsa: chão, água, mangue e árvores, e o boneco base de quem está começando.
 
 ## v0.2
 - Arte nova em teste: o Peão Brabo e a Idol ganharam bonecos novos, bem mais caprichados.

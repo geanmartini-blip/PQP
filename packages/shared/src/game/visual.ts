@@ -8,6 +8,7 @@
 import { getData } from '../data';
 import type { TileMap } from '../map/types';
 import { validateAppearance } from './appearance';
+import { conjuntoDaClasse } from './equipment';
 import { lookItemOf } from './items';
 import type { Appearance, CharacterLook, Check, PlayerRecord, VisualTierId } from './types';
 
@@ -76,6 +77,7 @@ export function lookOf(rec: PlayerRecord): CharacterLook {
   const outfit: CharacterLook['outfit'] = { tier: TIER_TO_LOOK[tier], palette: idx };
   if (isAlaTier(tier) && rec.archetype) outfit.archetypeId = rec.archetype;
   if (rec.institution) outfit.institutionId = rec.institution;
+  if (conjuntoDaClasse(rec).completo) outfit.conjunto = true;
   const items: NonNullable<CharacterLook['items']> = [];
   // Fase 5 (game/items.ts): a camada do slot muda dentro do estilo da ala e a raridade aparece
   for (const [slot, id] of Object.entries(rec.equipment)) {

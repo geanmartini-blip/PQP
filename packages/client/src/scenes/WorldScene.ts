@@ -267,9 +267,9 @@ export class WorldScene extends Phaser.Scene {
     this.sheetPending = false;
     switch (e.kind) {
       case 'p': {
-        // arquétipo com boneco do PixelLab usa a folha dele; os outros seguem com as camadas
+        // v0.3: boneco do PixelLab (o base, ou o da ala com o conjunto completo); as camadas só se faltar
         const look = this.playerLook(e);
-        return pixellabSheet(this, look.outfit.archetypeId) ?? this.playerSheet(look);
+        return pixellabSheet(this, look) ?? this.playerSheet(look);
       }
       case 'n':
         return art.npcSheet(this, id);

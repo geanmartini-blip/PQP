@@ -21,6 +21,7 @@ import { isDungeonMapId } from '../game/dungeonMap';
 import { MATO_FRAMES, OVERLAY_FRAMES, overlayKind, renderTerrain, styleOfRegion, type Style, type TerrainSource, TREE_BASE_Y, TREE_H } from '../art/terrain';
 import { hashInt } from '../art/noise';
 import { treeFrame } from '../art/tiles';
+import { desenhaPlChao, plArvoreFrame, plArvores, usaPlChao } from '../art/plChao';
 import { DEPTH } from './depth';
 
 export const GRID_KEY = 'tiles_grid';
@@ -129,6 +130,8 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
   const H = map.height;
   const tex = scene.textures.get(TILE_KEY);
   const srcImg = tex.getSourceImage() as HTMLCanvasElement | HTMLImageElement;
+  // v0.3: chão do PixelLab (a água já vem desenhada, sem o brilho procedural por cima)
+  const plChao = !dungeon && usaPlChao(scene, map);
 
   // ---------------- camada animada
   interface Cell {
@@ -153,7 +156,7 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
     for (let x = 0; x < W; x++) {
       const t = map.tiles[y * W + x]!;
       const kind = overlayKind(t);
-      if (!kind) {
+      if (!kind || (plChao && (kind === 'rasa' || kind === 'funda'))) {
         row.push(-1);
         continue;
       }
@@ -221,6 +224,11 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
     const pix = dungeon ? renderGalerias(src, tx0, ty0, tw, th) : renderTerrain(src, tx0, ty0, tw, th);
     const key = `terreno_${seq}_${cx}_${cy}`;
     uploadPix(scene, key, pix);
+    if (plChao) {
+      const ct = scene.textures.get(key) as Phaser.Textures.CanvasTexture;
+      desenhaPlChao(scene, ct.getContext(), map, tx0, ty0, tw, th);
+      ct.refresh();
+    }
     const img = scene.add.image(tx0 * TILE_PX, ty0 * TILE_PX, key).setOrigin(0, 0).setDepth(DEPTH.floor);
     return { key, img, used: frameNo };
   };
@@ -234,6 +242,9 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
 
   // ---------------- árvores
   const canopies: Phaser.GameObjects.Image[] = [];
+  // v0.3: nos mapas com chão do PixelLab, as árvores também são do PixelLab
+  const plArv = plChao ? plArvores(scene) : undefined;
+  const arvKey = plArv ?? TILE_KEY;
   const blitters = new Map<number, { b: Phaser.GameObjects.Blitter; cx: number; cy: number }>();
   const bCols = Math.ceil(W / CANOPY_CHUNK);
   const blitterAt = (x: number, y: number) => {
@@ -242,7 +253,7 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
     const k = cy * bCols + cx;
     let c = blitters.get(k);
     if (!c) {
-      c = { b: scene.add.blitter(0, 0, TILE_KEY).setDepth(DEPTH.canopyFar), cx, cy };
+      c = { b: scene.add.blitter(0, 0, arvKey).setDepth(DEPTH.canopyFar), cx, cy };
       blitters.set(k, c);
     }
     return c.b;
@@ -250,8 +261,8 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
   for (let y = 0; y < H; y++)
     for (let x = 0; x < W; x++) {
       if (map.tiles[y * W + x] !== Tile.Arvore) continue;
-      const frame = treeFrame(src.style(x, y), x, y);
-      if (!tex.has(frame)) continue;
+      const frame = plArv ? plArvoreFrame(x, y) : treeFrame(src.style(x, y), x, y);
+      if (!scene.textures.get(arvKey).has(frame)) continue;
       const flip = (hashInt(x, y, 83) & 1) === 1;
       // base do tronco no meio do tile, perto da borda de baixo
       const bx = x * TILE_PX + 16;
@@ -259,7 +270,7 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
       let open = false;
       for (let dy = -3; dy <= 1 && !open; dy++) for (let dx = -1; dx <= 1 && !open; dx++) if (!isSolidTile(map, x + dx, y + dy)) open = true;
       if (open) {
-        const img = scene.add.image(bx, by + (TREE_H - TREE_BASE_Y), TILE_KEY, frame).setOrigin(0.5, 1).setFlipX(flip);
+        const img = scene.add.image(bx, by + (TREE_H - TREE_BASE_Y), arvKey, frame).setOrigin(0.5, 1).setFlipX(flip);
         img.setDepth(DEPTH.entity + by);
         canopies.push(img);
       } else {

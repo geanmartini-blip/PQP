@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { enemyById, getData } from '../src/data';
-import { ALA_LEVEL, applyRewards, conjuntoDaClasse, DELTA_MAX_LEVEL, newPlayerRecord, TRAVESSIA_LEVEL } from '../src/game';
+import { ALA_LEVEL, applyRewards, conjuntoDaClasse, DELTA_MAX_LEVEL, lookOf, newPlayerRecord, TRAVESSIA_LEVEL } from '../src/game';
 import { getMap, listMaps } from '../src/map/registry';
 import { ritmoMult } from '../src/sim/stats';
 
@@ -69,8 +69,10 @@ describe('jornada do 1 ao 20', () => {
     const ids = ['cabeca', 'peito', 'arma', 'calcado', 'adorno'].map((s) => `${s}_combatente_esquerda_comum`);
     for (const [i, id] of ids.entries()) rec.equipment[['cabeca', 'peito', 'arma', 'calcado', 'adorno'][i]!] = id;
     expect(conjuntoDaClasse(rec).completo).toBe(true);
+    expect(lookOf(rec).outfit.conjunto).toBe(true);
     rec.equipment['peito'] = 'peito_combatente_direita_comum';
     expect(conjuntoDaClasse(rec)).toMatchObject({ completo: false });
+    expect(lookOf(rec).outfit.conjunto).toBeUndefined();
     expect(conjuntoDaClasse(rec).pecas).not.toContain('peito');
   });
 });

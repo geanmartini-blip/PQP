@@ -722,6 +722,7 @@ export function archetypeLook(archetypeId: string, tier: CharacterLook['outfit']
   return {
     ...defaultLook(),
     ...base,
-    outfit: { tier, archetypeId, institutionId: a?.instituicao, palette },
+    // o visual "da ala" (galeria, NPCs, ?ala=) é o do conjunto completo
+    outfit: { tier, archetypeId, institutionId: a?.instituicao, palette, conjunto: true },
   };
 }

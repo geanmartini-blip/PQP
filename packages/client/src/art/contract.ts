@@ -38,6 +38,8 @@ export interface CharacterLook {
     institutionId?: string;
     /** 0..2: paleta da ala; no traje do Delta, 0..5 é a cor da camiseta */
     palette: number;
+    /** v0.3: as 5 peças do conjunto da classe vestidas (o boneco vira a versão inicial da ala) */
+    conjunto?: boolean;
   };
   /** itens equipados que mudam a sua parte do visual dentro do estilo da ala */
   items?: { slot: string; rarity: 'comum' | 'raro' | 'unico' | 'set'; art?: string }[];
