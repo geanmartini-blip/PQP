@@ -248,6 +248,34 @@ O registro completo está em `decisoes/fase5-masmorra.md`. Os pontos principais:
     - assinar um plano com mais de uma geração por vez. Com 24 arquétipos, 24 treinadores e NPCs,
       são cerca de 12 gerações por boneco só para andar.
 
+## Revisão visual, v3 no jogo: v0.2 de teste (2026-11-01)
+- **O que foi feito:** o usuário autorizou seguir com o estilo do PixelLab e pediu o jogo nessa arte
+  para teste, gastando pouco.
+  - **Idol:** gerada com o Peão v2 como `style_image`, para os dois parecerem do mesmo elenco. Custou
+    12 gerações. O id é `b0c70150-cd12-4e30-a3b2-c1099189d1b3`.
+  - **Consumo:** as 40 gerações do trial ficaram em 4.
+- **No jogo:**
+  - `art/pixellab.ts` monta a folha do contrato (`${anim}_${dir}_${i}`) com os quadros de
+    `public/pl/<pasta>/`.
+  - Por enquanto só existe o andar. Parado usa o 1º passo, e golpe, habilidade e derrota repetem
+    passos.
+  - A folha tem escala 0,5: o boneco tem ~97 px e o mundo usa 48 px. O `EntityView` aplica
+    `SheetMeta.scale`.
+  - O `WorldScene` usa essa folha quando o arquétipo do jogador está em `PL_ARCHETYPES` (Peão Brabo e
+    Idol). Os outros continuam com as camadas.
+- **Câmera:** a largura alvo caiu de 12 para ~8 tiles, e o mínimo foi para 6,5 tiles. Assim os bonecos
+  aparecem maiores, mais perto do alvo de tela.
+- **Para gerar um boneco novo:**
+  1. Gere no PixelLab e baixe o andar para `pixellab/resultados/<boneco>/andar/`.
+  2. Rode `node tools/art/mock-pixellab-pl.mjs <pasta-andar> packages/client/public/pl/<pasta>`.
+  3. Acrescente o arquétipo em `PL_ARCHETYPES`.
+- **O que falta (precisa de um plano pago do PixelLab):**
+  - Os outros 22 arquétipos, os 24 treinadores, os NPCs, os inimigos e os chefes. São ~12 gerações por
+    boneco só para o andar, mais as poses de golpe.
+  - Os tiles e os props do cenário.
+  - O visual da criação de personagem: as camadas tipo Habbo não combinam com bonecos prontos, então
+    a criação precisa de uma decisão própria.
+
 ## Sugestões (o que não está nos docs)
 Lista mantida por fase. Tudo aqui pode ser trocado pelos autores.
 

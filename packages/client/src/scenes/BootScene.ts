@@ -10,6 +10,7 @@ import { getMap, hasMap, START_MAP } from '@pqp/shared/map';
 import { getData } from '@pqp/shared';
 import { archetypeLook, createArt, defaultLook } from '../art/index';
 import type { ArtApi } from '../art/contract';
+import { preloadPixellab } from '../art/pixellab';
 import type { ClientConfig } from '../config';
 import type { GameClient } from '../game/GameClient';
 import { createRuntime, makeBaseTransport } from '../game/runtime';
@@ -29,6 +30,10 @@ export class BootScene extends Phaser.Scene {
 
   constructor(private readonly cfg: ClientConfig) {
     super('BootScene');
+  }
+
+  preload(): void {
+    preloadPixellab(this);
   }
 
   create(): void {

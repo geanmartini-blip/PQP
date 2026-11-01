@@ -53,6 +53,8 @@ export interface SheetMeta {
   originY: number;
   anims?: Partial<Record<AnimName, number>>;
   fx?: FxInfo;
+  /** escala de desenho (os bonecos do PixelLab têm o dobro da resolução do mundo) */
+  scale?: number;
 }
 
 /** Quadros por segundo e repetição de cada animação de boneco. SUGESTÃO: os fps não estão nos docs. */
@@ -196,6 +198,12 @@ function uploadDeferred(scene: Phaser.Scene, sheet: SheetData): string {
     jobKeys.add(sheet.key);
   }
   return sheet.key;
+}
+
+/** Folha que veio pronta de fora (PixelLab, art/pixellab.ts): guarda os metadados e cria as animações. */
+export function registerSheet(scene: Phaser.Scene, meta: SheetMeta): void {
+  if (!metas.has(meta.key)) metas.set(meta.key, meta);
+  registerAnims(scene, meta.key);
 }
 
 function registerAnims(scene: Phaser.Scene, sheetKey: string): void {

@@ -60,14 +60,14 @@ describe('pickDpr e fpsLimitFor', () => {
 });
 
 describe('computeZoom', () => {
-  it('zoom inteiro, de 9,5 a 14 tiles de largura nos celulares em pé (qualquer densidade)', () => {
+  it('zoom inteiro, de 6,5 a 14 tiles de largura nos celulares em pé (qualquer densidade)', () => {
     for (const w of [360, 375, 390, 412, 430]) {
       for (const dpr of [1, 2, 2.625, 2.75, 3]) {
         const W = Math.round(w * dpr), H = Math.round(w * 2.1 * dpr);
         const z = computeZoom(W, H);
         expect(Number.isInteger(z)).toBe(true);
         const tiles = W / (32 * z);
-        expect(tiles).toBeGreaterThanOrEqual(9.5);
+        expect(tiles).toBeGreaterThanOrEqual(6.5);
         expect(tiles).toBeLessThanOrEqual(14);
       }
     }

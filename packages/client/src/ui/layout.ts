@@ -19,8 +19,9 @@ import type { TipId } from './tips';
 
 // SUGESTÃO: ~12 tiles de largura, no mínimo 9,5 de largura (360 px de CSS com dpr 2,625 só tem 9,8
 // ou 14,8 com zoom inteiro) e 14 de altura (a tela em pé mostra o alcance de aquisição na vertical).
-export const ZOOM_TARGET_TILES = 12;
-export const ZOOM_MIN_TILES = 9.5;
+// revisão visual v3: câmera mais perto (~8 tiles) para os bonecos do PixelLab aparecerem
+export const ZOOM_TARGET_TILES = 8;
+export const ZOOM_MIN_TILES = 6.5;
 export const ZOOM_MIN_TILES_V = 14;
 export const ZOOM_MAX = 12;
 

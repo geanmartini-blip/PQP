@@ -12,6 +12,7 @@ import { getData } from '@pqp/shared';
 import { hasLineOfSight, isBoatRoom } from '@pqp/shared/map';
 import { SIM_TUNING, type CombatEvent, type Vec } from '@pqp/shared/sim';
 import { archetypeLook, asCharacterLook, coneKeyFor, defaultLook, sheetMeta, TILE_PX } from '../art/index';
+import { pixellabSheet } from '../art/pixellab';
 import { lookKey, type ArtLook } from '../art/character';
 import type { CharacterLook } from '../art/contract';
 import { FL, type ClientEnt } from '../game/clientWorld';
@@ -265,8 +266,11 @@ export class WorldScene extends Phaser.Scene {
     const id = e.defId ?? '';
     this.sheetPending = false;
     switch (e.kind) {
-      case 'p':
-        return this.playerSheet(this.playerLook(e));
+      case 'p': {
+        // arquétipo com boneco do PixelLab usa a folha dele; os outros seguem com as camadas
+        const look = this.playerLook(e);
+        return pixellabSheet(this, look.outfit.archetypeId) ?? this.playerSheet(look);
+      }
       case 'n':
         return art.npcSheet(this, id);
       case 'e':

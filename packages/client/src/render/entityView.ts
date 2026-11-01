@@ -193,9 +193,11 @@ export class EntityView {
     this.sheetKey = key;
     const m = sheetMeta(key);
     this.isFx = m?.fx !== undefined;
-    this.frameH = m?.frameH ?? 48;
+    const sc = m?.scale ?? 1;
+    this.frameH = (m?.frameH ?? 48) * sc;
     this.originY = m?.originY ?? 1;
     this.sprite.setTexture(key);
+    this.sprite.setScale(sc);
     this.sprite.setOrigin(m?.originX ?? 0.5, this.originY);
     this.anim = '';
     if (m?.fx) {

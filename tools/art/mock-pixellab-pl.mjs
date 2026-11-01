@@ -3,7 +3,7 @@
 // pularem entre quadros, e grava packages/client/public/mock-pixellab/pl_<dir>_<i>.png mais a lista no
 // manifest.json (chave "pl"). As direções são as do PixelLab: south, north, east e west.
 // Uso: node tools/art/mock-pixellab-pl.mjs [pasta]   (padrão: a v2, cabelo castanho e cabeça maior)
-import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
 
 const SRC = process.argv[2] ?? 'pixellab/resultados/v2/andar';
@@ -39,6 +39,13 @@ const res = await p.evaluate(async (imgs) => {
 }, arquivos.map((f) => [f.replace('.png', ''), readFileSync(`${SRC}/${f}`).toString('base64')]));
 await b.close();
 
+// com uma pasta de saída (2º argumento), grava os quadros recortados lá para o jogo (public/pl/<boneco>)
+if (process.argv[3]) {
+  mkdirSync(process.argv[3], { recursive: true });
+  for (const [nome, png] of Object.entries(res.out)) writeFileSync(`${process.argv[3]}/${nome}.png`, Buffer.from(png, 'base64'));
+  console.log(`${Object.keys(res.out).length} quadros ${res.w}x${res.h} em ${process.argv[3]}`);
+  process.exit(0);
+}
 const man = JSON.parse(readFileSync(`${OUT}/manifest.json`, 'utf8'));
 man.pl = { w: res.w, h: res.h, quadros: [] };
 for (const [nome, png] of Object.entries(res.out)) {
