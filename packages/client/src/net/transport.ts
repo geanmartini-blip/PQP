@@ -13,6 +13,11 @@ export interface Transport {
   close(): void;
   /** entrega o que já chegou (rede simulada); chamado a cada quadro */
   pump?(now: number): void;
+  /**
+   * Fase 3: sai da sala atual e entra de novo (troca de sala por mapa, 'trocar_sala'). As opções do
+   * joinOrCreate vêm de novo de joinOptions(), que já leva o mapId novo. Só o Colyseus precisa.
+   */
+  rejoin?(): void;
   /** mensagem do servidor */
   onMessage: (type: string, msg: unknown) => void;
   onStatus: (s: NetStatus, info?: string) => void;
@@ -68,6 +73,12 @@ export class LaggedTransport implements Transport {
 
   close(): void {
     this.inner.close();
+  }
+
+  rejoin(): void {
+    this.up.clear();
+    this.down.clear();
+    this.inner.rejoin?.();
   }
 
   pump(now = this.clock()): void {

@@ -12,3 +12,12 @@ export * from './tutorial';
 export * from './missions';
 export * from './travessia';
 export * from './dialog';
+// Fase 3: instituições, ala, talentos, guias, treinadores e patentes
+export * from './people';
+export * from './ranks';
+export * from './guides';
+export * from './trainers';
+export * from './ala';
+export * from './talents';
+export * from './institutions';
+export * from './combatKit';

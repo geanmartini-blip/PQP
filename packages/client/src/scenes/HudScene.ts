@@ -446,6 +446,12 @@ export class HudScene extends Phaser.Scene {
       this.onEditDown(p, now);
       return;
     }
+    // Fase 3: tocar no quadro do jogador abre o painel do personagem
+    const P = this.L.player;
+    if (gc.game.profile?.criado && p.x >= P.x && p.x <= P.x + P.w && p.y >= P.y && p.y <= P.y + P.h) {
+      this.ui.openScreen('painel');
+      return;
+    }
     const btn = this.hitButton(p.x, p.y);
     if (btn) {
       const tr: Track = { mode: 'btn', btn, x0: p.x, y0: p.y, t0: now, moved: 0 };
@@ -710,7 +716,7 @@ export class HudScene extends Phaser.Scene {
     const gc = this.rt.gc;
     const now = performance.now();
     // interface em DOM da Fase 2 (telas, rastreador, avisos)
-    this.ui.update(now, { topCss: this.L.bannerY / this.px, selfTile: this.world.selfTile });
+    this.ui.update(now, { topCss: this.L.bannerY / this.px, selfTile: this.world.selfTile, rowTopCss: (this.L.ajuste.y - this.L.ajuste.r) / this.px });
     const modal = this.ui.modalOpen;
     if (modal !== this.wasModal) {
       this.wasModal = modal;
@@ -756,6 +762,7 @@ export class HudScene extends Phaser.Scene {
     if (this.targetPanel.visible) this.targetPanel.setVisible(false);
     this.arrow.setVisible(false);
     for (const k of ['nome', 'vida', 'nivel', 'alvoNome', 'alvoNivel', 'chefe', 'falarNome']) this.text(k, '');
+    this.textCache.delete('nomeSrc');
     for (const id of ['alvo', 'chefe']) this.setBar(id, 0, false);
     this.bossBox.setVisible(false);
     this.downedText.setVisible(false);
@@ -876,9 +883,20 @@ export class HudScene extends Phaser.Scene {
     this.setBar('xp', hud.xpNext > 0 ? hud.xp / hud.xpNext : 0);
     // Fase 2: o nome do cadastro (o snapshot só manda o nome quando a entidade aparece)
     const name = gc.game.profile?.name ?? gc.world.self()?.name ?? '';
-    // nome e ala se couberem; senão só o nome (a ala aparece no traje e no botão ALA)
+    // nome e ala se couberem; senão só o nome (a ala aparece no traje e no painel). O nome cabe
+    // inteiro diminuindo a escala da fonte (escala inteira, até 1); só corta se nem assim couber.
     const full = fontText(`${name}${arch ? ' - ' + arch.name : ''}`);
-    this.text('nome', full.length <= L.player.chars ? full : fitChars(name, L.player.chars));
+    const nameText = full.length <= L.player.chars ? full : fontText(name);
+    if (this.textCache.get('nomeSrc') !== nameText) {
+      this.textCache.set('nomeSrc', nameText);
+      const nt = this.texts['nome']!;
+      let s = L.ts;
+      while (s > 1 && charsFit(L.player.hpBar.w, s) < nameText.length) s--;
+      nt.setScale(s);
+      // escala menor: a linha fica no meio da altura de uma linha normal
+      nt.setY(L.player.name.y + Math.max(0, Math.round((L.lineH - (L.lineH / L.ts) * s) / 2)));
+      this.text('nome', nameText.length <= charsFit(L.player.hpBar.w, s) ? nameText : fitChars(name, charsFit(L.player.hpBar.w, s)));
+    }
     this.text('vida', fitChars(`${Math.ceil(hud.hp)}/${hud.hpMax}`, L.player.chars));
     this.text('nivel', fontText(`NV ${hud.level}`));
 

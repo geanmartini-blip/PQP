@@ -14,6 +14,7 @@ import type { MapMarker } from '@pqp/shared/map';
 import { msToTicks, spawnEnemy, spawnNpc, spawnPack, type EnemyTier, type Entity, type SpawnEnemyOpts, type World } from '@pqp/shared/sim';
 import { enemyMind } from '@pqp/shared/sim/ai_state';
 import { BAND_SPREAD_TILES, RESPAWN_MS, RESPAWN_SAFE_RADIUS } from './config';
+import { npcDisplayName } from './handoff';
 
 interface SpawnSlot {
   enemyId: string;
@@ -78,6 +79,9 @@ export class Spawner {
         if (m.kind === 'npc' && m.ref) {
           const e = spawnNpc(this.w, m.ref, m.x, m.y);
           e.facing = 0;
+          // Fase 3: IA de facção (faction_ai.json) e guia (guides.json) também têm nome nos dados
+          const nome = npcDisplayName(m.ref);
+          if (nome) e.name = nome;
           this.npcIds.set(m.id, e.id);
         } else if (m.kind === 'bando') {
           const ids = asStrings(m.params?.['inimigos']);

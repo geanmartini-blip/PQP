@@ -254,14 +254,14 @@
     "cost": 0,
     "effects": [
       { "kind": "recurso", "pct": 30, "target": "self" },
-      { "kind": "cura", "pctVidaMax": 10, "target": "aliados_area" }
+      { "kind": "cura", "pctVidaMax": 6, "target": "aliados_area" }
     ],
-    "description": "Recupera 30% do recurso e cura 10% da vida dos aliados perto.",
+    "description": "Recupera 30% do recurso e cura 6% da vida dos aliados perto.",
     "visual": {
       "esquerda": "Círculo de luz verde sobe do chão, como seiva.",
       "direita": "Anel de carregamento azul, com barra de bateria enchendo."
     },
-    "sugestaoCampos": ["radius", "cooldownS", "cost", "visual"]
+    "sugestaoCampos": ["radius", "cooldownS", "cost", "visual", "effects.cura.pctVidaMax", "description"]
   },
   {
     "id": "sumico",

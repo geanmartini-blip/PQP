@@ -5,16 +5,20 @@
  */
 import { getData } from '../data';
 import { hasFlag } from './flags';
-import { availableMissions, acceptMission, currentObjectives, onGameEvent } from './missions';
+import { availableMissions, acceptMission, currentObjectives, missionAvailable, onGameEvent } from './missions';
+import { archetypeOptions, canChooseArchetype, chooseArchetype } from './ala';
+import { guideLine, guideOf } from './guides';
+import { alaTrainerOf, baseTrainerOf, isOwnGuide, npcMatches } from './people';
+import { teachesEmote, unlockTrainerEmote } from './trainers';
 import { FLAG_BRUNO } from './progression';
 import { canCross, travessiaOptions, type TravessiaOptions } from './travessia';
 import { canUseMachine } from './visual';
 import { emptyResult, mergeResult, type GameResult, type PlayerRecord } from './types';
 
-export type DialogOptionKind = 'aceitar_missao' | 'escolha' | 'maquina_visual' | 'travessia' | 'tchau';
+export type DialogOptionKind = 'aceitar_missao' | 'escolha' | 'maquina_visual' | 'travessia' | 'tchau' | 'escolher_ala';
 
 export interface DialogOption {
-  /** id que o cliente devolve em dialogo_opcao: 'aceitar:<missão>', 'escolha:<opção>', 'maquina:<id>', 'travessia', 'tchau' */
+  /** id que o cliente devolve em dialogo_opcao: 'aceitar:<missão>', 'escolha:<opção>', 'maquina:<id>', 'travessia', 'ala:<arquétipo>', 'tchau' */
   id: string;
   tipo: DialogOptionKind;
   texto: string;
@@ -27,6 +31,15 @@ export interface Dialog {
   contexto: string;
   fala: string;
   opcoes: DialogOption[];
+  // ---- Fase 3 ----
+  /** bordão do treinador (vira emote) */
+  bordao?: string;
+  /** emote do bordão; novo = liberado nesta conversa */
+  emote?: { id: string; texto: string; novo: boolean };
+  /** missão da ala que este treinador dá ou acompanha agora */
+  missaoAla?: { id: string; name: string; estado: 'disponivel' | 'ativa' };
+  /** conversa com o guia (espírito ou IA de bolso) */
+  guia?: boolean;
 }
 
 /** Contexto de fala do Seu Jacó por missão ativa (npcs.json, seu_jaco.falas). */
@@ -83,6 +96,16 @@ export function dialogOptions(rec: PlayerRecord, npcId: string): DialogOption[] 
     if (mq.atendente === npcId && canUseMachine(rec, mq.id).ok) out.push({ id: `maquina:${mq.id}`, tipo: 'maquina_visual', texto: mq.name });
   }
   if (npcId === 'seu_jaco' && canCross(rec).ok) out.push({ id: 'travessia', tipo: 'travessia', texto: 'Embarcar na travessia' });
+  // Fase 3: quem recebe a base apresenta as 3 alas; cada treinador da instituição oferece a dele
+  const tr = D.trainersById.get(npcId);
+  if (tr && tr.institution === rec.institution && canChooseArchetype(rec).ok) {
+    const base = npcId === baseTrainerOf(rec);
+    for (const a of archetypeOptions(rec)) {
+      if (!a.liberado || (!base && a.treinador !== npcId)) continue;
+      // SUGESTÃO: texto do botão de escolher a ala.
+      out.push({ id: `ala:${a.id}`, tipo: 'escolher_ala', texto: `Entrar na ala: ${a.name} (com ${a.treinadorNome})` });
+    }
+  }
   // SUGESTÃO: texto do botão de sair da conversa.
   out.push({ id: 'tchau', tipo: 'tchau', texto: 'Até mais' });
   return out;
@@ -94,24 +117,68 @@ export function dialogOptions(rec: PlayerRecord, npcId: string): DialogOption[] 
  */
 export function talkTo(rec: PlayerRecord, npcId: string): { dialogo: Dialog; resultado: GameResult } {
   const D = getData();
+  // Fase 3: o guia é uma conversa à parte ('guia' ou o id do guia)
+  if (guideOf(rec) && isOwnGuide(rec, npcId)) return talkToGuide(rec, npcId);
   const r = onGameEvent(rec, { t: 'talk', npcId });
   const tr = D.trainersById.get(npcId);
   const npc = D.npcsById.get(npcId);
   let contexto = 'aleatorias';
   let lines: readonly string[] = [];
   let nome = npcId;
+  const extra: Partial<Dialog> = {};
   if (tr) {
     nome = tr.name;
     const daMissao = availableMissions(rec, npcId).length > 0;
     contexto = rec.archetype === tr.archetype ? 'treino' : daMissao ? 'entregaMissao' : tr.recebeBase && rec.institution === tr.institution ? 'treino' : 'saudacao';
     lines = tr.falas[contexto as 'treino' | 'entregaMissao' | 'saudacao'];
+    // bordão e emote: quem treina você (a ala ou a base) ensina o bordão
+    extra.bordao = tr.bordao;
+    if (teachesEmote(rec, npcId)) {
+      const novo = unlockTrainerEmote(rec, npcId);
+      if (novo) {
+        (r.emotes ??= []).push(novo);
+        r.avisos.push(`Emote liberado: "${tr.emote.texto}"`);
+        r.mudou = true;
+      }
+      extra.emote = { id: tr.emote.id, texto: tr.emote.texto, novo: novo !== null };
+    }
+    const ala = alaMissionFor(rec, npcId);
+    if (ala) extra.missaoAla = ala;
   } else if (npc) {
     nome = npc.name;
     const contexts = npc.falas.map((f) => f.contexto);
     contexto = (npcId === 'seu_jaco' ? jacoContext(rec, r) : otherContext(rec, npcId, contexts)) ?? 'aleatorias';
     lines = npc.falas.find((f) => f.contexto === contexto)?.linhas ?? npc.falas[0]?.linhas ?? [];
   }
-  return { dialogo: { npc: npcId, nome, contexto, fala: nextLine(rec, npcId, contexto, lines), opcoes: dialogOptions(rec, npcId) }, resultado: r };
+  return { dialogo: { npc: npcId, nome, contexto, fala: nextLine(rec, npcId, contexto, lines), opcoes: dialogOptions(rec, npcId), ...extra }, resultado: r };
+}
+
+/** Missão da ala (A Ala) que este treinador dá ou acompanha agora. */
+function alaMissionFor(rec: PlayerRecord, npcId: string): Dialog['missaoAla'] | undefined {
+  const D = getData();
+  for (const m of D.missions.missoes) {
+    if (m.cadeia !== 'escolha_da_ala' || m.margem !== rec.side) continue;
+    const ativa = rec.missions.ativas.includes(m.id);
+    const giver = m.dadaPor !== undefined && npcMatches(rec, m.dadaPor, npcId);
+    const daAla = ativa && npcId === alaTrainerOf(rec);
+    if (ativa && (giver || daAla)) return { id: m.id, name: m.name, estado: 'ativa' };
+    if (!ativa && giver && missionAvailable(rec, m.id).ok) return { id: m.id, name: m.name, estado: 'disponivel' };
+  }
+  return undefined;
+}
+
+/**
+ * Conversa com o guia: conta como 'talk' com o apelido 'guia' (objetivos "converse com o seu
+ * espírito") e a fala vem de guides.json (missão quando há missão ativa, senão aleatória).
+ */
+function talkToGuide(rec: PlayerRecord, npcId: string): { dialogo: Dialog; resultado: GameResult } {
+  const r = onGameEvent(rec, { t: 'talk', npcId: 'guia' });
+  const g = guideOf(rec)!;
+  const line = guideLine(rec, rec.missions.ativas.length > 0 ? 'missao' : 'aleatoria');
+  return {
+    dialogo: { npc: npcId, nome: g.name, contexto: line?.situacao ?? 'aleatoria', fala: line?.texto ?? '…', opcoes: dialogOptions(rec, 'guia'), guia: true },
+    resultado: r,
+  };
 }
 
 /** O que o cliente precisa abrir depois de uma opção. */
@@ -131,5 +198,9 @@ export function dialogOption(rec: PlayerRecord, npcId: string, opcaoId: string):
   }
   if (kind === 'escolha') return { ok: true, resultado: mergeResult(r, onGameEvent(rec, { t: 'choose', opcao: arg })) };
   if (kind === 'maquina') return { ok: true, resultado: r, abrir: { tela: 'maquina_visual', maquina: arg } };
+  if (kind === 'ala') {
+    const a = chooseArchetype(rec, arg);
+    return a.ok ? { ok: true, resultado: a.resultado } : { ok: false, erro: a.erro, resultado: a.resultado };
+  }
   return { ok: false, erro: 'Opção indisponível.', resultado: r };
 }

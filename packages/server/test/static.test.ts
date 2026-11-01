@@ -47,6 +47,6 @@ describe('estático do cliente', () => {
     const body = (await health.json()) as { ok: boolean; rooms: { players: number; mapId: string }[] };
     expect(body.ok).toBe(true);
     // uma sala por mapa, desde o início (o Delta primeiro)
-    expect(body.rooms.map((r) => r.mapId).sort()).toEqual(['delta', 'prototipo_delta', 'qg_direita', 'qg_esquerda']);
+    expect(body.rooms.map((r) => r.mapId).sort()).toEqual(['delta', 'juncal', 'margem_direita', 'margem_esquerda', 'prototipo_delta', 'usina_da_ponte']);
   });
 });

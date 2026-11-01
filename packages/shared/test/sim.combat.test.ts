@@ -209,7 +209,7 @@ describe('etapas, Doutrina e companheiros', () => {
     expect([c.loadout?.b1, c.loadout?.b2, c.loadout?.b3]).toEqual(['maldicao_ou_virus', 'confusao', 'sumico']);
     expect(c.stats.hpMax).toBe(115);
     const a = spawnPlayer(w, { name: 'Peão', archetypeId: 'peao_brabo', level: 8, x: 7, y: 5 });
-    expect(a.stats.hpMax).toBe(160);
+    expect(a.stats.hpMax).toBe(getData().balance.atributosArquetipo['peao_brabo']!.vida);
     expect(a.stats.range).toBe(1);
   });
 

@@ -13,6 +13,7 @@ import {
   SUMMON_RADIUS,
 } from './constants';
 import { passivesOf, recomputeShield, resourceMaxOf } from './combat';
+import { applyFlatPassiveNumbers, applyTalentLoadout, baseAbilityId } from './passiveDefs';
 import { alcanceTiles, combatStatsFrom, resolveKit, speedFactor, statRowAt, type Kit } from './stats';
 import { msToTicks, type EnemyTier, type Entity, type Loadout, type Team, type World } from './types';
 import type { CharacterLook } from '../game/types';
@@ -40,6 +41,11 @@ export interface SpawnPlayerOpts {
   deltaRookie?: boolean;
   /** XP dentro do nível, vindo do registro */
   xp?: number;
+  // ---- Fase 3 (game/): talentos e guia do registro (game/combatKit.ts simSpawnExtrasOf) ----
+  /** talentos escolhidos (talents.json): valem desde o nascimento */
+  talents?: string[];
+  /** guia da travessia (guides.json): bônus pequeno */
+  guideId?: string;
 }
 
 /** Nível padrão de cada etapa quando não vem nível: Delta 1, classe 8, arquétipo 12 (aprendiz). */
@@ -63,7 +69,9 @@ export function loadoutFor(kit: Kit, slot3?: string): Loadout {
     return { b1, b2, b3, especial: cls.special, basico: cls.basicAttack, item: 'pocao', itemCount: START_POTIONS };
   }
   const arch = d.archetypesById.get(kit.archetypeId)!;
-  const b3 = slot3 && cls.abilities.includes(slot3) ? slot3 : cls.slot3Padrao;
+  // o botão 3 pode vir com o sufixo dos talentos (id derivado): vale o id base
+  const s3 = slot3 ? baseAbilityId(slot3) : undefined;
+  const b3 = s3 && cls.abilities.includes(s3) ? s3 : cls.slot3Padrao;
   return {
     b1: arch.habilidadesMarca.marca_1,
     b2: arch.habilidadesMarca.marca_2,
@@ -126,6 +134,8 @@ function applyKit(e: Entity, kit: Kit, level: number, slot3?: string): void {
   }
   // jogador: defId = arquétipo/classe; companheiro e NPC guardam o id do treinador
   if (e.kind === 'player') e.defId = kit.kind === 'arquetipo' ? kit.archetypeId : kit.kind === 'classe' ? kit.classId : 'delta';
+  // Fase 3: botões com as modificações dos talentos (ids derivados)
+  applyTalentLoadout(e);
 }
 
 /** Jogador com os atributos da classe, do arquétipo e do nível (balance + classes) e os botões dos docs. */
@@ -143,7 +153,11 @@ export function spawnPlayer(w: World, opts: SpawnPlayerOpts): Entity {
     stats: blankStats(),
     level,
   });
+  if (opts.talents && opts.talents.length > 0) e.talents = [...opts.talents];
+  if (opts.guideId) e.guideId = opts.guideId;
   applyKit(e, kit, level, opts.slot3);
+  // Fase 3: números fixos de talento e guia (os condicionais e os gatilhos são de sim/passives.ts)
+  applyFlatPassiveNumbers(e);
   e.hp = e.stats.hpMax;
   e.resource = e.stats.resourceMax;
   e.xp = opts.xp ?? 0;
@@ -179,7 +193,7 @@ export function setArchetype(w: World, e: Entity, archetypeId: string, slot3?: s
 export function relevel(w: World, e: Entity, level: number): void {
   void w;
   const kit: Kit = e.archetypeId ? resolveKit(e.archetypeId) : e.classId ? resolveKit(e.classId, e.side) : { kind: 'delta' };
-  const slot3 = e.loadout?.b3;
+  const slot3 = e.loadout?.b3 ? baseAbilityId(e.loadout.b3) : undefined;
   applyKit(e, kit, level, slot3);
 }
 

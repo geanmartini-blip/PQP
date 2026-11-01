@@ -53,7 +53,7 @@
     "cooldownS": 1.2,
     "cost": 0,
     "effects": [
-      { "kind": "dano", "mult": 1.1, "target": "alvo" }
+      { "kind": "dano", "mult": 1, "target": "alvo" }
     ],
     "description": "Automático no alvo travado: projétil de elemento ou faísca teleguiada, inclusive andando.",
     "visual": {

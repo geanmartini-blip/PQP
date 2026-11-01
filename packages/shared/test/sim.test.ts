@@ -30,9 +30,15 @@ import {
   type World,
 } from '../src/sim';
 import { relevel } from '../src/sim/spawn';
+import { getData } from '../src/data';
 import { arena, fill, freeze } from '../src/sim/testkit';
 
 const statusOf = (e: Entity, kind: string) => e.statuses.find((s) => s.kind === kind);
+/** pct do efeito da habilidade nos dados (os números mudam com o balanceamento; o teste confere a regra) */
+const pctOf = (ability: string, kind: string, stat?: string): number => {
+  const ef = getData().abilities.get(ability)!.effects.find((x) => x.kind === kind && (stat === undefined || (x as { stat?: string }).stat === stat));
+  return (ef as unknown as { pct: number }).pct;
+};
 const peao = (w: World, x = 10, y = 15) => spawnPlayer(w, { name: 'Peão', archetypeId: 'peao_brabo', x, y });
 const idol = (w: World, x = 10, y = 15) => spawnPlayer(w, { name: 'Idol', archetypeId: 'idol', x, y });
 
@@ -141,7 +147,7 @@ describe('os 6 tipos de habilidade acertam sem mira', () => {
     expect(statusOf(a, 'provocar')).toBeDefined();
     expect(statusOf(b, 'provocar')).toBeDefined();
     expect(statusOf(c, 'provocar')).toBeUndefined();
-    expect(statusOf(p, 'reducao_dano')?.value).toBe(30);
+    expect(statusOf(p, 'reducao_dano')?.value).toBe(pctOf('segura_o_peao', 'reducao_dano'));
     step(w);
     expect(a.targetId).toBe(p.id);
   });
@@ -170,7 +176,7 @@ describe('os 6 tipos de habilidade acertam sem mira', () => {
     expect(castAbility(w, p, 'fanchant')).toBe(true);
     expect(frente.x).toBeGreaterThan(13.5);
     expect(costas.x).toBeCloseTo(7.5, 5);
-    expect(statusOf(amigo, 'reforco:speed')?.value).toBe(25);
+    expect(statusOf(amigo, 'reforco:speed')?.value).toBe(pctOf('fanchant', 'reforco', 'speed'));
   });
 
   it('campo: Chuva de Chumbo fica no chão e bate várias vezes', () => {
@@ -193,8 +199,8 @@ describe('os 6 tipos de habilidade acertam sem mira', () => {
     const perto = peao(w, 11.5, 10);
     const longe = peao(w, 13.5, 13);
     expect(castAbility(w, p, 'bora_monstro')).toBe(true);
-    expect(statusOf(perto, 'reforco:attackSpeed')?.value).toBe(40);
-    expect(statusOf(p, 'reforco:cooldownSpeed')?.value).toBe(40);
+    expect(statusOf(perto, 'reforco:attackSpeed')?.value).toBe(pctOf('bora_monstro', 'reforco', 'attackSpeed'));
+    expect(statusOf(p, 'reforco:cooldownSpeed')?.value).toBe(pctOf('bora_monstro', 'reforco', 'cooldownSpeed'));
     expect(statusOf(longe, 'reforco:attackSpeed')).toBeUndefined();
   });
 });

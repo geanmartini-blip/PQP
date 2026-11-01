@@ -14,7 +14,8 @@ import { ENEMY_ART_IDS } from './creatures';
 import { buildFx, coneKeyFor, FONT_KEY, fontText } from './fx';
 import { Tile } from '@pqp/shared/map';
 import { asciiSource, DEMO_CITY_ROWS, DEMO_ROWS } from './demoMap';
-import { createArt, sheetMeta, uploadPix } from './index';
+import { createArt, pendingSheets, propsTexture, sheetMeta, uploadPix } from './index';
+import { facadeFrame, facadeIds, PROP_VARIANTS, propsByGroup } from './landmarks';
 import { hashInt } from './noise';
 import { STORY_NPC_IDS } from './npcs';
 import { MATO_FRAMES, OVERLAY_FRAMES, overlayKind, renderTerrain, type TerrainSource, TREE_BASE_Y, TREE_H, TREE_W } from './terrain';
@@ -88,13 +89,16 @@ export class GalleryScene extends Phaser.Scene {
     for (const a of ['peao_brabo', 'idol']) for (let p = 0; p < 3; p++) t(() => this.single(this.art.characterSheet(this, archetypeLook(a, 'veterano', p)), 'parado_0_0'));
     t(() => this.newline());
 
-    // ---------------- os 24 arquétipos (aprendiz e veterano)
-    t(() => this.title('24 ALAS: APRENDIZ E VETERANO'));
+    // ---------------- os 24 arquétipos: base da instituição, aprendiz e veterano nas 3 paletas
     for (const a of getData().archetypes) {
-      t(() => this.single(this.art.characterSheet(this, archetypeLook(a.id, 'aprendiz')), 'parado_0_0'));
+      t(() => this.title(`${a.id.replace(/_/g, ' ').toUpperCase()}: BASE, APRENDIZ, VETERANO X3, COSTAS`));
+      t(() => this.single(this.art.characterSheet(this, archetypeLook(a.id, 'base')), 'parado_0_0'));
+      for (let p = 0; p < 3; p++) t(() => this.single(this.art.characterSheet(this, archetypeLook(a.id, 'aprendiz', p)), 'parado_0_0'));
+      for (let p = 0; p < 3; p++) t(() => this.single(this.art.characterSheet(this, archetypeLook(a.id, 'veterano', p)), 'parado_0_0'));
       t(() => this.single(this.art.characterSheet(this, archetypeLook(a.id, 'veterano')), 'parado_2_0'));
+      t(() => this.single(this.art.characterSheet(this, archetypeLook(a.id, 'veterano')), 'parado_1_0'));
+      t(() => this.newline());
     }
-    t(() => this.newline());
     t(() => this.title('BASES DAS 8 INSTITUICOES'));
     for (const i of getData().institutions.instituicoes) {
       const lk: CharacterLook = { ...defaultLook(), outfit: { tier: 'base', institutionId: i.id, palette: 0 } };
@@ -108,6 +112,13 @@ export class GalleryScene extends Phaser.Scene {
     // ---------------- NPCs
     t(() => this.title('TREINADORES (VISUAL DE MESTRE)'));
     for (const tr of getData().trainers) t(() => this.animated(this.art.npcSheet(this, tr.id), 0));
+    t(() => this.newline());
+    t(() => this.title('TREINADORES DA BASE DAS 8 INSTITUICOES'));
+    for (const i of getData().institutions.instituicoes)
+      t(() => {
+        this.place((x, y) => this.add.image(x, y, this.art.emblem(this, i.id)).setOrigin(0).setScale(this.S / 4), 16 * this.S, 16 * this.S);
+        this.animated(this.art.npcSheet(this, i.baseTrainer), 0);
+      });
     t(() => this.newline());
     t(() => this.title('PERSONAGENS'));
     for (const id of STORY_NPC_IDS) t(() => this.animated(this.art.npcSheet(this, id), 0));
@@ -150,6 +161,33 @@ export class GalleryScene extends Phaser.Scene {
       this.newline();
     });
 
+    // ---------------- props das margens e fachadas
+    const groups = propsByGroup();
+    const GROUP_TITLE: Record<string, string> = {
+      esquerda: 'PROPS DA ESQUERDA',
+      direita: 'PROPS DA DIREITA',
+      usina: 'PROPS DA USINA',
+      juncal: 'PROPS DO JUNCAL',
+      geral: 'PROPS GERAIS',
+    };
+    for (const [g, names] of Object.entries(groups))
+      t(() => {
+        const key = propsTexture(this);
+        this.title(GROUP_TITLE[g] ?? g.toUpperCase());
+        for (const n of names)
+          for (let v = 0; v < PROP_VARIANTS; v++) {
+            const fr = this.textures.get(key).get(`prop_${n}_${v}`);
+            this.place((x, y) => this.add.image(x, y, key, `prop_${n}_${v}`).setOrigin(0).setScale(this.S), fr.width * this.S, fr.height * this.S);
+          }
+        this.newline();
+      });
+    t(() => {
+      const key = propsTexture(this);
+      this.title('FACHADAS DAS SEDES E DOS QGS');
+      for (const id of facadeIds()) this.place((x, y) => this.add.image(x, y, key, facadeFrame(id)).setOrigin(0).setScale(this.S), 64 * this.S, 64 * this.S);
+      this.newline();
+    });
+
     // ---------------- tiles
     t(() => {
       const S = this.S;
@@ -186,10 +224,10 @@ export class GalleryScene extends Phaser.Scene {
 
     // ---------------- ícones, emblemas, retratos
     const d = getData();
-    t(() => this.title('ICONES'));
+    t(() => this.title('ICONES: 16 DE CLASSE, 48 MARCAS, ESPECIAIS, BASICOS E ITENS'));
     const iconIds = [
-      ...d.abilitiesArchetype.filter((a) => a.ownerKey === 'peao_brabo' || a.ownerKey === 'idol').map((a) => a.id),
       ...d.abilitiesClass.map((a) => a.id),
+      ...d.abilitiesArchetype.map((a) => a.id),
       ...d.abilitiesSpecial.filter((a) => a.slot === 'especial').map((a) => a.id),
       ...d.abilitiesBasic.map((a) => a.id),
       ...d.consumables.habilidades.map((a) => a.id),
@@ -243,8 +281,19 @@ export class GalleryScene extends Phaser.Scene {
     });
   }
 
+  private lastPending = -1;
+
   override update(): void {
-    if (this.finished) return;
+    if (this.finished) {
+      // as folhas aparecem com a silhueta e ficam prontas aos poucos (art/index.ts)
+      const n = pendingSheets();
+      if (n !== this.lastPending) {
+        this.lastPending = n;
+        if (n > 0) this.setLabel(`DESENHANDO ${n} FOLHAS`);
+        else this.updateLabel();
+      }
+      return;
+    }
     const t0 = performance.now();
     while (this.doneTasks < this.tasks.length && performance.now() - t0 < BUDGET_MS) {
       this.tasks[this.doneTasks]!();

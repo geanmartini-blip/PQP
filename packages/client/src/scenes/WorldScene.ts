@@ -164,6 +164,8 @@ export class WorldScene extends Phaser.Scene {
     this.syncMarkers();
     this.drawGuide();
     this.handleEvents(now);
+    // Fase 3: bordão usado como emote vira balão em cima de quem fez
+    for (const em of gc.game.takeEmotes()) this.balloons.say(em.entity, em.texto, now);
     this.floats.update(now);
     this.balloons.update(now, (id) => {
       const v = this.views.get(id);

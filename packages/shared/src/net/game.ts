@@ -10,6 +10,10 @@ import type { PlayerProfile } from '../game/record';
 import type { TravessiaOptions } from '../game/travessia';
 import type { Appearance, Unlock } from '../game/types';
 import type { VisualChange } from '../game/visual';
+import type { AlaOption, LoadoutView } from '../game/ala';
+import type { GuideLineOut } from '../game/guides';
+import type { InstitutionInfo } from '../game/institutions';
+import type { TalentOption } from '../game/talents';
 
 export const GAME_MSG = {
   // cliente -> servidor
@@ -28,6 +32,29 @@ export const GAME_MSG = {
   travessiaOpcoes: 'travessia_opcoes',
   /** adição do servidor da Fase 2: o personagem é de outro mapa (ou acabou de atravessar); troque de sala */
   trocarSala: 'trocar_sala',
+  // ---- Fase 3 ----
+  // cliente -> servidor
+  /** escolher a ala no nível 12 (C2S_EscolherAla) */
+  escolherAla: 'escolher_ala',
+  /** escolher o talento de um nível (C2S_EscolherTalento) */
+  escolherTalento: 'escolher_talento',
+  /** trocar a habilidade da classe no botão 3 (C2S_TrocarSlot3) */
+  trocarSlot3: 'trocar_slot3',
+  /** pedir a tela da instituição: loja, quadro de missões, patentes (C2S_Instituicao) */
+  instituicao: 'instituicao',
+  /** pagar o objetivo 'pagar' da missão (C2S_MissaoPagar) */
+  missaoPagar: 'missao_pagar',
+  /** pedir as opções de ala e de talento (sem corpo) */
+  progressoOpcoes: 'progresso_opcoes',
+  // cliente -> servidor (C2S_Emote) e servidor -> todos perto (S2C_Emote): mesmo nome
+  emote: 'emote',
+  // servidor -> cliente
+  /** opções de ala e de talentos pendentes (S2C_ProgressoOpcoes) */
+  progressoInfo: 'progresso_info',
+  /** tela da instituição (S2C_InstituicaoInfo) */
+  instituicaoInfo: 'instituicao_info',
+  /** fala do guia (S2C_FalaGuia): missão aceita, bônus */
+  falaGuia: 'fala_guia',
 } as const;
 export type GameMsgName = (typeof GAME_MSG)[keyof typeof GAME_MSG];
 
@@ -121,3 +148,58 @@ export interface S2C_TrocarSala {
 
 /** Nome das salas de mapa no Colyseus (uma por mapa, opção mapId). */
 export const SALA_MUNDO = 'mundo';
+
+// ---------------------------------------------------------------------------
+// Fase 3: ala, talentos, botão 3, instituição, emote e guia
+
+/** Escolher a ala (game/ala.ts chooseArchetype). Responde 'perfil' e 'aviso'. */
+export interface C2S_EscolherAla {
+  archetype: string;
+}
+
+/** Escolher um talento (game/talents.ts pickTalent). O efeito vale no próximo nascimento da entidade. */
+export interface C2S_EscolherTalento {
+  talent: string;
+}
+
+/** Trocar a habilidade da classe no botão 3 (game/ala.ts setSlot3). */
+export interface C2S_TrocarSlot3 {
+  ability: string;
+}
+
+/** Tela da instituição; sem id, a do jogador. */
+export interface C2S_Instituicao {
+  id?: string;
+}
+
+/** Pagar o objetivo 'pagar' (game/institutions.ts payObjective). */
+export interface C2S_MissaoPagar {
+  missao?: string;
+}
+
+/** Usar um emote liberado (game/trainers.ts useEmote). */
+export interface C2S_Emote {
+  emote: string;
+}
+
+/** Emote espalhado pelo servidor a quem está perto (raio de interesse). */
+export interface S2C_Emote {
+  /** id da entidade de quem fez */
+  entity: number;
+  playerId: string;
+  nome: string;
+  emote: string;
+  texto: string;
+  animacao: string;
+  quadros: number;
+}
+
+export interface S2C_ProgressoOpcoes {
+  ala: { pode: boolean; motivo?: string; opcoes: AlaOption[] };
+  talentos: { nivel: number; opcoes: TalentOption[] }[];
+  loadout: LoadoutView | null;
+}
+
+export type S2C_InstituicaoInfo = InstitutionInfo;
+
+export type S2C_FalaGuia = GuideLineOut;

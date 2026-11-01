@@ -10,35 +10,35 @@
       "controle": 3,
       "cura": 3
     },
-    "min": 52.5,
-    "max": 56,
-    "description": "Valores iniciais para calibrar. O Orçamento compara o poder total. Todos os arquétipos ficam entre 52,5 e 56. Alcance 1 é corpo a corpo, 2 é médio e 3 é longo; Velocidade vale para ataque, recarga e deslocamento."
+    "min": 43,
+    "max": 61,
+    "description": "Valores iniciais para calibrar. O Orçamento compara o poder total. No doc, todos os arquétipos ficavam entre 52,5 e 56. Depois da calibração no simulador (Fase 3), Vida e Ataque de cada linha mudaram e o Orçamento ficou entre 43 e 60,5: a fórmula não conta o poder do kit (marca, invocação, área) nem o alcance longo, e o simulador é quem manda. Alcance 1 é corpo a corpo, 2 é médio e 3 é longo; Velocidade vale para ataque, recarga e deslocamento."
   },
   "atributosArquetipo": {
-    "peao_brabo": { "classe": "combatente", "papel": "tanque", "margem": "esquerda", "par": "sumo_cibernetico", "vida": 160, "ataque": 8, "defesa": 17, "velocidade": 7, "alcance": 1, "controle": 2, "cura": 0, "orcamento": 56 },
-    "sumo_cibernetico": { "classe": "combatente", "papel": "tanque", "margem": "direita", "par": "peao_brabo", "vida": 160, "ataque": 8, "defesa": 17, "velocidade": 7, "alcance": 1, "controle": 2, "cura": 0, "orcamento": 56 },
-    "iogue_furioso": { "classe": "combatente", "papel": "dano", "margem": "esquerda", "par": "o_fiel", "vida": 120, "ataque": 16, "defesa": 10, "velocidade": 11, "alcance": 1, "controle": 1, "cura": 0, "orcamento": 54 },
-    "o_fiel": { "classe": "combatente", "papel": "dano", "margem": "direita", "par": "iogue_furioso", "vida": 120, "ataque": 16, "defesa": 10, "velocidade": 11, "alcance": 1, "controle": 1, "cura": 0, "orcamento": 54 },
+    "peao_brabo": { "classe": "combatente", "papel": "tanque", "margem": "esquerda", "par": "sumo_cibernetico", "vida": 178, "ataque": 9, "defesa": 17, "velocidade": 7, "alcance": 1, "controle": 2, "cura": 0, "orcamento": 58.8, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "sumo_cibernetico": { "classe": "combatente", "papel": "tanque", "margem": "direita", "par": "peao_brabo", "vida": 178, "ataque": 9, "defesa": 17, "velocidade": 7, "alcance": 1, "controle": 2, "cura": 0, "orcamento": 58.8, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "iogue_furioso": { "classe": "combatente", "papel": "dano", "margem": "esquerda", "par": "o_fiel", "vida": 89, "ataque": 12, "defesa": 10, "velocidade": 11, "alcance": 1, "controle": 1, "cura": 0, "orcamento": 46.9, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "o_fiel": { "classe": "combatente", "papel": "dano", "margem": "direita", "par": "iogue_furioso", "vida": 89, "ataque": 12, "defesa": 10, "velocidade": 11, "alcance": 1, "controle": 1, "cura": 0, "orcamento": 46.9, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
     "cidadao_revolucionario": { "classe": "combatente", "papel": "suporte", "margem": "esquerda", "par": "monstro_da_academia", "vida": 115, "ataque": 10, "defesa": 11, "velocidade": 12, "alcance": 1, "controle": 2, "cura": 1, "orcamento": 55.5 },
     "monstro_da_academia": { "classe": "combatente", "papel": "suporte", "margem": "direita", "par": "cidadao_revolucionario", "vida": 115, "ataque": 10, "defesa": 11, "velocidade": 12, "alcance": 1, "controle": 2, "cura": 1, "orcamento": 55.5 },
-    "babushka": { "classe": "atirador", "papel": "tanque", "margem": "esquerda", "par": "tropa_de_choque", "vida": 140, "ataque": 10, "defesa": 14, "velocidade": 8, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 56 },
-    "tropa_de_choque": { "classe": "atirador", "papel": "tanque", "margem": "direita", "par": "babushka", "vida": 140, "ataque": 10, "defesa": 14, "velocidade": 8, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 56 },
-    "arqueiro_das_estepes": { "classe": "atirador", "papel": "dano", "margem": "esquerda", "par": "cowboy_cromado", "vida": 95, "ataque": 20, "defesa": 7, "velocidade": 10, "alcance": 3, "controle": 0, "cura": 0, "orcamento": 52.5 },
-    "cowboy_cromado": { "classe": "atirador", "papel": "dano", "margem": "direita", "par": "arqueiro_das_estepes", "vida": 95, "ataque": 20, "defesa": 7, "velocidade": 10, "alcance": 3, "controle": 0, "cura": 0, "orcamento": 52.5 },
-    "cacador_de_crocodilo": { "classe": "atirador", "papel": "suporte", "margem": "esquerda", "par": "diretor_de_nollywood", "vida": 95, "ataque": 11, "defesa": 8, "velocidade": 14, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 52.5 },
-    "diretor_de_nollywood": { "classe": "atirador", "papel": "suporte", "margem": "direita", "par": "cacador_de_crocodilo", "vida": 95, "ataque": 11, "defesa": 8, "velocidade": 14, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 52.5 },
-    "druida_rabugento": { "classe": "elemental", "papel": "tanque", "margem": "esquerda", "par": "engenheira_de_gambiarra", "vida": 145, "ataque": 8, "defesa": 15, "velocidade": 8, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 55.5 },
-    "engenheira_de_gambiarra": { "classe": "elemental", "papel": "tanque", "margem": "direita", "par": "druida_rabugento", "vida": 145, "ataque": 8, "defesa": 15, "velocidade": 8, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 55.5 },
-    "bruxa_do_trovao": { "classe": "elemental", "papel": "dano", "margem": "esquerda", "par": "doktor_klaus", "vida": 95, "ataque": 17, "defesa": 8, "velocidade": 11, "alcance": 2, "controle": 1, "cura": 0, "orcamento": 52.5 },
-    "doktor_klaus": { "classe": "elemental", "papel": "dano", "margem": "direita", "par": "bruxa_do_trovao", "vida": 95, "ataque": 17, "defesa": 8, "velocidade": 11, "alcance": 2, "controle": 1, "cura": 0, "orcamento": 52.5 },
-    "curandeira_dos_andes": { "classe": "elemental", "papel": "cura", "margem": "esquerda", "par": "coach_de_bem_estar", "vida": 105, "ataque": 7, "defesa": 10, "velocidade": 12, "alcance": 2, "controle": 0, "cura": 3, "orcamento": 52.5 },
-    "coach_de_bem_estar": { "classe": "elemental", "papel": "cura", "margem": "direita", "par": "curandeira_dos_andes", "vida": 105, "ataque": 7, "defesa": 10, "velocidade": 12, "alcance": 2, "controle": 0, "cura": 3, "orcamento": 52.5 },
-    "luchador_sagrado": { "classe": "mascarado", "papel": "tanque", "margem": "esquerda", "par": "atendente_imortal", "vida": 140, "ataque": 8, "defesa": 12, "velocidade": 9, "alcance": 2, "controle": 2, "cura": 1, "orcamento": 56 },
-    "atendente_imortal": { "classe": "mascarado", "papel": "tanque", "margem": "direita", "par": "luchador_sagrado", "vida": 140, "ataque": 8, "defesa": 12, "velocidade": 9, "alcance": 2, "controle": 2, "cura": 1, "orcamento": 56 },
-    "diva_da_opera": { "classe": "mascarado", "papel": "dano", "margem": "esquerda", "par": "hacker_da_aldeia", "vida": 100, "ataque": 15, "defesa": 9, "velocidade": 10, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 54 },
-    "hacker_da_aldeia": { "classe": "mascarado", "papel": "dano", "margem": "direita", "par": "diva_da_opera", "vida": 100, "ataque": 15, "defesa": 9, "velocidade": 10, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 54 },
-    "malandro": { "classe": "mascarado", "papel": "suporte", "margem": "esquerda", "par": "idol", "vida": 100, "ataque": 9, "defesa": 9, "velocidade": 11, "alcance": 2, "controle": 3, "cura": 1, "orcamento": 55 },
-    "idol": { "classe": "mascarado", "papel": "suporte", "margem": "direita", "par": "malandro", "vida": 100, "ataque": 9, "defesa": 9, "velocidade": 11, "alcance": 2, "controle": 3, "cura": 1, "orcamento": 55 }
+    "babushka": { "classe": "atirador", "papel": "tanque", "margem": "esquerda", "par": "tropa_de_choque", "vida": 150, "ataque": 10.5, "defesa": 14, "velocidade": 8, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 57.5, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "tropa_de_choque": { "classe": "atirador", "papel": "tanque", "margem": "direita", "par": "babushka", "vida": 150, "ataque": 10.5, "defesa": 14, "velocidade": 8, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 57.5, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "arqueiro_das_estepes": { "classe": "atirador", "papel": "dano", "margem": "esquerda", "par": "cowboy_cromado", "vida": 65, "ataque": 13.5, "defesa": 7, "velocidade": 10, "alcance": 3, "controle": 0, "cura": 0, "orcamento": 43, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "cowboy_cromado": { "classe": "atirador", "papel": "dano", "margem": "direita", "par": "arqueiro_das_estepes", "vida": 65, "ataque": 13.5, "defesa": 7, "velocidade": 10, "alcance": 3, "controle": 0, "cura": 0, "orcamento": 43, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "cacador_de_crocodilo": { "classe": "atirador", "papel": "suporte", "margem": "esquerda", "par": "diretor_de_nollywood", "vida": 112, "ataque": 13, "defesa": 8, "velocidade": 14, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 56.2, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "diretor_de_nollywood": { "classe": "atirador", "papel": "suporte", "margem": "direita", "par": "cacador_de_crocodilo", "vida": 112, "ataque": 13, "defesa": 8, "velocidade": 14, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 56.2, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "druida_rabugento": { "classe": "elemental", "papel": "tanque", "margem": "esquerda", "par": "engenheira_de_gambiarra", "vida": 145, "ataque": 13.5, "defesa": 9.5, "velocidade": 8, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 55.5, "sugestaoCampos": ["ataque", "defesa", "orcamento"] },
+    "engenheira_de_gambiarra": { "classe": "elemental", "papel": "tanque", "margem": "direita", "par": "druida_rabugento", "vida": 145, "ataque": 13.5, "defesa": 9.5, "velocidade": 8, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 55.5, "sugestaoCampos": ["ataque", "defesa", "orcamento"] },
+    "bruxa_do_trovao": { "classe": "elemental", "papel": "dano", "margem": "esquerda", "par": "doktor_klaus", "vida": 86, "ataque": 15.5, "defesa": 8, "velocidade": 11, "alcance": 2, "controle": 1, "cura": 0, "orcamento": 50.1, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "doktor_klaus": { "classe": "elemental", "papel": "dano", "margem": "direita", "par": "bruxa_do_trovao", "vida": 86, "ataque": 15.5, "defesa": 8, "velocidade": 11, "alcance": 2, "controle": 1, "cura": 0, "orcamento": 50.1, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "curandeira_dos_andes": { "classe": "elemental", "papel": "cura", "margem": "esquerda", "par": "coach_de_bem_estar", "vida": 139, "ataque": 9.5, "defesa": 10, "velocidade": 12, "alcance": 2, "controle": 0, "cura": 3, "orcamento": 58.4, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "coach_de_bem_estar": { "classe": "elemental", "papel": "cura", "margem": "direita", "par": "curandeira_dos_andes", "vida": 139, "ataque": 9.5, "defesa": 10, "velocidade": 12, "alcance": 2, "controle": 0, "cura": 3, "orcamento": 58.4, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "luchador_sagrado": { "classe": "mascarado", "papel": "tanque", "margem": "esquerda", "par": "atendente_imortal", "vida": 149, "ataque": 8.5, "defesa": 12, "velocidade": 9, "alcance": 2, "controle": 2, "cura": 1, "orcamento": 57.4, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "atendente_imortal": { "classe": "mascarado", "papel": "tanque", "margem": "direita", "par": "luchador_sagrado", "vida": 149, "ataque": 8.5, "defesa": 12, "velocidade": 9, "alcance": 2, "controle": 2, "cura": 1, "orcamento": 57.4, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "diva_da_opera": { "classe": "mascarado", "papel": "dano", "margem": "esquerda", "par": "hacker_da_aldeia", "vida": 81, "ataque": 12, "defesa": 9, "velocidade": 10, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 49.1, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "hacker_da_aldeia": { "classe": "mascarado", "papel": "dano", "margem": "direita", "par": "diva_da_opera", "vida": 81, "ataque": 12, "defesa": 9, "velocidade": 10, "alcance": 2, "controle": 2, "cura": 0, "orcamento": 49.1, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "malandro": { "classe": "mascarado", "papel": "suporte", "margem": "esquerda", "par": "idol", "vida": 130, "ataque": 11.5, "defesa": 9, "velocidade": 11, "alcance": 2, "controle": 3, "cura": 1, "orcamento": 60.5, "sugestaoCampos": ["vida", "ataque", "orcamento"] },
+    "idol": { "classe": "mascarado", "papel": "suporte", "margem": "direita", "par": "malandro", "vida": 130, "ataque": 11.5, "defesa": 9, "velocidade": 11, "alcance": 2, "controle": 3, "cura": 1, "orcamento": 60.5, "sugestaoCampos": ["vida", "ataque", "orcamento"] }
   },
   "atributosPreAla": {
     "combatente": { "vida": 140, "ataque": 11, "defesa": 13, "velocidade": 10, "alcance": 1, "controle": 1, "cura": 0, "orcamento": 53, "sugestao": true },
@@ -192,5 +192,6 @@
     "modos": ["um_contra_um", "grupo_contra_grupo"],
     "gruposDePapelUnico": ["tanque", "dano"],
     "description": "Rodem lutas simuladas de 1 contra 1 e de grupo contra grupo. Nenhum arquétipo deveria vencer mais de 55% contra a média. Testem grupos só de tanque e só de dano. Se algum ganhar sempre, o papel está forte demais."
-  }
+  },
+  "sugestaoCampos": ["orcamento.min", "orcamento.max", "orcamento.description"]
 }

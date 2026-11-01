@@ -142,14 +142,24 @@ describe('WorldRoom (Colyseus 0.18)', () => {
     r2.onMessage(MSG.snap, () => undefined);
     r2.send(MSG.hello, b2.hello());
     await waitFor(() => b2.trocarSala !== undefined);
-    expect(b2.trocarSala).toEqual({ mapId: 'qg_direita', motivo: 'registro' });
+    expect(b2.trocarSala).toEqual({ mapId: 'margem_direita', motivo: 'registro' });
     await r2.leave(true);
+    // Fase 3: cliente antigo pedindo a sala qg_direita cai na sala de apelido, que manda para a margem
+    b2.trocarSala = undefined;
+    const ra: Room = await c.joinOrCreate('mundo', { mapId: 'qg_direita' });
+    for (const t of [MSG.welcome, ...Object.values(GAME_MSG)]) ra.onMessage(t, (m: unknown) => b2.onGame(t, m));
+    ra.onMessage(MSG.snap, () => undefined);
+    ra.send(MSG.hello, b2.hello());
+    await waitFor(() => b2.trocarSala !== undefined);
+    expect(b2.trocarSala).toEqual({ mapId: 'margem_direita', motivo: 'registro' });
+    expect(b2.welcome).toBeUndefined();
+    await ra.leave(true);
     const r3: Room = await c.joinOrCreate('mundo', { mapId: b2.trocarSala!.mapId });
     for (const t of [MSG.welcome, ...Object.values(GAME_MSG)]) r3.onMessage(t, (m: unknown) => b2.onGame(t, m));
     r3.onMessage(MSG.snap, () => undefined);
     r3.send(MSG.hello, b2.hello());
     await waitFor(() => b2.welcome !== undefined);
-    expect(b2.welcome!.mapId).toBe('qg_direita');
+    expect(b2.welcome!.mapId).toBe('margem_direita');
     expect(b2.perfil?.archetype).toBe('idol');
     await r3.leave(true);
   });

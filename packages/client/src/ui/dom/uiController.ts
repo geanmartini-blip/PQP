@@ -19,6 +19,7 @@ import { DialogBox } from './dialogBox';
 import { EditorScreen } from './editorScreen';
 import { button, el, uiRoot } from './styles';
 import { TravessiaScreen } from './travessiaScreen';
+import { Fase3Ui, type Fase3Screen } from './progressScreens';
 
 // SUGESTÃO: avisos ficam 3,2 s; o banner de nível 3 s; no máximo 3 avisos na tela.
 export const TOAST_MS = 3200;
@@ -32,6 +33,8 @@ export interface UiFrame {
   topCss: number;
   /** posição desenhada do próprio personagem (tiles) */
   selfTile: Vec | null;
+  /** Fase 3: topo da linha de botões abaixo do quadro do jogador (px de CSS) */
+  rowTopCss?: number;
 }
 
 export class UiController {
@@ -39,6 +42,8 @@ export class UiController {
   readonly editor: EditorScreen;
   readonly dialog: DialogBox;
   readonly travessia: TravessiaScreen;
+  /** Fase 3: ala, talentos, botão 3, bordões, painel, balão do guia e troca de mapa */
+  readonly fase3: Fase3Ui;
   private tracker: HTMLDivElement;
   private trackerSig = '';
   private hint: HTMLDivElement;
@@ -103,11 +108,20 @@ export class UiController {
     this.machineBtn = button('Mudar o visual', 'acao', () => this.openMachine());
     this.machineBtn.style.display = 'none';
     this.root.appendChild(this.machineBtn);
+    this.fase3 = new Fase3Ui(this.root, gc, art, scene);
   }
 
-  /** Tela que tapa o mundo aberta (criação, máquina, travessia): o HUD do Phaser não recebe toque nem tecla. */
+  /** Tela que tapa o mundo aberta (criação, máquina, travessia, telas da Fase 3): o HUD do Phaser não recebe toque nem tecla. */
   get modalOpen(): boolean {
-    return this.editor.isOpen || this.travessia.isOpen;
+    return this.editor.isOpen || this.travessia.isOpen || this.fase3.isOpen;
+  }
+
+  /** Abre uma tela da Fase 3 (o toque no quadro do jogador abre o painel). */
+  openScreen(kind: Fase3Screen): void {
+    const p = this.gc.game.profile;
+    if (!p || !p.criado || this.editor.isOpen || this.travessia.isOpen) return;
+    this.closeDialog();
+    this.fase3.open(kind);
   }
 
   get dialogOpen(): boolean {
@@ -185,6 +199,8 @@ export class UiController {
     const p = game.profile;
     if (!p || !this.gc.welcomed) {
       this.hideHud();
+      // a transição de mapa continua na tela enquanto a sala nova não responde
+      this.fase3.update(now, { rowTopCss: f.rowTopCss ?? f.topCss, free: false });
       return;
     }
     // criação: abre sozinha enquanto não tiver cadastro
@@ -217,6 +233,7 @@ export class UiController {
     this.editor.update(now);
     this.dialog.update(now);
     this.travessia.update();
+    this.fase3.update(now, { rowTopCss: f.rowTopCss ?? f.topCss, free: !this.editor.isOpen && !this.travessia.isOpen && !this.dialog.isOpen });
     if (this.modalOpen) {
       this.hideHud();
       return;

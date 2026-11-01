@@ -529,7 +529,8 @@ export function decoFor(src: TerrainSource, x: number, y: number, mat: number, s
   if (md === Deco.Flor) return 'flores';
   if (md === Deco.Concha) return 'concha';
   if (md === Deco.Tabua) return 'tabua';
-  if (md > 0) return 'pedrinhas';
+  // Fase 3: as outras decorações são props (sprites do tileLayer, art/landmarks.ts)
+  if (md > 0) return 'none';
   const t = src.tile(x, y);
   if (OBJECT_TILES.has(t)) return 'none';
   const r = hashInt(x, y, 101) % 1000;

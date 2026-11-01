@@ -43,7 +43,7 @@
  */
 import { randomUUID } from 'node:crypto';
 import { getData } from '@pqp/shared/data';
-import { findPath, getMap, START_MAP } from '@pqp/shared/map';
+import { ARRIVAL_MAP_BY_SIDE, findPath, getMap, resolveMapId, START_MAP, type MapMarker } from '@pqp/shared/map';
 import {
   dequantizeAxis,
   GAME_MSG,
@@ -62,6 +62,16 @@ import {
   type C2S_Need,
   type C2S_Travessia,
   type C2S_TutorialPasso,
+  type C2S_Emote,
+  type C2S_EscolherAla,
+  type C2S_EscolherTalento,
+  type C2S_Instituicao,
+  type C2S_MissaoPagar,
+  type C2S_TrocarSlot3,
+  type S2C_Emote,
+  type S2C_FalaGuia,
+  type S2C_InstituicaoInfo,
+  type S2C_ProgressoOpcoes,
   type EntSnap,
   type S2C_Dialogo,
   type S2C_Info,
@@ -99,7 +109,15 @@ import {
   type Vec,
   type World,
 } from '@pqp/shared/sim';
-import { relevel } from '@pqp/shared/sim/spawn';
+import { relevel, spawnEnemy } from '@pqp/shared/sim/spawn';
+import { applyFlatPassiveNumbers, baseAbilityId } from '@pqp/shared/sim/passiveDefs';
+import { chooseArchetype, setSlot3 } from '@pqp/shared/game/ala';
+import { pickTalent } from '@pqp/shared/game/talents';
+import { progressOptions, simSpawnExtrasOf } from '@pqp/shared/game/combatKit';
+import { useEmote } from '@pqp/shared/game/trainers';
+import { institutionInfo, payObjective } from '@pqp/shared/game/institutions';
+import { guideOf } from '@pqp/shared/game/guides';
+import { baseTrainerOf, isOwnGuide } from '@pqp/shared/game/people';
 import { lookOf as recordLook, nearVisualMachine, applyVisualMachine } from '@pqp/shared/game/visual';
 import { newPlayerRecord, profileOf, simKitOf } from '@pqp/shared/game/record';
 import { gainXp, isDeltaRookie, simLevelCap } from '@pqp/shared/game/progression';
@@ -136,7 +154,14 @@ import {
   SANDBOX_MAPS,
   SAVE_EVERY_MS,
   TRAVESSIA_REACH_TILES,
+  ALA_TRAINER_REACH_TILES,
+  EMOTE_COOLDOWN_MS,
+  EXIT_GRACE_MS,
+  EXIT_RADIUS_TILES,
+  INTERACT_REPEAT_MS,
+  SURVIVE_SPAWN_TILES,
 } from './config';
+import { hasArrival, mapAllowed, setArrival, takeArrival } from './handoff';
 import type { Store, StoredPlayer } from './persistence/store';
 import { sanitizeDoctrine } from './doctrine_guard';
 import { areaMarkers, avisosOf, botaoOf, controlOfBotao, interactAction, isResource, killParticipants, mapForRecord, rollRewardItems, wantsControl, type AreaMarkers } from './game_bridge';
@@ -249,6 +274,16 @@ interface Slot {
   hadTarget: boolean;
   jacoDownAt?: number;
   lastDialog?: Dialog;
+  // ---- Fase 3 ----
+  /** tick em que o personagem nasceu neste mapa (as saídas esperam EXIT_GRACE_MS) */
+  bornTick: number;
+  /** saídas recusadas em que o jogador está (avisa uma vez) */
+  exitWarned: Set<string>;
+  /** último tick em que um marcador de quadro contou (INTERACT_REPEAT_MS) */
+  interactAt: Map<string, number>;
+  lastEmoteTick?: number;
+  /** objetivo 'sobreviver' em andamento */
+  survive?: { key: string; startTick: number; x: number; y: number; waves: number; lastSecond: number };
 }
 
 // SUGESTÃO: 'need' responde no máximo 64 ids por pedido.
@@ -261,6 +296,13 @@ const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object
 const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
 const CONTROLS = new Set<string>(TutorialControl.options);
 const STEPS = new Set<string>(TUTORIAL_STEPS.map((s) => s.id));
+
+/** Números fixos (stats.pct) que os talentos e o guia da entidade somam ao nascer. */
+function flatPctOf(e: Entity): Record<string, number> {
+  const stub = { ...e, stats: { ...e.stats, pct: {} } } as Entity;
+  applyFlatPassiveNumbers(stub);
+  return stub.stats.pct as Record<string, number>;
+}
 
 /** Nome limpo (sem controle, até MAX_NAME_LENGTH) ou undefined. */
 export function cleanName(v: unknown): string | undefined {
@@ -353,7 +395,8 @@ export class GameServerCore {
   private evCache = new Map<CombatEvent, CombatEvent>();
 
   constructor(opts: CoreOptions = {}) {
-    this.mapId = opts.mapId ?? DEFAULT_MAP_ID;
+    // Fase 3: qg_esquerda e qg_direita são apelidos das margens (registros e salas antigas)
+    this.mapId = resolveMapId(opts.mapId ?? DEFAULT_MAP_ID);
     this.world = createWorld(getMap(this.mapId), opts.seed ?? DEFAULT_WORLD_SEED);
     this.world.pathfinder = findPath;
     if (opts.store) this.store = opts.store;
@@ -418,7 +461,14 @@ export class GameServerCore {
       this.redirect(this.ensureSession(sessionId, token), mapForRecord(rec), 'registro', generated);
       return null;
     }
-    return this.addClient(sessionId, h, row?.data, { generated });
+    return this.addClient(sessionId, h, row?.data, { generated, ...(opts.explicit !== undefined ? { explicit: opts.explicit } : {}) });
+  }
+
+  /** Ponto de um marcador spawn_jogador pelo id (as entradas do mapa); undefined = o padrão. */
+  spawnPointOf(markerId: string | undefined): Vec | undefined {
+    if (!markerId) return undefined;
+    const m = this.world.map.markers.find((x) => x.kind === 'spawn_jogador' && x.id === markerId);
+    return m ? { x: m.x, y: m.y } : undefined;
   }
 
   /**
@@ -427,7 +477,7 @@ export class GameServerCore {
    * registro. Uma sessão antiga do mesmo token é derrubada (takeKicked). Fora da sandbox, devolve
    * null quando falta criar o personagem ou ele é de outro mapa (as mensagens vão pela caixa).
    */
-  addClient(sessionId: string, hello: C2S_Hello, rec?: PlayerRecord, opts: { generated?: boolean } = {}): S2C_Welcome | null {
+  addClient(sessionId: string, hello: C2S_Hello, rec?: PlayerRecord, opts: { generated?: boolean; explicit?: boolean } = {}): S2C_Welcome | null {
     const { token, generated: gen0 } = normalizeToken(hello?.token);
     const generated = gen0 || opts.generated === true;
     const name = cleanName(hello?.name);
@@ -459,7 +509,10 @@ export class GameServerCore {
       const r = rec ? clone(rec) : this.records.get(token) ? clone(this.records.get(token)!) : newPlayerRecord(randomUUID(), name ?? DEFAULT_PLAYER_NAME);
       const sess = this.ensureSession(sessionId, token);
       const target = mapForRecord(r);
-      if (target !== this.mapId) {
+      // Fase 3: fica neste mapa quem é daqui, quem pediu esta sala (trocar_sala) ou quem chegou por
+      // uma saída, desde que o estágio deixe estar aqui (handoff.ts mapAllowed)
+      const stay = target === this.mapId || ((opts.explicit === true || hasArrival(token, this.mapId)) && mapAllowed(r, this.mapId));
+      if (!stay) {
         this.redirect(sess, target, 'registro', generated);
         return null;
       }
@@ -470,7 +523,8 @@ export class GameServerCore {
         this.send(sessionId, GAME_MSG.perfil, profileOf(r, controlesLiberados(r)));
         return null;
       }
-      slot = this.spawnSlot(token, r, false);
+      const arr = takeArrival(token, this.mapId);
+      slot = this.spawnSlot(token, r, false, undefined, this.spawnPointOf(arr?.spawn));
     }
     this.comeBack(slot);
     slot.sid = sessionId;
@@ -644,10 +698,11 @@ export class GameServerCore {
   }
 
   /** Nasce o personagem do registro no spawn. */
-  private spawnSlot(token: string, rec: PlayerRecord, sandbox: boolean, archetypeReq?: string): Slot {
+  private spawnSlot(token: string, rec: PlayerRecord, sandbox: boolean, archetypeReq?: string, at?: Vec): Slot {
     const D = getData();
     let e: Entity;
     const side = rec.side ?? undefined;
+    const pos = at ?? this.spawn;
     if (sandbox) {
       const saved = rec.archetype ?? rec.class ?? undefined;
       const kit = typeof archetypeReq === 'string' && D.archetypesById.has(archetypeReq) ? archetypeReq : this.validKit(saved) ? saved : this.defaultArchetype;
@@ -656,8 +711,8 @@ export class GameServerCore {
         name: rec.name,
         archetypeId: kit,
         level,
-        x: this.spawn.x,
-        y: this.spawn.y,
+        x: pos.x,
+        y: pos.y,
         playerId: rec.id,
         xp: Math.max(0, rec.xp),
         ...(side ? { side } : {}),
@@ -670,14 +725,15 @@ export class GameServerCore {
         archetypeId: simKitOf(rec),
         level: Math.max(1, Math.floor(rec.level)),
         xp: Math.max(0, rec.xp),
-        x: this.spawn.x,
-        y: this.spawn.y,
+        x: pos.x,
+        y: pos.y,
         playerId: rec.id,
         look: recordLook(rec),
         ...(cap !== undefined ? { levelCap: cap } : {}),
         ...(isDeltaRookie(rec) ? { deltaRookie: true } : {}),
         ...(side ? { side } : {}),
-        ...(rec.archetype && rec.loadout.slot3_ability ? { slot3: rec.loadout.slot3_ability } : {}),
+        // Fase 3: talentos, guia e botão 3 do registro valem desde o nascimento
+        ...simSpawnExtrasOf(rec),
       });
     }
     e.semente = Math.max(0, rec.semente);
@@ -700,6 +756,9 @@ export class GameServerCore {
       inside: new Set(),
       stickDown: false,
       hadTarget: false,
+      bornTick: this.world.tick,
+      exitWarned: new Set(),
+      interactAt: new Map(),
     };
     if (!sandbox && this.jaco && rec.stage !== 'margem') this.spawnJaco(slot, e);
     else if (this.companions) this.spawnCompanion(slot, e);
@@ -774,16 +833,7 @@ export class GameServerCore {
     if (!e) return;
     const w = this.world;
     const r = slot.rec;
-    const kit = simKitOf(r);
-    const cur = e.archetypeId ?? e.classId ?? 'delta';
-    if (kit !== cur) {
-      if (r.side) e.side = r.side;
-      try {
-        setArchetype(w, e, kit, r.loadout.slot3_ability ?? undefined);
-      } catch (err) {
-        this.log(`[core] kit ${kit} falhou: ${String(err)}`);
-      }
-    }
+    this.syncKit(e, r);
     if (e.level !== r.level) relevel(w, e, r.level);
     e.xp = Math.max(0, r.xp);
     const cap = simLevelCap(r);
@@ -798,6 +848,36 @@ export class GameServerCore {
     e.inventory = [...r.inventory];
     if (e.loadout) e.loadout.itemCount = r.item_count;
     slot.lastLevel = e.level;
+  }
+
+  /**
+   * Fase 3: kit, talentos, guia e botão 3 do registro na entidade, sem renascer (a entidade mantém
+   * o id, a posição e a fração de vida). Os números fixos dos talentos e do guia (stats.pct) saem
+   * pela conta antiga e entram pela nova, como se a entidade tivesse nascido com eles.
+   */
+  private syncKit(e: Entity, r: PlayerRecord): void {
+    const kit = simKitOf(r);
+    const ex = simSpawnExtrasOf(r);
+    const talents = ex.talents ?? [];
+    const cur = e.archetypeId ?? e.classId ?? 'delta';
+    const talChanged = talents.join(',') !== (e.talents ?? []).join(',') || (ex.guideId ?? undefined) !== (e.guideId ?? undefined);
+    const curS3 = e.loadout?.b3 ? baseAbilityId(e.loadout.b3) : undefined;
+    const s3Changed = ex.slot3 !== undefined && ex.slot3 !== curS3;
+    if (kit === cur && !talChanged && !s3Changed) return;
+    const before = flatPctOf(e);
+    if (r.side) e.side = r.side;
+    if (talents.length > 0) e.talents = [...talents];
+    else delete e.talents;
+    if (ex.guideId) e.guideId = ex.guideId;
+    else delete e.guideId;
+    try {
+      setArchetype(this.world, e, kit, ex.slot3 ?? r.loadout.slot3_ability ?? undefined);
+    } catch (err) {
+      this.log(`[core] kit ${kit} falhou: ${String(err)}`);
+    }
+    const after = flatPctOf(e);
+    const pct = e.stats.pct as Record<string, number | undefined>;
+    for (const k of new Set([...Object.keys(before), ...Object.keys(after)])) pct[k] = (pct[k] ?? 0) - (before[k] ?? 0) + (after[k] ?? 0);
   }
 
   private persist(slot: Slot): Promise<void> {
@@ -845,6 +925,8 @@ export class GameServerCore {
       slot.notify = true;
     }
     for (const a of avisosOf(r)) this.send(slot.sid, GAME_MSG.aviso, a);
+    // Fase 3: o guia fala (missão aceita, bônus)
+    for (const f of r.falasGuia ?? []) this.send(slot.sid, GAME_MSG.falaGuia, f satisfies S2C_FalaGuia);
   }
 
   /** Evento de jogo para o registro do slot (com pull antes). */
@@ -920,6 +1002,61 @@ export class GameServerCore {
           if (typeof t.controle === 'string' && CONTROLS.has(t.controle)) this.gameEvent(slot, { t: 'control', controle: t.controle });
           break;
         }
+        // ---- Fase 3 ----
+        case GAME_MSG.escolherAla:
+          this.onChooseAla(slot, e, m as unknown as C2S_EscolherAla);
+          break;
+        case GAME_MSG.escolherTalento: {
+          const id = (m as unknown as C2S_EscolherTalento).talent;
+          const p = pickTalent(slot.rec, typeof id === 'string' ? id : '');
+          if (!p.ok) {
+            this.aviso(sessionId, p.erro);
+            break;
+          }
+          this.applyResult(slot, p.resultado);
+          this.sendProgress(slot);
+          break;
+        }
+        case GAME_MSG.trocarSlot3: {
+          const id = (m as unknown as C2S_TrocarSlot3).ability;
+          const c = setSlot3(slot.rec, typeof id === 'string' ? id : '');
+          if (!c.ok) {
+            this.aviso(sessionId, c.erro);
+            break;
+          }
+          this.push(slot);
+          slot.dirty = true;
+          slot.notify = true;
+          this.sendProgress(slot);
+          break;
+        }
+        case GAME_MSG.progressoOpcoes:
+          this.sendProgress(slot);
+          break;
+        case GAME_MSG.instituicao: {
+          const id = (m as unknown as C2S_Instituicao).id;
+          const info = institutionInfo(slot.rec, typeof id === 'string' ? id : slot.rec.institution);
+          if (info) this.send(sessionId, GAME_MSG.instituicaoInfo, info satisfies S2C_InstituicaoInfo);
+          else this.aviso(sessionId, 'Instituição desconhecida.');
+          break;
+        }
+        case GAME_MSG.missaoPagar: {
+          const id = (m as unknown as C2S_MissaoPagar).missao;
+          const p = payObjective(slot.rec, typeof id === 'string' ? id : undefined);
+          if (!p.ok) {
+            this.aviso(sessionId, p.erro);
+            break;
+          }
+          // a moeda saiu do registro: a entidade acompanha
+          this.push(slot);
+          slot.dirty = true;
+          slot.notify = true;
+          this.applyResult(slot, p.resultado);
+          break;
+        }
+        case GAME_MSG.emote:
+          this.onEmote(slot, e, m as unknown as C2S_Emote);
+          break;
         default:
           break;
       }
@@ -927,6 +1064,62 @@ export class GameServerCore {
       this.log(`[core] mensagem ${type} falhou: ${err instanceof Error ? err.stack : String(err)}`);
     } finally {
       this.flushNotify();
+    }
+  }
+
+  /** Opções de ala, talentos pendentes e botões (progresso_info). */
+  private sendProgress(slot: Slot): void {
+    this.send(slot.sid, GAME_MSG.progressoInfo, progressOptions(slot.rec) satisfies S2C_ProgressoOpcoes);
+  }
+
+  /** NPC deste id de dados a até `reach` tiles (borda a borda). */
+  private npcNear(e: Entity, npcId: string, reach: number): boolean {
+    for (const n of this.world.entities.values()) {
+      if (n.kind !== 'npc' || n.dead || n.defId !== npcId) continue;
+      if (Math.hypot(n.x - e.x, n.y - e.y) - n.radius - e.radius <= reach) return true;
+    }
+    return false;
+  }
+
+  /**
+   * Escolher a ala no 12 pela mensagem direta. SUGESTÃO: pede o treinador da ala ou quem recebe a
+   * base por perto (a opção 'ala:<id>' do diálogo é o outro caminho, com a mesma regra).
+   */
+  private onChooseAla(slot: Slot, e: Entity, msg: C2S_EscolherAla): void {
+    const id = typeof msg.archetype === 'string' ? msg.archetype : '';
+    const a = getData().archetypesById.get(id);
+    const trainers = [a?.treinador, baseTrainerOf(slot.rec)].filter((t): t is string => typeof t === 'string');
+    if (a && !trainers.some((t) => this.npcNear(e, t, ALA_TRAINER_REACH_TILES))) {
+      this.aviso(slot.sid!, 'Fale com o treinador da ala na sede da instituição.');
+      return;
+    }
+    const c = chooseArchetype(slot.rec, id);
+    if (!c.ok) {
+      this.aviso(slot.sid!, c.erro);
+      return;
+    }
+    this.applyResult(slot, c.resultado);
+    this.sendProgress(slot);
+  }
+
+  /** Emote liberado: vai para todos no raio de interesse (o próprio jogador também). */
+  private onEmote(slot: Slot, e: Entity, msg: C2S_Emote): void {
+    const w = this.world;
+    if (slot.lastEmoteTick !== undefined && w.tick - slot.lastEmoteTick < msToTicks(EMOTE_COOLDOWN_MS)) return;
+    const u = useEmote(slot.rec, typeof msg.emote === 'string' ? msg.emote : '');
+    if (!u.ok || !u.emote) {
+      this.aviso(slot.sid!, u.ok ? 'Emote desconhecido.' : u.erro);
+      return;
+    }
+    slot.lastEmoteTick = w.tick;
+    const out: S2C_Emote = { entity: e.id, playerId: slot.rec.id, nome: slot.rec.name, emote: u.emote.id, texto: u.emote.texto, animacao: u.emote.animacao, quadros: u.emote.quadros };
+    const R2 = this.interestRadius * this.interestRadius;
+    for (const s of this.sessions.values()) {
+      if (!s.connected) continue;
+      const me = this.entityOf(s.sid);
+      if (!me) continue;
+      const dx = me.x - e.x, dy = me.y - e.y;
+      if (dx * dx + dy * dy <= R2) this.send(s.sid, GAME_MSG.emote, out);
     }
   }
 
@@ -993,6 +1186,11 @@ export class GameServerCore {
     if (isInt(msg.entity)) q.entity = msg.entity;
     if (typeof msg.npcId === 'string') q.npcId = msg.npcId;
     if (q.entity === undefined && q.npcId === undefined) return;
+    // Fase 3: o guia anda com o jogador ('guia' ou o id dele): conversa sem precisar chegar perto
+    if (q.entity === undefined && q.npcId !== undefined && guideOf(slot.rec) && isOwnGuide(slot.rec, q.npcId)) {
+      this.talk(slot, q.npcId);
+      return;
+    }
     const n = npcInReach(this.world, e, q);
     if (!n) {
       this.aviso(slot.sid!, 'Chegue mais perto para conversar.');
@@ -1012,12 +1210,13 @@ export class GameServerCore {
   private onDialogOption(slot: Slot, e: Entity, msg: C2S_DialogoOpcao): void {
     const npcId = typeof msg.npcId === 'string' ? msg.npcId : '';
     const opcao = typeof msg.opcao === 'string' ? msg.opcao : '';
-    if (!npcInReach(this.world, e, { npcId })) {
+    const guia = guideOf(slot.rec) !== undefined && isOwnGuide(slot.rec, npcId);
+    if (!guia && !npcInReach(this.world, e, { npcId })) {
       this.aviso(slot.sid!, 'Chegue mais perto para conversar.');
       return;
     }
     this.pull(slot);
-    const res = dialogOption(slot.rec, npcId, opcao);
+    const res = dialogOption(slot.rec, guia ? 'guia' : npcId, opcao);
     if (!res.ok) {
       this.aviso(slot.sid!, res.erro ?? 'Opção indisponível.');
       return;
@@ -1061,15 +1260,107 @@ export class GameServerCore {
       slot.notify = true;
       return;
     }
-    // o personagem sai deste mapa: grava antes de mandar trocar de sala (a sala da margem lê o Store)
+    this.leaveTo(slot, target, undefined, 'travessia');
+  }
+
+  /**
+   * O personagem sai deste mapa para outro (travessia ou saída do mapa): grava antes de mandar trocar
+   * de sala (a sala de destino lê o Store) e deixa a entrada do destino em handoff.ts.
+   */
+  private leaveTo(slot: Slot, target: string, spawn: string | undefined, motivo: S2C_TrocarSala['motivo']): void {
+    const sid = slot.sid;
     slot.notify = false;
+    setArrival(slot.token, target, spawn);
     const saved = this.persist(slot);
     this.removeSlot(slot);
     const sess = sid ? this.sessions.get(sid) : undefined;
     if (sess) sess.movedTo = target;
     void saved.then(() => {
-      if (sid && this.sessions.get(sid)?.movedTo === target) this.send(sid, GAME_MSG.trocarSala, { mapId: target, motivo: 'travessia' } satisfies S2C_TrocarSala);
+      if (sid && this.sessions.get(sid)?.movedTo === target) this.send(sid, GAME_MSG.trocarSala, { mapId: target, motivo } satisfies S2C_TrocarSala);
     });
+  }
+
+  /**
+   * Fase 3: saída do mapa ('saida' com params.para) por perto: troca de sala para o destino, na
+   * entrada params.spawn. A saída da travessia do Delta leva de volta para a margem quem já
+   * atravessou (o barco do Toninho). Devolve true quando o personagem saiu deste mapa.
+   */
+  private checkExits(slot: Slot, e: Entity): boolean {
+    if (this.world.tick - slot.bornTick < msToTicks(EXIT_GRACE_MS)) return false;
+    for (const mk of this.areas.exits) {
+      const d = Math.hypot(mk.x - e.x, mk.y - e.y);
+      if (d > EXIT_RADIUS_TILES) {
+        if (d > EXIT_RADIUS_TILES + 1) slot.exitWarned.delete(mk.id);
+        continue;
+      }
+      const dest = this.exitTarget(slot.rec, mk);
+      if (!dest) continue;
+      if (!mapAllowed(slot.rec, dest.mapId)) {
+        if (!slot.exitWarned.has(mk.id)) {
+          slot.exitWarned.add(mk.id);
+          // SUGESTÃO: texto do aviso de saída fechada.
+          if (slot.sid) this.aviso(slot.sid, 'Esse caminho só abre depois da travessia.');
+        }
+        continue;
+      }
+      this.pull(slot);
+      this.leaveTo(slot, dest.mapId, dest.spawn, 'registro');
+      return true;
+    }
+    return false;
+  }
+
+  private exitTarget(rec: PlayerRecord, mk: MapMarker): { mapId: string; spawn?: string } | undefined {
+    if (mk.params?.['travessia'] === true) {
+      // o cais do Delta: a travessia é pela mensagem 'travessia'; quem já é da margem volta de barco
+      return rec.stage === 'margem' && rec.side ? { mapId: ARRIVAL_MAP_BY_SIDE[rec.side] } : undefined;
+    }
+    const para = mk.params?.['para'];
+    if (typeof para !== 'string') return undefined;
+    const spawn = mk.params?.['spawn'];
+    return { mapId: resolveMapId(para), ...(typeof spawn === 'string' ? { spawn } : {}) };
+  }
+
+  /**
+   * Fase 3: objetivo 'sobreviver' atual. Conta 1 s por segundo com o jogador de pé (e dentro de
+   * naoSairDoRaio, quando houver); as ondas da missão nascem perto, espalhadas pela duração.
+   */
+  private tickSurvive(slot: Slot, e: Entity): void {
+    const w = this.world;
+    const cur = currentObjectives(slot.rec).find((c) => c.objetivo.tipo === 'sobreviver');
+    if (!cur || cur.objetivo.tipo !== 'sobreviver') {
+      slot.survive = undefined;
+      return;
+    }
+    const o = cur.objetivo;
+    const key = `${cur.missao.id}:${cur.indice}`;
+    if (slot.survive?.key !== key) slot.survive = { key, startTick: w.tick, x: e.x, y: e.y, waves: 0, lastSecond: w.tick };
+    const sv = slot.survive;
+    // ondas: a onda i nasce em i × duração / ondas
+    const ondas = o.ondas ?? [];
+    const elapsedS = (w.tick - sv.startTick) / TICK_RATE;
+    while (sv.waves < ondas.length && elapsedS >= (sv.waves * o.duracaoS) / ondas.length) {
+      const g = ondas[sv.waves]!;
+      sv.waves++;
+      if (!getData().enemiesById.has(g.inimigo)) continue;
+      for (let i = 0; i < g.quantidade; i++) {
+        const a = (i / Math.max(1, g.quantidade)) * Math.PI * 2 + sv.waves;
+        try {
+          spawnEnemy(w, g.inimigo, e.x + Math.cos(a) * SURVIVE_SPAWN_TILES, e.y + Math.sin(a) * SURVIVE_SPAWN_TILES, {
+            tier: g.tier,
+            level: Math.max(1, slot.rec.level),
+            ...(g.afixos && g.afixos.length > 0 ? { affixes: [...g.afixos] } : {}),
+          });
+        } catch (err) {
+          this.log(`[core] onda de ${g.inimigo} falhou: ${String(err)}`);
+        }
+      }
+    }
+    if (w.tick - sv.lastSecond < TICK_RATE) return;
+    sv.lastSecond += TICK_RATE;
+    if (e.dead || e.downedUntil !== undefined) return;
+    if (o.naoSairDoRaio !== undefined && Math.hypot(e.x - sv.x, e.y - sv.y) > o.naoSairDoRaio) return;
+    this.gameEvent(slot, { t: 'survive', segundos: 1 });
   }
 
   /** Eventos da simulação deste tick para as regras (só fora da sandbox). */
@@ -1166,6 +1457,9 @@ export class GameServerCore {
       if (slot.sandbox) continue;
       const e = w.entities.get(slot.entityId);
       if (!e || e.dead) continue;
+      // Fase 3: saídas do mapa (troca de sala) e o objetivo 'sobreviver'
+      if (this.checkExits(slot, e)) continue;
+      this.tickSurvive(slot, e);
       // lugar
       let best: string | null = null;
       let bd = Infinity;
@@ -1196,8 +1490,14 @@ export class GameServerCore {
         const d = Math.hypot(mk.x - e.x, mk.y - e.y);
         const alvo = mk.params!['interagir'] as string;
         if (d <= INTERACT_MARKER_RADIUS_TILES) {
-          if (slot.inside.has(mk.id)) continue;
+          if (slot.inside.has(mk.id)) {
+            // Fase 3: quadro ou papel que o objetivo atual pede conta de novo, parado ali
+            const last = slot.interactAt.get(mk.id) ?? w.tick;
+            if (mk.kind !== 'quadro_missoes' || w.tick - last < msToTicks(INTERACT_REPEAT_MS)) continue;
+            if (!currentObjectives(slot.rec).some((c) => c.objetivo.tipo === 'interagir' && c.objetivo.alvo === alvo)) continue;
+          }
           slot.inside.add(mk.id);
+          slot.interactAt.set(mk.id, w.tick);
           this.gameEvent(slot, { t: 'interact', alvo, acao: interactAction(slot.rec, alvo, mk) });
         } else if (d > INTERACT_MARKER_RADIUS_TILES + 1) slot.inside.delete(mk.id);
       }

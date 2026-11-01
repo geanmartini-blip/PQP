@@ -1,7 +1,8 @@
 /**
  * Monta e sobe o servidor: HTTP (express) + WebSocket (Colyseus 0.18) na mesma porta.
- * - salas 'mundo' (WorldRoom), uma por mapa (opção mapId: delta, qg_esquerda, qg_direita e a
- *   sandbox prototipo_delta);
+ * - salas 'mundo' (WorldRoom), uma por mapa (opção mapId: delta, margem_esquerda, margem_direita,
+ *   usina_da_ponte, juncal e a sandbox prototipo_delta); quem pede qg_esquerda ou qg_direita (Fase 2)
+ *   cai numa sala de apelido que manda trocar_sala para a margem;
  * - GET /health;
  * - packages/client/dist como estático, com volta para index.html, quando a pasta existir.
  * Usado pelo index.ts e pelo teste do WorldRoom (porta aleatória).

@@ -51,6 +51,8 @@ describe('alvo automático segue o inimigo mais perto à vista', () => {
     expect(p.targetId).toBe(longe.id);
     const perto = spawnEnemy(w, 'siri_do_mangue', 11.2, 15);
     freeze(perto);
+    // vida alta: com o ataque calibrado da Fase 3 o Idol mata o siri antes dos 30 ticks
+    perto.hp = perto.stats.hpMax = 5000;
     const evs = stepN(w, 30);
     expect(p.targetId).toBe(perto.id);
     expect(evs.some((e) => e.t === 'hit' && e.src === p.id && e.dst === perto.id)).toBe(true);

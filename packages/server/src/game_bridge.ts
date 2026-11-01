@@ -12,7 +12,11 @@ import type { BotaoId, GameResult, PlayerRecord } from '@pqp/shared/game/types';
 import type { S2C_Aviso } from '@pqp/shared/net';
 import { Resource } from '@pqp/shared/schema/world';
 
-/** Mapa onde o personagem do registro vive: Delta até a travessia; depois, o QG da margem. */
+/**
+ * Mapa "de casa" do registro: Delta até a travessia; depois, a margem (o QG fica nela). Quem anda
+ * pelas saídas para a Usina, o Juncal ou a outra margem fica lá enquanto estiver conectado
+ * (handoff.ts); ao voltar sem pedir sala, volta para casa.
+ */
 export function mapForRecord(rec: PlayerRecord): string {
   if (!rec.criado || rec.stage !== 'margem' || !rec.side) return START_MAP;
   return ARRIVAL_MAP_BY_SIDE[rec.side];
@@ -60,6 +64,8 @@ export interface AreaMarkers {
   places: MapMarker[];
   interacts: MapMarker[];
   travessia: MapMarker[];
+  /** Fase 3: saídas para outro mapa (params.para) e a do cais da travessia */
+  exits: MapMarker[];
 }
 
 export function areaMarkers(map: TileMap): AreaMarkers {
@@ -67,6 +73,7 @@ export function areaMarkers(map: TileMap): AreaMarkers {
     places: map.markers.filter((m) => m.kind === 'lugar' && typeof m.ref === 'string'),
     interacts: map.markers.filter((m) => typeof m.params?.['interagir'] === 'string'),
     travessia: map.markers.filter((m) => m.kind === 'saida' && m.params?.['travessia'] === true),
+    exits: map.markers.filter((m) => m.kind === 'saida' && (typeof m.params?.['para'] === 'string' || m.params?.['travessia'] === true)),
   };
 }
 

@@ -21,20 +21,20 @@
   {
     "id": "barricada",
     "name": "Barricada",
-    "hpPct": 40,
+    "hpPct": 52,
     "attackMult": 0,
     "behavior": "muralha",
     "range": 0,
     "radius": 3,
     "tickMs": 1000,
     "effects": [
-      { "kind": "reforco", "stat": "damage", "pct": 20, "duracaoMs": 1500, "target": "aliados_area" },
-      { "kind": "reforco", "stat": "defense", "pct": 20, "duracaoMs": 1500, "target": "aliados_area" }
+      { "kind": "reforco", "stat": "damage", "pct": 26, "duracaoMs": 1500, "target": "aliados_area" },
+      { "kind": "reforco", "stat": "defense", "pct": 26, "duracaoMs": 1500, "target": "aliados_area" }
     ],
     "destructible": true,
-    "description": "Barricada do Às Barricadas! (Cidadão Revolucionário): segura a passagem por 8 s, e os aliados perto dela ganham +20% de dano e defesa.",
+    "description": "Barricada do Às Barricadas! (Cidadão Revolucionário): segura a passagem por 8 s, e os aliados perto dela ganham +26% de dano e defesa.",
     "visual": { "esquerda": "Barricada de cadeiras de bistrô empilhadas, com a placa GREVE." },
-    "sugestaoCampos": ["hpPct", "radius", "tickMs"]
+    "sugestaoCampos": ["hpPct", "radius", "tickMs", "effects.reforco.pct", "description"]
   },
   {
     "id": "barricada_gigante",
@@ -58,14 +58,14 @@
   {
     "id": "circulo_de_pedras",
     "name": "Círculo de Pedras",
-    "hpPct": 50,
+    "hpPct": 10,
     "attackMult": 0,
     "behavior": "muralha",
     "range": 0,
     "radius": 3,
     "tickMs": 4000,
     "effects": [
-      { "kind": "controle", "cc": "provocar", "duracaoMs": 2000, "target": "inimigos_area" }
+      { "kind": "controle", "cc": "provocar", "duracaoMs": 500, "target": "inimigos_area" }
     ],
     "destructible": true,
     "description": "Totem do Druida Rabugento que vira muralha e provoca os inimigos perto.",
@@ -75,14 +75,14 @@
   {
     "id": "barreira_de_sucata",
     "name": "Barreira de Sucata",
-    "hpPct": 40,
+    "hpPct": 8,
     "attackMult": 0,
     "behavior": "muralha",
     "range": 0,
     "radius": 0,
     "effects": [],
     "destructible": true,
-    "rebuildMs": 4000,
+    "rebuildMs": 10000,
     "description": "Barreira do Funciona, Não Pergunta (Engenheira de Gambiarra): segura passagem e projéteis e se refaz depois de destruída.",
     "visual": { "direita": "Geladeira velha, ventilador e fita prata, com o lacre \"GARANTIA VIOLADA\"." },
     "sugestaoCampos": ["hpPct", "rebuildMs"]
@@ -90,14 +90,14 @@
   {
     "id": "robo_geladeira",
     "name": "Robô-Geladeira",
-    "hpPct": 60,
-    "attackMult": 0.3,
+    "hpPct": 12,
+    "attackMult": 0.05,
     "behavior": "provoca",
     "range": 1,
     "radius": 3,
-    "tickMs": 4000,
+    "tickMs": 6000,
     "effects": [
-      { "kind": "controle", "cc": "provocar", "duracaoMs": 2000, "target": "inimigos_area" }
+      { "kind": "controle", "cc": "provocar", "duracaoMs": 500, "target": "inimigos_area" }
     ],
     "destructible": true,
     "description": "Robô da Engenheira de Gambiarra que segura a frente e provoca os inimigos perto.",
@@ -107,15 +107,15 @@
   {
     "id": "lhama_cuspidora",
     "name": "Lhama Cuspidora",
-    "hpPct": 20,
-    "attackMult": 0.6,
+    "hpPct": 15,
+    "attackMult": 0.45,
     "behavior": "cura_menos_vida",
     "range": 4,
     "radius": 0,
     "tickMs": 1500,
     "effects": [
-      { "kind": "cura", "pctVidaMax": 4, "target": "aliado_menos_vida" },
-      { "kind": "dano", "mult": 1, "target": "inimigo_mais_perto" }
+      { "kind": "cura", "pctVidaMax": 3, "target": "aliado_menos_vida" },
+      { "kind": "dano", "mult": 0.75, "target": "inimigo_mais_perto" }
     ],
     "destructible": true,
     "description": "Totem de lhama da Curandeira dos Andes: cura o aliado mais ferido e cospe no inimigo mais perto.",

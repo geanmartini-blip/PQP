@@ -14,9 +14,10 @@ import { buildEnemySheet, buildSummonSheet } from './creatures';
 import { buildFontPix, buildFx, FONT_CELL_H, FONT_CELL_W, FONT_KEY, FONT_PER_ROW, type FxInfo } from './fx';
 import { FONT_CHARS } from './font';
 import { buildEmblem, buildIcon, buildPortrait } from './icons';
+import { buildPropSheet, PROP_KEY } from './landmarks';
 import { npcLook } from './npcs';
 import { hashString, type Pix, stableStringify } from './pixel';
-import { type SheetData } from './sheet';
+import { drawPending, isPendingSheet, pendingProgress, type SheetData, TOTAL_FRAMES_PER_DIR, withDeferredDraw } from './sheet';
 import { buildTileset, TILE_KEY } from './tiles';
 
 export type { ArtApi, CharacterLook } from './contract';
@@ -24,6 +25,7 @@ export { ANIMS, SPRITE_H, SPRITE_W, TILE_PX } from './contract';
 export { ANIMATED_TILES, TILE_ANIM_MS, TILE_KEY, TILE_VARIANTS, tileFrame, treeFrame } from './tiles';
 export { coneKeyFor, CONE_ANGLES, FONT_KEY, FX_KEYS, shadowFrameFor } from './fx';
 export type { FxInfo } from './fx';
+export { facadeFrame, propForDeco, propFrame, propIsFlat, PROP_KEY, PROPS } from './landmarks';
 export { defaultLook, archetypeLook } from './character';
 export type { ArtLook } from './character';
 
@@ -81,6 +83,106 @@ function uploadSheet(scene: Phaser.Scene, sheet: SheetData, extra: Partial<Sheet
   return sheet.key;
 }
 
+// ---------------------------------------------------------------------------
+// geração sob demanda (Fase 3): a folha nasce na hora com a silhueta de espera, com os mesmos
+// quadros e animações, e os quadros de verdade são desenhados em fatias de tempo por quadro do
+// jogo. Quando a folha fica pronta, o mesmo canvas é redesenhado: sprites e animações continuam
+// valendo, sem trocar de textura.
+
+/** SUGESTÃO: 6 ms por quadro do jogo para desenhar bonecos (sobra folga para os 60 fps). */
+export const ART_BUDGET_MS = 6;
+/** SUGESTÃO: sobe a parte pronta quando parado e andando (os 32 primeiros quadros) ficam prontos. */
+const EARLY_UPLOAD_FRAMES = 32;
+
+interface SheetJob {
+  key: string;
+  pix: Pix;
+  early: boolean;
+}
+
+const jobs: SheetJob[] = [];
+const jobKeys = new Set<string>();
+const readyCbs = new Map<string, (() => void)[]>();
+const hookedGames = new WeakSet<object>();
+let pumpGame: Phaser.Game | undefined;
+
+/** Folhas ainda na fila de desenho. */
+export function pendingSheets(): number {
+  return jobs.length;
+}
+
+/** A folha desta chave já está desenhada de verdade (não é mais a silhueta)? */
+export function sheetReady(key: string): boolean {
+  return !jobKeys.has(key);
+}
+
+/** Chama `cb` quando a folha ficar pronta (na hora, se já está). */
+export function whenSheetReady(key: string, cb: () => void): void {
+  if (!jobKeys.has(key)) return cb();
+  let l = readyCbs.get(key);
+  if (!l) readyCbs.set(key, (l = []));
+  l.push(cb);
+}
+
+function refreshCanvas(game: Phaser.Game, key: string, pix: Pix): void {
+  const tex = game.textures.get(key) as Phaser.Textures.CanvasTexture | undefined;
+  if (!tex || typeof (tex as Partial<Phaser.Textures.CanvasTexture>).getContext !== 'function') return;
+  const data = new Uint8ClampedArray(pix.data.length);
+  data.set(pix.data);
+  tex.getContext().putImageData(new ImageData(data, pix.w, pix.h), 0, 0);
+  tex.refresh();
+}
+
+/** Desenha folhas pendentes até o orçamento do quadro (a mais recente primeiro). */
+export function pumpSheets(game: Phaser.Game | undefined = pumpGame, budgetMs = ART_BUDGET_MS): void {
+  if (!game || jobs.length === 0) return;
+  const now = () => performance.now();
+  const deadline = now() + budgetMs;
+  while (jobs.length > 0 && now() < deadline) {
+    const job = jobs[jobs.length - 1]!;
+    const done = drawPending(job.pix, deadline, now);
+    if (!done) {
+      if (!job.early && pendingProgress(job.pix) * TOTAL_FRAMES_PER_DIR * 4 >= EARLY_UPLOAD_FRAMES) {
+        job.early = true;
+        refreshCanvas(game, job.key, job.pix);
+      }
+      break;
+    }
+    jobs.pop();
+    jobKeys.delete(job.key);
+    refreshCanvas(game, job.key, job.pix);
+    const cbs = readyCbs.get(job.key);
+    readyCbs.delete(job.key);
+    for (const cb of cbs ?? []) {
+      try {
+        cb();
+      } catch {
+        // quem pediu saiu de cena
+      }
+    }
+  }
+}
+
+function hookPump(scene: Phaser.Scene): void {
+  const game = scene.game as Phaser.Game | undefined;
+  if (!game || hookedGames.has(game)) return;
+  hookedGames.add(game);
+  pumpGame = game;
+  game.events.on(Phaser.Core.Events.POST_STEP, () => pumpSheets(game));
+}
+
+/** Sobe a casca (silhueta) e põe o desenho na fila; folha já pronta sobe direto. */
+function uploadDeferred(scene: Phaser.Scene, sheet: SheetData): string {
+  const fresh = !scene.textures.exists(sheet.key);
+  uploadSheet(scene, sheet);
+  if (fresh && isPendingSheet(sheet.pix) && !jobKeys.has(sheet.key)) {
+    hookPump(scene);
+    jobs.push({ key: sheet.key, pix: sheet.pix, early: false });
+    jobKeys.add(sheet.key);
+  }
+  return sheet.key;
+}
+
 function registerAnims(scene: Phaser.Scene, sheetKey: string): void {
   const meta = metas.get(sheetKey);
   if (!meta) return;
@@ -111,6 +213,12 @@ function registerAnims(scene: Phaser.Scene, sheetKey: string): void {
   }
 }
 
+/** Sobe (uma vez) a folha dos props e fachadas das margens (art/landmarks.ts). */
+export function propsTexture(scene: Phaser.Scene): string {
+  if (!scene.textures.exists(PROP_KEY)) uploadSheet(scene, buildPropSheet());
+  return PROP_KEY;
+}
+
 /** Visual de reserva para um NPC sem ficha: o padrão, estável pelo id. */
 function fallbackNpcLook(id: string): ArtLook {
   const ap = getData().appearance;
@@ -129,7 +237,7 @@ export function createArt(): ArtApi {
   const api: ArtApi = {
     characterSheet(scene, look) {
       const key = lookKey(look as ArtLook);
-      if (!scene.textures.exists(key)) uploadSheet(scene, buildCharacterSheet(look as ArtLook, key));
+      if (!scene.textures.exists(key)) uploadDeferred(scene, withDeferredDraw(() => buildCharacterSheet(look as ArtLook, key)));
       registerAnims(scene, key);
       return key;
     },
@@ -137,22 +245,20 @@ export function createArt(): ArtApi {
       const key = `npc_${npcId}`;
       if (!scene.textures.exists(key)) {
         const look = npcLook(npcId) ?? fallbackNpcLook(npcId);
-        uploadSheet(scene, { ...buildCharacterSheet(look, key), key });
+        uploadDeferred(scene, { ...withDeferredDraw(() => buildCharacterSheet(look, key)), key });
       }
       registerAnims(scene, key);
       return key;
     },
     enemySheet(scene, enemyId, tier) {
-      const sheet = buildEnemySheet(enemyId, tier);
-      uploadSheet(scene, sheet);
-      registerAnims(scene, sheet.key);
-      return sheet.key;
+      const key = uploadDeferred(scene, withDeferredDraw(() => buildEnemySheet(enemyId, tier)));
+      registerAnims(scene, key);
+      return key;
     },
     summonSheet(scene, summonId, side) {
-      const sheet = buildSummonSheet(summonId, side ?? 'esquerda');
-      uploadSheet(scene, sheet);
-      registerAnims(scene, sheet.key);
-      return sheet.key;
+      const key = uploadDeferred(scene, withDeferredDraw(() => buildSummonSheet(summonId, side ?? 'esquerda')));
+      registerAnims(scene, key);
+      return key;
     },
     tileset(scene) {
       const sheet = buildTileset();

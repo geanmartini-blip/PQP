@@ -20,12 +20,27 @@ import { hasFlag, setFlag } from './flags';
 import { FLAG_BRUNO, gainXp, groupXp, isDeltaRookie, raiseToLevel, syncLevel, TRAVESSIA_LEVEL } from './progression';
 import { markStep, onTutorialEvent } from './tutorial';
 import { emptyResult, mergeResult, type Check, type GameEvent, type GameResult, type GroupCtx, type PlayerRecord } from './types';
+import { guideLine } from './guides';
+import { alaTrainerOf, npcMatches, resolveNpc } from './people';
+import { updateRanks } from './ranks';
+import { unlockTrainerEmote } from './trainers';
 
 /** SUGESTÃO: quantos níveis abaixo do nível da missão ainda dá para aceitar (fora do Delta). */
 export const NIVEL_TOLERANCIA = 2;
 
-/** Cadeias que andam sozinhas. */
-export const AUTO_CHAINS = ['delta_1_a_7', 'travessia'] as const;
+/**
+ * Cadeias que andam sozinhas. Fase 3: a missão de entrada da instituição ('entradas') entra
+ * sozinha quando a cadeia de chegada da margem libera (só a da instituição do jogador passa no
+ * missionAvailable).
+ */
+export const AUTO_CHAINS = ['delta_1_a_7', 'travessia', 'entradas'] as const;
+
+/** Cadeias que só abrem no nível exato da missão (sem a tolerância): a escolha da ala é no 12. */
+const NIVEL_EXATO = new Set(['escolha_da_ala']);
+
+/** SUGESTÃO: seguidores por inimigo derrotado e por lugar novo visitado (entrada da Agência Neon). */
+export const SEGUIDORES_POR_INIMIGO = 10;
+export const SEGUIDORES_POR_LUGAR = 5;
 
 const missionOf = (id: string): Mission | undefined => getData().missionsById.get(id);
 
@@ -43,6 +58,7 @@ export function missionAvailable(rec: PlayerRecord, id: string): Check {
   if (m.margem && m.margem !== rec.side) return { ok: false, erro: 'Missão da outra margem.' };
   if (m.instituicao && m.instituicao !== rec.institution) return { ok: false, erro: 'Missão de outra instituição.' };
   const delta = m.cadeia === 'delta_1_a_7';
+  if (m.cadeia && NIVEL_EXATO.has(m.cadeia) && rec.level < m.nivel) return { ok: false, erro: `Volte no nível ${m.nivel}.` };
   if (!delta && rec.level < m.nivel - NIVEL_TOLERANCIA) return { ok: false, erro: `Volte no nível ${m.nivel - NIVEL_TOLERANCIA}.` };
   if (m.nivelMax !== undefined && rec.level > m.nivelMax + NIVEL_TOLERANCIA) return { ok: false, erro: 'Você já passou dessa missão.' };
   return { ok: true };
@@ -50,7 +66,8 @@ export function missionAvailable(rec: PlayerRecord, id: string): Check {
 
 /** Missões disponíveis, de quem dá (id do NPC) ou de todos. */
 export function availableMissions(rec: PlayerRecord, giver?: string): Mission[] {
-  return getData().missions.missoes.filter((m) => (giver === undefined || m.dadaPor === giver) && missionAvailable(rec, m.id).ok);
+  // dadaPor pode ser apelido ('treinador_da_base', 'guia'): vale o NPC de verdade do jogador
+  return getData().missions.missoes.filter((m) => (giver === undefined || (m.dadaPor !== undefined && npcMatches(rec, m.dadaPor, giver))) && missionAvailable(rec, m.id).ok);
 }
 
 /** Contadores pedidos por objetivo (um por grupo no derrotar). */
@@ -65,6 +82,8 @@ export function objectiveNeeds(o: Objective): number[] {
     case 'entregar':
     case 'pagar':
       return [o.quantidade];
+    case 'sobreviver':
+      return [o.duracaoS];
     default:
       return [1];
   }
@@ -106,6 +125,9 @@ export function acceptMission(rec: PlayerRecord, id: string): Check & { resultad
   r.aceitas.push(id);
   r.mudou = true;
   r.avisos.push(`Missão: ${m.name}`);
+  // Fase 3: o guia comenta a missão
+  const gl = guideLine(rec, 'missao');
+  if (gl) (r.falasGuia ??= []).push(gl);
   mergeResult(r, settle(rec, {}));
   return { ok: true, resultado: r };
 }
@@ -114,12 +136,17 @@ export function acceptMission(rec: PlayerRecord, id: string): Check & { resultad
 // Eventos
 
 /** Quanto o evento soma em cada contador do objetivo (null = não conta). */
-function matchObjective(_rec: PlayerRecord, o: Objective, prog: number[], ev: GameEvent): number[] | null {
+function matchObjective(rec: PlayerRecord, o: Objective, prog: number[], ev: GameEvent): number[] | null {
   const need = objectiveNeeds(o);
   const one = (n = 1) => [Math.min(n, need[0]! - (prog[0] ?? 0))];
   switch (o.tipo) {
     case 'falar':
-      return ev.t === 'talk' && ev.npcId === o.npc ? one() : null;
+      // o npc pode ser apelido ('guia', 'treinador_da_base', 'treinador_da_ala')
+      return ev.t === 'talk' && npcMatches(rec, o.npc, ev.npcId) ? one() : null;
+    case 'sobreviver':
+      return ev.t === 'survive' && ev.segundos > 0 ? one(ev.segundos) : null;
+    case 'pagar':
+      return ev.t === 'pay' && ev.moeda === o.moeda ? one(ev.quantidade) : null;
     case 'ir_ate':
       if (ev.t !== 'arrive') return null;
       if (o.lugar && ev.placeId === o.lugar) return one();
@@ -139,6 +166,9 @@ function matchObjective(_rec: PlayerRecord, o: Objective, prog: number[], ev: Ga
       return add;
     }
     case 'coletar': {
+      // seguidores (Agência Neon): lutar e passar nos lugares dá seguidor
+      if (o.chave === 'seguidores' && ev.t === 'kill') return one(SEGUIDORES_POR_INIMIGO);
+      if (o.chave === 'seguidores' && ev.t === 'arrive' && ev.placeId) return one(SEGUIDORES_POR_LUGAR);
       if (ev.t !== 'pickup') return null;
       const q = ev.quantidade ?? 1;
       if (o.chave === 'saque') return one(q);
@@ -207,12 +237,20 @@ export function applyRewards(rec: PlayerRecord, rewards: readonly Reward[], g?: 
         const k = `reputacao:${w.instituicao ?? rec.institution ?? 'delta'}`;
         rec.counters[k] = (rec.counters[k] ?? 0) + w.quantidade;
         r.mudou = true;
+        // Fase 3: a patente sobe com a reputação
+        mergeResult(r, updateRanks(rec));
         break;
       }
       case 'desbloqueio': {
         if (!rec.unlocks.includes(w.chave)) rec.unlocks.push(w.chave);
         r.avisos.push(w.descricao);
         r.mudou = true;
+        // Fase 3: o bordão do treinador da ala vira emote
+        if (w.chave === 'bordao_emote') {
+          const tr = alaTrainerOf(rec);
+          const em = tr ? unlockTrainerEmote(rec, tr) : null;
+          if (em) (r.emotes ??= []).push(em);
+        }
         break;
       }
       default:
@@ -269,7 +307,11 @@ function settle(rec: PlayerRecord, opts: { grupo?: GroupCtx }): GameResult {
         const ja =
           zerado &&
           ((o.tipo === 'usar_controle' && rec.tutorial.controles.includes(o.controle)) ||
-            ((o.tipo === 'ir_ate' || o.tipo === 'visitar_lugar') && o.lugar !== undefined && rec.lugar_atual === o.lugar));
+            ((o.tipo === 'ir_ate' || o.tipo === 'visitar_lugar') && o.lugar !== undefined && rec.lugar_atual === o.lugar) ||
+            // Fase 3: o que a travessia e a escolha da ala já decidiram
+            (o.tipo === 'escolher_guia' && rec.guide_id !== null && o.margem === rec.side) ||
+            (o.tipo === 'escolher_ala' && rec.archetype !== null) ||
+            (o.tipo === 'interagir' && o.acao === 'escolher_instituicao' && rec.institution !== null));
         if (!ja) break;
         prog[i] = objectiveNeeds(o);
         r.avancos.push({ missao: id, objetivo: i });
@@ -453,10 +495,12 @@ export function nextObjectiveTarget(rec: PlayerRecord, map: TileMap, from?: { x:
   switch (o.tipo) {
     case 'falar':
     case 'entregar':
-    case 'escoltar':
-      t.npc = o.npc;
-      put(near((mk) => mk.kind === 'npc' && mk.ref === o.npc));
+    case 'escoltar': {
+      const npcId = resolveNpc(rec, o.npc) ?? o.npc;
+      t.npc = npcId;
+      put(near((mk) => mk.kind === 'npc' && mk.ref === npcId));
       break;
+    }
     case 'ir_ate':
     case 'visitar_lugar':
       if (o.lugar) {

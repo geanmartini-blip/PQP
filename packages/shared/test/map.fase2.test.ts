@@ -9,7 +9,8 @@ import { ARRIVAL_MAP_BY_SIDE, getMap, hasMap, listMaps, START_MAP } from '../src
 import { Tile, type MapMarker, type TileMap } from '../src/map/types';
 
 const R = 0.35;
-const NOVOS = ['delta', 'qg_esquerda', 'qg_direita'] as const;
+// Fase 3: qg_esquerda e qg_direita viraram apelidos das margens (testes em map3.test.ts)
+const NOVOS = ['delta'] as const;
 
 const byKind = (map: TileMap, k: MapMarker['kind']) => map.markers.filter((m) => m.kind === k);
 const spawnOf = (map: TileMap) => byKind(map, 'spawn_jogador')[0]!;
@@ -36,9 +37,8 @@ function reachable(map: TileMap, r = R): Uint8Array {
 const isReached = (map: TileMap, seen: Uint8Array, m: { x: number; y: number }) => seen[Math.floor(m.y) * map.width + Math.floor(m.x)] === 1;
 
 describe('registro com os mapas da Fase 2', () => {
-  it('lista e carrega os quatro mapas, com o tamanho de cada um', () => {
-    expect(listMaps()).toEqual(expect.arrayContaining(['prototipo_delta', 'delta', 'qg_esquerda', 'qg_direita']));
-    expect(listMaps()).toHaveLength(4);
+  it('lista e carrega os mapas, com o tamanho do Delta; os qg_* abrem as margens', () => {
+    expect(listMaps()).toEqual(expect.arrayContaining(['prototipo_delta', 'delta']));
     for (const id of listMaps()) {
       const m = getMap(id);
       expect(m.id).toBe(id);
@@ -46,7 +46,7 @@ describe('registro com os mapas da Fase 2', () => {
       expect(m.deco?.length).toBe(m.width * m.height);
     }
     expect([getMap('delta').width, getMap('delta').height]).toEqual([90, 140]);
-    for (const id of ['qg_esquerda', 'qg_direita']) expect([getMap(id).width, getMap(id).height]).toEqual([40, 50]);
+    for (const id of ['qg_esquerda', 'qg_direita']) expect(hasMap(id)).toBe(true);
     expect(hasMap(START_MAP)).toBe(true);
     expect(hasMap(ARRIVAL_MAP_BY_SIDE.esquerda)).toBe(true);
     expect(hasMap(ARRIVAL_MAP_BY_SIDE.direita)).toBe(true);
@@ -283,45 +283,5 @@ describe('mapa delta', () => {
   });
 });
 
-describe.each([
-  { id: 'qg_esquerda', margem: 'esquerda', regiao: 'margem_esquerda', qg: 'casa_da_assembleia', npc: 'benzedeira_do_espelho', tem: [Tile.Madeira, Tile.Grama, Tile.Arvore, Tile.Terra], nao: [Tile.PisoNeon, Tile.Asfalto, Tile.Concreto] },
-  { id: 'qg_direita', margem: 'direita', regiao: 'margem_direita', qg: 'torre_do_consorcio', npc: 'funcionario_da_cabine_neon', tem: [Tile.Concreto, Tile.PisoNeon, Tile.Asfalto, Tile.Grade], nao: [Tile.Arvore] },
-] as const)('chegada $id', ({ id, margem, regiao, qg, npc, tem, nao }) => {
-  const map = getMap(id);
-  const D = getData();
-  const lugares = byKind(map, 'lugar');
-
-  it('tem a região e a paleta da margem', () => {
-    expect(map.regions).toEqual([{ regionId: regiao, x: 0, y: 0, w: 40, h: 50 }]);
-    const ts = new Set(map.tiles);
-    for (const t of tem) expect(ts.has(t), Tile[t]).toBe(true);
-    for (const t of nao) expect(ts.has(t), Tile[t]).toBe(false);
-  });
-
-  it('tem o QG, as 4 instituições da margem com porta e a Máquina de Visual da margem', () => {
-    expect(lugares.some((m) => m.ref === qg)).toBe(true);
-    const insts = D.places.filter((p) => p.tipo === 'instituicao' && p.margem === margem && p.emPiloto);
-    expect(insts).toHaveLength(4);
-    for (const p of insts) {
-      const m = lugares.find((l) => l.ref === p.id);
-      expect(m, p.id).toBeDefined();
-      expect(P(m!, 'instituicao')).toBe(p.instituicao);
-      expect(D.institutionsById.has(p.instituicao!), p.instituicao).toBe(true);
-      // porta do prédio encostada no marcador
-      const tx = Math.floor(m!.x), ty = Math.floor(m!.y);
-      let porta = false;
-      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if (tileAt(map, tx + dx, ty + dy) === Tile.Porta) porta = true;
-      expect(porta, p.id).toBe(true);
-    }
-    for (const l of lugares) expect(placeById(l.ref!).margem).toBe(margem);
-    const maq = byKind(map, 'maquina_visual');
-    expect(maq.map((m) => m.ref)).toEqual([placeById(qg).maquinaDeVisual!.id]);
-    expect(byKind(map, 'npc').map((m) => m.ref)).toEqual([npc]);
-    const n = byKind(map, 'npc')[0]!;
-    expect(Math.hypot(n.x - maq[0]!.x, n.y - maq[0]!.y)).toBeLessThan(3);
-  });
-
-  it('não tem inimigos (a chegada é segura)', () => {
-    expect(map.markers.filter((m) => m.kind === 'bando' || m.kind === 'inimigo' || m.kind === 'chefe')).toEqual([]);
-  });
-});
+// As chegadas qg_esquerda e qg_direita da Fase 2 viraram as margens completas da Fase 3: o QG, as 4
+// instituições com porta, a Máquina de Visual e a área segura do cais estão em map3.test.ts.

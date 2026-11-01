@@ -5,7 +5,19 @@
  * Só guarda o que o servidor disse (mensagens de GAME_MSG). As telas leem daqui; nada aqui decide
  * regra: quem decide é o servidor (ou o servidor local do ?offline=1) com shared/game.
  */
-import { GAME_MSG, type S2C_Aviso, type S2C_Dialogo, type S2C_MissaoEstado, type S2C_Perfil, type S2C_TravessiaOpcoes } from '@pqp/shared/net';
+import {
+  GAME_MSG,
+  type S2C_Aviso,
+  type S2C_Dialogo,
+  type S2C_Emote,
+  type S2C_FalaGuia,
+  type S2C_InstituicaoInfo,
+  type S2C_MissaoEstado,
+  type S2C_Perfil,
+  type S2C_ProgressoOpcoes,
+  type S2C_TravessiaOpcoes,
+  type S2C_TrocarSala,
+} from '@pqp/shared/net';
 import { TUTORIAL_STEPS, type TutorialStep } from '@pqp/shared/game/tutorial';
 import type { Unlock } from '@pqp/shared/game/types';
 
@@ -33,6 +45,8 @@ export interface LevelUp {
 // SUGESTÃO: XP que chega em até 1,2 s vira um aviso só; no máximo 6 avisos guardados.
 export const XP_MERGE_MS = 1200;
 export const MAX_TOASTS = 6;
+// SUGESTÃO: no máximo 3 falas do guia esperando o balão.
+export const MAX_GUIDE_LINES = 3;
 
 /** Aviso de nível que o servidor manda junto com o perfil (o banner grande já mostra). */
 const LEVEL_TEXT = /^N[íi]vel \d+!?$/;
@@ -52,6 +66,17 @@ export class GameState {
   version = 0;
   /** passos do tutorial marcados aqui antes da confirmação do servidor */
   readonly localSteps = new Set<string>();
+  // ---- Fase 3 ----
+  /** opções de ala, talentos pendentes e botões (resposta de 'progresso_opcoes') */
+  progress: S2C_ProgressoOpcoes | null = null;
+  /** tela da instituição (resposta de 'instituicao') */
+  institution: S2C_InstituicaoInfo | null = null;
+  /** falas do guia ainda não mostradas (balão pequeno) */
+  readonly guideLines: (S2C_FalaGuia & { at: number })[] = [];
+  /** emotes recebidos (o mundo desenha o balão em cima de quem fez) */
+  readonly emotes: S2C_Emote[] = [];
+  /** troca de sala pedida pelo servidor online (o GameClient refaz a entrada) */
+  roomChange: S2C_TrocarSala | null = null;
   private toastSeq = 0;
   private pendingUnlocks: Unlock[] = [];
 
@@ -75,6 +100,32 @@ export class GameState {
         break;
       case GAME_MSG.aviso:
         this.onAviso(msg as S2C_Aviso, now);
+        break;
+      // Fase 3
+      case GAME_MSG.progressoInfo:
+        this.progress = msg as S2C_ProgressoOpcoes;
+        break;
+      case GAME_MSG.instituicaoInfo:
+        this.institution = msg as S2C_InstituicaoInfo;
+        break;
+      case GAME_MSG.falaGuia: {
+        const f = msg as S2C_FalaGuia;
+        if (f && typeof f.texto === 'string' && f.texto) {
+          this.guideLines.push({ ...f, at: now });
+          if (this.guideLines.length > MAX_GUIDE_LINES) this.guideLines.shift();
+        }
+        break;
+      }
+      case GAME_MSG.emote: {
+        const e = msg as S2C_Emote;
+        if (e && typeof e.entity === 'number') {
+          this.emotes.push(e);
+          if (this.emotes.length > 8) this.emotes.shift();
+        }
+        break;
+      }
+      case GAME_MSG.trocarSala:
+        this.roomChange = msg as S2C_TrocarSala;
         break;
       default:
         return false;
@@ -137,6 +188,25 @@ export class GameState {
     // SUGESTÃO: textos do aviso de XP em grupo
     const sub = this.profile?.stage === 'delta' ? 'Luta em grupo: o Seu Jacó está junto' : 'Luta em grupo (+15% por jogador a mais)';
     this.pushToast(`+${Math.round(amount)} XP`, 'xp', now, sub);
+  }
+
+  /** Próxima fala do guia (sai da fila). */
+  takeGuideLine(): (S2C_FalaGuia & { at: number }) | undefined {
+    return this.guideLines.shift();
+  }
+
+  /** Emotes recebidos desde a última chamada. */
+  takeEmotes(): S2C_Emote[] {
+    return this.emotes.splice(0, this.emotes.length);
+  }
+
+  /** Há escolha de ala ou de talento esperando (o botão pisca). */
+  get pendingChoice(): 'ala' | 'talento' | null {
+    const p = this.profile;
+    if (!p) return null;
+    if (p.podeEscolherAla) return 'ala';
+    if ((p.talentosPendentes?.length ?? 0) > 0) return 'talento';
+    return null;
   }
 
   /** O próximo pedido de tela (sai da fila). */

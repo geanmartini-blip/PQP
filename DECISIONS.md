@@ -67,6 +67,19 @@ O registro completo está em `decisoes/fase1-prototipo.md`. Os pontos principais
 - **Códigos de fechamento:** 4101 quando o mesmo token entra em outro aparelho e 4102 quando o tempo no
   automático acaba.
 
+## Fase 3: margens e arquétipos
+O registro completo está em `decisoes/fase3-margens.md`. Os pontos principais:
+- **Ala:** pede o nível 12 e a entrada na instituição, e precisa ser da mesma classe e instituição. No
+  piloto, a ala não pode ser trocada.
+- **Talentos:**
+  - o 10 é de instituição, o 15 de papel e o 20 é a chave;
+  - quando um talento muda uma habilidade, ela vira uma habilidade derivada com id
+    `<base>@<arquétipo>:<talentos>`;
+  - refazer talento fica para depois.
+- **Emote:** fica salvo em `rec.unlocks` como `emote:<id>`.
+- **Orçamento de poder:** o dos arquétipos ficou entre 43 e 60,5, fora da faixa de 52,5 a 56 de
+  Sistemas.md. O ajuste está em `balance.json`. É preciso decidir se o doc muda.
+
 ## Sugestões (o que não está nos docs)
 Lista mantida por fase. Tudo aqui pode ser trocado pelos autores.
 

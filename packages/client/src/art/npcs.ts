@@ -76,6 +76,14 @@ export function trainerLook(trainerId: string): ArtLook | undefined {
     details: b.details ?? [],
     outfit: { tier: 'mestre', archetypeId: t.archetype, institutionId: t.institution, palette: 0 },
     extras: b.extras,
+    // SUGESTÃO (Fase 3): o mestre é o veterano completo da ala (Arte.md: "cada evolução da ficha é o
+    // visual completo do treinador") e se distingue do jogador pelos itens únicos de cabeça, peito e
+    // adorno, com o brilho dourado da raridade
+    items: [
+      { slot: 'cabeca', rarity: 'unico' },
+      { slot: 'peito', rarity: 'unico' },
+      { slot: 'adorno', rarity: 'unico' },
+    ],
   };
 }
 

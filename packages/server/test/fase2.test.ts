@@ -236,7 +236,8 @@ describe('travessia', () => {
     h.game(bot, GAME_MSG.travessia, { side: 'esquerda', institution: inst.id, guide: guide.id });
     await new Promise((r) => setTimeout(r, 0));
     h.tick(2);
-    expect(bot.robot.trocarSala).toEqual({ mapId: 'qg_esquerda', motivo: 'travessia' });
+    // Fase 3: a chegada é a Margem Esquerda (qg_esquerda virou apelido dela)
+    expect(bot.robot.trocarSala).toEqual({ mapId: 'margem_esquerda', motivo: 'travessia' });
     expect(h.world.entities.has(eid)).toBe(false);
     expect(h.core.entityOf(bot.sid)).toBeUndefined();
     expect(bot.robot.perfil?.stage).toBe('margem');
@@ -251,7 +252,8 @@ describe('travessia', () => {
     // a sala do QG da Esquerda recebe o personagem
     const h2 = new Harness({ mapId: 'qg_esquerda', content: true, store });
     const b2 = await h2.connectAsync({ token, seed: 205 });
-    expect(b2.robot.welcome?.mapId).toBe('qg_esquerda');
+    // o núcleo criado pelo apelido roda a margem de verdade
+    expect(b2.robot.welcome?.mapId).toBe('margem_esquerda');
     const e2 = h2.core.entityOf(b2.sid)!;
     expect(e2.classId).toBe(inst.classe);
     expect(e2.side).toBe('esquerda');
@@ -268,7 +270,7 @@ describe('travessia', () => {
     const h3 = new Harness({ mapId: 'delta', content: false, store });
     const b3 = await h3.connectAsync({ token, seed: 206 });
     expect(b3.robot.you).toBeUndefined();
-    expect(b3.robot.trocarSala).toEqual({ mapId: 'qg_esquerda', motivo: 'registro' });
+    expect(b3.robot.trocarSala).toEqual({ mapId: 'margem_esquerda', motivo: 'registro' });
   });
 
   it('a sala do protótipo (sandbox) sem pedido explícito manda para o mapa do registro', async () => {
@@ -509,14 +511,14 @@ describe('fluxo completo da Fase 2', () => {
     h.game(bot, GAME_MSG.travessia, { side: 'esquerda', institution: inst.id, guide: guia.id });
     await new Promise((r) => setTimeout(r, 0));
     h.tick(2);
-    expect(bot.robot.trocarSala).toEqual({ mapId: 'qg_esquerda', motivo: 'travessia' });
+    expect(bot.robot.trocarSala).toEqual({ mapId: 'margem_esquerda', motivo: 'travessia' });
     expect(h.core.entityOf(bot.sid)).toBeUndefined();
 
     // --- chega no QG da Esquerda com tudo gravado
     await store.flush();
     const h2 = new Harness({ mapId: 'qg_esquerda', content: true, store });
     const b2 = await h2.connectAsync({ token, seed: 302 });
-    expect(b2.robot.welcome?.mapId).toBe('qg_esquerda');
+    expect(b2.robot.welcome?.mapId).toBe('margem_esquerda');
     const r2 = h2.core.recordOf(b2.sid)!;
     expect(r2.name).toBe('Zé Travessia');
     expect(r2.stage).toBe('margem');

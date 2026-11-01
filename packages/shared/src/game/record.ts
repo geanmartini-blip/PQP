@@ -7,6 +7,9 @@ import type { Resource } from '../schema/world';
 import type { DoctrineCard } from '../sim/types';
 import { defaultAppearance } from './appearance';
 import { lookOf } from './visual';
+import { canChooseArchetype, loadoutOf, type LoadoutView } from './ala';
+import { pendingTalentLevels } from './talents';
+import { unlockedEmotes } from './trainers';
 import type { Appearance, CharacterLook, PlayerRecord, PlayerStage, SideId, VisualTierId } from './types';
 
 export const RECORD_VERSION = 2;
@@ -218,6 +221,17 @@ export interface PlayerProfile {
   /** controles da tela já liberados pelo tutorial (desbloqueioTutorial + o que a missão atual ensina) */
   controlesLiberados: string[];
   resources: Partial<Record<Resource, number>>;
+  // ---- Fase 3 ----
+  /** emotes liberados (bordões dos treinadores) */
+  emotes?: string[];
+  /** talentos escolhidos */
+  talentos?: string[];
+  /** níveis de talento (10, 15, 20) alcançados e ainda sem escolha */
+  talentosPendentes?: number[];
+  /** botões pela regra dos docs, com as opções do botão 3 */
+  loadout?: LoadoutView | null;
+  /** pode escolher a ala agora */
+  podeEscolherAla?: boolean;
 }
 
 export function xpForLevel(level: number): number {
@@ -252,6 +266,11 @@ export function profileOf(rec: PlayerRecord, controlesLiberados: string[] = []):
     tutorial: { feitos: [...rec.tutorial.feitos], controles: [...rec.tutorial.controles] },
     controlesLiberados,
     resources: { ...rec.resources },
+    emotes: unlockedEmotes(rec),
+    talentos: [...rec.talent_picks],
+    talentosPendentes: pendingTalentLevels(rec),
+    loadout: loadoutOf(rec),
+    podeEscolherAla: canChooseArchetype(rec).ok,
   };
 }
 

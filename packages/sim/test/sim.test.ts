@@ -25,6 +25,19 @@ describe('runMatch', () => {
     expect(w.tick).toBe(0);
   });
 
+  it('sorteia o começo pela semente: vida de 60 a 100%, botões em recarga; jitter false volta ao começo limpo', () => {
+    const { A, B, w } = setupMatch({ a: ['babushka'], b: ['tropa_de_choque'], seed: 7 });
+    for (const e of [...A, ...B]) {
+      expect(e.hp / e.stats.hpMax).toBeGreaterThanOrEqual(0.6 - 1e-9);
+      expect(e.hp / e.stats.hpMax).toBeLessThanOrEqual(1);
+      const ids = [e.loadout!.b1, e.loadout!.b2, e.loadout!.b3].filter(Boolean);
+      for (const id of ids) expect(e.cooldowns[id] ?? 0).toBeGreaterThanOrEqual(w.tick);
+    }
+    expect(setupMatch({ a: ['babushka'], b: ['tropa_de_choque'], seed: 7 }).A[0]!.hp).toBe(A[0]!.hp);
+    const limpo = setupMatch({ a: ['babushka'], b: ['tropa_de_choque'], seed: 7, jitter: false });
+    expect(limpo.A[0]!.hp).toBe(limpo.A[0]!.stats.hpMax);
+  });
+
   it('grupo contra grupo termina com um vencedor e respeita o tempo máximo', () => {
     const r = runMatch({ a: ['peao_brabo', 'curandeira_dos_andes', 'cowboy_cromado'], b: ['sumo_cibernetico', 'coach_de_bem_estar', 'arqueiro_das_estepes'], seed: 3 });
     expect(['a', 'b', 'empate']).toContain(r.winner);
@@ -75,40 +88,33 @@ describe('torneio', () => {
 
 describe('critério de pronto: nenhum arquétipo acima de 55% contra a média', () => {
   /**
-   * Arquétipos que hoje passam do limite no 1 contra 1 (n 1, semente 3): os números de
-   * balance.json e das habilidades ainda não foram calibrados (openIssues da correção da Fase 1).
-   * A lista só pode diminuir: quem sair dela, tire daqui.
+   * Com n pequeno a taxa de cada arquétipo tem ruído de amostra (erro padrão √(p(1−p)/lutas)):
+   * a trava rápida aceita o limite mais 2 erros padrão, para pegar arquétipo forte de verdade
+   * sem falhar por sorteio. A conferência cheia (limite seco, n grande) é a de PQP_BALANCO=1.
    */
-  const ALERTA_CONHECIDO_1V1 = new Set([
-    'cowboy_cromado',
-    'doktor_klaus',
-    'arqueiro_das_estepes',
-    'bruxa_do_trovao',
-    'diva_da_opera',
-    'iogue_furioso',
-    'o_fiel',
-    'hacker_da_aldeia',
-    'engenheira_de_gambiarra',
-    'cidadao_revolucionario',
-  ]);
+  const limite = (lutas: number, limitPct: number) => limitPct + 2 * 100 * Math.sqrt(0.25 / Math.max(1, lutas));
+  const acima = (rows: { id: string; winPct: number; games: number }[], limitPct: number) =>
+    rows.filter((r) => r.winPct > limite(r.games, limitPct)).map((r) => `${r.id} ${r.winPct}% em ${r.games} lutas`);
 
-  it('regressão: nenhum arquétipo novo passa do limite no 1 contra 1 (n pequeno, semente fixa)', () => {
-    const rep = runTournament({ modo: 'um_contra_um', n: 1, seed: 3 });
-    expect(rep.games).toBe((24 * 23) / 2);
-    const novos = rep.rows.filter((r) => r.alert && !ALERTA_CONHECIDO_1V1.has(r.id)).map((r) => `${r.id} ${r.winPct}%`);
-    expect(novos).toEqual([]);
-    expect(rep.alerts.length).toBe(rep.rows.filter((r) => r.alert).length);
-  }, 60000);
+  it('trava: 1 contra 1 e grupo contra grupo sem arquétipo nem papel acima de 55% (n pequeno, semente fixa)', () => {
+    const r1 = runTournament({ modo: 'um_contra_um', n: 4, seed: 3 });
+    expect(r1.games).toBe(((24 * 23) / 2) * 4);
+    expect(acima(r1.rows, r1.limitPct)).toEqual([]);
+    const rg = runTournament({ modo: 'grupo_contra_grupo', n: 120, seed: 3, roleMatches: 24 });
+    expect(acima(rg.rows, rg.limitPct)).toEqual([]);
+    expect(acima((rg.roles ?? []).map((r) => ({ id: r.papel, winPct: r.winPct, games: r.games })), rg.limitPct)).toEqual([]);
+    expect(r1.alerts.length).toBe(r1.rows.filter((r) => r.alert).length);
+  }, 20000);
 
-  // a trava de verdade: liga com PQP_BALANCO=1 (npx vitest run packages/sim) quando os dados forem calibrados
+  // conferência cheia, com o limite seco: PQP_BALANCO=1 npx vitest run packages/sim (alguns minutos)
   it.runIf(process.env['PQP_BALANCO'] === '1')(
-    'o torneio de 1 contra 1 e o de grupo não têm alertas',
+    'o torneio de 1 contra 1 e o de grupo não têm alertas (n grande)',
     () => {
-      const r1 = runTournament({ modo: 'um_contra_um', n: 2, seed: 3 });
-      const rg = runTournament({ modo: 'grupo_contra_grupo', n: 600, seed: 3 });
+      const r1 = runTournament({ modo: 'um_contra_um', n: 20, seed: 3 });
+      const rg = runTournament({ modo: 'grupo_contra_grupo', n: 4000, seed: 3 });
       expect([...r1.alerts, ...rg.alerts]).toEqual([]);
     },
-    600000,
+    1800000,
   );
 
   it('carga inicial do Especial (specialStart) para o Especial pesar nas lutas curtas', () => {

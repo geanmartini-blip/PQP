@@ -14,9 +14,9 @@
  * O clima (luz por região, vinheta e partículas) vem de art/ambient.ts.
  */
 import * as Phaser from 'phaser';
-import { isSolidTile, Tile, type TileMap } from '@pqp/shared/map';
+import { isSolidTile, type MapMarker, Tile, type TileMap } from '@pqp/shared/map';
 import { createAmbient, type Ambient } from '../art/ambient';
-import { TILE_ANIM_MS, TILE_KEY, TILE_PX, uploadPix } from '../art/index';
+import { facadeFrame, propForDeco, propFrame, propIsFlat, propsTexture, TILE_ANIM_MS, TILE_KEY, TILE_PX, uploadPix } from '../art/index';
 import { MATO_FRAMES, OVERLAY_FRAMES, overlayKind, renderTerrain, styleOfRegion, type Style, type TerrainSource, TREE_BASE_Y, TREE_H } from '../art/terrain';
 import { hashInt } from '../art/noise';
 import { treeFrame } from '../art/tiles';
@@ -59,6 +59,57 @@ export function mapSource(map: TileMap): TerrainSource {
     style: (x, y) => styles[cl(y, H) * W + cl(x, W)]! as Style,
     deco: (x, y) => (x < 0 || y < 0 || x >= W || y >= H ? 0 : (map.deco?.[y * W + x] ?? 0)),
   };
+}
+
+/** Prop automático de uma região num tile (SUGESTÃO: ponte de metal na Usina, junco no Juncal). */
+export function regionProp(map: TileMap, x: number, y: number): string | undefined {
+  const t = map.tiles[y * map.width + x];
+  const reg = regionAt(map, x, y);
+  if (reg === 'usina_da_ponte' && t === Tile.Madeira) return 'ponte_metal';
+  if (reg === 'juncal' && t === Tile.AguaRasa && (hashInt(x, y, 157) & 7) === 0) return 'junco';
+  return undefined;
+}
+
+/** Id da fachada de um marcador 'lugar' (instituição ou QG), se houver. */
+export function facadeIdOf(m: MapMarker): string | undefined {
+  if (m.kind !== 'lugar') return undefined;
+  const p = (m.params ?? {}) as Record<string, unknown>;
+  if (typeof p['instituicao'] === 'string') return p['instituicao'];
+  if (typeof p['qg'] === 'string') return p['qg'];
+  return undefined;
+}
+
+/** Props da camada de decoração, das regiões e as fachadas das sedes, como imagens com profundidade. */
+function buildProps(scene: Phaser.Scene, map: TileMap): Phaser.GameObjects.Image[] {
+  const key = propsTexture(scene);
+  const tex = scene.textures.get(key);
+  const out: Phaser.GameObjects.Image[] = [];
+  const add = (prop: string, x: number, y: number) => {
+    const frame = propFrame(prop, x, y);
+    if (!tex.has(frame)) return;
+    const fh = tex.get(frame).height;
+    const flat = propIsFlat(prop);
+    const bx = x * TILE_PX + 16;
+    // raso: centrado no tile; alto: a base perto da borda de baixo do tile
+    const by = flat ? y * TILE_PX + 16 + Math.ceil(fh / 2) : y * TILE_PX + 30;
+    const img = scene.add.image(bx, by, key, frame).setOrigin(0.5, 1);
+    img.setDepth(flat ? DEPTH.deco : DEPTH.entity + by);
+    out.push(img);
+  };
+  for (let y = 0; y < map.height; y++)
+    for (let x = 0; x < map.width; x++) {
+      const dv = map.deco?.[y * map.width + x] ?? 0;
+      const prop = (dv > 0 ? propForDeco(dv) : undefined) ?? regionProp(map, x, y);
+      if (prop) add(prop, x, y);
+    }
+  for (const m of map.markers) {
+    const id = facadeIdOf(m);
+    if (!id || !tex.has(facadeFrame(id))) continue;
+    const bx = Math.round(m.x * TILE_PX);
+    const by = Math.round(m.y * TILE_PX) + 12;
+    out.push(scene.add.image(bx, by, key, facadeFrame(id)).setOrigin(0.5, 1).setDepth(DEPTH.entity + by));
+  }
+  return out;
 }
 
 let layerSeq = 0;
@@ -215,6 +266,9 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
     }
   const bPx = CANOPY_CHUNK * TILE_PX;
 
+  // ---------------- props das margens e fachadas (Fase 3, art/landmarks.ts)
+  const props = buildProps(scene, map);
+
   // ---------------- clima
   const ambient: Ambient = createAmbient(scene, src);
 
@@ -279,6 +333,10 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
         const vis = c.x + 32 > x0 && c.x - 32 < x1 && c.y > y0 && c.y - TREE_H < y1;
         if (c.visible !== vis) c.setVisible(vis);
       }
+      for (const c of props) {
+        const vis = c.x + 32 > x0 && c.x - 32 < x1 && c.y > y0 && c.y - 64 < y1;
+        if (c.visible !== vis) c.setVisible(vis);
+      }
       for (const c of blitters.values()) {
         const bx = c.cx * bPx - 32;
         const by = c.cy * bPx - TREE_BASE_Y;
@@ -292,6 +350,7 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
       tm?.destroy();
       for (const k of [...chunks.keys()]) dropChunk(k);
       for (const c of canopies) c.destroy();
+      for (const c of props) c.destroy();
       for (const c of blitters.values()) c.b.destroy();
       ambient.destroy();
     },

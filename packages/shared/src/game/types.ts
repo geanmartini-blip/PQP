@@ -151,7 +151,12 @@ export type GameEvent =
   | { t: 'control'; controle: string }
   | { t: 'interact'; alvo: string; acao: string }
   | { t: 'choose'; opcao: string; missionId?: string }
-  | { t: 'tutorial'; passo: string };
+  | { t: 'tutorial'; passo: string }
+  // ---- Fase 3 ----
+  /** segundos aguentados num objetivo 'sobreviver' (o servidor manda enquanto o jogador está no lugar da missão) */
+  | { t: 'survive'; segundos: number }
+  /** pagamento feito (game/institutions.ts payObjective já tirou a moeda) */
+  | { t: 'pay'; moeda: 'semente' | 'credito'; quantidade: number };
 
 export interface Unlock {
   nivel: number;
@@ -188,6 +193,11 @@ export interface GameResult {
   avisos: string[];
   /** mudança de estágio, quando houve */
   estagio?: PlayerStage;
+  // ---- Fase 3 ----
+  /** emotes liberados agora (ids de trainers.json emote.id) */
+  emotes?: string[];
+  /** falas do guia que vieram junto (missão aceita, bônus) */
+  falasGuia?: { guia: string; nome: string; situacao: string; texto: string }[];
 }
 
 export const emptyResult = (): GameResult => ({
@@ -224,6 +234,8 @@ export function mergeResult(a: GameResult, b: GameResult): GameResult {
   a.itensParaRolar.push(...b.itensParaRolar);
   a.avisos.push(...b.avisos);
   if (b.estagio) a.estagio = b.estagio;
+  if (b.emotes?.length) (a.emotes ??= []).push(...b.emotes);
+  if (b.falasGuia?.length) (a.falasGuia ??= []).push(...b.falasGuia);
   return a;
 }
 

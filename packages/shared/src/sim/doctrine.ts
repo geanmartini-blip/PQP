@@ -462,6 +462,10 @@ function tryUse(w: World, e: Entity, id: string | undefined, o: UseOpts = {}): b
   }
   // dano, controle, empurrão...
   if (!p.harmful || !t) return false;
+  // cura com efeito de ataque e sem dano (Respiração: cura 15% e deixa lentos): guarda até
+  // alguém do grupo estar ferido, para a cura não sair de vida cheia.
+  // SUGESTÃO: limiar de 70% de vida (o mesmo da defesa em si)
+  if (p.heal && p.damage <= 0 && !o.permissive && !groupOf(w, e, false).some((m) => m.kind !== 'summon' && hpRatio(m) < 0.7)) return false;
   if (a.type === 'em_volta' || (a.type === 'campo' && a.range <= 0)) {
     const n = hostilesWithin(w, e, rad - 0.1);
     return n > 0 && castAbility(w, e, id);

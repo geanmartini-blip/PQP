@@ -37,6 +37,13 @@ import {
   type C2S_MissaoAceitar,
   type C2S_Travessia,
   type C2S_TutorialPasso,
+  type C2S_EscolherAla,
+  type C2S_EscolherTalento,
+  type C2S_TrocarSlot3,
+  type C2S_Instituicao,
+  type C2S_MissaoPagar,
+  type C2S_Emote,
+  type S2C_TrocarSala,
 } from '@pqp/shared/net';
 
 export interface StorageLike {
@@ -149,6 +156,10 @@ export class GameClient {
   private readonly selfSample: Sample = { t: 0, x: 0, y: 0 };
   /** quantas vezes a mesma sessão voltou depois de uma queda (diagnóstico e testes) */
   resumes = 0;
+  /** Fase 3: sala (mapa) pedida no joinOrCreate depois de um 'trocar_sala' */
+  roomMapId: string | undefined;
+  /** troca de mapa em andamento (a tela de transição fica até o welcome do mapa novo) */
+  mapChange: { to: string; at: number } | null = null;
 
   constructor(
     readonly transport: Transport,
@@ -185,7 +196,12 @@ export class GameClient {
 
   /** Opções do joinOrCreate (o servidor também recebe o token aqui). */
   joinOptions(): Record<string, unknown> {
-    return { token: this.token, ...(this.opts.name ? { name: this.opts.name } : {}), ...(this.opts.archetypeId ? { archetypeId: this.opts.archetypeId } : {}) };
+    return {
+      token: this.token,
+      ...(this.opts.name ? { name: this.opts.name } : {}),
+      ...(this.opts.archetypeId ? { archetypeId: this.opts.archetypeId } : {}),
+      ...(this.roomMapId ? { mapId: this.roomMapId } : {}),
+    };
   }
 
   connect(): void {
@@ -233,8 +249,30 @@ export class GameClient {
         if (text) this.pushNotice(text);
         break;
       }
+      case GAME_MSG.trocarSala:
+        this.onRoomChange(msg as S2C_TrocarSala);
+        break;
       default:
         this.game.onMessage(type, msg, this.now);
+    }
+  }
+
+  /**
+   * 'trocar_sala' do servidor online (Fase 2/3): guarda o token, pede a sala do mapa novo e entra
+   * de novo; o hello sai no onOpen(true). Sem rejoin (servidor local), o welcome novo já vem.
+   */
+  private onRoomChange(m: S2C_TrocarSala): void {
+    if (!m || typeof m.mapId !== 'string') return;
+    if (typeof m.token === 'string' && m.token.length > 4 && m.token !== this.token) {
+      this.token = m.token;
+      safeSet(this.opts.storage, TOKEN_KEY, m.token);
+    }
+    this.roomMapId = m.mapId;
+    this.mapChange = { to: m.mapId, at: this.now };
+    this.game.onMessage(GAME_MSG.trocarSala, m, this.now);
+    if (this.transport.rejoin) {
+      this.welcomed = false;
+      this.transport.rejoin();
     }
   }
 
@@ -255,6 +293,9 @@ export class GameClient {
       this.statusInfo = `mapa desconhecido: ${w.mapId}`;
       return;
     }
+    // mapa diferente do anterior: a tela de transição mostra o nome do lugar
+    if (this.welcomed && this.world.mapId && this.world.mapId !== w.mapId) this.mapChange = { to: w.mapId, at: this.now };
+    else if (this.mapChange && this.mapChange.to !== w.mapId) this.mapChange = { to: w.mapId, at: this.now };
     this.world.applyWelcome(w);
     this.map = map;
     this.pred = new Predictor(this.map);
@@ -582,6 +623,51 @@ export class GameClient {
     }
     if (alvo.x === undefined || alvo.y === undefined) return false;
     return this.goTo(alvo.x, alvo.y) !== null || this.goTo(alvo.x, alvo.y + 0.8) !== null;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Fase 3: ala, talentos, botão 3, instituição, emote e guia
+
+  /** Pede as opções de ala, talentos pendentes e botões (resposta: game.progress). */
+  requestProgress(): boolean {
+    return this.sendGame(GAME_MSG.progressoOpcoes, {});
+  }
+
+  chooseArchetype(archetype: string): boolean {
+    const m: C2S_EscolherAla = { archetype };
+    return this.sendGame(GAME_MSG.escolherAla, m);
+  }
+
+  pickTalent(talent: string): boolean {
+    const m: C2S_EscolherTalento = { talent };
+    return this.sendGame(GAME_MSG.escolherTalento, m);
+  }
+
+  setSlot3(ability: string): boolean {
+    const m: C2S_TrocarSlot3 = { ability };
+    return this.sendGame(GAME_MSG.trocarSlot3, m);
+  }
+
+  /** Pede a tela da instituição (sem id: a do jogador). Resposta: game.institution. */
+  requestInstitution(id?: string): boolean {
+    const m: C2S_Instituicao = id ? { id } : {};
+    return this.sendGame(GAME_MSG.instituicao, m);
+  }
+
+  payMission(missao?: string): boolean {
+    const m: C2S_MissaoPagar = missao ? { missao } : {};
+    return this.sendGame(GAME_MSG.missaoPagar, m);
+  }
+
+  emote(emote: string): boolean {
+    const m: C2S_Emote = { emote };
+    return this.sendGame(GAME_MSG.emote, m);
+  }
+
+  /** Conversa com o próprio guia (espírito ou IA de bolso): ele está sempre junto. */
+  talkToGuide(): boolean {
+    const m: C2S_Falar = { npcId: 'guia' };
+    return this.sendGame(GAME_MSG.falar, m);
   }
 
   close(): void {

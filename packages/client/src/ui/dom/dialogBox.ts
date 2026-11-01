@@ -60,6 +60,17 @@ export class DialogBox {
     const fala = el('div', 'dlg-fala sombra', '');
     this.fala = fala;
     col.appendChild(fala);
+    // Fase 3: o bordão do treinador (vira emote) e a missão da ala que ele dá
+    if (d.bordao) {
+      const b = el('div', 'dlg-toque', `Bordão: "${d.bordao}"${d.emote?.novo ? ' (novo emote!)' : ''}`);
+      b.style.textAlign = 'left';
+      col.appendChild(b);
+    }
+    if (d.missaoAla) {
+      const m = el('div', 'dlg-toque', `${d.missaoAla.estado === 'ativa' ? 'Em andamento' : 'Missão'}: ${d.missaoAla.name}`);
+      m.style.textAlign = 'left';
+      col.appendChild(m);
+    }
     topo.appendChild(col);
     box.appendChild(topo);
     const ops = el('div', 'dlg-ops');
@@ -87,7 +98,7 @@ export class DialogBox {
     ops.innerHTML = '';
     for (const o of d.opcoes) {
       ops.appendChild(
-        button(o.texto, o.tipo === 'tchau' ? 'sec' : o.tipo === 'travessia' ? 'ok' : '', () => {
+        button(o.texto, o.tipo === 'tchau' ? 'sec' : o.tipo === 'travessia' || o.tipo === 'escolher_ala' ? 'ok' : '', () => {
           if (o.tipo === 'tchau') this.deps.onClose();
           else this.deps.onOption(d.npc, o.id);
         }),

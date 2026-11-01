@@ -105,6 +105,21 @@ export class ColyseusTransport implements Transport {
     }, delay);
   }
 
+  /**
+   * Troca de sala (Fase 3, 'trocar_sala'): sai da sala atual sem contar como queda e entra de novo
+   * com joinOrCreate (as opções já trazem o mapId novo); o hello sai no onOpen(true).
+   */
+  rejoin(): void {
+    if (this.closed) return;
+    const r = this.room;
+    this.room = undefined;
+    if (r) void r.leave(true);
+    if (this.timer !== undefined) clearTimeout(this.timer);
+    this.timer = undefined;
+    this.retries = 0;
+    void this.join();
+  }
+
   /** Quantas tentativas seguidas falharam (a tela de conexão oferece o modo offline). */
   get failures(): number {
     return this.retries;

@@ -7,10 +7,11 @@
  * mascarado roxo) não estão nos docs.
  */
 import { getData } from '@pqp/shared';
-import { buildCharacterSheet, type ArtLook } from './character';
+import { type ArtLook, drawCharacterFrame, resolveLook } from './character';
 import type { CharacterLook } from './contract';
 import { buildEnemySheet } from './creatures';
 import { drawText, textWidth } from './font';
+import { MARK_ABILITY_MOTIF, MARK_MOTIFS } from './markIcons';
 import { npcLook } from './npcs';
 import { C, type Color, hex, light, mix, Pix, shade, withAlpha } from './pixel';
 import { frameOf } from './sheet';
@@ -158,9 +159,11 @@ export function drawTypeGlyph(p: Pix, type: string, x: number, y: number, s: num
 // ---------------------------------------------------------------------------
 // motivos (desenhados num quadro de 24x24 em x, y)
 
-function motif(p: Pix, m: Motif, x: number, y: number, accent: Color): void {
+function motif(p: Pix, m: Motif | string, x: number, y: number, accent: Color): void {
   const W = C.pureWhite;
   const ink = C.ink;
+  const mark = MARK_MOTIFS[m];
+  if (mark) return mark(p, x, y, accent);
   switch (m) {
     case 'touro':
       p.ellipse(x + 12, y + 14, 7, 6, hex('#7a4a2a'));
@@ -350,7 +353,7 @@ interface IconSpec {
   bg: Color;
   frame: Color;
   frameInner: Color;
-  motif?: Motif;
+  motif?: Motif | string;
   type?: string;
   accent: Color;
   label?: string;
@@ -400,6 +403,11 @@ function sideFrame(side: string | undefined): { frame: Color; inner: Color } {
   return { frame: hex('#3a3a40'), inner: hex('#a8aab0') };
 }
 
+/** Motivo próprio do ícone de uma habilidade (undefined: cai no glifo do tipo ou na estrela). */
+export function abilityMotif(id: string): string | undefined {
+  return ABILITY_MOTIF[id] ?? MARK_ABILITY_MOTIF[id];
+}
+
 /** Ícone 48x48 (puro). Aceita id de habilidade, item, único ou consumível. */
 export function buildIcon(id: string): Pix {
   const d = getData();
@@ -411,7 +419,7 @@ export function buildIcon(id: string): Pix {
     const f = sideFrame(side);
     const bg = cls ? CLASS_COLOR[cls]! : ab.slot === 'item' ? hex('#5a8a5a') : hex('#6a4a5a');
     const accent = arch ? hex(arch.paletasTraje[0]!.cores[0]!) : bg;
-    let m = ABILITY_MOTIF[id];
+    let m: Motif | string | undefined = ABILITY_MOTIF[id] ?? MARK_ABILITY_MOTIF[id];
     if (!m && ab.slot === 'basico' && cls) m = BASIC_MOTIF[cls];
     if (!m && (ab.slot === 'especial' || ab.slot === 'virada')) m = 'estrela';
     return renderIcon({ bg: shade(bg, 0.85), frame: f.frame, frameInner: ab.slot === 'especial' || ab.slot === 'virada' ? C.warn : f.inner, motif: m, type: ab.type, accent });
@@ -618,10 +626,11 @@ export function buildPortrait(who: string | CharacterLook): Pix {
   const out = new Pix(64, 64);
   portraitBg(out, side);
   if (!look) return out;
-  const sh = buildCharacterSheet(look);
-  const f = frameOf(sh, 'parado_0_0');
+  // só o quadro de frente (a folha inteira custa ~100 quadros)
+  const rl = resolveLook(look);
+  const f = drawCharacterFrame(rl, 'parado', 0, 0);
   // recorte de 32x32 a partir do topo do boneco (sem a sobra de cima), centrado
-  const padTop = sh.frameH - 48;
+  const padTop = rl.H - 48;
   const cx = Math.floor((f.w - 32) / 2);
   const crop = f.crop(cx, Math.max(0, padTop), 32, 32);
   const big = crop.scaleNearest(2);

@@ -205,6 +205,13 @@ export interface Entity {
   levelCap?: number;
   /** ainda no Delta: o Seu Jacó acompanha, então a luta conta como grupo para o XP */
   deltaRookie?: boolean;
+  // ---- Adições da Fase 3 (talentos e guia; sim/passiveDefs.ts e sim/passives.ts). Todas opcionais. ----
+  /** talentos escolhidos (talents.json): números, gatilhos e modificações de habilidade */
+  talents?: string[];
+  /** guia (guides.json): bônus pequeno no combate */
+  guideId?: string;
+  /** estado dos passivos de talento e guia: chave -> tick (recargas, intervalos, marcas de "já disparou") */
+  passiveState?: Record<string, number>;
 }
 
 /** Carga curta de uma habilidade (castMs). */

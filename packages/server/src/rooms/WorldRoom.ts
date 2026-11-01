@@ -16,11 +16,11 @@
  * fila em ordem do cliente, mas não sorteiam perda.
  */
 import { Room, type Client } from 'colyseus';
-import { hasMap, START_MAP } from '@pqp/shared/map';
-import { CLOSE_CODE, GAME_MSG, MSG, type C2S_Hello, type C2S_Input, type C2S_Need, type C2S_Ping } from '@pqp/shared/net';
+import { hasMap, resolveMapId, START_MAP } from '@pqp/shared/map';
+import { CLOSE_CODE, GAME_MSG, MSG, type C2S_Hello, type C2S_Input, type C2S_Need, type C2S_Ping, type S2C_TrocarSala } from '@pqp/shared/net';
 import { TICK_MS } from '@pqp/shared/sim';
 import { COLYSEUS_RECONNECT_S, MAX_CATCHUP_TICKS } from '../config';
-import { GameServerCore, type CoreOptions } from '../core';
+import { GameServerCore, normalizeToken, type CoreOptions } from '../core';
 import { LinkSim, linkConfigFromEnv, type LinkConfig } from '../netsim';
 import type { Store } from '../persistence/store';
 
@@ -47,6 +47,14 @@ const GAME_IN = [
   GAME_MSG.missaoAceitar,
   GAME_MSG.travessia,
   GAME_MSG.tutorialPasso,
+  // Fase 3
+  GAME_MSG.escolherAla,
+  GAME_MSG.escolherTalento,
+  GAME_MSG.trocarSlot3,
+  GAME_MSG.instituicao,
+  GAME_MSG.missaoPagar,
+  GAME_MSG.progressoOpcoes,
+  GAME_MSG.emote,
 ] as const;
 
 /** Dependências que não cabem em JSON (Store, log), postas antes do define. */
@@ -72,14 +80,25 @@ export class WorldRoom extends Room {
   /** quem entrou pedindo esta sala pelo mapId */
   private explicit = new Set<string>();
 
+  /**
+   * Fase 3: sala pedida por um apelido (qg_esquerda, qg_direita). Não roda mundo: quem entra recebe
+   * trocar_sala para o mapa de verdade (o cliente antigo continua chegando) e a sala se desfaz vazia.
+   */
+  aliasTo?: string;
+
   override onCreate(options: WorldRoomOptions = {}): void {
-    const mapId = typeof options.mapId === 'string' ? options.mapId : START_MAP;
-    if (!hasMap(mapId)) throw new Error(`mapa desconhecido: ${mapId}`);
-    const coreOpts: CoreOptions = { mapId };
+    const asked = typeof options.mapId === 'string' ? options.mapId : START_MAP;
+    if (!hasMap(asked)) throw new Error(`mapa desconhecido: ${asked}`);
+    const mapId = resolveMapId(asked);
+    if (mapId !== asked) {
+      this.aliasTo = mapId;
+      this.autoDispose = true;
+    }
+    const coreOpts: CoreOptions = { mapId, ...(this.aliasTo ? { content: false } : {}) };
     if (options.seed !== undefined) coreOpts.seed = options.seed;
     if (options.companions !== undefined) coreOpts.companions = options.companions;
     if (options.jaco !== undefined) coreOpts.jaco = options.jaco;
-    if (options.content !== undefined) coreOpts.content = options.content;
+    if (options.content !== undefined && !this.aliasTo) coreOpts.content = options.content;
     if (options.offlineAutoMs !== undefined) coreOpts.offlineAutoMs = options.offlineAutoMs;
     if (deps.store) coreOpts.store = deps.store;
     if (deps.log) coreOpts.log = deps.log;
@@ -88,6 +107,17 @@ export class WorldRoom extends Room {
     this.inLink = new LinkSim(link, 1);
     this.outLink = new LinkSim(link, 2);
     if (this.inLink.active) (deps.log ?? console.log)(`[mundo:${mapId}] rede simulada: RTT +${link.lagMs} ms, perda ${link.loss * 100}% (${this.inLink.mode}), variação ${link.jitterMs} ms`);
+    if (this.aliasTo) {
+      // só redireciona: hello -> trocar_sala para o mapa de verdade
+      this.onMessage(MSG.hello, (client: Client, msg: C2S_Hello) => {
+        const { token, generated } = normalizeToken(msg?.token);
+        const out: S2C_TrocarSala = { mapId: this.aliasTo!, motivo: 'registro', ...(generated ? { token } : {}) };
+        this.safeSend(client, GAME_MSG.trocarSala, out);
+      });
+      this.onMessage('*', () => undefined);
+      this.patchRate = null;
+      return;
+    }
     liveRooms.add(this);
 
     // cada cliente tem a sua fila em ordem nos dois sentidos (chave = sessionId), como uma conexão TCP

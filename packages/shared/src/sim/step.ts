@@ -24,6 +24,7 @@ import { tickDoctrine } from './doctrine';
 import { canMove, entityList, getEnt, isPartyMember, isUp, statPts } from './entity';
 import { dist, facingFrom } from './geom';
 import { moveVelocity, stepMovement, velocityToward } from './movement';
+import { tickTalentPassives } from './passives';
 import { tickPickup, tickRewards } from './rewards';
 import { cooldownRate, moveSpeedOf } from './stats';
 import { tickStatuses } from './statusTick';
@@ -69,6 +70,8 @@ export function step(w: World): CombatEvent[] {
   // 12. XP, saque e moeda
   tickRewards(w);
   tickPickup(w);
+  // 12b. passivos de talento e de guia (Fase 3): gatilhos pelos eventos do tick, auras e recargas
+  tickTalentPassives(w);
   // 13. invocações e limpeza
   tickSummons(w);
   cleanup(w);

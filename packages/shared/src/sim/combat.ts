@@ -27,6 +27,7 @@ import {
 } from './entity';
 import { dist } from './geom';
 import { moveBody } from './movement';
+import { condStatPts, talentPassivesOf } from './passiveDefs';
 import { msToTicks, type Entity, type StatusInstance, type World } from './types';
 import { emit, newId } from './world';
 
@@ -125,10 +126,11 @@ export function applyBuff(w: World, target: Entity, source: Entity | undefined, 
 // ---------------------------------------------------------------------------
 // Passivos de afixo (e, depois, de talento, guia e item)
 
-/** Passivos ativos da entidade: hoje, os dos afixos de elite. */
+/** Passivos ativos da entidade: os dos afixos de elite e (Fase 3) os de talento e de guia. */
 export function passivesOf(e: Entity): Passive[] {
-  if (!e.affixes || e.affixes.length === 0) return [];
-  const out: Passive[] = [];
+  const extra = talentPassivesOf(e);
+  if (!e.affixes || e.affixes.length === 0) return extra;
+  const out: Passive[] = [...extra];
   for (const id of e.affixes) {
     const af = getData().enemies.afixos.find((a) => a.id === id);
     if (af) out.push(...af.passivos);
@@ -344,10 +346,11 @@ export function dealDamage(w: World, src: Entity, dst: Entity, mult: number, opt
       const vc = b.vantagemClasse as Record<string, Record<string, number> | undefined>;
       amount *= 1 + (vc[src.classId]?.[dst.classId] ?? 0) / 100;
     }
-    amount *= 1 + statPts(src, 'damage') / 100;
+    // (Fase 3: condStatPts = números de talento e guia que dependem do alvo, como Execução)
+    amount *= 1 + (statPts(src, 'damage') + condStatPts(src, dst, 'damage')) / 100;
     amount *= Math.max(0, 1 + statPts(dst, 'damageTaken') / 100);
     amount *= 1 + markPts(dst, src) / 100;
-    const critChance = src.stats.critChance + statPts(src, 'crit') / 100;
+    const critChance = src.stats.critChance + (statPts(src, 'crit') + condStatPts(src, dst, 'crit')) / 100;
     if (!opts.noCrit && (opts.forceCrit || w.rng.next() < critChance)) {
       crit = true;
       amount *= src.stats.critDamage + statPts(src, 'critDamage') / 100;
@@ -461,7 +464,7 @@ export function healAmount(w: World, src: Entity, dst: Entity, eff: { pctVidaMax
     eff.pctVidaMax !== undefined
       ? (eff.pctVidaMax / 100) * dst.stats.hpMax
       : src.stats.attack * (eff.mult ?? 0) * (1 + (b.dano.curaPorPontoCuraPct / 100) * (src.attr?.cura ?? 0));
-  a *= 1 + statPts(src, 'healing') / 100;
+  a *= 1 + (statPts(src, 'healing') + condStatPts(src, dst, 'healing')) / 100;
   a *= 1 + marginPct(w, src) / 100;
   return Math.max(0, a);
 }

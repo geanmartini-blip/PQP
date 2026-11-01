@@ -281,8 +281,9 @@ describe('servidor local com as regras da Fase 2', () => {
     s.receive(GAME_MSG.travessia, { side: 'esquerda', institution: inst.id, guide: guia.id });
     const out = s.take();
     const w = out.find(([t]) => t === MSG.welcome)![1] as { mapId: string; you: number };
-    expect(w.mapId).toBe('qg_esquerda');
-    expect(s.mapId).toBe('qg_esquerda');
+    // Fase 3: qg_esquerda virou apelido da margem_esquerda (o QG fica nela)
+    expect(w.mapId).toBe('margem_esquerda');
+    expect(s.mapId).toBe('margem_esquerda');
     expect(s.player!.classId).toBe(inst.classe);
     const p = out.filter(([t]) => t === GAME_MSG.perfil).pop()![1] as { stage: string; institution: string };
     expect(p.stage).toBe('margem');
@@ -293,7 +294,7 @@ describe('servidor local com as regras da Fase 2', () => {
     const s2 = new LocalServer({ store, noEnemies: true });
     s2.receive(MSG.hello, { token, name: 'Zé' });
     const w2 = s2.take().find(([t]) => t === MSG.welcome)![1] as { mapId: string };
-    expect(w2.mapId).toBe('qg_esquerda');
+    expect(w2.mapId).toBe('margem_esquerda');
     expect(s2.rec!.institution).toBe(inst.id);
   });
 

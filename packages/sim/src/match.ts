@@ -4,7 +4,7 @@
  * determinística: mesma configuração e mesma semente dão o mesmo resultado.
  */
 import { getData } from '@pqp/shared';
-import { createWorld, spawnPlayer, step, type DoctrineCard, type Entity, type World } from '@pqp/shared/sim';
+import { createRng, createWorld, spawnPlayer, step, type DoctrineCard, type Entity, type World } from '@pqp/shared/sim';
 import { arena } from '@pqp/shared/sim/testkit';
 
 export interface MatchConfig {
@@ -32,6 +32,13 @@ export interface MatchConfig {
    * Especial carrega em 45 a 90 s: com 1, todos começam com ele pronto e ele pesa no resultado.
    */
   specialStart?: number;
+  /**
+   * sorteio do começo da luta pela semente (padrão true): distância entre os times de
+   * distance ± jitterDistance tiles, um pouco de desalinhamento vertical, o primeiro ataque
+   * básico de cada um atrasado de 0 a 1 s e os botões já gastos em parte. Sem isso, 1 contra 1
+   * de atributos parecidos vira um degrau: quem tem a menor vantagem ganha todas.
+   */
+  jitter?: boolean;
 }
 
 export interface MatchResult {
@@ -47,8 +54,13 @@ export interface MatchResult {
   seed: number;
 }
 
-// SUGESTÃO: luta simulada dura no máximo 120 s; começa com os times a 8 tiles (a trava automática pega a 8).
-export const MATCH_DEFAULTS = { maxSeconds: 120, distance: 8, mapSize: 40, potions: 0 } as const;
+// SUGESTÃO: luta simulada dura no máximo 120 s; começa com os times a 8 tiles (a trava automática pega a 8),
+// com sorteio de ±2 tiles, até 1 tile de desalinhamento, até 1 s de atraso no primeiro básico e cada
+// botão começando com 0 a 100% da recarga (luta pega no meio da rotina) e vida de 60 a 100%.
+// Sem o sorteio da vida, o 1 contra 1 é determinístico: com a força de todos parecida, quem tem a
+// menor vantagem vence quase todas, e a vitória contra a média vira o posto do arquétipo (de 26% a
+// 74% mesmo com força igual), sem como ficar tudo em 55%.
+export const MATCH_DEFAULTS = { maxSeconds: 120, distance: 8, mapSize: 40, potions: 0, jitterDistance: 2, jitterY: 1, jitterBasicMs: 1000, jitterHpMin: 0.6 } as const;
 
 export const referenceLevel = () => getData().balance.ganhoPorNivel.nivelReferenciaClasse;
 
@@ -57,15 +69,29 @@ const up = (e: Entity) => !e.dead && e.downedUntil === undefined;
 /** Monta o mundo da luta (exportado para testes e depuração). */
 export function setupMatch(cfg: MatchConfig): { w: World; A: Entity[]; B: Entity[] } {
   const size = cfg.mapSize ?? MATCH_DEFAULTS.mapSize;
-  const dist = cfg.distance ?? MATCH_DEFAULTS.distance;
+  const jitter = cfg.jitter ?? true;
+  // sorteio próprio da montagem (não mexe no RNG do mundo)
+  const jr = createRng((cfg.seed ^ 0x5bd1e995) >>> 0);
+  const J = MATCH_DEFAULTS;
+  const dist = (cfg.distance ?? J.distance) + (jitter ? (jr.next() * 2 - 1) * J.jitterDistance : 0);
   const level = cfg.level ?? referenceLevel();
   const w = createWorld(arena(size, size), cfg.seed >>> 0);
   const cx = size / 2, cy = size / 2;
   const left = cx - dist / 2, right = cx + dist / 2;
   const mk = (ids: readonly string[], team: 'aliados' | 'inimigos', x: number, party: string, cards?: DoctrineCard[]) =>
     ids.map((id, i) => {
-      const y = cy + (i - (ids.length - 1) / 2) * 1.5;
+      const y = cy + (i - (ids.length - 1) / 2) * 1.5 + (jitter ? (jr.next() * 2 - 1) * J.jitterY : 0);
       const e = spawnPlayer(w, { name: `${party}${i + 1}:${id}`, archetypeId: id, level, x, y, team, playerId: `${party}${i + 1}` });
+      if (jitter) {
+        e.nextBasicTick = Math.max(e.nextBasicTick, w.tick + jr.int(0, Math.round(J.jitterBasicMs / 50)));
+        // chega à luta com 60 a 100% da vida (no mapa ninguém começa a briga cheio e igual)
+        e.hp = e.stats.hpMax * (J.jitterHpMin + jr.next() * (1 - J.jitterHpMin));
+        // a luta pega cada um no meio da rotina: cada botão começa com 0 a 100% da recarga
+        for (const ab of [e.loadout!.b1, e.loadout!.b2, e.loadout!.b3]) {
+          const cd = ab ? getData().abilities.get(ab)?.cooldownS : undefined;
+          if (ab && cd) e.cooldowns[ab] = Math.max(e.cooldowns[ab] ?? 0, w.tick + jr.int(0, Math.round(cd * 20)));
+        }
+      }
       e.partyId = party;
       e.auto = true;
       e.doctrine = cards ? [...cards] : [];

@@ -16,8 +16,45 @@ Comandos rodam com `. .\scripts\env.ps1` antes (Node e Git portáteis).
 - Contratos da Fase 1: `shared/src/map/types.ts`, `shared/src/sim/types.ts`,
   `shared/src/net/protocol.ts` e `client/src/art/contract.ts`.
 
-## Fase 3: margens, instituições, arquétipos e treinadores — EM ANDAMENTO
+## Fase 4: sociedade, moradia e economia básica — EM ANDAMENTO
 Plano:
+1. Regras em `shared/src/game`: carteira com Semente e Crédito; score do Crédito; patentes iniciais
+   já existem e só ganham ligação com a economia.
+2. Feira de troca da Esquerda (anúncios entre jogadores, sem taxa) e app do Consórcio (taxa e preço
+   dinâmico).
+3. Câmbio na ponte com taxa variável; contrabando pelo Juncal fica como sugestão simples.
+4. Moradia: casa de mutirão por lista de espera e cápsula de aluguel. Móveis em grade, colocar,
+   girar e tirar. O estado é salvo no registro.
+5. Servidor com mensagens novas. O cliente ganha telas de loja, feira/app, câmbio e o modo de decorar
+   a casa.
+6. SQL do Supabase para economia e moradia. Testes, build e commit.
+
+## Fase 3: margens, instituições, arquétipos e treinadores — CONCLUÍDA
+- Regras:
+  - ala no 12;
+  - talentos do 10, 15 e 20 com habilidades derivadas e passivos;
+  - guias com falas;
+  - bordão vira emote;
+  - patentes por reputação;
+  - loja e quadro por instituição;
+  - missões de entrada das 8.
+- Mapas: `margem_esquerda`, `margem_direita`, `usina_da_ponte` e `juncal`, com saídas. Os `qg_*`
+  viraram apelidos.
+- Arte: os 24 arquétipos e os treinadores, tiles das margens, emblemas e ícones. A geração de sprites
+  agora é assíncrona.
+- Balanceamento: com n=60 no 1 contra 1, nenhum arquétipo passa de 55%. O maior é 54,3%.
+- Verificação:
+  - typecheck ok;
+  - 596 testes passando;
+  - build ok;
+  - e2e passou com 200 ms e 2% de perda;
+  - fluxo completo em `server/test/fase3.test.ts`.
+- Detalhe em `decisoes/fase3-margens.md`. Em aberto:
+  - o e2e é instável: o robô às vezes não chega ao chefe;
+  - Diva e Druida estão fracos, com cerca de 42%;
+  - o grupo contra grupo foi conferido com amostra pequena.
+
+Plano original:
 1. Mapas das duas margens com os 2 QGs e as 8 instituições, cada uma com quem treina a base, loja,
    treino, quadro de missões e patentes. Também a Usina da Ponte e o Juncal.
 2. Os 24 arquétipos jogáveis:

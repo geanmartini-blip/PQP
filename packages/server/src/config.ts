@@ -113,3 +113,25 @@ export const MAX_CLIENT_RTT_MS = 2000;
 
 // SUGESTÃO: o servidor roda no máximo 4 ticks de recuperação quando o processo engasga.
 export const MAX_CATCHUP_TICKS = 4;
+
+// ---- Fase 3. Tudo SUGESTÃO: os docs não dão esses números. ----
+
+// SUGESTÃO: a saída do mapa ('saida') leva para a outra sala a até 1,5 tile do marcador.
+export const EXIT_RADIUS_TILES = 1.5;
+
+// SUGESTÃO: quem acabou de nascer espera 2 s antes de uma saída valer (não volta sem querer).
+export const EXIT_GRACE_MS = 2000;
+
+// SUGESTÃO: escolher a ala pela mensagem direta pede o treinador da ala ou quem recebe a base a até 4 tiles.
+export const ALA_TRAINER_REACH_TILES = 4;
+
+// SUGESTÃO: um emote a cada 2 s por jogador; vai para quem está no raio de interesse.
+export const EMOTE_COOLDOWN_MS = 2000;
+
+// SUGESTÃO: parado num quadro ou papel (kind 'quadro_missoes') que o objetivo pede, conta de novo a cada 2 s
+// ("responda 3 perguntas" sem sair e voltar 3 vezes).
+export const INTERACT_REPEAT_MS = 2000;
+
+// SUGESTÃO: no objetivo 'sobreviver', as ondas da missão nascem a 5 tiles do jogador, espalhadas
+// pela duração (a onda i em i × duração / ondas); fora do raio (naoSairDoRaio) o tempo não conta.
+export const SURVIVE_SPAWN_TILES = 5;

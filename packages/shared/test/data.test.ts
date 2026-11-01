@@ -173,7 +173,7 @@ describe('classes e habilidades', () => {
     expect(problems).toEqual([]);
   });
 
-  it('orçamento de cada arquétipo bate com a fórmula e fica entre 52,5 e 56', () => {
+  it('orçamento de cada arquétipo bate com a fórmula e fica na faixa de balance.json', () => {
     const problems: string[] = [];
     const w = d.balance.orcamento.pesos;
     for (const a of d.archetypes) {
@@ -185,7 +185,9 @@ describe('classes e habilidades', () => {
       if (s.classe !== a.classe || s.papel !== a.papel || s.margem !== a.margem) problems.push(`${a.id}: classe/papel/margem diferente em balance.json`);
       const calc = computeBudget(s, w);
       if (Math.abs(calc - s.orcamento) > 1e-6) problems.push(`${a.id}: orçamento ${s.orcamento} != ${calc}`);
-      if (calc < 52.5 - 1e-9 || calc > 56 + 1e-9) problems.push(`${a.id}: orçamento ${calc} fora de 52,5 a 56`);
+      // a faixa vem de balance.json: o doc dava 52,5 a 56; a calibração da Fase 3 no simulador abriu a faixa (sugestaoCampos)
+      const { min, max } = d.balance.orcamento;
+      if (calc < min - 1e-9 || calc > max + 1e-9) problems.push(`${a.id}: orçamento ${calc} fora de ${min} a ${max}`);
     }
     expect(Object.keys(d.balance.atributosArquetipo).sort()).toEqual(d.archetypes.map((a) => a.id).sort());
     expect(problems).toEqual([]);
