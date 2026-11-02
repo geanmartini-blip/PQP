@@ -621,5 +621,112 @@
     "pos": { "x": 120, "y": 6 },
     "npcs": ["nayra_sundaram", "kenji_albrecht"],
     "sugestaoCampos": ["pos"]
+  },
+  {
+    "id": "roca_coletiva",
+    "name": "Roça Coletiva",
+    "regiao": "planalto_do_trigo",
+    "tipo": "natureza",
+    "margem": "esquerda",
+    "emPiloto": true,
+    "descricao": "Os campos de trigo que alimentam a margem inteira, quando a comissão deixa.",
+    "pos": {
+      "x": 24,
+      "y": 70
+    },
+    "sugestao": true
+  },
+  {
+    "id": "barracao_da_comissao",
+    "name": "Barracão da Comissão da Colheita",
+    "regiao": "planalto_do_trigo",
+    "tipo": "servico",
+    "margem": "esquerda",
+    "emPiloto": true,
+    "descricao": "Onde a comissão da colheita se reúne mais do que colhe.",
+    "pos": {
+      "x": 66,
+      "y": 98
+    },
+    "npcs": [
+      "presidenta_da_colheita"
+    ],
+    "sugestao": true
+  },
+  {
+    "id": "silos_do_planalto",
+    "name": "Silos do Planalto",
+    "regiao": "planalto_do_trigo",
+    "tipo": "infraestrutura",
+    "margem": "esquerda",
+    "emPiloto": true,
+    "descricao": "Os silos da cota, trancados até a próxima reunião.",
+    "pos": {
+      "x": 82,
+      "y": 96
+    },
+    "sugestao": true
+  },
+  {
+    "id": "fabrica_de_baterias",
+    "name": "Fábrica de Baterias",
+    "regiao": "vale_das_chamines",
+    "tipo": "infraestrutura",
+    "margem": "direita",
+    "emPiloto": true,
+    "descricao": "A fábrica de baterias do Consórcio, que nunca desliga as chaminés.",
+    "pos": {
+      "x": 170,
+      "y": 226
+    },
+    "sugestao": true
+  },
+  {
+    "id": "refeitorio_do_turno",
+    "name": "Refeitório do Turno da Noite",
+    "regiao": "vale_das_chamines",
+    "tipo": "servico",
+    "margem": "direita",
+    "emPiloto": true,
+    "descricao": "O refeitório onde o turno da noite almoça às três da manhã.",
+    "pos": {
+      "x": 200,
+      "y": 250
+    },
+    "npcs": [
+      "gerente_de_turno"
+    ],
+    "sugestao": true
+  },
+  {
+    "id": "estacao_de_mascaras",
+    "name": "Estação de Máscaras",
+    "regiao": "vale_das_chamines",
+    "tipo": "comercio",
+    "margem": "direita",
+    "emPiloto": true,
+    "descricao": "Onde o colaborador compra a própria máscara de ar, em doze vezes.",
+    "pos": {
+      "x": 150,
+      "y": 250
+    },
+    "sugestao": true
+  },
+  {
+    "id": "farol_da_ilha",
+    "name": "Farol da Ilha",
+    "regiao": "ilha_do_farol",
+    "tipo": "historico",
+    "margem": "neutra",
+    "emPiloto": true,
+    "descricao": "O farol da cidade unida, que ainda acende quando ninguém olha.",
+    "pos": {
+      "x": 118,
+      "y": 232
+    },
+    "npcs": [
+      "faroleiro_aposentado"
+    ],
+    "sugestao": true
   }
 ]

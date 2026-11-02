@@ -471,7 +471,8 @@ describe('treinadores e bordão como emote', () => {
   it('quem recebe a base ensina o bordão; o da ala só depois da ala; emote usado vira mensagem', () => {
     const rec = entered('agencia_neon');
     const d = talkTo(rec, 'katia');
-    expect(d.dialogo.contexto).toBe('treino');
+    // v0.4: o treinador da base tem a missão da instituição, então a conversa abre por ela
+    expect(['treino', 'entregaMissao']).toContain(d.dialogo.contexto);
     expect(d.dialogo.emote).toMatchObject({ id: 'emote_katia', novo: true });
     expect(d.resultado.emotes).toEqual(['emote_katia']);
     expect(unlockedEmotes(rec)).toEqual(['emote_katia']);

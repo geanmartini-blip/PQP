@@ -183,7 +183,7 @@ export const DUNGEON_GROUP_RADIUS_TILES = 6;
 export const DUTY_SPAWN_OFFSET_TILES = 1;
 
 // SUGESTÃO: encontros com IA nas margens, na Usina e no Juncal (o Delta é o tutorial e fica sem).
-export const ENCOUNTER_MAPS: readonly string[] = ['margem_esquerda', 'margem_direita', 'usina_da_ponte', 'juncal'];
+export const ENCOUNTER_MAPS: readonly string[] = ['margem_esquerda', 'margem_direita', 'usina_da_ponte', 'juncal', 'planalto_do_trigo', 'vale_das_chamines', 'ilha_do_farol'];
 
 // SUGESTÃO: os encontros da janela são conferidos a cada 100 ticks (5 s).
 export const ENCOUNTER_CHECK_TICKS = 100;

@@ -30,7 +30,8 @@ const INSTITUTIONS = [
 ];
 const SPIRITS = ['valquiria', 'golem', 'curupira', 'tengu', 'chupacabra', 'fenix', 'dragao', 'djinn', 'kitsune', 'anansi', 'saci', 'baba_yaga'];
 const POCKET_AIS = ['capita', 'mira', 'faisca', 'byte'];
-const PILOT_REGIONS = ['delta', 'margem_esquerda', 'margem_direita', 'usina_da_ponte', 'juncal'];
+// v0.4: Planalto do Trigo, Vale das Chaminés e Ilha do Farol entraram no early game
+const PILOT_REGIONS = ['delta', 'margem_esquerda', 'margem_direita', 'usina_da_ponte', 'juncal', 'planalto_do_trigo', 'vale_das_chamines', 'ilha_do_farol'];
 const PLAYER_SLOTS = new Set(['basico', 'classe', 'marca_1', 'marca_2', 'especial', 'virada']);
 /** papéis aceitos em `dadaPor` das missões (mission.ts) */
 const MISSION_GIVER_ROLES = ['guia', 'treinador_da_ala', 'treinador_da_base', 'quadro_de_missoes', 'ia_de_faccao'];
@@ -388,7 +389,7 @@ describe('itens, mundo e masmorra', () => {
     expect(d.uniques.unicos.filter((u) => u.piloto).length).toBe(2);
   });
 
-  it('5 regiões emPiloto', () => {
+  it('8 regiões emPiloto', () => {
     expect(d.regions.regioes.filter((r) => r.emPiloto).map((r) => r.id).sort()).toEqual([...PILOT_REGIONS].sort());
   });
 

@@ -44,7 +44,17 @@ export function takeArrival(token: string, mapId: string): Arrival | undefined {
 }
 
 /** Mapas da Fase 3 abertos para quem já atravessou. */
-export const MARGEM_MAPS: readonly string[] = ['margem_esquerda', 'margem_direita', 'usina_da_ponte', 'juncal', START_MAP];
+export const MARGEM_MAPS: readonly string[] = [
+  'margem_esquerda',
+  'margem_direita',
+  'usina_da_ponte',
+  'juncal',
+  // v0.4: as áreas novas do early game
+  'planalto_do_trigo',
+  'vale_das_chamines',
+  'ilha_do_farol',
+  START_MAP,
+];
 
 /** O personagem do registro pode estar neste mapa? */
 export function mapAllowed(rec: PlayerRecord, mapId: string): boolean {

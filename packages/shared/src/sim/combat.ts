@@ -8,6 +8,7 @@
  */
 import { getData } from '../data';
 import type { Passive } from '../schema/ability';
+import { xpDaFormula } from '../schema/progression';
 import { bal, DESCONSTRUIDO_HEAL_PCT_DEFAULT, DESCONSTRUIDO_RANGE_TILES, MAX_DAMAGE_REDUCTION_PCT, SPECIAL_BANK_MAX_S } from './constants';
 import {
   CC_KINDS,
@@ -675,8 +676,7 @@ export function respawnAtHq(w: World, e: Entity): void {
   e.resource = resourceMaxOf(e);
   e.vel = { x: 0, y: 0 };
   if (e.kind === 'player' && e.level > morte.semPerdaAteNivel && !(e.onDuty && !morte.plantonistaPerdeXp)) {
-    const f = getData().progression.xp.formula;
-    const need = Math[f.arredondamento](f.base * Math.pow(e.level, f.expoente));
+    const need = xpDaFormula(getData().progression.xp.formula, e.level);
     e.xp = Math.max(0, (e.xp ?? 0) - Math.round((need * morte.perdePctDoXpDoNivel) / 100));
   }
 }

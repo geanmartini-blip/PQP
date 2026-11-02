@@ -19,7 +19,21 @@ Comandos rodam com `. .\scripts\env.ps1` antes (Node e Git portáteis).
 ## PILOTO: as 5 fases estão concluídas
 O que falta depende dos autores ou de aparelho: ver PENDENTE.md. Para rodar, ver README.md.
 
-### v0.3: jornada nova do 1 ao 20, conjunto da classe, ritmo do combate e arte nova — EM ANDAMENTO
+### v0.4: early game mais longo, com áreas e missões novas — CONCLUÍDA (falta o push)
+Pronto: os 3 mapas, 8 inimigos (2 chefes), 30 missões, 3 NPCs, a faixa de XP do 5 ao 10, a arte
+do PixelLab e `test/v04.test.ts` (as missões cabem nos mapas e as cadeias se jogam até o fim). Detalhe
+em DECISIONS.md. Versão 0.4.0. Próximo passo: o chão das Galerias e a troca de lado.
+Meta: umas 2 horas até o nível 10, com algo para fazer em cada nível. Plano:
+1. Mapas novos: Planalto do Trigo (acima da Esquerda, 6 a 10), Vale das Chaminés (abaixo da
+   Direita, 6 a 10) e Ilha do Farol (no rio, neutra, 9 a 12, pequena), com saídas a partir das margens.
+2. Inimigos novos de cada área e um chefe no Planalto e outro no Vale (nível 9).
+3. Missões: +5 no Delta, cadeias do 5 ao 9 com 8 missões por lado (cobrindo o 8), 2 por
+   instituição e bicos repetíveis num quadro de tarefas por margem.
+4. Curva de XP um pouco mais lenta do 5 ao 10, com as missões como fonte principal.
+5. Arte do PixelLab com as gerações que sobram: chão do Planalto e do Vale, inimigos e NPCs parados.
+6. Testes, simulador, build, conferência no navegador, versão 0.4.0, NOVIDADES e commit, sem push.
+
+### v0.3: jornada nova do 1 ao 20, conjunto da classe, ritmo do combate e arte nova — CONCLUÍDA
 Plano:
 1. **Jornada** (pronta). A história e as missões estão em `docs/Jornada.md`:
    - Delta do 1 ao 4, com o Bruno Ferro no 4;

@@ -3,6 +3,7 @@
  * cliente.
  */
 import { getData } from '../data';
+import { xpDaFormula } from '../schema/progression';
 import type { Resource } from '../schema/world';
 import type { DoctrineCard } from '../sim/types';
 import { defaultAppearance } from './appearance';
@@ -280,8 +281,7 @@ export interface PlayerProfile {
 }
 
 export function xpForLevel(level: number): number {
-  const f = getData().progression.xp.formula;
-  return Math[f.arredondamento](f.base * Math.pow(level, f.expoente));
+  return xpDaFormula(getData().progression.xp.formula, level);
 }
 
 export function profileOf(rec: PlayerRecord, controlesLiberados: string[] = []): PlayerProfile {

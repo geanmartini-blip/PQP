@@ -190,6 +190,26 @@ const NPC_LOOKS: Record<string, () => ArtLook> = {
       L('pes', 'chinelo', ['#3a6e8c']),
       L('mao_principal', 'remo', ['#8a5a32']),
     ]),
+  // v0.4: NPCs das áreas novas (reserva por código; a arte de verdade é do PixelLab)
+  presidenta_da_colheita: () =>
+    npc('presidenta_da_colheita', { hair: 'coque', hairColor: 'grisalho', face: 'desconfiado' }, [
+      L('torso', 'roupao_florido', ['#c8a050', '#f0e0a0', '#8a6a3a']),
+      L('pes', 'chinelo', ['#8a5a32']),
+      L('mao_secundaria', 'caderninho', ['#5a7a3a']),
+    ]),
+  gerente_de_turno: () =>
+    npc('gerente_de_turno', { face: 'cara_de_sono', details: ['olheira'] }, [
+      L('torso', 'camisa_social_suada', ['#8a8a90']),
+      L('pernas', 'calca_social', ['#3a3a40']),
+      L('pes', 'tenis_basico', ['#e8e8e8']),
+      L('mao_secundaria', 'prancheta_quem_entrou', ['#2a2a30', '#ffc21a'], 'TURNO'),
+    ]),
+  faroleiro_aposentado: () =>
+    npc('faroleiro_aposentado', { hairColor: 'grisalho', face: 'tranquilo' }, [
+      L('torso', 'regata_furada', ['#e5c234']),
+      L('pernas', 'bermuda_caqui', ['#5a5a4a']),
+      L('pes', 'chinelo', ['#3a6e8c']),
+    ]),
   vizinha_da_bracadeira: () =>
     npc('vizinha_da_bracadeira', { hair: 'coque', hairColor: 'grisalho', face: 'desconfiado', body: 'barrigudo' }, [
       L('torso', 'roupao_florido', ['#d88aa8', '#f0e0a0', '#8ac0d0']),
@@ -283,6 +303,37 @@ export const STORY_NPC_IDS = Object.keys(NPC_LOOKS);
 
 /** Inimigos humanos desenhados com o boneco em camadas (enemies.json, campo visual). */
 export const HUMAN_ENEMY_LOOKS: Record<string, () => ArtLook> = {
+  // v0.4: reserva por código das áreas novas (a arte de verdade é do PixelLab, art/pixellab.ts)
+  espantalho_benzido: () =>
+    npc('espantalho_benzido', { face: 'cara_fechada', hair: 'raspado' }, [
+      L('torso', 'camisa_bolsos_simples', ['#c8a050']),
+      L('bracos', 'bracadeira_fiscal', ['#e5e234']),
+      L('pernas', 'calca_cargo', ['#8a6a3a']),
+      L('pes', 'bota_trilha', ['#4a3a28']),
+    ]),
+  espantalho_mor: () =>
+    npc('espantalho_mor', { body: 'fortao', face: 'cara_fechada', hair: 'raspado' }, [
+      L('torso', 'camisa_bolsos_simples', ['#b08a40']),
+      L('bracos', 'bracadeira_fiscal', ['#a8463f']),
+      L('pernas', 'calca_cargo', ['#7a5a2a']),
+      L('pes', 'bota_trilha', ['#4a3a28']),
+      L('mao_principal', 'porrete', ['#8a5a32']),
+    ]),
+  fiscal_da_cota: () =>
+    npc('fiscal_da_cota', { face: 'cara_de_assembleia', details: ['oculos'] }, [
+      L('torso', 'camisa_listrada', ['#a0b080', '#5a6a3a']),
+      L('bracos', 'bracadeira_fiscal', ['#e5e234']),
+      L('pernas', 'calca_social_surrada', ['#5a4a3a']),
+      L('pes', 'chinelo_com_meia', ['#6b4429', '#f0f0f0']),
+      L('mao_secundaria', 'prancheta_madeira', ['#8a5a32']),
+    ]),
+  supervisor_de_meta: () =>
+    npc('supervisor_de_meta', { face: 'sorriso_amarelo', hair: 'calvicie_penteada', hairColor: 'castanho_claro' }, [
+      L('torso', 'camisa_social_suada', ['#d8e8f8']),
+      L('pernas', 'calca_social', ['#2a2a30']),
+      L('pes', 'sapato_social_gasto', ['#1a1a20']),
+      L('mao_secundaria', 'prancheta_quem_entrou', ['#2a2a30', '#2ee6f0'], 'META'),
+    ]),
   capanga_do_capataz: () =>
     npc('capanga_do_capataz', { body: 'fortao', face: 'cara_fechada', hair: 'raspado' }, [
       L('torso', 'regata_cavada', ['#e8e4d6']),

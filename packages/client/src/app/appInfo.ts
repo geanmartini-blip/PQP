@@ -99,6 +99,9 @@ export function mapLabel(mapId: string | undefined | null): string {
     qg_direita: 'Margem Direita',
     usina_da_ponte: 'Usina da Ponte',
     juncal: 'Juncal',
+    planalto_do_trigo: 'Planalto do Trigo',
+    vale_das_chamines: 'Vale das Chaminés',
+    ilha_do_farol: 'Ilha do Farol',
   };
   if (names[mapId]) return names[mapId];
   if (mapId.startsWith('casa')) return 'Casa';

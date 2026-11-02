@@ -107,6 +107,8 @@ export const PL_NPCS: Record<string, string> = {
       'funcionario_da_cabine_neon', 'entregador_de_app',
       // Usina e Juncal
       'cambista_da_ponte', 'dalva_rocha', 'o_sombra', 'curupira',
+      // v0.4: Planalto, Vale e Ilha do Farol
+      'presidenta_da_colheita', 'gerente_de_turno', 'faroleiro_aposentado',
     ].map((id) => [id, id]),
   ),
 };
@@ -125,8 +127,17 @@ export const PL_INIMIGOS: Record<string, string> = {
   cobra_do_juncal: 'cobra',
   cao_de_guarda_do_capataz: 'cao',
   bomba_descontrolada: 'bomba',
+  // v0.4: Planalto e Vale
+  espantalho_benzido: 'espantalho',
+  espantalho_mor: 'espantalho_mor',
+  fiscal_da_cota: 'fiscal_cota',
+  supervisor_de_meta: 'supervisor',
+  robo_de_linha: 'robo_linha',
+  gafanhoto_da_safra: 'gafanhoto',
+  rato_de_duto: 'rato',
+  relogio_de_ponto: 'relogio',
 };
-const PL_BICHOS: ReadonlySet<string> = new Set(['siri', 'mosquito', 'drone', 'turbina', 'enguia', 'cobra', 'cao', 'bomba']);
+const PL_BICHOS: ReadonlySet<string> = new Set(['siri', 'mosquito', 'drone', 'turbina', 'enguia', 'cobra', 'cao', 'bomba', 'gafanhoto', 'rato', 'relogio']);
 /** NPCs que não lutam: só o andar */
 const PL_SEM_GOLPE: ReadonlySet<string> = new Set(['jaco', 'toninho', 'vendedor', 'chopindita']);
 /** NPCs das margens, da Usina e do Juncal: só as 4 direções, sem andar nem golpe (ficam no lugar) */

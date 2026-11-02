@@ -736,6 +736,96 @@
         }
       ],
       "sugestao": true
+    },
+    {
+      "id": "presidenta_da_colheita",
+      "name": "Presidenta da Comissão da Colheita",
+      "categoria": "menor",
+      "lado": "esquerda",
+      "quemE": "Preside a Comissão da Colheita do Planalto há onze safras. Colheu em três delas.",
+      "apresentacao": "presencial",
+      "visual": {
+        "descricao": "Lenço de chita, avental de feira, chapéu de palha largo e uma pasta de atas debaixo do braço",
+        "piada": "A pasta de atas pesa mais que um saco de trigo",
+        "artKey": "npc_presidenta_da_colheita",
+        "sugestao": true
+      },
+      "regioes": [
+        "planalto_do_trigo"
+      ],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "aleatoria",
+          "linhas": [
+            "A colheita está na pauta. A pauta está atrasada.",
+            "Trigo tem. O que falta é quórum.",
+            "Aqui ninguém passa fome. A fome é que passa da cota."
+          ],
+          "sugestao": true
+        }
+      ],
+      "sugestao": true
+    },
+    {
+      "id": "gerente_de_turno",
+      "name": "Gerente de Turno",
+      "categoria": "menor",
+      "lado": "direita",
+      "quemE": "Gerencia o turno da noite no Vale das Chaminés. Está no turno desde que o turno existe.",
+      "apresentacao": "presencial",
+      "visual": {
+        "descricao": "Macacão cinza com colete refletivo, máscara de ar no pescoço, prancheta digital e olheira até o queixo",
+        "piada": "O crachá dela diz COLABORADORA HÁ 0 DIAS SEM FOLGA",
+        "artKey": "npc_gerente_de_turno",
+        "sugestao": true
+      },
+      "regioes": [
+        "vale_das_chamines"
+      ],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "aleatoria",
+          "linhas": [
+            "Somos uma família. A família trabalha à noite.",
+            "A máscara de ar é por sua conta, mas o ar é cortesia.",
+            "Meta é meta. Gente é gente. A meta vem primeiro."
+          ],
+          "sugestao": true
+        }
+      ],
+      "sugestao": true
+    },
+    {
+      "id": "faroleiro_aposentado",
+      "name": "Faroleiro Aposentado",
+      "categoria": "menor",
+      "lado": "neutro",
+      "quemE": "Cuidava do farol quando a cidade era uma só. Ficou na ilha porque ninguém lembrou de buscar.",
+      "apresentacao": "presencial",
+      "visual": {
+        "descricao": "Capa de chuva amarela velha, barba branca, cachimbo apagado e uma lanterna que não acende",
+        "piada": "Ele conversa com a lanterna e a lanterna parece responder",
+        "artKey": "npc_faroleiro_aposentado",
+        "sugestao": true
+      },
+      "regioes": [
+        "ilha_do_farol"
+      ],
+      "noPiloto": true,
+      "falas": [
+        {
+          "contexto": "aleatoria",
+          "linhas": [
+            "A Eco fala de madrugada. Fala igual a Rosa Tavares.",
+            "Do farol dá para ver as duas margens. De longe, são iguais.",
+            "Ninguém vem aqui. Por isso aqui ainda funciona."
+          ],
+          "sugestao": true
+        }
+      ],
+      "sugestao": true
     }
   ],
   "herois": [

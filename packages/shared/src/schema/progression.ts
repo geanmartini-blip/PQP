@@ -128,6 +128,15 @@ export const XpRow = z
   .strict();
 export type XpRow = z.infer<typeof XpRow>;
 
+/** XP para sair do nível: arredonda(base × n^expoente × mult da faixa do nível, se houver). */
+export function xpDaFormula(
+  f: { base: number; expoente: number; arredondamento: 'round' | 'floor' | 'ceil'; faixas?: { de: number; ate: number; mult: number }[] | undefined },
+  level: number,
+): number {
+  const faixa = f.faixas?.find((x) => level >= x.de && level <= x.ate);
+  return Math[f.arredondamento](f.base * Math.pow(level, f.expoente) * (faixa?.mult ?? 1));
+}
+
 export const XpCurve = z
   .object({
     semTeto: z.literal(true),
@@ -139,6 +148,10 @@ export const XpCurve = z
         expoente: z.number().positive(),
         arredondamento: z.enum(['round', 'floor', 'ceil']),
         texto: z.string().min(1),
+        /** v0.4: faixas de nível com o XP multiplicado (early game mais longo) */
+        faixas: z
+          .array(z.object({ de: z.number().int().positive(), ate: z.number().int().positive(), mult: z.number().positive(), ...Sugestao }).strict())
+          .optional(),
       })
       .strict(),
     /** tabela de referência gerada pela fórmula (o código usa a fórmula) */
@@ -165,10 +178,9 @@ export const XpCurve = z
   })
   .strict()
   .superRefine((c, ctx) => {
-    const r = Math[c.formula.arredondamento];
     let acum = 0;
     c.tabela.forEach((row, i) => {
-      const esperado = r(c.formula.base * Math.pow(row.nivel, c.formula.expoente));
+      const esperado = xpDaFormula(c.formula, row.nivel);
       if (row.nivel !== i + 1) ctx.addIssue({ code: 'custom', message: `tabela de XP fora de ordem no nível ${row.nivel}` });
       if (row.xpParaProximo !== esperado) ctx.addIssue({ code: 'custom', message: `XP do nível ${row.nivel}: ${row.xpParaProximo} != ${esperado}` });
       if (row.xpAcumulado !== acum) ctx.addIssue({ code: 'custom', message: `XP acumulado do nível ${row.nivel}: ${row.xpAcumulado} != ${acum}` });

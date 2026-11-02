@@ -447,7 +447,7 @@ export interface LocalServerOpts {
 }
 
 /** Mapas aceitos pelo ?dev_mapa= (o barco e o protótipo têm entrada própria). */
-export const DEV_MAPS: readonly string[] = ['delta', 'margem_esquerda', 'margem_direita', 'usina_da_ponte', 'juncal'];
+export const DEV_MAPS: readonly string[] = ['delta', 'margem_esquerda', 'margem_direita', 'usina_da_ponte', 'juncal', 'planalto_do_trigo', 'vale_das_chamines', 'ilha_do_farol'];
 
 export class LocalServer {
   w!: World;

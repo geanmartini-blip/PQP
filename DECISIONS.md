@@ -321,6 +321,25 @@ O registro completo está em `decisoes/fase5-masmorra.md`. Os pontos principais:
 - **PixelLab:** o trial tem 4 gerações. O cenário e os bonecos novos esperam o plano pago; a estimativa
   está em PROGRESS.md.
 
+## v0.4: early game mais longo (2026-11-02)
+Pedido do usuário: mais áreas e missões iniciais para o jogo durar mais no começo. Tudo abaixo é
+sugestão; os docs só descrevem o Planalto, o Vale e a Ilha do Farol em uma linha cada.
+- **Áreas:** Planalto do Trigo (saída no noroeste da Margem Esquerda), Vale das Chaminés (saída no
+  leste da Margem Direita) e Ilha do Farol (barco no píer da barragem da Usina). Ficam nas regiões
+  de regions.json, que viraram `emPiloto`.
+- **Missões (30, `tools/content/v04.mjs`):** 5 extras no Delta, as cadeias A Colheita e O Turno da
+  Noite (6 a 9, com chefe no 9), uma missão de cada instituição no 7, 4 bicos repetíveis e O Sinal da
+  Eco (10 e 11, para os dois lados, dada pela Dalva). Só usam objetivos que já funcionam no jogo
+  (ir até, derrotar, falar, interagir, escolher).
+- **Inimigos:** gafanhoto, espantalho benzido, fiscal da cota e o Espantalho-Mor no Planalto; rato de
+  duto, robô de linha, supervisor de meta e o Relógio de Ponto no Vale. A Ilha usa a enguia e o
+  mercenário do Sombra. Os chefes ficam longe do caminho das missões do 7.
+- **Curva de XP:** `formula.faixas` em progression.json multiplica por 1,5 o XP pedido do 5 ao 10
+  (um helper só, `xpDaFormula`, no lugar das quatro cópias da fórmula). Do 1 ao 20 o total passa de
+  49.474 para 53.336.
+- **Arte:** 2 tilesets de trigo e 15 bonecos e bichos do PixelLab (198 gerações). O Vale e a Ilha
+  usam os tilesets que já existiam.
+
 ## Sugestões (o que não está nos docs)
 Lista mantida por fase. Tudo aqui pode ser trocado pelos autores.
 

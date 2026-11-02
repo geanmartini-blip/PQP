@@ -78,6 +78,7 @@ function build(): AsciiMapDef {
 
   // ruas de terra
   c.rect(84, 1, 4, 12, '.'); // trilha para o Juncal
+  c.rect(8, 1, 4, 10, '.'); // v0.4: trilha para o Planalto do Trigo
   c.rect(6, 10, 86, 3, '.'); // rua de cima
   c.rect(6, 10, 4, 122, '.'); // rua do oeste
   c.rect(88, 10, 4, 122, '.'); // rua da beira-rio
@@ -136,8 +137,10 @@ function build(): AsciiMapDef {
     mk('spawn', 'spawn_jogador', 51, 147, undefined, { chegada: 'travessia' }),
     mk('spawn_juncal', 'spawn_jogador', 85, 5, undefined, { de: 'juncal' }),
     mk('spawn_usina', 'spawn_jogador', 92, 55, undefined, { de: 'usina_da_ponte' }),
+    mk('spawn_planalto', 'spawn_jogador', 10, 5, undefined, { de: 'planalto_do_trigo' }),
     // saídas
     mk('saida_juncal', 'saida', 85, 1, 'juncal', { para: 'juncal', spawn: 'spawn_esquerda' }),
+    mk('saida_planalto_do_trigo', 'saida', 10, 1, 'planalto_do_trigo', { para: 'planalto_do_trigo', spawn: 'spawn_esquerda' }),
     mk('saida_usina_da_ponte', 'saida', 101, 55, 'usina_da_ponte', { para: 'usina_da_ponte', spawn: 'spawn_esquerda' }),
     // SUGESTÃO: o barco do Toninho também desce de volta ao Delta
     mk('saida_delta', 'saida', 52, 155, 'delta', { para: 'delta', spawn: 'spawn', barco: true }),

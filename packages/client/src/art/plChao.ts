@@ -11,13 +11,23 @@ import * as Phaser from 'phaser';
 import { Tile, type TileMap } from '@pqp/shared/map';
 import man from './plChao.json';
 
-export const PL_CHAO_MAPS: ReadonlySet<string> = new Set(['delta', 'barco_travessia', 'margem_esquerda', 'margem_direita', 'usina_da_ponte', 'juncal']);
+export const PL_CHAO_MAPS: ReadonlySet<string> = new Set([
+  'delta',
+  'barco_travessia',
+  'margem_esquerda',
+  'margem_direita',
+  'usina_da_ponte',
+  'juncal',
+  'planalto_do_trigo',
+  'vale_das_chamines',
+  'ilha_do_farol',
+]);
 
 /**
  * terrenos do PixelLab, do mais baixo ao mais alto (a ordem decide quem é "upper" num vértice; em
  * cada tileset, o lower vem antes do upper nesta lista)
  */
-const ORDEM = ['funda', 'rasa', 'lama', 'areia', 'grama', 'terra', 'asfalto', 'concreto', 'pisoneon', 'madeira', 'parede', 'parede_esq', 'parede_dir'] as const;
+const ORDEM = ['funda', 'rasa', 'lama', 'areia', 'grama', 'terra', 'trigo', 'asfalto', 'concreto', 'pisoneon', 'madeira', 'parede', 'parede_esq', 'parede_dir'] as const;
 type Terreno = (typeof ORDEM)[number];
 const NIVEL: Record<string, number> = Object.fromEntries(ORDEM.map((t, i) => [t, i]));
 
@@ -52,6 +62,19 @@ const CHAO_DO_MAPA: Record<string, Partial<Record<number, Terreno>>> = {
     [Tile.Mato]: 'concreto',
     [Tile.Grama]: 'concreto',
   },
+  // v0.4: no Planalto o mato é o trigo e a cerca fica em cima da grama; o Vale é como a Margem Direita;
+  // na Ilha, a antena (máquina) fica em cima da grama
+  planalto_do_trigo: { [Tile.Mato]: 'trigo', [Tile.Cerca]: 'grama' },
+  vale_das_chamines: {
+    [Tile.Parede]: 'parede_dir',
+    [Tile.Concreto]: 'concreto',
+    [Tile.Asfalto]: 'asfalto',
+    [Tile.PisoNeon]: 'pisoneon',
+    [Tile.Grade]: 'concreto',
+    [Tile.Maquina]: 'concreto',
+    [Tile.Porta]: 'concreto',
+  },
+  ilha_do_farol: { [Tile.Maquina]: 'grama' },
   // a Usina é de concreto, com a parede da Direita; o Juncal usa o chão e a parede de palafita do Delta
   usina_da_ponte: {
     [Tile.Parede]: 'parede_dir',
@@ -143,6 +166,9 @@ export function plMatoKey(scene: Phaser.Scene, x: number, y: number): string | u
 }
 
 export const temPlMato = (scene: Phaser.Scene) => scene.textures.exists('pl_mato_0');
+
+/** v0.4: no mapa em que o mato vira trigo (Planalto), o trigo é chão e não leva tufo. */
+export const matoViraTrigo = (mapId: string) => CHAO_DO_MAPA[mapId]?.[Tile.Mato] === 'trigo';
 
 /** Textura com as árvores do PixelLab lado a lado (quadros a0, a1...), para o Blitter da mata. */
 export function plArvores(scene: Phaser.Scene): string | undefined {

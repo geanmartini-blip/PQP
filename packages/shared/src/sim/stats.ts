@@ -3,6 +3,7 @@
  * Fórmulas de balance.json (ganhoPorNivel, deslocamento) e progression.json (xp).
  */
 import { getData } from '../data';
+import { xpDaFormula } from '../schema/progression';
 import { bal } from './constants';
 import { maxStatusValue, statPts } from './entity';
 import type { CombatStats, Entity } from './types';
@@ -185,6 +186,5 @@ export function applyEquipment(e: Entity, eq: EquipStats | undefined): void {
 
 /** XP para sair do nível n: round(50 × n^1.6), sem teto (progression.json). */
 export function xpToNext(level: number): number {
-  const f = getData().progression.xp.formula;
-  return Math[f.arredondamento](f.base * Math.pow(level, f.expoente));
+  return xpDaFormula(getData().progression.xp.formula, level);
 }

@@ -40,6 +40,9 @@ const PARES = [
   ['32b672a7-a4ba-4b57-9123-eddf3c792048', 'funda', 'grama'],
   ['8b89f87f-0247-47e5-a418-29b08525ab8c', 'grama', 'concreto'],
   ['83c8e217-7427-4c72-a4c4-e313780963be', 'concreto', 'madeira'],
+  // v0.4: o trigo do Planalto
+  ['123a9a3f-1d90-49df-82eb-9e7674b9b4c7', 'grama', 'trigo'],
+  ['ed748400-950a-4834-88c0-ab5a2e5d4e73', 'terra', 'trigo'],
 ];
 const API = 'https://api.pixellab.ai/mcp/tilesets';
 const OUT_IMG = 'packages/client/public/pl/chao';

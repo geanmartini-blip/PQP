@@ -696,5 +696,542 @@
     "effects": [{ "kind": "dano", "mult": 3.5, "target": "inimigos_area" }],
     "description": "Explode a sala em volta dela. Aviso de 2 s no chão: corra para fora do círculo, e não pare para gravar.",
     "sugestao": true
+  },
+  {
+    "id": "gafanhoto_da_safra_mordida",
+    "name": "Mordida de Safra",
+    "ownerKey": "gafanhoto_da_safra",
+    "slot": "inimigo",
+    "type": "travada",
+    "range": 1,
+    "radius": 0,
+    "cooldownS": 1.3,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 0,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 1,
+        "target": "alvo"
+      }
+    ],
+    "description": "Morde o que estiver na frente. Na dúvida, morde a cota.",
+    "sugestao": true
+  },
+  {
+    "id": "gafanhoto_da_safra_revoada",
+    "name": "Revoada",
+    "ownerKey": "gafanhoto_da_safra",
+    "slot": "inimigo",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 9,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 800,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 1.3,
+        "target": "inimigos_area"
+      }
+    ],
+    "description": "O bando levanta voo em volta de você: aviso de 0,8 s e uma chuva de asa.",
+    "sugestao": true
+  },
+  {
+    "id": "espantalho_benzido_vassourada",
+    "name": "Vassourada",
+    "ownerKey": "espantalho_benzido",
+    "slot": "inimigo",
+    "type": "travada",
+    "range": 1,
+    "radius": 0,
+    "cooldownS": 1.6,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 0,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 1,
+        "target": "alvo"
+      }
+    ],
+    "description": "Bate com a vassoura que alguém esqueceu na mão dele.",
+    "sugestao": true
+  },
+  {
+    "id": "espantalho_benzido_benzimento_torto",
+    "name": "Benzimento Torto",
+    "ownerKey": "espantalho_benzido",
+    "slot": "inimigo",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 11,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 1000,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 1.6,
+        "target": "inimigos_area"
+      },
+      {
+        "kind": "empurrar",
+        "tiles": 2,
+        "target": "inimigos_area"
+      }
+    ],
+    "description": "Benze tudo em volta com força demais: aviso de 1 s, e quem estiver perto é benzido para longe.",
+    "sugestao": true
+  },
+  {
+    "id": "fiscal_da_cota_regua",
+    "name": "Régua da Cota",
+    "ownerKey": "fiscal_da_cota",
+    "slot": "inimigo",
+    "type": "travada",
+    "range": 5,
+    "radius": 0,
+    "cooldownS": 1.6,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 0,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 0.9,
+        "target": "alvo"
+      }
+    ],
+    "description": "Mede você com a régua da cota. Você está acima.",
+    "sugestao": true
+  },
+  {
+    "id": "fiscal_da_cota_corte_na_cota",
+    "name": "Corte na Cota",
+    "ownerKey": "fiscal_da_cota",
+    "slot": "inimigo",
+    "type": "area_alvo",
+    "range": 5,
+    "radius": 2,
+    "cooldownS": 11,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 900,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 1.6,
+        "target": "inimigos_area"
+      }
+    ],
+    "description": "Corta a sua cota e o chão embaixo de você: aviso de 0,9 s.",
+    "sugestao": true
+  },
+  {
+    "id": "fiscal_da_cota_multa",
+    "name": "Multa por Excesso",
+    "ownerKey": "fiscal_da_cota",
+    "slot": "inimigo",
+    "type": "travada",
+    "range": 4,
+    "radius": 0,
+    "cooldownS": 14,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 0,
+    "effects": [
+      {
+        "kind": "controle",
+        "cc": "silenciar",
+        "duracaoMs": 1000,
+        "target": "alvo"
+      }
+    ],
+    "description": "Multa por excesso de habilidade: 1 s sem usar nenhuma.",
+    "sugestao": true
+  },
+  {
+    "id": "espantalho_mor_foicada",
+    "name": "Foicada",
+    "ownerKey": "espantalho_mor",
+    "slot": "inimigo",
+    "type": "travada",
+    "range": 1,
+    "radius": 0,
+    "cooldownS": 1.6,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 0,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 1,
+        "target": "alvo"
+      }
+    ],
+    "description": "Golpe de foice cerimonial. A foice tem placa de patrimônio.",
+    "sugestao": true
+  },
+  {
+    "id": "espantalho_mor_rodamoinho_de_palha",
+    "name": "Rodamoinho de Palha",
+    "ownerKey": "espantalho_mor",
+    "slot": "inimigo",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 3,
+    "cooldownS": 10,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 1000,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 2,
+        "target": "inimigos_area"
+      },
+      {
+        "kind": "empurrar",
+        "tiles": 2,
+        "target": "inimigos_area"
+      }
+    ],
+    "description": "Gira e solta palha para todo lado: aviso de 1 s no chão.",
+    "sugestao": true
+  },
+  {
+    "id": "espantalho_mor_chamado_da_cota",
+    "name": "Chamado da Cota",
+    "ownerKey": "espantalho_mor",
+    "slot": "inimigo",
+    "type": "area_alvo",
+    "range": 6,
+    "radius": 2.5,
+    "cooldownS": 9,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 1200,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 2.2,
+        "target": "inimigos_area"
+      }
+    ],
+    "description": "Aponta para você e lê a sua cota em voz alta: círculo no chão por 1,2 s.",
+    "sugestao": true
+  },
+  {
+    "id": "espantalho_mor_mandato_vitalicio",
+    "name": "Mandato Vitalício",
+    "ownerKey": "espantalho_mor",
+    "slot": "inimigo",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 20,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 0,
+    "effects": [
+      {
+        "kind": "reforco",
+        "stat": "attackSpeed",
+        "pct": 25,
+        "duracaoMs": 8000,
+        "target": "self"
+      },
+      {
+        "kind": "reforco",
+        "stat": "moveSpeed",
+        "pct": 15,
+        "duracaoMs": 8000,
+        "target": "self"
+      }
+    ],
+    "description": "Prorroga o próprio mandato: por 8 s, bate 25% e anda 15% mais rápido.",
+    "sugestao": true
+  },
+  {
+    "id": "rato_de_duto_mordida",
+    "name": "Mordida no Cabo",
+    "ownerKey": "rato_de_duto",
+    "slot": "inimigo",
+    "type": "travada",
+    "range": 1,
+    "radius": 0,
+    "cooldownS": 1.2,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 0,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 1,
+        "target": "alvo"
+      }
+    ],
+    "description": "Morde o primeiro cabo que encontra. Às vezes é a sua perna.",
+    "sugestao": true
+  },
+  {
+    "id": "rato_de_duto_guincho",
+    "name": "Guincho",
+    "ownerKey": "rato_de_duto",
+    "slot": "inimigo",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 9,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 800,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 1.2,
+        "target": "inimigos_area"
+      }
+    ],
+    "description": "Guincha e chama os primos do duto: aviso de 0,8 s.",
+    "sugestao": true
+  },
+  {
+    "id": "robo_de_linha_prensa",
+    "name": "Prensa",
+    "ownerKey": "robo_de_linha",
+    "slot": "inimigo",
+    "type": "travada",
+    "range": 1,
+    "radius": 0,
+    "cooldownS": 1.7,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 0,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 1.1,
+        "target": "alvo"
+      }
+    ],
+    "description": "Prensa o que estiver na esteira. Hoje é você.",
+    "sugestao": true
+  },
+  {
+    "id": "robo_de_linha_parafusadeira",
+    "name": "Parafusadeira",
+    "ownerKey": "robo_de_linha",
+    "slot": "inimigo",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 10,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 900,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 1.8,
+        "target": "inimigos_area"
+      }
+    ],
+    "description": "Gira os braços de parafusar: aviso de 0,9 s.",
+    "sugestao": true
+  },
+  {
+    "id": "robo_de_linha_hora_extra",
+    "name": "Hora Extra",
+    "ownerKey": "robo_de_linha",
+    "slot": "inimigo",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 16,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 0,
+    "effects": [
+      {
+        "kind": "reforco",
+        "stat": "attackSpeed",
+        "pct": 30,
+        "duracaoMs": 6000,
+        "target": "self"
+      }
+    ],
+    "description": "Entra em hora extra sem perguntar: 6 s batendo 30% mais rápido.",
+    "sugestao": true
+  },
+  {
+    "id": "supervisor_de_meta_caneta_laser",
+    "name": "Caneta Laser",
+    "ownerKey": "supervisor_de_meta",
+    "slot": "inimigo",
+    "type": "travada",
+    "range": 5,
+    "radius": 0,
+    "cooldownS": 1.6,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 0,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 0.9,
+        "target": "alvo"
+      }
+    ],
+    "description": "Aponta a caneta laser para o seu desempenho.",
+    "sugestao": true
+  },
+  {
+    "id": "supervisor_de_meta_feedback_construtivo",
+    "name": "Feedback Construtivo",
+    "ownerKey": "supervisor_de_meta",
+    "slot": "inimigo",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 4,
+    "cooldownS": 10,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 0,
+    "effects": [
+      {
+        "kind": "escudo",
+        "pctVidaMax": 15,
+        "duracaoMs": 4000,
+        "target": "aliados_area_sem_self"
+      }
+    ],
+    "description": "Dá feedback construtivo aos colegas: escudo de 15% da vida por 4 s. Para você, um plano de melhoria.",
+    "sugestao": true
+  },
+  {
+    "id": "supervisor_de_meta_meta_dobrada",
+    "name": "Meta Dobrada",
+    "ownerKey": "supervisor_de_meta",
+    "slot": "inimigo",
+    "type": "travada",
+    "range": 4,
+    "radius": 0,
+    "cooldownS": 14,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 0,
+    "effects": [
+      {
+        "kind": "controle",
+        "cc": "silenciar",
+        "duracaoMs": 1000,
+        "target": "alvo"
+      }
+    ],
+    "description": "Dobra a sua meta: 1 s sem usar habilidades, ocupado calculando.",
+    "sugestao": true
+  },
+  {
+    "id": "relogio_de_ponto_batida",
+    "name": "Batida de Ponto",
+    "ownerKey": "relogio_de_ponto",
+    "slot": "inimigo",
+    "type": "travada",
+    "range": 6,
+    "radius": 0,
+    "cooldownS": 1.6,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 0,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 1,
+        "target": "alvo"
+      }
+    ],
+    "description": "Bate o seu ponto à distância. Com atraso.",
+    "sugestao": true
+  },
+  {
+    "id": "relogio_de_ponto_desconto_em_folha",
+    "name": "Desconto em Folha",
+    "ownerKey": "relogio_de_ponto",
+    "slot": "inimigo",
+    "type": "area_alvo",
+    "range": 7,
+    "radius": 2.5,
+    "cooldownS": 9,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 1200,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 2.2,
+        "target": "inimigos_area"
+      }
+    ],
+    "description": "Desconta direto do chão onde você está: círculo por 1,2 s.",
+    "sugestao": true
+  },
+  {
+    "id": "relogio_de_ponto_banco_de_horas",
+    "name": "Banco de Horas",
+    "ownerKey": "relogio_de_ponto",
+    "slot": "inimigo",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 4,
+    "cooldownS": 11,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 1000,
+    "effects": [
+      {
+        "kind": "dano",
+        "mult": 2,
+        "target": "inimigos_area"
+      },
+      {
+        "kind": "empurrar",
+        "tiles": 2,
+        "target": "inimigos_area"
+      }
+    ],
+    "description": "Cobra o banco de horas de todo mundo em volta: aviso de 1 s.",
+    "sugestao": true
+  },
+  {
+    "id": "relogio_de_ponto_turno_dobrado",
+    "name": "Turno Dobrado",
+    "ownerKey": "relogio_de_ponto",
+    "slot": "inimigo",
+    "type": "em_volta",
+    "range": 0,
+    "radius": 2,
+    "cooldownS": 20,
+    "cost": 0,
+    "castMs": 0,
+    "telegraphMs": 0,
+    "effects": [
+      {
+        "kind": "reforco",
+        "stat": "attackSpeed",
+        "pct": 30,
+        "duracaoMs": 8000,
+        "target": "self"
+      }
+    ],
+    "description": "Dobra o próprio turno: 8 s batendo 30% mais rápido.",
+    "sugestao": true
   }
 ]

@@ -12,7 +12,9 @@
  * - usina_da_ponte: a ponte entre as margens, a barragem e a entrada das Galerias (Fase 3);
  * - juncal: a mata do Curupira e a trilha dos contrabandistas do Capataz (Fase 3);
  * - barco_travessia: o barco do Seu Jacó no nível 8. Roda numa sala por jogador ('barco:<id>'):
- *   boatRoomMap(id) devolve o mesmo mapa com o id da sala.
+ *   boatRoomMap(id) devolve o mesmo mapa com o id da sala;
+ * - planalto_do_trigo, vale_das_chamines e ilha_do_farol (v0.4): o early game da Esquerda (do 6 ao
+ *   9), o da Direita (do 6 ao 9) e a ilha neutra (10 e 11), de barco pela barragem da Usina.
  *
  * Apelidos: qg_esquerda e qg_direita eram as chegadas da Fase 2. Viraram apelidos das margens, para
  * registros salvos e salas antigas continuarem abrindo: getMap('qg_esquerda') devolve margem_esquerda
@@ -22,11 +24,14 @@ import type { TileMap } from './types';
 import { buildAsciiMap } from './maps/ascii';
 import { BARCO_TRAVESSIA } from './maps/barco_travessia';
 import { DELTA } from './maps/delta';
+import { ILHA_DO_FAROL } from './maps/ilha_do_farol';
 import { JUNCAL } from './maps/juncal';
 import { MARGEM_DIREITA } from './maps/margem_direita';
 import { MARGEM_ESQUERDA } from './maps/margem_esquerda';
+import { PLANALTO_DO_TRIGO } from './maps/planalto_do_trigo';
 import { PROTOTIPO_DELTA } from './maps/prototipo_delta';
 import { USINA_DA_PONTE } from './maps/usina_da_ponte';
+import { VALE_DAS_CHAMINES } from './maps/vale_das_chamines';
 
 const BUILDERS: Readonly<Record<string, () => TileMap>> = {
   prototipo_delta: () => buildAsciiMap(PROTOTIPO_DELTA),
@@ -36,6 +41,9 @@ const BUILDERS: Readonly<Record<string, () => TileMap>> = {
   usina_da_ponte: () => buildAsciiMap(USINA_DA_PONTE),
   juncal: () => buildAsciiMap(JUNCAL),
   barco_travessia: () => buildAsciiMap(BARCO_TRAVESSIA),
+  planalto_do_trigo: () => buildAsciiMap(PLANALTO_DO_TRIGO),
+  vale_das_chamines: () => buildAsciiMap(VALE_DAS_CHAMINES),
+  ilha_do_farol: () => buildAsciiMap(ILHA_DO_FAROL),
 };
 
 /** Mapa do barco da travessia (nível 8). */

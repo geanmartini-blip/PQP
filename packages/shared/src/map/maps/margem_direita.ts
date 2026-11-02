@@ -69,6 +69,7 @@ function build(): AsciiMapDef {
   c.rect(9, 26, 4, 121, '_').rect(94, 26, 4, 95, '_');
   c.rect(1, 26, 97, 4, '_'); // sai para o Juncal pela abertura da grade
   for (const y of [56, 86, 116]) c.rect(9, y, 89, 4, '_');
+  c.rect(97, 116, 6, 4, '_'); // v0.4: a avenida vai até a grade, na saída para o Vale das Chaminés
   // ponte de concreto para a Usina da Ponte e cais da travessia
   c.rect(1, 116, 8, 4, '.');
   c.rect(48, 146, 9, 11, '.');
@@ -116,7 +117,9 @@ function build(): AsciiMapDef {
     mk('spawn', 'spawn_jogador', 52, 148, undefined, { chegada: 'travessia' }),
     mk('spawn_juncal', 'spawn_jogador', 5, 27, undefined, { de: 'juncal' }),
     mk('spawn_usina', 'spawn_jogador', 6, 117, undefined, { de: 'usina_da_ponte' }),
+    mk('spawn_vale', 'spawn_jogador', 98, 118,undefined, { de: 'vale_das_chamines' }),
     // saídas
+    mk('saida_vale_das_chamines', 'saida', 102, 118,'vale_das_chamines', { para: 'vale_das_chamines', spawn: 'spawn_direita' }),
     mk('saida_juncal', 'saida', 1, 27, 'juncal', { para: 'juncal', spawn: 'spawn_direita' }),
     mk('saida_usina_da_ponte', 'saida', 2, 117, 'usina_da_ponte', { para: 'usina_da_ponte', spawn: 'spawn_direita' }),
     // SUGESTÃO: o barco também desce de volta ao Delta

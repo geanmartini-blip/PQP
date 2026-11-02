@@ -74,6 +74,8 @@ function build(): AsciiMapDef {
   c.rect(26, 34, 48, 2, '.').rect(26, 36, 48, 4, 'q').rect(46, 36, 3, 6, '.');
   c.rect(38, 42, 20, 8, '.').rect(58, 42, 12, 8, ',');
   c.set(66, 43, 'j').set(60, 48, 'j');
+  // v0.4: píer da barragem, de onde sai o barco para a Ilha do Farol
+  c.rect(64, 47, 3, 8, '=');
   // Teatro Abandonado, na cabeceira leste
   c.building(87, 38, 11, 11, '#', '=', [[91, 38], [92, 38]]);
   c.set(95, 44, 'c');
@@ -85,6 +87,8 @@ function build(): AsciiMapDef {
     // saídas
     mk('saida_margem_esquerda', 'saida', 1, 26, 'margem_esquerda', { para: 'margem_esquerda', spawn: 'spawn_usina' }),
     mk('saida_margem_direita', 'saida', 98, 26, 'margem_direita', { para: 'margem_direita', spawn: 'spawn_usina' }),
+    mk('spawn_ilha', 'spawn_jogador', 65, 49, undefined, { de: 'ilha_do_farol' }),
+    mk('saida_ilha_do_farol', 'saida', 65, 54, 'ilha_do_farol', { para: 'ilha_do_farol', spawn: 'spawn', barco: true }),
     // pontos de controle nas pontas e o cartaz do lado
     mk('pc_ponte_esquerda', 'ponto_controle', 8, 22, 'pc_ponte_esquerda', { margem: 'esquerda' }),
     mk('pc_ponte_direita', 'ponto_controle', 91, 22, 'pc_ponte_direita', { margem: 'direita' }),

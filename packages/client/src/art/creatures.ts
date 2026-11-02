@@ -673,6 +673,11 @@ const ENEMY_DRAW: Record<string, CreatureDef> = {
   enguia_eletrica: { w: 32, h: 32, draw: enguia },
   // 60 + 2 px de aura de chefe de cada lado = 64
   bomba_descontrolada: { w: 60, h: 62, draw: bomba, still: true },
+  // v0.4: reserva por código das áreas novas (a arte de verdade é do PixelLab, art/pixellab.ts)
+  gafanhoto_da_safra: { w: 32, h: 40, draw: mosquito, flying: true },
+  rato_de_duto: { w: 32, h: 32, draw: siri },
+  robo_de_linha: { w: 32, h: 40, draw: robo },
+  relogio_de_ponto: { w: 48, h: 56, draw: turbina, still: true },
 };
 
 /** Ids de inimigos com desenho próprio (bicho/máquina) ou boneco humano. */

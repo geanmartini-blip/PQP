@@ -11,6 +11,7 @@
  *   escolher a margem.
  */
 import { getData } from '../data';
+import { xpDaFormula } from '../schema/progression';
 import { bal } from '../sim/constants';
 import { hasFlag } from './flags';
 import { emptyResult, type GameResult, type GroupCtx, type PlayerRecord, type Unlock } from './types';
@@ -23,8 +24,7 @@ export const TRAVESSIA_LEVEL = 5;
 
 /** XP para sair do nível e chegar no próximo: round(50 × n^1,6), sem teto (progression.xp.formula). */
 export function xpToNextLevel(level: number): number {
-  const f = getData().progression.xp.formula;
-  return Math[f.arredondamento](f.base * Math.pow(level, f.expoente));
+  return xpDaFormula(getData().progression.xp.formula, level);
 }
 
 /** XP total acumulado para chegar no nível. */

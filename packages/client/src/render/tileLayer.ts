@@ -21,7 +21,7 @@ import { isDungeonMapId } from '../game/dungeonMap';
 import { MATO_FRAMES, OVERLAY_FRAMES, overlayKind, renderTerrain, styleOfRegion, type Style, type TerrainSource, TREE_BASE_Y, TREE_H } from '../art/terrain';
 import { hashInt } from '../art/noise';
 import { treeFrame } from '../art/tiles';
-import { desenhaPlChao, PL_POR_CIMA, PL_PROP_ESCALA, plArvoreFrame, plArvores, plFachadaKey, plMatoKey, plPropKey, temPlMato, usaPlChao } from '../art/plChao';
+import { desenhaPlChao, matoViraTrigo, PL_POR_CIMA, PL_PROP_ESCALA, plArvoreFrame, plArvores, plFachadaKey, plMatoKey, plPropKey, temPlMato, usaPlChao } from '../art/plChao';
 import { DEPTH } from './depth';
 
 export const GRID_KEY = 'tiles_grid';
@@ -121,7 +121,8 @@ function buildProps(scene: Phaser.Scene, map: TileMap, plChao: boolean): Phaser.
   for (let y = 0; y < map.height; y++)
     for (let x = 0; x < map.width; x++) {
       // v0.3: tufos de mato do PixelLab, com profundidade (quem passa atrás fica escondido)
-      const mato = plChao && map.tiles[y * map.width + x] === Tile.Mato ? plMatoKey(scene, x, y) : undefined;
+      // (v0.4: no Planalto o mato é o trigo, que já vem no chão)
+      const mato = plChao && map.tiles[y * map.width + x] === Tile.Mato && !matoViraTrigo(map.id) ? plMatoKey(scene, x, y) : undefined;
       if (mato) {
         const by = y * TILE_PX + 28 + (hashInt(x, y, 97) & 3);
         const img = scene.add.image(x * TILE_PX + 16 + ((hashInt(x, y, 91) & 7) - 3), by, mato).setOrigin(0.5, 1).setScale(PL_PROP_ESCALA);

@@ -47,6 +47,16 @@ describe('estático do cliente', () => {
     const body = (await health.json()) as { ok: boolean; rooms: { players: number; mapId: string }[] };
     expect(body.ok).toBe(true);
     // uma sala por mapa, desde o início (o Delta primeiro)
-    expect(body.rooms.map((r) => r.mapId).sort()).toEqual(['delta', 'juncal', 'margem_direita', 'margem_esquerda', 'prototipo_delta', 'usina_da_ponte']);
+    expect(body.rooms.map((r) => r.mapId).sort()).toEqual([
+      'delta',
+      'ilha_do_farol',
+      'juncal',
+      'margem_direita',
+      'margem_esquerda',
+      'planalto_do_trigo',
+      'prototipo_delta',
+      'usina_da_ponte',
+      'vale_das_chamines',
+    ]);
   });
 });

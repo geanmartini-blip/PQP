@@ -472,6 +472,49 @@
       ],
       "emPiloto": true,
       "sugestao": true
+    },
+    {
+      "id": "esquerda_a_colheita",
+      "name": "A Colheita",
+      "nivelMin": 6,
+      "nivelMax": 9,
+      "textoDoc": "SUGESTÃO: no Planalto do Trigo, a comissão da colheita se reúne mais do que colhe; gafanhotos, espantalhos benzidos demais e fiscais da cota travam o trigo da margem.",
+      "missoes": [
+        "colheita_01_subir_o_planalto",
+        "colheita_02_gafanhoto_sem_cota",
+        "colheita_03_espantalho_benzido",
+        "colheita_04_fiscal_da_cota",
+        "colheita_05_espantalho_mor"
+      ],
+      "emPiloto": true
+    },
+    {
+      "id": "direita_o_turno_da_noite",
+      "name": "O Turno da Noite",
+      "nivelMin": 6,
+      "nivelMax": 9,
+      "textoDoc": "SUGESTÃO: no Vale das Chaminés, o colaborador do turno da noite paga a própria máscara de ar; ratos de duto, robôs de linha e supervisores de meta, até o relógio de ponto.",
+      "missoes": [
+        "turno_01_descer_o_vale",
+        "turno_02_rato_no_duto",
+        "turno_03_linha_de_montagem",
+        "turno_04_meta_batida",
+        "turno_05_relogio_de_ponto"
+      ],
+      "emPiloto": true
+    },
+    {
+      "id": "ilha_do_farol",
+      "name": "O Sinal da Eco",
+      "nivelMin": 10,
+      "nivelMax": 11,
+      "textoDoc": "SUGESTÃO: na Ilha do Farol, a antiga rádio da cidade unida, a Eco transmite, ninguém sabe como.",
+      "missoes": [
+        "farol_01_um_sinal_no_rio",
+        "farol_02_a_eco",
+        "farol_03_arquivo_molhado"
+      ],
+      "emPiloto": true
     }
   ],
   "missoes": [
@@ -4808,6 +4851,1872 @@
       "ligaFlags": [
         "troca_de_lado_liberada",
         "conjunto_da_classe_completo"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "delta_extra_rede_furada",
+      "name": "Rede Furada",
+      "dadaPor": "toninho_do_barco",
+      "nivel": 1,
+      "nivelMax": 4,
+      "regiao": "delta",
+      "lugar": "cais_do_delta",
+      "modo": "solo",
+      "aliadosIA": [
+        "seu_jaco"
+      ],
+      "resumo": "Os siris cortaram a rede do Toninho. De novo. Ele jura que é perseguição.",
+      "objetivos": [
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "siri_do_mangue",
+              "quantidade": 8,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Espante os siris do cais"
+        },
+        {
+          "tipo": "falar",
+          "npc": "toninho_do_barco",
+          "descricao": "Conte ao Toninho"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal_missao_delta",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "comida",
+            "quantidade": 3
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 120
+          }
+        ]
+      },
+      "requerFlags": [
+        "delta_aprendeu_remar"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "delta_extra_rede"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "delta_extra_fiado",
+      "name": "O Fiado da Feira",
+      "dadaPor": "vendedor_do_delta",
+      "nivel": 2,
+      "nivelMax": 4,
+      "regiao": "delta",
+      "lugar": "feira_de_pulgas",
+      "modo": "solo",
+      "aliadosIA": [
+        "seu_jaco"
+      ],
+      "resumo": "Os capangas do Capataz compraram fiado na feira e mandaram cobrar do vendedor.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "lugar": "feira_de_pulgas",
+          "descricao": "Vá à feira de pulgas"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "capanga_do_capataz",
+              "quantidade": 4,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Tire os capangas da feira"
+        },
+        {
+          "tipo": "falar",
+          "npc": "vendedor_do_delta",
+          "descricao": "Avise o vendedor"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal_missao_delta",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 10
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 250
+          }
+        ]
+      },
+      "requerFlags": [
+        "delta_aprendeu_lutar"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "delta_extra_fiado"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "delta_extra_chopindita_batizada",
+      "name": "Chopindita Batizada",
+      "dadaPor": "vendedor_de_chopindita_barata",
+      "nivel": 3,
+      "nivelMax": 4,
+      "regiao": "delta",
+      "modo": "solo",
+      "aliadosIA": [
+        "seu_jaco"
+      ],
+      "resumo": "O vendedor jura que esta chopindita é legítima. Os mosquitos em volta dela discordam.",
+      "objetivos": [
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "mosquito_do_delta",
+              "quantidade": 10,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Espante a nuvem em volta do caixote"
+        },
+        {
+          "tipo": "escolher",
+          "pergunta": "O que você faz com a chopindita?",
+          "opcoes": [
+            {
+              "id": "provar",
+              "texto": "Prova um gole. É água do rio com corante.",
+              "ligaFlags": [],
+              "sugestao": true
+            },
+            {
+              "id": "devolver",
+              "texto": "Devolve e pede o dinheiro de volta. Ele finge que não ouviu.",
+              "ligaFlags": [],
+              "sugestao": true
+            }
+          ],
+          "descricao": "Decida o que fazer com a garrafa"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "comida",
+            "quantidade": 4
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 400
+          }
+        ]
+      },
+      "requerFlags": [
+        "delta_aprendeu_habilidades"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "delta_extra_chopindita"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "delta_extra_juros_do_juros",
+      "name": "Juros do Juros",
+      "dadaPor": "seu_jaco",
+      "nivel": 3,
+      "nivelMax": 4,
+      "regiao": "delta",
+      "lugar": "palafitas_do_delta",
+      "modo": "solo",
+      "aliadosIA": [
+        "seu_jaco"
+      ],
+      "resumo": "O cobrador do Capataz descobriu os juros compostos e está aplicando nas palafitas.",
+      "objetivos": [
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "capanga_do_capataz",
+              "quantidade": 5,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "cobrador_do_capataz",
+              "quantidade": 1,
+              "tier": "elite"
+            }
+          ],
+          "descricao": "Expulse o cobrador e a turma dele"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal_missao_delta",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 15
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 450
+          }
+        ]
+      },
+      "requerFlags": [
+        "delta_aprendeu_habilidades"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "delta_extra_juros"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "delta_extra_mutirao_do_mangue",
+      "name": "Mutirão do Mangue",
+      "dadaPor": "seu_jaco",
+      "nivel": 4,
+      "nivelMax": 4,
+      "regiao": "delta",
+      "lugar": "palafitas_do_delta",
+      "modo": "solo",
+      "aliadosIA": [
+        "seu_jaco"
+      ],
+      "resumo": "Antes de enfrentar o Capataz, o Delta faz um mutirão. Sem ata, sem quórum, só mangue.",
+      "objetivos": [
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "siri_do_mangue",
+              "quantidade": 10,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "mosquito_do_delta",
+              "quantidade": 10,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Limpe o mangue"
+        },
+        {
+          "tipo": "falar",
+          "npc": "toninho_do_barco",
+          "descricao": "Avise o Toninho que o cais está limpo"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal_missao_delta",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "comida",
+            "quantidade": 5
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 600
+          }
+        ]
+      },
+      "requerFlags": [
+        "delta_boleto_chegou"
+      ],
+      "bloqueadaPorFlags": [
+        "delta_bruno_ferro_derrotado"
+      ],
+      "ligaFlags": [
+        "delta_extra_mutirao"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "colheita_01_subir_o_planalto",
+      "name": "Subir o Planalto",
+      "cadeia": "esquerda_a_colheita",
+      "dadaPor": "yusuf_adeyemi",
+      "nivel": 6,
+      "regiao": "planalto_do_trigo",
+      "margem": "esquerda",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "O trigo da margem inteira vem do Planalto, e o Planalto parou de mandar trigo. Yusuf quer saber por quê.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "regiao": "planalto_do_trigo",
+          "descricao": "Suba a trilha até o Planalto do Trigo"
+        },
+        {
+          "tipo": "falar",
+          "npc": "presidenta_da_colheita",
+          "descricao": "Fale com a presidenta da Comissão da Colheita"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 20
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 900
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_instituicao",
+        "margem_esquerda"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "colheita_planalto_chegou"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "colheita_02_gafanhoto_sem_cota",
+      "name": "Gafanhoto Sem Cota",
+      "cadeia": "esquerda_a_colheita",
+      "dadaPor": "presidenta_da_colheita",
+      "nivel": 7,
+      "regiao": "planalto_do_trigo",
+      "lugar": "roca_coletiva",
+      "margem": "esquerda",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "Os gafanhotos comem acima da cota e ninguém abre comissão contra eles.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "lugar": "roca_coletiva",
+          "descricao": "Vá à roça coletiva"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "gafanhoto_da_safra",
+              "quantidade": 12,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "gafanhoto_da_safra",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "rapido"
+              ]
+            }
+          ],
+          "descricao": "Espante os gafanhotos da roça"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "comida",
+            "quantidade": 10
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1300
+          }
+        ]
+      },
+      "requerFlags": [
+        "colheita_planalto_chegou"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "colheita_gafanhotos"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "colheita_03_espantalho_benzido",
+      "name": "Benzido Demais",
+      "cadeia": "esquerda_a_colheita",
+      "dadaPor": "presidenta_da_colheita",
+      "nivel": 8,
+      "regiao": "planalto_do_trigo",
+      "lugar": "roca_coletiva",
+      "margem": "esquerda",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "A comissão benzeu os espantalhos para vigiar a cota. Agora eles vigiam todo mundo.",
+      "objetivos": [
+        {
+          "tipo": "interagir",
+          "alvo": "espantalho",
+          "acao": "desbenzer",
+          "quantidade": 3,
+          "descricao": "Desbenza os 3 espantalhos-mestres"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "espantalho_benzido",
+              "quantidade": 6,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Derrube os espantalhos que acordaram"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 25
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1700
+          }
+        ]
+      },
+      "requerFlags": [
+        "colheita_gafanhotos"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "colheita_espantalhos"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "colheita_04_fiscal_da_cota",
+      "name": "A Cota do Fiscal",
+      "cadeia": "esquerda_a_colheita",
+      "dadaPor": "presidenta_da_colheita",
+      "nivel": 8,
+      "regiao": "planalto_do_trigo",
+      "lugar": "silos_do_planalto",
+      "margem": "esquerda",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "Os fiscais da cota trancaram os silos até a próxima reunião, que ainda não tem data.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "lugar": "silos_do_planalto",
+          "descricao": "Vá aos silos"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "fiscal_da_cota",
+              "quantidade": 8,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Tire os fiscais da porta dos silos"
+        },
+        {
+          "tipo": "escolher",
+          "pergunta": "O que fazer com o relatório da cota?",
+          "opcoes": [
+            {
+              "id": "assembleia",
+              "texto": "Leva para a Assembleia. Entra na pauta de 2079.",
+              "ligaFlags": [],
+              "sugestao": true
+            },
+            {
+              "id": "silo",
+              "texto": "Abre o silo e divide o trigo agora.",
+              "ligaFlags": [],
+              "sugestao": true
+            }
+          ],
+          "descricao": "Decida o destino do trigo"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "comida",
+            "quantidade": 10
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1800
+          }
+        ]
+      },
+      "requerFlags": [
+        "colheita_espantalhos"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "colheita_cota_resolvida"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "colheita_05_espantalho_mor",
+      "name": "O Espantalho-Mor",
+      "cadeia": "esquerda_a_colheita",
+      "dadaPor": "presidenta_da_colheita",
+      "nivel": 9,
+      "regiao": "planalto_do_trigo",
+      "lugar": "roca_coletiva",
+      "margem": "esquerda",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "O espantalho mais antigo leu o estatuto da comissão e se elegeu presidente vitalício.",
+      "objetivos": [
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "espantalho_mor",
+              "quantidade": 1,
+              "tier": "chefe"
+            }
+          ],
+          "descricao": "Derrube o Espantalho-Mor no meio da roça"
+        },
+        {
+          "tipo": "falar",
+          "npc": "presidenta_da_colheita",
+          "descricao": "Volte à presidenta"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_elite",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 60
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 2600
+          }
+        ]
+      },
+      "requerFlags": [
+        "colheita_cota_resolvida"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "colheita_salva"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "turno_01_descer_o_vale",
+      "name": "Descer o Vale",
+      "cadeia": "direita_o_turno_da_noite",
+      "dadaPor": "mateo_silva_park",
+      "nivel": 6,
+      "regiao": "vale_das_chamines",
+      "margem": "direita",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "A produção de baterias caiu e o frete dinâmico subiu. Mateo quer um colaborador lá embaixo.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "regiao": "vale_das_chamines",
+          "descricao": "Desça até o Vale das Chaminés"
+        },
+        {
+          "tipo": "falar",
+          "npc": "gerente_de_turno",
+          "descricao": "Apresente-se à gerente de turno"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 20
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 900
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_instituicao",
+        "margem_direita"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "turno_vale_chegou"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "turno_02_rato_no_duto",
+      "name": "Rato no Duto",
+      "cadeia": "direita_o_turno_da_noite",
+      "dadaPor": "gerente_de_turno",
+      "nivel": 7,
+      "regiao": "vale_das_chamines",
+      "lugar": "fabrica_de_baterias",
+      "margem": "direita",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "Os ratos dos dutos roem o cabo e a culpa sai no relatório do turno da noite.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "lugar": "fabrica_de_baterias",
+          "descricao": "Vá à fábrica de baterias"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "rato_de_duto",
+              "quantidade": 12,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "rato_de_duto",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "rapido"
+              ]
+            }
+          ],
+          "descricao": "Limpe os dutos"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 25
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1300
+          }
+        ]
+      },
+      "requerFlags": [
+        "turno_vale_chegou"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "turno_ratos"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "turno_03_linha_de_montagem",
+      "name": "Linha de Montagem",
+      "cadeia": "direita_o_turno_da_noite",
+      "dadaPor": "gerente_de_turno",
+      "nivel": 8,
+      "regiao": "vale_das_chamines",
+      "lugar": "fabrica_de_baterias",
+      "margem": "direita",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "Os robôs da linha aprenderam a fazer hora extra sozinhos e não querem parar.",
+      "objetivos": [
+        {
+          "tipo": "interagir",
+          "alvo": "esteira",
+          "acao": "desligar",
+          "quantidade": 3,
+          "descricao": "Desligue as 3 esteiras"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "robo_de_linha",
+              "quantidade": 6,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Pare os robôs da linha"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 30
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1700
+          }
+        ]
+      },
+      "requerFlags": [
+        "turno_ratos"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "turno_esteiras"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "turno_04_meta_batida",
+      "name": "Meta Batida",
+      "cadeia": "direita_o_turno_da_noite",
+      "dadaPor": "gerente_de_turno",
+      "nivel": 8,
+      "regiao": "vale_das_chamines",
+      "lugar": "refeitorio_do_turno",
+      "margem": "direita",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "Os supervisores dobraram a meta e trancaram o refeitório até alguém bater.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "lugar": "refeitorio_do_turno",
+          "descricao": "Vá ao refeitório do turno"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "supervisor_de_meta",
+              "quantidade": 6,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Tire os supervisores da porta"
+        },
+        {
+          "tipo": "escolher",
+          "pergunta": "A meta do mês dobrou. E agora?",
+          "opcoes": [
+            {
+              "id": "bater",
+              "texto": "Bate a meta. Ganha um bóton escrito COLABORADOR DESTAQUE.",
+              "ligaFlags": [],
+              "sugestao": true
+            },
+            {
+              "id": "aumento",
+              "texto": "Pede aumento. Ganha uma reunião sobre cultura da empresa.",
+              "ligaFlags": [],
+              "sugestao": true
+            }
+          ],
+          "descricao": "Responda à meta"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 30
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1800
+          }
+        ]
+      },
+      "requerFlags": [
+        "turno_esteiras"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "turno_meta"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "turno_05_relogio_de_ponto",
+      "name": "O Relógio de Ponto",
+      "cadeia": "direita_o_turno_da_noite",
+      "dadaPor": "gerente_de_turno",
+      "nivel": 9,
+      "regiao": "vale_das_chamines",
+      "lugar": "fabrica_de_baterias",
+      "margem": "direita",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "O relógio de ponto ganhou autonomia e desconta o atraso de quem passa na frente dele.",
+      "objetivos": [
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "relogio_de_ponto",
+              "quantidade": 1,
+              "tier": "chefe"
+            }
+          ],
+          "descricao": "Quebre o Relógio de Ponto"
+        },
+        {
+          "tipo": "falar",
+          "npc": "gerente_de_turno",
+          "descricao": "Volte à gerente de turno"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_elite",
+            "quantidade": 1
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 60
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 2600
+          }
+        ]
+      },
+      "requerFlags": [
+        "turno_meta"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "turno_ponto_quebrado"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "inst_brigada_popular_v04",
+      "name": "Colheita Armada",
+      "dadaPor": "treinador_da_base",
+      "nivel": 7,
+      "regiao": "planalto_do_trigo",
+      "margem": "esquerda",
+      "instituicao": "brigada_popular",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "Jacques quer a Brigada no Planalto antes que a comissão aprove a colheita em 2080.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "regiao": "planalto_do_trigo",
+          "descricao": "Suba ao Planalto"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "gafanhoto_da_safra",
+              "quantidade": 10,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "espantalho_benzido",
+              "quantidade": 3,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Defenda a roça"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "reputacao",
+            "quantidade": 80,
+            "instituicao": "brigada_popular"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 30
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1500
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_brigada_popular"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "inst_guarda_comunitaria_v04",
+      "name": "Ronda no Planalto",
+      "dadaPor": "treinador_da_base",
+      "nivel": 7,
+      "regiao": "planalto_do_trigo",
+      "margem": "esquerda",
+      "instituicao": "guarda_comunitaria",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "A Olga desconfia que os fiscais da cota estão levando trigo para casa.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "lugar": "silos_do_planalto",
+          "descricao": "Vá aos silos"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "fiscal_da_cota",
+              "quantidade": 6,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Fiscalize os fiscais"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "reputacao",
+            "quantidade": 80,
+            "instituicao": "guarda_comunitaria"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 30
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1500
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_guarda_comunitaria"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "inst_escola_dos_saberes_v04",
+      "name": "Aula de Campo",
+      "dadaPor": "treinador_da_base",
+      "nivel": 7,
+      "regiao": "planalto_do_trigo",
+      "margem": "esquerda",
+      "instituicao": "escola_dos_saberes",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "Seamus leva a turma para ver como se desbenze um espantalho. A turma é você.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "lugar": "roca_coletiva",
+          "descricao": "Vá à roça coletiva"
+        },
+        {
+          "tipo": "interagir",
+          "alvo": "espantalho",
+          "acao": "desbenzer",
+          "quantidade": 2,
+          "descricao": "Desbenza 2 espantalhos"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "gafanhoto_da_safra",
+              "quantidade": 8,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Afaste os gafanhotos"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "reputacao",
+            "quantidade": 80,
+            "instituicao": "escola_dos_saberes"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 30
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1500
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_escola_dos_saberes"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "inst_trupe_do_povo_v04",
+      "name": "Espetáculo na Roça",
+      "dadaPor": "treinador_da_base",
+      "nivel": 7,
+      "regiao": "planalto_do_trigo",
+      "margem": "esquerda",
+      "instituicao": "trupe_do_povo",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "Tião marcou um espetáculo no barracão da colheita. O público inclui espantalhos.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "lugar": "barracao_da_comissao",
+          "descricao": "Vá ao barracão da comissão"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "espantalho_benzido",
+              "quantidade": 6,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Segure a plateia"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "reputacao",
+            "quantidade": 80,
+            "instituicao": "trupe_do_povo"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 30
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1500
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_trupe_do_povo"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "inst_torcida_furia_neon_v04",
+      "name": "Pelada do Turno da Noite",
+      "dadaPor": "treinador_da_base",
+      "nivel": 7,
+      "regiao": "vale_das_chamines",
+      "margem": "direita",
+      "instituicao": "torcida_furia_neon",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "O Edson marcou uma pelada no refeitório. Os robôs da linha querem jogar.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "lugar": "refeitorio_do_turno",
+          "descricao": "Vá ao refeitório do turno"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "robo_de_linha",
+              "quantidade": 4,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "rato_de_duto",
+              "quantidade": 6,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Ganhe a pelada"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "reputacao",
+            "quantidade": 80,
+            "instituicao": "torcida_furia_neon"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 30
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1500
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_torcida_furia_neon"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "inst_pm_do_consorcio_v04",
+      "name": "Ronda Patrocinada",
+      "dadaPor": "treinador_da_base",
+      "nivel": 7,
+      "regiao": "vale_das_chamines",
+      "margem": "direita",
+      "instituicao": "pm_do_consorcio",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "A PM vende ronda no Vale, com patrocínio da fábrica. O Dusty quer resultado no vídeo.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "regiao": "vale_das_chamines",
+          "descricao": "Desça ao Vale"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "rato_de_duto",
+              "quantidade": 10,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "supervisor_de_meta",
+              "quantidade": 2,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Faça a ronda"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "reputacao",
+            "quantidade": 80,
+            "instituicao": "pm_do_consorcio"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 30
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1500
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_pm_do_consorcio"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "inst_universidade_neon_v04",
+      "name": "Estágio Não Remunerado",
+      "dadaPor": "treinador_da_base",
+      "nivel": 7,
+      "regiao": "vale_das_chamines",
+      "margem": "direita",
+      "instituicao": "universidade_neon",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "O Klaus arrumou um estágio para você na fábrica. Paga em experiência.",
+      "objetivos": [
+        {
+          "tipo": "interagir",
+          "alvo": "esteira",
+          "acao": "desligar",
+          "quantidade": 2,
+          "descricao": "Desligue 2 esteiras"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "robo_de_linha",
+              "quantidade": 6,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Teste os robôs"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "reputacao",
+            "quantidade": 80,
+            "instituicao": "universidade_neon"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 30
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1500
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_universidade_neon"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "inst_agencia_neon_v04",
+      "name": "Conteúdo do Chão de Fábrica",
+      "dadaPor": "treinador_da_base",
+      "nivel": 7,
+      "regiao": "vale_das_chamines",
+      "margem": "direita",
+      "instituicao": "agencia_neon",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "A Kátia quer vídeo de bastidor no Vale. Engajamento acima de tudo, inclusive da segurança.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "lugar": "fabrica_de_baterias",
+          "descricao": "Vá à fábrica de baterias"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "supervisor_de_meta",
+              "quantidade": 3,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "rato_de_duto",
+              "quantidade": 6,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Grave a briga"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "reputacao",
+            "quantidade": 80,
+            "instituicao": "agencia_neon"
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 30
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 1500
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_agencia_neon"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "bico_planalto_safra",
+      "name": "Bico: Safra",
+      "dadaPor": "quadro_de_missoes",
+      "nivel": 6,
+      "nivelMax": 19,
+      "regiao": "planalto_do_trigo",
+      "margem": "esquerda",
+      "modo": "qualquer",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "Mutirão da safra: quem espanta gafanhoto leva trigo.",
+      "objetivos": [
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "gafanhoto_da_safra",
+              "quantidade": 15,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Espante os gafanhotos do Planalto"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "comida",
+            "quantidade": 10
+          },
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 15
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 700
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_instituicao",
+        "margem_esquerda"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [],
+      "repetivel": true,
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "bico_planalto_espantalhos",
+      "name": "Bico: Espantalhos",
+      "dadaPor": "quadro_de_missoes",
+      "nivel": 7,
+      "nivelMax": 19,
+      "regiao": "planalto_do_trigo",
+      "margem": "esquerda",
+      "modo": "qualquer",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "A comissão paga por espantalho derrubado. Em Semente, depois da reunião.",
+      "objetivos": [
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "espantalho_benzido",
+              "quantidade": 8,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Derrube espantalhos benzidos"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 20
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 800
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_instituicao",
+        "margem_esquerda"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [],
+      "repetivel": true,
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "bico_vale_dedetizacao",
+      "name": "Bico: Dedetização",
+      "dadaPor": "quadro_de_missoes",
+      "nivel": 6,
+      "nivelMax": 19,
+      "regiao": "vale_das_chamines",
+      "margem": "direita",
+      "modo": "qualquer",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "Dedetização por demanda. Pagamento por rato, com taxa do app.",
+      "objetivos": [
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "rato_de_duto",
+              "quantidade": 15,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Limpe os dutos do Vale"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 15
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 700
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_instituicao",
+        "margem_direita"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [],
+      "repetivel": true,
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "bico_vale_hora_extra",
+      "name": "Bico: Hora Extra",
+      "dadaPor": "quadro_de_missoes",
+      "nivel": 7,
+      "nivelMax": 19,
+      "regiao": "vale_das_chamines",
+      "margem": "direita",
+      "modo": "qualquer",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "Hora extra no Vale: desligar robô que não quer bater o ponto.",
+      "objetivos": [
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "robo_de_linha",
+              "quantidade": 8,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Desligue os robôs da linha"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 20
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 800
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_instituicao",
+        "margem_direita"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [],
+      "repetivel": true,
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "farol_01_um_sinal_no_rio",
+      "name": "Um Sinal no Rio",
+      "cadeia": "ilha_do_farol",
+      "dadaPor": "dalva_rocha",
+      "nivel": 10,
+      "regiao": "ilha_do_farol",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "A Dalva ouviu uma rádio que não devia existir, vinda da Ilha do Farol. Ela não tem poder para ir, mas tem você.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "regiao": "ilha_do_farol",
+          "descricao": "Pegue o barco da barragem até a Ilha do Farol"
+        },
+        {
+          "tipo": "falar",
+          "npc": "faroleiro_aposentado",
+          "descricao": "Fale com o faroleiro"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "recurso",
+            "recurso": "semente",
+            "quantidade": 20
+          },
+          {
+            "kind": "recurso",
+            "recurso": "credito",
+            "quantidade": 20
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 2000
+          }
+        ]
+      },
+      "requerFlags": [
+        "entrou_instituicao"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "farol_chegou"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "farol_02_a_eco",
+      "name": "A Eco",
+      "cadeia": "ilha_do_farol",
+      "dadaPor": "faroleiro_aposentado",
+      "nivel": 10,
+      "regiao": "ilha_do_farol",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "As antenas da rádio velha apontam para todo lado. A Eco fala quando as três apontam para a Ponte.",
+      "objetivos": [
+        {
+          "tipo": "interagir",
+          "alvo": "antena_do_farol",
+          "acao": "sintonizar",
+          "quantidade": 3,
+          "descricao": "Aponte as 3 antenas para a Ponte"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "enguia_eletrica",
+              "quantidade": 8,
+              "tier": "normal"
+            }
+          ],
+          "descricao": "Afaste as enguias das antenas"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_normal",
+            "quantidade": 1
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 2200
+          }
+        ]
+      },
+      "requerFlags": [
+        "farol_chegou"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "farol_eco_ouvida"
+      ],
+      "emPiloto": true,
+      "sugestao": true
+    },
+    {
+      "id": "farol_03_arquivo_molhado",
+      "name": "Arquivo Molhado",
+      "cadeia": "ilha_do_farol",
+      "dadaPor": "faroleiro_aposentado",
+      "nivel": 11,
+      "regiao": "ilha_do_farol",
+      "lugar": "arquivo_da_ilha_do_farol",
+      "modo": "grupo",
+      "aliadosIA": [
+        "treinador_da_base"
+      ],
+      "resumo": "Os homens do Sombra querem as fitas da rádio antes que alguém escute o que a cidade unida dizia.",
+      "objetivos": [
+        {
+          "tipo": "ir_ate",
+          "lugar": "arquivo_da_ilha_do_farol",
+          "descricao": "Vá ao arquivo da rádio"
+        },
+        {
+          "tipo": "derrotar",
+          "inimigos": [
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 6,
+              "tier": "normal"
+            },
+            {
+              "inimigo": "mercenario_do_sombra",
+              "quantidade": 1,
+              "tier": "elite",
+              "afixos": [
+                "blindado"
+              ]
+            }
+          ],
+          "descricao": "Tire os homens do Sombra do arquivo"
+        }
+      ],
+      "recompensas": {
+        "solo": [
+          {
+            "kind": "item",
+            "tabela": "loot_elite",
+            "quantidade": 1
+          }
+        ],
+        "grupo": [
+          {
+            "kind": "xp",
+            "quantidade": 2400
+          }
+        ]
+      },
+      "requerFlags": [
+        "farol_eco_ouvida"
+      ],
+      "bloqueadaPorFlags": [],
+      "ligaFlags": [
+        "farol_arquivo_salvo"
       ],
       "emPiloto": true,
       "sugestao": true

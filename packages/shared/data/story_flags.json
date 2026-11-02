@@ -524,5 +524,144 @@
     "cadeia": "a_cabeceira",
     "emPiloto": true,
     "sugestao": true
+  },
+  {
+    "id": "delta_extra_rede",
+    "descricao": "Espantou os siris da rede do Toninho.",
+    "escopo": "jogador",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "delta_extra_fiado",
+    "descricao": "Tirou os capangas do Capataz da feira de pulgas.",
+    "escopo": "jogador",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "delta_extra_chopindita",
+    "descricao": "Descobriu que a chopindita batizada era água do rio.",
+    "escopo": "jogador",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "delta_extra_juros",
+    "descricao": "Expulsou o cobrador dos juros compostos das palafitas.",
+    "escopo": "jogador",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "delta_extra_mutirao",
+    "descricao": "Fez o mutirão do mangue antes de enfrentar o Capataz.",
+    "escopo": "jogador",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "colheita_planalto_chegou",
+    "descricao": "Subiu ao Planalto do Trigo e conheceu a Comissão da Colheita.",
+    "escopo": "jogador",
+    "cadeia": "esquerda_a_colheita",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "colheita_gafanhotos",
+    "descricao": "Espantou os gafanhotos da roça coletiva.",
+    "escopo": "jogador",
+    "cadeia": "esquerda_a_colheita",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "colheita_espantalhos",
+    "descricao": "Desbenzeu os espantalhos-mestres.",
+    "escopo": "jogador",
+    "cadeia": "esquerda_a_colheita",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "colheita_cota_resolvida",
+    "descricao": "Resolveu a cota trancada nos silos.",
+    "escopo": "jogador",
+    "cadeia": "esquerda_a_colheita",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "colheita_salva",
+    "descricao": "Derrubou o Espantalho-Mor e salvou a colheita.",
+    "escopo": "jogador",
+    "cadeia": "esquerda_a_colheita",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "turno_vale_chegou",
+    "descricao": "Desceu ao Vale das Chaminés e conheceu a gerente de turno.",
+    "escopo": "jogador",
+    "cadeia": "direita_o_turno_da_noite",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "turno_ratos",
+    "descricao": "Limpou os ratos dos dutos da fábrica.",
+    "escopo": "jogador",
+    "cadeia": "direita_o_turno_da_noite",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "turno_esteiras",
+    "descricao": "Desligou as esteiras e parou os robôs da linha.",
+    "escopo": "jogador",
+    "cadeia": "direita_o_turno_da_noite",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "turno_meta",
+    "descricao": "Respondeu à meta dobrada dos supervisores.",
+    "escopo": "jogador",
+    "cadeia": "direita_o_turno_da_noite",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "turno_ponto_quebrado",
+    "descricao": "Quebrou o Relógio de Ponto do Vale.",
+    "escopo": "jogador",
+    "cadeia": "direita_o_turno_da_noite",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "farol_chegou",
+    "descricao": "Chegou à Ilha do Farol.",
+    "escopo": "jogador",
+    "cadeia": "ilha_do_farol",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "farol_eco_ouvida",
+    "descricao": "Ouviu a Eco pelas antenas da rádio velha.",
+    "escopo": "jogador",
+    "cadeia": "ilha_do_farol",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
+    "id": "farol_arquivo_salvo",
+    "descricao": "Salvou as fitas da rádio dos homens do Sombra.",
+    "escopo": "jogador",
+    "cadeia": "ilha_do_farol",
+    "emPiloto": true,
+    "sugestao": true
   }
 ]

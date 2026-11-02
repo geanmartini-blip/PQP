@@ -10,7 +10,8 @@ import { ARRIVAL_MAP_BY_SIDE, getMap, hasMap, listMaps, MAP_ALIASES, resolveMapI
 import { Tile, type MapMarker, type TileMap } from '../src/map/types';
 
 const R = 0.35;
-const NOVOS = ['margem_esquerda', 'margem_direita', 'usina_da_ponte', 'juncal'] as const;
+// v0.4: o Planalto, o Vale e a Ilha do Farol passam pelas mesmas checagens
+const NOVOS = ['margem_esquerda', 'margem_direita', 'usina_da_ponte', 'juncal', 'planalto_do_trigo', 'vale_das_chamines', 'ilha_do_farol'] as const;
 const MARGENS = [
   { id: 'margem_esquerda', margem: 'esquerda', qg: 'casa_da_assembleia', maquina: 'espelho_da_benzedeira', npcMaquina: 'benzedeira_do_espelho', tem: [Tile.Grama, Tile.Terra, Tile.Madeira, Tile.Arvore], nao: [Tile.PisoNeon, Tile.Asfalto, Tile.Concreto] },
   { id: 'margem_direita', margem: 'direita', qg: 'torre_do_consorcio', maquina: 'cabine_neon', npcMaquina: 'funcionario_da_cabine_neon', tem: [Tile.Concreto, Tile.PisoNeon, Tile.Asfalto, Tile.Grade], nao: [Tile.Arvore] },

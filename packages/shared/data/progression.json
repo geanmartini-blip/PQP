@@ -564,7 +564,8 @@
       "base": 50,
       "expoente": 1.6,
       "arredondamento": "round",
-      "texto": "xpParaProximo(n) = round(50 * n^1.6), sem teto: cada nível pede mais XP que o anterior."
+      "texto": "xpParaProximo(n) = round(50 * n^1.6 * mult), sem teto: cada nível pede mais XP que o anterior. v0.4: do 5 ao 10 o XP pedido é 1,5 vez maior, porque o early game ganhou áreas e missões.",
+      "faixas": [{ "de": 5, "ate": 10, "mult": 1.5, "sugestao": true }]
     },
     "tabela": [
       {
@@ -589,83 +590,83 @@
       },
       {
         "nivel": 5,
-        "xpParaProximo": 657,
+        "xpParaProximo": 985,
         "xpAcumulado": 951
       },
       {
         "nivel": 6,
-        "xpParaProximo": 879,
-        "xpAcumulado": 1608
+        "xpParaProximo": 1319,
+        "xpAcumulado": 1936
       },
       {
         "nivel": 7,
-        "xpParaProximo": 1125,
-        "xpAcumulado": 2487
+        "xpParaProximo": 1687,
+        "xpAcumulado": 3255
       },
       {
         "nivel": 8,
-        "xpParaProximo": 1393,
-        "xpAcumulado": 3612
+        "xpParaProximo": 2089,
+        "xpAcumulado": 4942
       },
       {
         "nivel": 9,
-        "xpParaProximo": 1682,
-        "xpAcumulado": 5005
+        "xpParaProximo": 2523,
+        "xpAcumulado": 7031
       },
       {
         "nivel": 10,
-        "xpParaProximo": 1991,
-        "xpAcumulado": 6687
+        "xpParaProximo": 2986,
+        "xpAcumulado": 9554
       },
       {
         "nivel": 11,
         "xpParaProximo": 2318,
-        "xpAcumulado": 8678
+        "xpAcumulado": 12540
       },
       {
         "nivel": 12,
         "xpParaProximo": 2665,
-        "xpAcumulado": 10996
+        "xpAcumulado": 14858
       },
       {
         "nivel": 13,
         "xpParaProximo": 3029,
-        "xpAcumulado": 13661
+        "xpAcumulado": 17523
       },
       {
         "nivel": 14,
         "xpParaProximo": 3410,
-        "xpAcumulado": 16690
+        "xpAcumulado": 20552
       },
       {
         "nivel": 15,
         "xpParaProximo": 3808,
-        "xpAcumulado": 20100
+        "xpAcumulado": 23962
       },
       {
         "nivel": 16,
         "xpParaProximo": 4222,
-        "xpAcumulado": 23908
+        "xpAcumulado": 27770
       },
       {
         "nivel": 17,
         "xpParaProximo": 4653,
-        "xpAcumulado": 28130
+        "xpAcumulado": 31992
       },
       {
         "nivel": 18,
         "xpParaProximo": 5098,
-        "xpAcumulado": 32783
+        "xpAcumulado": 36645
       },
       {
         "nivel": 19,
         "xpParaProximo": 5559,
-        "xpAcumulado": 37881
+        "xpAcumulado": 41743
       },
       {
         "nivel": 20,
         "xpParaProximo": 6034,
-        "xpAcumulado": 43440
+        "xpAcumulado": 47302
       }
     ],
     "ritmoEsperado": {

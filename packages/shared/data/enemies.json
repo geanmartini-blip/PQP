@@ -671,7 +671,8 @@
       "tier": "normal",
       "nivel": 10,
       "regioes": [
-        "usina_da_ponte"
+        "usina_da_ponte",
+        "ilha_do_farol"
       ],
       "masmorra": {
         "id": "galerias_da_usina",
@@ -757,7 +758,8 @@
       "tier": "normal",
       "nivel": 10,
       "regioes": [
-        "usina_da_ponte"
+        "usina_da_ponte",
+        "ilha_do_farol"
       ],
       "masmorra": {
         "id": "galerias_da_usina",
@@ -934,6 +936,437 @@
         "falas",
         "visual"
       ]
+    },
+    {
+      "id": "gafanhoto_da_safra",
+      "name": "Gafanhoto da Safra",
+      "description": "Come acima da cota e não responde a nenhuma comissão. Vem em nuvem, porque sozinho ninguém dá quórum.",
+      "tier": "normal",
+      "nivel": 6,
+      "regioes": [
+        "planalto_do_trigo"
+      ],
+      "vida": 30,
+      "ataque": 5,
+      "defesa": 2,
+      "velocidade": 13,
+      "alcance": 1,
+      "comportamento": "enxame",
+      "raioCorpoTiles": 0.3,
+      "bando": {
+        "min": 4,
+        "max": 6
+      },
+      "afixosPossiveis": [
+        "rapido",
+        "explode_ao_morrer"
+      ],
+      "tabelaSaque": "loot_normal",
+      "xp": 5,
+      "ataqueBasico": "gafanhoto_da_safra_mordida",
+      "habilidades": [
+        "gafanhoto_da_safra_revoada"
+      ],
+      "falas": {
+        "aoAparecer": [
+          "Bzzz... cota? Que cota?"
+        ]
+      },
+      "visual": "Gafanhoto do tamanho de um gato, com um crachá da comissão grudado na asa.",
+      "sugestao": true
+    },
+    {
+      "id": "espantalho_benzido",
+      "name": "Espantalho Benzido",
+      "description": "A comissão benzeu os espantalhos para vigiar a cota. Benzeu demais: agora vigiam quem passa e cobram ata.",
+      "tier": "normal",
+      "nivel": 7,
+      "regioes": [
+        "planalto_do_trigo"
+      ],
+      "vida": 110,
+      "ataque": 8,
+      "defesa": 9,
+      "velocidade": 7,
+      "alcance": 1,
+      "comportamento": "corpo_a_corpo",
+      "raioCorpoTiles": 0.45,
+      "bando": {
+        "min": 2,
+        "max": 3
+      },
+      "afixosPossiveis": [
+        "blindado",
+        "rapido"
+      ],
+      "tabelaSaque": "loot_normal",
+      "xp": 16,
+      "ataqueBasico": "espantalho_benzido_vassourada",
+      "habilidades": [
+        "espantalho_benzido_benzimento_torto"
+      ],
+      "falas": {
+        "aoAparecer": [
+          "Quem autorizou essa colheita?"
+        ],
+        "aoCair": [
+          "Registra... em... ata..."
+        ]
+      },
+      "visual": "Espantalho de palha com chapéu de comissão, braçadeira e um galho de arruda no bolso.",
+      "sugestao": true
+    },
+    {
+      "id": "fiscal_da_cota",
+      "name": "Fiscal da Cota",
+      "description": "Mede o trigo, o vizinho e o tamanho da sua fome. O relatório sai em três vias, e nenhuma volta.",
+      "tier": "normal",
+      "nivel": 8,
+      "regioes": [
+        "planalto_do_trigo"
+      ],
+      "vida": 75,
+      "ataque": 9,
+      "defesa": 6,
+      "velocidade": 9,
+      "alcance": 3,
+      "comportamento": "a_distancia",
+      "raioCorpoTiles": 0.4,
+      "bando": {
+        "min": 2,
+        "max": 3
+      },
+      "afixosPossiveis": [
+        "rapido",
+        "blindado",
+        "cura_os_outros"
+      ],
+      "tabelaSaque": "loot_normal",
+      "xp": 17,
+      "ataqueBasico": "fiscal_da_cota_regua",
+      "habilidades": [
+        "fiscal_da_cota_corte_na_cota",
+        "fiscal_da_cota_multa"
+      ],
+      "falas": {
+        "aoAparecer": [
+          "Isso aí passou da cota, companheiro."
+        ],
+        "aoCair": [
+          "A cota... era de todos..."
+        ]
+      },
+      "visual": "Colete de comissão, régua de madeira de dois metros e um saco de trigo que ninguém sabe de quem é.",
+      "sugestao": true
+    },
+    {
+      "id": "espantalho_mor",
+      "name": "O Espantalho-Mor",
+      "description": "O espantalho mais antigo do Planalto leu o estatuto da Comissão da Colheita e se elegeu presidente vitalício. A pauta é ele.",
+      "tier": "chefe",
+      "nivel": 9,
+      "regioes": [
+        "planalto_do_trigo"
+      ],
+      "vida": 1600,
+      "ataque": 11,
+      "defesa": 10,
+      "velocidade": 8,
+      "alcance": 1,
+      "comportamento": "corpo_a_corpo",
+      "raioCorpoTiles": 0.8,
+      "bando": {
+        "min": 1,
+        "max": 1
+      },
+      "afixosPossiveis": [],
+      "tabelaSaque": "loot_chefe",
+      "xp": 350,
+      "ataqueBasico": "espantalho_mor_foicada",
+      "habilidades": [
+        "espantalho_mor_rodamoinho_de_palha",
+        "espantalho_mor_chamado_da_cota",
+        "espantalho_mor_mandato_vitalicio"
+      ],
+      "fases": [
+        {
+          "id": "abertura_da_sessao",
+          "name": "Abertura da Sessão",
+          "vidaAbaixoPct": 100,
+          "habilidades": [
+            "espantalho_mor_rodamoinho_de_palha"
+          ],
+          "fala": "Está aberta a sessão. A pauta sou eu.",
+          "sugestao": true
+        },
+        {
+          "id": "votacao_simbolica",
+          "name": "Votação Simbólica",
+          "vidaAbaixoPct": 65,
+          "habilidades": [
+            "espantalho_mor_rodamoinho_de_palha",
+            "espantalho_mor_chamado_da_cota"
+          ],
+          "reforcos": [
+            {
+              "inimigo": "gafanhoto_da_safra",
+              "quantidade": 4
+            }
+          ],
+          "fala": "Quem estiver de acordo permaneça como está. Aprovado.",
+          "sugestao": true
+        },
+        {
+          "id": "mandato_vitalicio",
+          "name": "Mandato Vitalício",
+          "vidaAbaixoPct": 30,
+          "habilidades": [
+            "espantalho_mor_rodamoinho_de_palha",
+            "espantalho_mor_chamado_da_cota",
+            "espantalho_mor_mandato_vitalicio"
+          ],
+          "reforcos": [
+            {
+              "inimigo": "espantalho_benzido",
+              "quantidade": 1
+            }
+          ],
+          "reforcosACadaS": 20,
+          "fala": "Prorrogo meu mandato até a próxima colheita. E a próxima.",
+          "sugestao": true
+        }
+      ],
+      "controleViraLentidaoPct": 40,
+      "vidaPorJogadorExtraPct": 50,
+      "falas": {
+        "aoAparecer": [
+          "Quem pediu a palavra? Ninguém. Ótimo."
+        ],
+        "aoCair": [
+          "Sessão... suspensa... por falta... de quórum..."
+        ],
+        "aoDerrotarJogador": [
+          "Encaminhado para a comissão de recursos."
+        ]
+      },
+      "visual": "Espantalho alto de palha velha, faixa de presidente, foice cerimonial e uma coroa de trigo seco.",
+      "sugestao": true
+    },
+    {
+      "id": "rato_de_duto",
+      "name": "Rato de Duto",
+      "description": "Mora nos dutos das fábricas e rói o cabo. A culpa sai no relatório do turno da noite.",
+      "tier": "normal",
+      "nivel": 6,
+      "regioes": [
+        "vale_das_chamines"
+      ],
+      "vida": 28,
+      "ataque": 5,
+      "defesa": 2,
+      "velocidade": 14,
+      "alcance": 1,
+      "comportamento": "enxame",
+      "raioCorpoTiles": 0.3,
+      "bando": {
+        "min": 4,
+        "max": 6
+      },
+      "afixosPossiveis": [
+        "rapido",
+        "explode_ao_morrer"
+      ],
+      "tabelaSaque": "loot_normal",
+      "xp": 5,
+      "ataqueBasico": "rato_de_duto_mordida",
+      "habilidades": [
+        "rato_de_duto_guincho"
+      ],
+      "falas": {
+        "aoAparecer": [
+          "Iiii!"
+        ]
+      },
+      "visual": "Rato cinza de rabo pelado, com uma máscara de ar pequena demais e um fio roído na boca.",
+      "sugestao": true
+    },
+    {
+      "id": "robo_de_linha",
+      "name": "Robô de Linha",
+      "description": "Robô de montagem que aprendeu a fazer hora extra sozinho e não aceita ser desligado antes de bater a meta.",
+      "tier": "normal",
+      "nivel": 7,
+      "regioes": [
+        "vale_das_chamines"
+      ],
+      "vida": 120,
+      "ataque": 8,
+      "defesa": 10,
+      "velocidade": 7,
+      "alcance": 1,
+      "comportamento": "corpo_a_corpo",
+      "raioCorpoTiles": 0.45,
+      "bando": {
+        "min": 2,
+        "max": 3
+      },
+      "afixosPossiveis": [
+        "blindado",
+        "rapido"
+      ],
+      "tabelaSaque": "loot_normal",
+      "xp": 16,
+      "ataqueBasico": "robo_de_linha_prensa",
+      "habilidades": [
+        "robo_de_linha_parafusadeira",
+        "robo_de_linha_hora_extra"
+      ],
+      "falas": {
+        "aoAparecer": [
+          "META. NÃO. BATIDA."
+        ],
+        "aoCair": [
+          "Bater... o... ponto..."
+        ]
+      },
+      "visual": "Braço mecânico amarelo de fábrica com esteira no lugar dos pés e um contador de peças piscando.",
+      "sugestao": true
+    },
+    {
+      "id": "supervisor_de_meta",
+      "name": "Supervisor de Meta",
+      "description": "Supervisiona a meta, o café e o tempo de banheiro. Somos uma família, e ele é o tio que cobra.",
+      "tier": "normal",
+      "nivel": 8,
+      "regioes": [
+        "vale_das_chamines"
+      ],
+      "vida": 80,
+      "ataque": 8,
+      "defesa": 7,
+      "velocidade": 9,
+      "alcance": 3,
+      "comportamento": "suporte",
+      "raioCorpoTiles": 0.4,
+      "bando": {
+        "min": 2,
+        "max": 3
+      },
+      "afixosPossiveis": [
+        "rapido",
+        "blindado",
+        "cura_os_outros"
+      ],
+      "tabelaSaque": "loot_normal",
+      "xp": 17,
+      "ataqueBasico": "supervisor_de_meta_caneta_laser",
+      "habilidades": [
+        "supervisor_de_meta_feedback_construtivo",
+        "supervisor_de_meta_meta_dobrada"
+      ],
+      "falas": {
+        "aoAparecer": [
+          "Vamos alinhar as expectativas?"
+        ],
+        "aoCair": [
+          "Vou... levar... pro RH..."
+        ]
+      },
+      "visual": "Camisa social com crachá, tablet com gráfico, caneta laser e um apito de chão de fábrica.",
+      "sugestao": true
+    },
+    {
+      "id": "relogio_de_ponto",
+      "name": "O Relógio de Ponto",
+      "description": "O relógio de ponto do Vale ganhou autonomia e desconta o atraso de quem passa na frente dele, inclusive o seu.",
+      "tier": "chefe",
+      "nivel": 9,
+      "regioes": [
+        "vale_das_chamines"
+      ],
+      "vida": 1600,
+      "ataque": 11,
+      "defesa": 10,
+      "velocidade": 7,
+      "alcance": 3,
+      "comportamento": "a_distancia",
+      "raioCorpoTiles": 0.9,
+      "bando": {
+        "min": 1,
+        "max": 1
+      },
+      "afixosPossiveis": [],
+      "tabelaSaque": "loot_chefe",
+      "xp": 350,
+      "ataqueBasico": "relogio_de_ponto_batida",
+      "habilidades": [
+        "relogio_de_ponto_desconto_em_folha",
+        "relogio_de_ponto_banco_de_horas",
+        "relogio_de_ponto_turno_dobrado"
+      ],
+      "fases": [
+        {
+          "id": "expediente",
+          "name": "Expediente",
+          "vidaAbaixoPct": 100,
+          "habilidades": [
+            "relogio_de_ponto_desconto_em_folha"
+          ],
+          "fala": "Bom dia, colaborador. Você está 3 minutos atrasado.",
+          "sugestao": true
+        },
+        {
+          "id": "banco_de_horas",
+          "name": "Banco de Horas",
+          "vidaAbaixoPct": 65,
+          "habilidades": [
+            "relogio_de_ponto_desconto_em_folha",
+            "relogio_de_ponto_banco_de_horas"
+          ],
+          "reforcos": [
+            {
+              "inimigo": "robo_de_linha",
+              "quantidade": 2
+            }
+          ],
+          "fala": "Seu banco de horas está negativo. Iniciando cobrança.",
+          "sugestao": true
+        },
+        {
+          "id": "turno_dobrado",
+          "name": "Turno Dobrado",
+          "vidaAbaixoPct": 30,
+          "habilidades": [
+            "relogio_de_ponto_desconto_em_folha",
+            "relogio_de_ponto_banco_de_horas",
+            "relogio_de_ponto_turno_dobrado"
+          ],
+          "reforcos": [
+            {
+              "inimigo": "supervisor_de_meta",
+              "quantidade": 1
+            }
+          ],
+          "reforcosACadaS": 20,
+          "fala": "Turno dobrado autorizado. Pela família.",
+          "sugestao": true
+        }
+      ],
+      "controleViraLentidaoPct": 40,
+      "vidaPorJogadorExtraPct": 50,
+      "falas": {
+        "aoAparecer": [
+          "Bata o ponto. Bata o ponto. BATA O PONTO."
+        ],
+        "aoCair": [
+          "Ponto... registrado... às... vinte e..."
+        ],
+        "aoDerrotarJogador": [
+          "Falta não justificada."
+        ]
+      },
+      "visual": "Relógio de ponto do tamanho de uma geladeira, com pernas de esteira, leitor de crachá piscando vermelho e um rolo de cartão de ponto saindo.",
+      "sugestao": true
     }
   ]
 }
