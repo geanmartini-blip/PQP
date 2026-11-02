@@ -20,6 +20,7 @@ export * from './ranks';
 export * from './guides';
 export * from './trainers';
 export * from './ala';
+export * from './trocaDeLado';
 export * from './talents';
 export * from './institutions';
 export * from './combatKit';

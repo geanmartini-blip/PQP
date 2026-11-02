@@ -22,7 +22,9 @@ O que falta depende dos autores ou de aparelho: ver PENDENTE.md. Para rodar, ver
 ### v0.4: early game mais longo, com áreas e missões novas — CONCLUÍDA (falta o push)
 Pronto: os 3 mapas, 8 inimigos (2 chefes), 30 missões, 3 NPCs, a faixa de XP do 5 ao 10, a arte
 do PixelLab e `test/v04.test.ts` (as missões cabem nos mapas e as cadeias se jogam até o fim). Detalhe
-em DECISIONS.md. Versão 0.4.0. Próximo passo: o chão das Galerias e a troca de lado.
+em DECISIONS.md. Versão 0.4.0. Depois, na mesma versão: o chão das Galerias no PixelLab, a troca de
+lado com o Seu Jacó (`game/trocaDeLado.ts`) e uma folha por boneco (o jogo abre bem mais rápido).
+Próximo passo: o push (é do usuário) e, com as gerações de dezembro, a arte que falta.
 Meta: umas 2 horas até o nível 10, com algo para fazer em cada nível. Plano:
 1. Mapas novos: Planalto do Trigo (acima da Esquerda, 6 a 10), Vale das Chaminés (abaixo da
    Direita, 6 a 10) e Ilha do Farol (no rio, neutra, 9 a 12, pequena), com saídas a partir das margens.

@@ -5,7 +5,23 @@
  */
 import { describe, expect, it } from 'vitest';
 import { getData } from '../src/data';
-import { acceptMission, createCharacter, defaultAppearance, newPlayerRecord, onGameEvent, setFlag, type GameEvent, type PlayerRecord } from '../src/game';
+import {
+  acceptMission,
+  createCharacter,
+  defaultAppearance,
+  destinoDaTroca,
+  dialogOption,
+  dialogOptions,
+  FLAG_TROCA_LIBERADA,
+  newPlayerRecord,
+  onGameEvent,
+  podeTrocarDeLado,
+  setFlag,
+  temporadaDe,
+  trocarDeLado,
+  type GameEvent,
+  type PlayerRecord,
+} from '../src/game';
 import { hasFlag } from '../src/game/flags';
 import { xpToNextLevel } from '../src/game/progression';
 import { getMap, listMaps } from '../src/map/registry';
@@ -107,5 +123,50 @@ describe('v0.4: curva de XP', () => {
     expect(xpToNextLevel(4)).toBe(Math.round(base(4)));
     for (let n = 5; n <= 10; n++) expect(xpToNextLevel(n)).toBe(Math.round(base(n) * 1.5));
     expect(xpToNextLevel(11)).toBe(Math.round(base(11)));
+  });
+});
+
+describe('v0.4: troca de lado', () => {
+  function veterano(): PlayerRecord {
+    const rec = personagem('esquerda', 19);
+    rec.institution = 'brigada_popular';
+    rec.class = 'combatente';
+    rec.archetype = 'peao_brabo';
+    rec.rank = 'membro';
+    rec.home_id = 'casa_teste';
+    for (const f of ['entrou_brigada_popular']) setFlag(rec, f);
+    return rec;
+  }
+
+  it('só depois da cabeceira; leva para a instituição da mesma classe e para a ala par', () => {
+    const rec = veterano();
+    expect(podeTrocarDeLado(rec, 1).ok).toBe(false);
+    setFlag(rec, FLAG_TROCA_LIBERADA);
+    expect(destinoDaTroca(rec)).toEqual({ side: 'direita', institution: 'torcida_furia_neon', archetype: 'sumo_cibernetico' });
+    expect(dialogOptions(rec, 'seu_jaco', { temporada: 1 }).some((o) => o.id === 'trocar_lado')).toBe(true);
+    expect(dialogOption(rec, 'seu_jaco', 'trocar_lado', { temporada: 1 }).ok).toBe(true);
+    expect(rec.side).toBe('direita');
+    expect(rec.institution).toBe('torcida_furia_neon');
+    expect(rec.class).toBe('combatente');
+    expect(rec.archetype).toBe('sumo_cibernetico');
+    expect(rec.level).toBe(19);
+    expect(rec.home_id).toBeNull();
+    expect(rec.rank).toBe(D.societies.sociedades.find((s) => s.side === 'direita')!.patentes[0]!.id);
+    expect(D.guidesById.get(rec.guide_id!)!.margem).toBe('direita');
+    expect(hasFlag(rec, 'margem_direita')).toBe(true);
+    expect(hasFlag(rec, 'margem_esquerda')).toBe(false);
+    expect(hasFlag(rec, 'entrou_torcida_furia_neon')).toBe(true);
+    expect(hasFlag(rec, 'trocou_de_lado')).toBe(true);
+  });
+
+  it('uma vez por temporada; na seguinte, volta para a ala de antes', () => {
+    const rec = veterano();
+    setFlag(rec, FLAG_TROCA_LIBERADA);
+    expect(trocarDeLado(rec, temporadaDe(Date.UTC(2026, 10, 2))).ok).toBe(true);
+    expect(trocarDeLado(rec, temporadaDe(Date.UTC(2026, 10, 30))).ok).toBe(false);
+    expect(dialogOptions(rec, 'seu_jaco', { temporada: temporadaDe(Date.UTC(2026, 10, 30)) }).some((o) => o.id === 'trocar_lado')).toBe(false);
+    expect(trocarDeLado(rec, temporadaDe(Date.UTC(2026, 11, 1))).ok).toBe(true);
+    expect(rec.side).toBe('esquerda');
+    expect(rec.archetype).toBe('peao_brabo');
   });
 });

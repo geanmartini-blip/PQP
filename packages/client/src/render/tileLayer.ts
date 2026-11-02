@@ -164,8 +164,9 @@ export function buildTileLayer(scene: Phaser.Scene, map: TileMap): TileLayerView
   const H = map.height;
   const tex = scene.textures.get(TILE_KEY);
   const srcImg = tex.getSourceImage() as HTMLCanvasElement | HTMLImageElement;
-  // v0.3: chão do PixelLab (a água já vem desenhada, sem o brilho procedural por cima)
-  const plChao = !dungeon && usaPlChao(scene, map);
+  // v0.3: chão do PixelLab (a água já vem desenhada, sem o brilho procedural por cima); v0.4: as
+  // Galerias também
+  const plChao = usaPlChao(scene, map);
   const plMato = plChao && temPlMato(scene);
 
   // ---------------- camada animada

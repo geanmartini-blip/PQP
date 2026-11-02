@@ -5,10 +5,10 @@ O jogo mostra a seção da versão atual uma vez, na primeira abertura depois de
 
 ## v0.4
 - Três áreas novas: o Planalto do Trigo, o Vale das Chaminés e a Ilha do Farol.
-- Duas histórias novas do 6 ao 9: A Colheita, na Esquerda, e O Turno da Noite, na Direita.
+- Histórias novas do 6 ao 9, com chefe: A Colheita, na Esquerda, e O Turno da Noite, na Direita.
 - Mais missões: 5 no Delta, uma por instituição, bicos repetíveis e O Sinal da Eco no nível 10.
-- Dois chefes novos: o Espantalho-Mor e o Relógio de Ponto.
-- Do 5 ao 10 cada nível pede mais experiência, e o começo do jogo dura mais.
+- No nível 19, o Seu Jacó leva você para o outro lado: troca de lado, uma vez por mês.
+- O jogo abre mais rápido, as Galerias têm chão novo e do 5 ao 10 cada nível pede mais experiência.
 
 ## v0.3
 - Jornada nova: o Bruno Ferro chega no nível 4, a balsa é no 5 e a ala no 10.

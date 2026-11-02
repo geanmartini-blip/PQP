@@ -1,9 +1,10 @@
 /**
- * Bonecos do PixelLab (revisão visual v3, v0.3). Os quadros ficam em public/pl/<pasta>/:
- * andar em <dir>_<i>.png e golpe em golpe_<dir>_<i>.png, recortados por tools/art/pl-boneco.mjs a
- * partir do download do personagem. A folha monta os mesmos quadros do contrato
- * (`${anim}_${dir}_${i}`) para o EntityView não saber de onde veio: parado usa o 1º passo, e o
- * básico, a habilidade e o Especial usam o golpe.
+ * Bonecos do PixelLab (revisão visual v3, v0.3). Cada boneco é uma folha só em
+ * public/pl/<pasta>/folha.png (v0.4: tools/art/pl-folhas.mjs junta os quadros que o
+ * tools/art/pl-boneco.mjs recorta em art-src/pl), com o tamanho e a contagem em plBonecos.json:
+ * linhas 0 a 3 = andar (sul, oeste, norte, leste), 4 a 7 = golpe. A folha do contrato
+ * (`${anim}_${dir}_${i}`) sai dela para o EntityView não saber de onde veio: parado usa o 1º passo,
+ * e o básico, a habilidade e o Especial usam o golpe. Boneco de um quadro por direção fica parado.
  *
  * v0.3: o jogador sem o conjunto da classe completo é o boneco base; com as 5 peças, vira o boneco
  * da ala (o do líder), quando a ala já tem um.
@@ -11,6 +12,10 @@
 import * as Phaser from 'phaser';
 import { ANIMS, type AnimName, type CharacterLook } from './contract';
 import { registerSheet } from './index';
+import FOLHAS from './plBonecos.json';
+
+/** tamanho do quadro e quantos quadros de andar e de golpe cada folha tem */
+const PL_FOLHAS: Record<string, { w: number; h: number; andar: number; golpe: number }> = FOLHAS;
 
 /** Arquétipo → pasta em public/pl/. */
 export const PL_ARCHETYPES: Record<string, string> = {
@@ -45,7 +50,6 @@ export const PL_BASE = 'base';
 /** dir do contrato: 0 baixo, 1 esquerda, 2 cima, 3 direita */
 const DIR_NAMES = ['south', 'west', 'north', 'east'] as const;
 const WALK = 6;
-const GOLPE = 6;
 /** quadros do golpe usados por animação do contrato (preparo, soco, volta) */
 const GOLPE_DE: Partial<Record<AnimName, readonly number[]>> = {
   basico: [1, 2, 3],
@@ -55,22 +59,14 @@ const GOLPE_DE: Partial<Record<AnimName, readonly number[]>> = {
 /** o boneco do PixelLab tem ~97 px de altura; no mundo, o boneco tem 48 */
 const PL_SCALE = 0.5;
 
-const frameKey = (f: string, d: string, i: number) => `pl_${f}_${d}_${i}`;
-const golpeKey = (f: string, d: string, i: number) => `pl_${f}_golpe_${d}_${i}`;
+const folhaKey = (f: string) => `pl_${f}_folha`;
 
-/** Põe na fila de carga os quadros de todos os bonecos do PixelLab (chamar no preload). */
+/** Põe na fila de carga a folha de cada boneco do PixelLab e o desenho de cada bicho (chamar no preload). */
 export function preloadPixellab(scene: Phaser.Scene): void {
   const base = import.meta.env.BASE_URL;
   for (const f of PL_BICHOS) scene.load.image(`pl_${f}_obj`, `${base}pl/${f}/obj.png`);
   const bonecos = new Set([...Object.values(PL_ARCHETYPES), PL_BASE, ...Object.values(PL_NPCS), ...Object.values(PL_INIMIGOS)]);
-  for (const f of bonecos) {
-    if (PL_BICHOS.has(f)) continue;
-    const parado = PL_PARADOS.has(f);
-    for (const d of DIR_NAMES) {
-      for (let i = 0; i < (parado ? 1 : WALK); i++) scene.load.image(frameKey(f, d, i), `${base}pl/${f}/${d}_${i}.png`);
-      if (!parado && !PL_SEM_GOLPE.has(f)) for (let i = 0; i < GOLPE; i++) scene.load.image(golpeKey(f, d, i), `${base}pl/${f}/golpe_${d}_${i}.png`);
-    }
-  }
+  for (const f of bonecos) if (!PL_BICHOS.has(f) && PL_FOLHAS[f]) scene.load.image(folhaKey(f), `${base}pl/${f}/folha.png`);
 }
 
 /** Pasta do boneco do PixelLab para este visual de jogador (ala com conjunto completo, senão o base). */
@@ -138,14 +134,6 @@ export const PL_INIMIGOS: Record<string, string> = {
   relogio_de_ponto: 'relogio',
 };
 const PL_BICHOS: ReadonlySet<string> = new Set(['siri', 'mosquito', 'drone', 'turbina', 'enguia', 'cobra', 'cao', 'bomba', 'gafanhoto', 'rato', 'relogio']);
-/** NPCs que não lutam: só o andar */
-const PL_SEM_GOLPE: ReadonlySet<string> = new Set(['jaco', 'toninho', 'vendedor', 'chopindita']);
-/** NPCs das margens, da Usina e do Juncal: só as 4 direções, sem andar nem golpe (ficam no lugar) */
-const PL_PARADOS: ReadonlySet<string> = new Set(
-  Object.values(PL_NPCS).filter(
-    (f) => !['jaco', 'bruno', 'toninho', 'vendedor', 'chopindita'].includes(f) && !Object.values(PL_ARCHETYPES).includes(f),
-  ),
-);
 
 /** Folha do PixelLab de um NPC ou inimigo, ou undefined se ele não tem (ou ainda não carregou). */
 export function pixellabEntSheet(scene: Phaser.Scene, kind: 'npc' | 'inimigo', id: string): string | undefined {
@@ -180,24 +168,15 @@ function folhaBicho(scene: Phaser.Scene, f: string): string | undefined {
 function folhaBoneco(scene: Phaser.Scene, f: string): string | undefined {
   const key = `pl_${f}`;
   if (scene.textures.exists(key)) return key;
-  if (!scene.textures.exists(frameKey(f, 'south', 0))) return undefined;
-  const s0 = scene.textures.get(frameKey(f, 'south', 0)).getSourceImage() as HTMLImageElement;
-  const w = s0.width, h = s0.height;
-  const tex = scene.textures.createCanvas(key, w * Math.max(WALK, GOLPE), h * DIR_NAMES.length * 2);
+  const info = PL_FOLHAS[f];
+  if (!info || !scene.textures.exists(folhaKey(f))) return undefined;
+  const folha = scene.textures.get(folhaKey(f)).getSourceImage() as HTMLImageElement;
+  const { w, h } = info;
+  const tex = scene.textures.createCanvas(key, folha.width, folha.height);
   if (!tex) return undefined;
-  const ctx = tex.getContext();
-  const temGolpe = scene.textures.exists(golpeKey(f, 'south', 0));
-  const temAndar = scene.textures.exists(frameKey(f, 'south', 1));
-  DIR_NAMES.forEach((d, dir) => {
-    for (let i = 0; i < WALK; i++) {
-      const k = frameKey(f, d, i);
-      if (scene.textures.exists(k)) ctx.drawImage(scene.textures.get(k).getSourceImage() as HTMLImageElement, i * w, dir * h);
-    }
-    for (let i = 0; i < GOLPE && temGolpe; i++) {
-      const k = golpeKey(f, d, i);
-      if (scene.textures.exists(k)) ctx.drawImage(scene.textures.get(k).getSourceImage() as HTMLImageElement, i * w, (DIR_NAMES.length + dir) * h);
-    }
-  });
+  tex.getContext().drawImage(folha, 0, 0);
+  const temGolpe = info.golpe >= 6;
+  const temAndar = info.andar > 1;
   const anims: Partial<Record<AnimName, number>> = {};
   for (const anim of Object.keys(ANIMS) as AnimName[]) {
     anims[anim] = ANIMS[anim];

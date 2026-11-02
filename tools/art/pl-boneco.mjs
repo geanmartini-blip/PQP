@@ -1,7 +1,8 @@
 // Leva um boneco do PixelLab para o jogo: lê o zip já extraído (o "download" do personagem:
 // <pasta>/<Estado>/animations/<anim>/<dir>/frame_00i.png), recorta todos os quadros de andar e golpe
-// no mesmo retângulo (a união do conteúdo, para os pés não pularem) e grava em
-// packages/client/public/pl/<boneco>/: andar como <dir>_<i>.png e golpe como golpe_<dir>_<i>.png.
+// no mesmo retângulo (a união do conteúdo, para os pés não pularem) e grava em art-src/pl/<boneco>/:
+// andar como <dir>_<i>.png e golpe como golpe_<dir>_<i>.png. Depois, tools/art/pl-folhas.mjs junta
+// tudo na folha que o jogo baixa (public/pl/<boneco>/folha.png).
 // Uso: node tools/art/pl-boneco.mjs <pasta extraída> <boneco>
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -11,7 +12,7 @@ const [SRC, BONECO] = process.argv.slice(2);
 if (!SRC || !BONECO) throw new Error('uso: node tools/art/pl-boneco.mjs <pasta extraída> <boneco>');
 const estado = readdirSync(SRC).find((f) => existsSync(join(SRC, f, 'animations'))) ?? readdirSync(SRC).find((f) => existsSync(join(SRC, f, 'rotations')));
 const ANIM = join(SRC, estado, 'animations');
-const OUT = `packages/client/public/pl/${BONECO}`;
+const OUT = `art-src/pl/${BONECO}`;
 const DIRS = ['south', 'west', 'north', 'east'];
 
 const imgs = [];

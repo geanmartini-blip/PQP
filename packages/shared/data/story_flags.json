@@ -510,6 +510,13 @@
     "sugestao": true
   },
   {
+    "id": "trocou_de_lado",
+    "descricao": "Trocou de lado com o Seu Jacó: mesma classe, a instituição e a ala da outra margem.",
+    "escopo": "jogador",
+    "emPiloto": true,
+    "sugestao": true
+  },
+  {
     "id": "conjunto_da_classe_completo",
     "descricao": "Ganhou a última peça do conjunto da classe na cabeceira da Ponte.",
     "escopo": "jogador",

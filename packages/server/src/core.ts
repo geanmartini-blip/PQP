@@ -138,7 +138,8 @@ import { newPlayerRecord, profileOf, simKitOf } from '@pqp/shared/game/record';
 import { gainXp, isDeltaRookie, simLevelCap } from '@pqp/shared/game/progression';
 import { acceptMission, currentObjectives, missionStatus, onGameEvent } from '@pqp/shared/game/missions';
 import { controlesLiberados, TUTORIAL_STEPS } from '@pqp/shared/game/tutorial';
-import { dialogOption, dialogOptions, talkTo, type Dialog } from '@pqp/shared/game/dialog';
+import { dialogOption, dialogOptions, talkTo, type Dialog, type DialogCtx } from '@pqp/shared/game/dialog';
+import { temporadaDe } from '@pqp/shared/game/trocaDeLado';
 import { applyTravessia, createCharacter, travessiaOptions } from '@pqp/shared/game/travessia';
 import { boardBoat, boatButtonOf, boatHold, boatInfo, boatOnCast, boatOnChosen, boatTick, boatWaveSpot, newBoatState, type BoatAction, type BoatState } from '@pqp/shared/game/barco';
 import type { GameEvent, GameResult, Moeda, PermissaoVisita, PlayerRecord, Rotacao } from '@pqp/shared/game/types';
@@ -1591,9 +1592,14 @@ export class GameServerCore implements CityCore {
     this.talk(slot, n.defId);
   }
 
+  /** v0.4: a temporada da troca de lado (o mês, pelo relógio da cidade). */
+  private dialogCtx(): DialogCtx {
+    return { temporada: temporadaDe(this.city.now()) };
+  }
+
   private talk(slot: Slot, npcId: string): void {
     this.pull(slot);
-    const t = talkTo(slot.rec, npcId);
+    const t = talkTo(slot.rec, npcId, this.dialogCtx());
     slot.lastDialog = t.dialogo;
     this.send(slot.sid, GAME_MSG.dialogo, t.dialogo satisfies S2C_Dialogo);
     this.applyResult(slot, t.resultado);
@@ -1613,7 +1619,7 @@ export class GameServerCore implements CityCore {
       this.onBoatOption(slot, e);
       return;
     }
-    const res = dialogOption(slot.rec, guia ? 'guia' : npcId, opcao);
+    const res = dialogOption(slot.rec, guia ? 'guia' : npcId, opcao, this.dialogCtx());
     if (!res.ok) {
       this.aviso(slot.sid!, res.erro ?? 'Opção indisponível.');
       return;
@@ -1621,7 +1627,7 @@ export class GameServerCore implements CityCore {
     this.applyResult(slot, res.resultado);
     if (opcao === 'tchau') return;
     const base: Dialog = slot.lastDialog && slot.lastDialog.npc === npcId ? slot.lastDialog : { npc: npcId, nome: npcId, contexto: 'opcao', fala: '', opcoes: [] };
-    const d: S2C_Dialogo = { ...base, opcoes: dialogOptions(slot.rec, npcId) };
+    const d: S2C_Dialogo = { ...base, opcoes: dialogOptions(slot.rec, npcId, this.dialogCtx()) };
     if (res.abrir) d.abrir = res.abrir;
     slot.lastDialog = { ...base, opcoes: d.opcoes };
     this.send(slot.sid, GAME_MSG.dialogo, d);

@@ -15,9 +15,15 @@ import { FLAG_BRUNO } from './progression';
 import { FLAG_EMBARCOU } from './barco';
 import { canCross, travessiaOptions, type TravessiaOptions } from './travessia';
 import { canUseMachine } from './visual';
+import { destinoDaTroca, podeTrocarDeLado, trocarDeLado } from './trocaDeLado';
 import { emptyResult, mergeResult, type GameResult, type PlayerRecord } from './types';
 
-export type DialogOptionKind = 'aceitar_missao' | 'escolha' | 'maquina_visual' | 'travessia' | 'tchau' | 'escolher_ala';
+export type DialogOptionKind = 'aceitar_missao' | 'escolha' | 'maquina_visual' | 'travessia' | 'tchau' | 'escolher_ala' | 'trocar_lado';
+
+/** O que a conversa precisa saber de fora da regra (a temporada da troca de lado, pelo relógio de quem chama). */
+export interface DialogCtx {
+  temporada?: number;
+}
 
 export interface DialogOption {
   /** id que o cliente devolve em dialogo_opcao: 'aceitar:<missão>', 'escolha:<opção>', 'maquina:<id>', 'travessia', 'ala:<arquétipo>', 'tchau' */
@@ -86,7 +92,7 @@ function nextLine(rec: PlayerRecord, npcId: string, ctx: string, lines: readonly
 }
 
 /** Opções da conversa com este NPC agora. */
-export function dialogOptions(rec: PlayerRecord, npcId: string): DialogOption[] {
+export function dialogOptions(rec: PlayerRecord, npcId: string, ctx: DialogCtx = {}): DialogOption[] {
   const D = getData();
   const out: DialogOption[] = [];
   for (const m of availableMissions(rec, npcId)) out.push({ id: `aceitar:${m.id}`, tipo: 'aceitar_missao', texto: `Aceitar: ${m.name}` });
@@ -100,6 +106,12 @@ export function dialogOptions(rec: PlayerRecord, npcId: string): DialogOption[] 
   // no Delta embarca; já no barco, abre a escolha da margem (o servidor decide pela sala)
   // SUGESTÃO: texto do botão de escolher a margem no barco.
   if (npcId === 'seu_jaco' && canCross(rec).ok) out.push({ id: 'travessia', tipo: 'travessia', texto: hasFlag(rec, FLAG_EMBARCOU) ? 'Escolher a margem' : 'Embarcar na travessia' });
+  // v0.4: depois da cabeceira, o Seu Jacó leva para o outro lado (uma vez por temporada)
+  if (npcId === 'seu_jaco' && podeTrocarDeLado(rec, ctx.temporada ?? -1).ok) {
+    const d = destinoDaTroca(rec)!;
+    // SUGESTÃO: texto do botão de trocar de lado.
+    out.push({ id: 'trocar_lado', tipo: 'trocar_lado', texto: `Trocar de lado: ${D.institutionsById.get(d.institution)?.name ?? d.institution}, na Margem ${d.side === 'esquerda' ? 'Esquerda' : 'Direita'}` });
+  }
   // Fase 3: quem recebe a base apresenta as 3 alas; cada treinador da instituição oferece a dele
   const tr = D.trainersById.get(npcId);
   if (tr && tr.institution === rec.institution && canChooseArchetype(rec).ok) {
@@ -119,7 +131,7 @@ export function dialogOptions(rec: PlayerRecord, npcId: string): DialogOption[] 
  * Fala com o NPC: conta como evento 'talk' (avança objetivos de falar) e devolve a fala e as
  * opções do estado depois do evento. Distância e linha de visão são do servidor (commands.ts).
  */
-export function talkTo(rec: PlayerRecord, npcId: string): { dialogo: Dialog; resultado: GameResult } {
+export function talkTo(rec: PlayerRecord, npcId: string, ctx: DialogCtx = {}): { dialogo: Dialog; resultado: GameResult } {
   const D = getData();
   // Fase 3: o guia é uma conversa à parte ('guia' ou o id do guia)
   if (guideOf(rec) && isOwnGuide(rec, npcId)) return talkToGuide(rec, npcId);
@@ -154,7 +166,7 @@ export function talkTo(rec: PlayerRecord, npcId: string): { dialogo: Dialog; res
     contexto = (npcId === 'seu_jaco' ? jacoContext(rec, r) : otherContext(rec, npcId, contexts)) ?? 'aleatorias';
     lines = npc.falas.find((f) => f.contexto === contexto)?.linhas ?? npc.falas[0]?.linhas ?? [];
   }
-  return { dialogo: { npc: npcId, nome, contexto, fala: nextLine(rec, npcId, contexto, lines), opcoes: dialogOptions(rec, npcId), ...extra }, resultado: r };
+  return { dialogo: { npc: npcId, nome, contexto, fala: nextLine(rec, npcId, contexto, lines), opcoes: dialogOptions(rec, npcId, ctx), ...extra }, resultado: r };
 }
 
 /** Missão da ala (A Ala) que este treinador dá ou acompanha agora. */
@@ -189,11 +201,15 @@ function talkToGuide(rec: PlayerRecord, npcId: string): { dialogo: Dialog; resul
 export type DialogOpen = { tela: 'maquina_visual'; maquina: string } | { tela: 'travessia'; opcoes: TravessiaOptions };
 
 /** Opção escolhida no diálogo. */
-export function dialogOption(rec: PlayerRecord, npcId: string, opcaoId: string): { ok: boolean; erro?: string; resultado: GameResult; abrir?: DialogOpen } {
+export function dialogOption(rec: PlayerRecord, npcId: string, opcaoId: string, ctx: DialogCtx = {}): { ok: boolean; erro?: string; resultado: GameResult; abrir?: DialogOpen } {
   const r = emptyResult();
-  const opts = dialogOptions(rec, npcId);
+  const opts = dialogOptions(rec, npcId, ctx);
   if (!opts.some((o) => o.id === opcaoId)) return { ok: false, erro: 'Opção indisponível.', resultado: r };
   if (opcaoId === 'tchau') return { ok: true, resultado: r };
+  if (opcaoId === 'trocar_lado') {
+    const t = trocarDeLado(rec, ctx.temporada ?? -1);
+    return t.ok ? { ok: true, resultado: t.resultado } : { ok: false, erro: t.erro, resultado: t.resultado };
+  }
   if (opcaoId === 'travessia') return { ok: true, resultado: r, abrir: { tela: 'travessia', opcoes: travessiaOptions(rec) } };
   const [kind, arg] = [opcaoId.slice(0, opcaoId.indexOf(':')), opcaoId.slice(opcaoId.indexOf(':') + 1)];
   if (kind === 'aceitar') {

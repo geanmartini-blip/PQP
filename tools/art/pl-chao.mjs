@@ -43,6 +43,9 @@ const PARES = [
   // v0.4: o trigo do Planalto
   ['123a9a3f-1d90-49df-82eb-9e7674b9b4c7', 'grama', 'trigo'],
   ['ed748400-950a-4834-88c0-ab5a2e5d4e73', 'terra', 'trigo'],
+  // v0.4: as Galerias da Usina
+  ['f5bbabed-805f-4276-98d8-5943a02359de', 'rasa', 'galeria'],
+  ['ef58af80-6fd8-48ff-8dfc-867bdf7bf177', 'galeria', 'parede_galeria'],
 ];
 const API = 'https://api.pixellab.ai/mcp/tilesets';
 const OUT_IMG = 'packages/client/public/pl/chao';

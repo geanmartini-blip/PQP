@@ -133,6 +133,7 @@ import {
   simKitOf,
   simLevelCap,
   talkTo,
+  temporadaDe,
   travessiaOptions,
   chooseArchetype,
   pickTalent,
@@ -1359,7 +1360,7 @@ export class LocalServer {
         }
         const npc = npcInReach(this.w, p, { ...(typeof c.entity === 'number' ? { entity: c.entity } : {}), ...(typeof c.npcId === 'string' ? { npcId: c.npcId } : {}) });
         if (!npc) return this.aviso('Chegue mais perto para conversar.', 'erro');
-        const t = talkTo(rec, npc.defId);
+        const t = talkTo(rec, npc.defId, { temporada: temporadaDe(this.nowMs()) });
         const d: S2C_Dialogo = t.dialogo;
         this.outbox.push([GAME_MSG.dialogo, d]);
         this.flush(t.resultado, { always: true });
@@ -1379,7 +1380,7 @@ export class LocalServer {
           this.embark();
           break;
         }
-        const r = dialogOption(rec, String(c.npcId), String(c.opcao));
+        const r = dialogOption(rec, String(c.npcId), String(c.opcao), { temporada: temporadaDe(this.nowMs()) });
         if (!r.ok) return this.aviso(r.erro ?? 'Opção indisponível.', 'erro');
         if (r.abrir?.tela === 'travessia') this.outbox.push([GAME_MSG.travessiaOpcoes, r.abrir.opcoes]);
         else if (r.abrir) {

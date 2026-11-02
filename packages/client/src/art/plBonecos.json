@@ -1,0 +1,374 @@
+{
+ "amara_okafor": {
+  "w": 82,
+  "h": 106,
+  "andar": 1,
+  "golpe": 0
+ },
+ "ayaan_quispe": {
+  "w": 80,
+  "h": 101,
+  "andar": 6,
+  "golpe": 6
+ },
+ "base": {
+  "w": 72,
+  "h": 101,
+  "andar": 6,
+  "golpe": 6
+ },
+ "batu": {
+  "w": 88,
+  "h": 109,
+  "andar": 6,
+  "golpe": 7
+ },
+ "bazza": {
+  "w": 90,
+  "h": 99,
+  "andar": 6,
+  "golpe": 7
+ },
+ "benzedeira_do_espelho": {
+  "w": 50,
+  "h": 98,
+  "andar": 1,
+  "golpe": 0
+ },
+ "big_mo": {
+  "w": 100,
+  "h": 106,
+  "andar": 6,
+  "golpe": 7
+ },
+ "brooke": {
+  "w": 96,
+  "h": 100,
+  "andar": 6,
+  "golpe": 6
+ },
+ "bruno": {
+  "w": 96,
+  "h": 116,
+  "andar": 6,
+  "golpe": 6
+ },
+ "cambista_da_ponte": {
+  "w": 74,
+  "h": 101,
+  "andar": 1,
+  "golpe": 0
+ },
+ "capanga": {
+  "w": 94,
+  "h": 107,
+  "andar": 6,
+  "golpe": 6
+ },
+ "chidi": {
+  "w": 100,
+  "h": 102,
+  "andar": 6,
+  "golpe": 7
+ },
+ "chopindita": {
+  "w": 82,
+  "h": 102,
+  "andar": 6,
+  "golpe": 0
+ },
+ "cobrador": {
+  "w": 110,
+  "h": 112,
+  "andar": 6,
+  "golpe": 7
+ },
+ "contrabandista": {
+  "w": 102,
+  "h": 105,
+  "andar": 6,
+  "golpe": 7
+ },
+ "curupira": {
+  "w": 64,
+  "h": 104,
+  "andar": 1,
+  "golpe": 0
+ },
+ "dalva_rocha": {
+  "w": 68,
+  "h": 103,
+  "andar": 1,
+  "golpe": 0
+ },
+ "dev_kumar": {
+  "w": 82,
+  "h": 103,
+  "andar": 6,
+  "golpe": 6
+ },
+ "donna_valentina": {
+  "w": 82,
+  "h": 106,
+  "andar": 6,
+  "golpe": 6
+ },
+ "dusty": {
+  "w": 90,
+  "h": 102,
+  "andar": 6,
+  "golpe": 7
+ },
+ "edson": {
+  "w": 82,
+  "h": 100,
+  "andar": 6,
+  "golpe": 6
+ },
+ "el_relampago": {
+  "w": 82,
+  "h": 100,
+  "andar": 6,
+  "golpe": 6
+ },
+ "entregador_de_app": {
+  "w": 72,
+  "h": 102,
+  "andar": 1,
+  "golpe": 0
+ },
+ "espantalho": {
+  "w": 84,
+  "h": 102,
+  "andar": 6,
+  "golpe": 6
+ },
+ "espantalho_mor": {
+  "w": 106,
+  "h": 98,
+  "andar": 6,
+  "golpe": 6
+ },
+ "faroleiro_aposentado": {
+  "w": 66,
+  "h": 102,
+  "andar": 1,
+  "golpe": 0
+ },
+ "fiscal": {
+  "w": 98,
+  "h": 102,
+  "andar": 6,
+  "golpe": 7
+ },
+ "fiscal_cota": {
+  "w": 100,
+  "h": 104,
+  "andar": 6,
+  "golpe": 7
+ },
+ "funcionario_da_cabine_neon": {
+  "w": 108,
+  "h": 105,
+  "andar": 1,
+  "golpe": 0
+ },
+ "gerente_de_turno": {
+  "w": 70,
+  "h": 103,
+  "andar": 1,
+  "golpe": 0
+ },
+ "idol": {
+  "w": 70,
+  "h": 101,
+  "andar": 6,
+  "golpe": 6
+ },
+ "ilaria_vesta": {
+  "w": 60,
+  "h": 99,
+  "andar": 1,
+  "golpe": 0
+ },
+ "jaco": {
+  "w": 80,
+  "h": 96,
+  "andar": 6,
+  "golpe": 0
+ },
+ "jacques": {
+  "w": 86,
+  "h": 102,
+  "andar": 6,
+  "golpe": 6
+ },
+ "katia": {
+  "w": 82,
+  "h": 104,
+  "andar": 6,
+  "golpe": 6
+ },
+ "kaua_ferreira": {
+  "w": 86,
+  "h": 101,
+  "andar": 6,
+  "golpe": 6
+ },
+ "kenji_albrecht": {
+  "w": 90,
+  "h": 102,
+  "andar": 1,
+  "golpe": 0
+ },
+ "klara_lindqvist": {
+  "w": 50,
+  "h": 100,
+  "andar": 1,
+  "golpe": 0
+ },
+ "klaus": {
+  "w": 112,
+  "h": 97,
+  "andar": 6,
+  "golpe": 6
+ },
+ "lazzaro_prati": {
+  "w": 62,
+  "h": 101,
+  "andar": 1,
+  "golpe": 0
+ },
+ "mateo_silva_park": {
+  "w": 62,
+  "h": 102,
+  "andar": 1,
+  "golpe": 0
+ },
+ "mei_lin_zhao": {
+  "w": 74,
+  "h": 102,
+  "andar": 6,
+  "golpe": 6
+ },
+ "mercenario": {
+  "w": 98,
+  "h": 102,
+  "andar": 6,
+  "golpe": 6
+ },
+ "nayra_sundaram": {
+  "w": 68,
+  "h": 106,
+  "andar": 1,
+  "golpe": 0
+ },
+ "o_sombra": {
+  "w": 56,
+  "h": 102,
+  "andar": 1,
+  "golpe": 0
+ },
+ "olga": {
+  "w": 104,
+  "h": 102,
+  "andar": 6,
+  "golpe": 7
+ },
+ "peao": {
+  "w": 76,
+  "h": 100,
+  "andar": 6,
+  "golpe": 6
+ },
+ "presidenta_da_colheita": {
+  "w": 74,
+  "h": 102,
+  "andar": 1,
+  "golpe": 0
+ },
+ "robo_linha": {
+  "w": 102,
+  "h": 102,
+  "andar": 6,
+  "golpe": 6
+ },
+ "rolf_halvorsen": {
+  "w": 54,
+  "h": 102,
+  "andar": 1,
+  "golpe": 0
+ },
+ "seamus": {
+  "w": 96,
+  "h": 98,
+  "andar": 6,
+  "golpe": 6
+ },
+ "sigrid": {
+  "w": 86,
+  "h": 97,
+  "andar": 6,
+  "golpe": 6
+ },
+ "supervisor": {
+  "w": 98,
+  "h": 99,
+  "andar": 6,
+  "golpe": 7
+ },
+ "takeshi": {
+  "w": 106,
+  "h": 109,
+  "andar": 6,
+  "golpe": 6
+ },
+ "teodoro_rinaldi": {
+  "w": 62,
+  "h": 100,
+  "andar": 1,
+  "golpe": 0
+ },
+ "thalysson": {
+  "w": 100,
+  "h": 104,
+  "andar": 6,
+  "golpe": 6
+ },
+ "tiao": {
+  "w": 70,
+  "h": 100,
+  "andar": 6,
+  "golpe": 6
+ },
+ "toninho": {
+  "w": 112,
+  "h": 107,
+  "andar": 6,
+  "golpe": 0
+ },
+ "vendedor": {
+  "w": 56,
+  "h": 101,
+  "andar": 6,
+  "golpe": 0
+ },
+ "viktor_sahl": {
+  "w": 58,
+  "h": 101,
+  "andar": 1,
+  "golpe": 0
+ },
+ "vizinha_da_bracadeira": {
+  "w": 60,
+  "h": 103,
+  "andar": 1,
+  "golpe": 0
+ },
+ "yusuf_adeyemi": {
+  "w": 78,
+  "h": 103,
+  "andar": 1,
+  "golpe": 0
+ }
+}

@@ -27,7 +27,7 @@ export const PL_CHAO_MAPS: ReadonlySet<string> = new Set([
  * terrenos do PixelLab, do mais baixo ao mais alto (a ordem decide quem é "upper" num vértice; em
  * cada tileset, o lower vem antes do upper nesta lista)
  */
-const ORDEM = ['funda', 'rasa', 'lama', 'areia', 'grama', 'terra', 'trigo', 'asfalto', 'concreto', 'pisoneon', 'madeira', 'parede', 'parede_esq', 'parede_dir'] as const;
+const ORDEM = ['funda', 'rasa', 'lama', 'areia', 'grama', 'terra', 'trigo', 'asfalto', 'concreto', 'pisoneon', 'galeria', 'madeira', 'parede', 'parede_esq', 'parede_dir', 'parede_galeria'] as const;
 type Terreno = (typeof ORDEM)[number];
 const NIVEL: Record<string, number> = Object.fromEntries(ORDEM.map((t, i) => [t, i]));
 
@@ -75,6 +75,8 @@ const CHAO_DO_MAPA: Record<string, Partial<Record<number, Terreno>>> = {
     [Tile.Porta]: 'concreto',
   },
   ilha_do_farol: { [Tile.Maquina]: 'grama' },
+  // os andares das Galerias da Usina (chave de qualquer andar de masmorra: chaveDoMapa)
+  galerias: { [Tile.Concreto]: 'galeria', [Tile.Parede]: 'parede_galeria', [Tile.Maquina]: 'galeria' },
   // a Usina é de concreto, com a parede da Direita; o Juncal usa o chão e a parede de palafita do Delta
   usina_da_ponte: {
     [Tile.Parede]: 'parede_dir',
@@ -168,7 +170,11 @@ export function plMatoKey(scene: Phaser.Scene, x: number, y: number): string | u
 export const temPlMato = (scene: Phaser.Scene) => scene.textures.exists('pl_mato_0');
 
 /** v0.4: no mapa em que o mato vira trigo (Planalto), o trigo é chão e não leva tufo. */
-export const matoViraTrigo = (mapId: string) => CHAO_DO_MAPA[mapId]?.[Tile.Mato] === 'trigo';
+export const matoViraTrigo = (mapId: string) => CHAO_DO_MAPA[chaveDoMapa(mapId)]?.[Tile.Mato] === 'trigo';
+
+/** Andar de masmorra ('galerias_da_usina:3'): todos usam o chão das Galerias. */
+const ehAndar = (mapId: string) => /^[a-z_]+:\d+$/.test(mapId);
+const chaveDoMapa = (mapId: string) => (ehAndar(mapId) ? 'galerias' : mapId);
 
 /** Textura com as árvores do PixelLab lado a lado (quadros a0, a1...), para o Blitter da mata. */
 export function plArvores(scene: Phaser.Scene): string | undefined {
@@ -191,7 +197,7 @@ export function plArvores(scene: Phaser.Scene): string | undefined {
 export const plArvoreFrame = (x: number, y: number) => `a${(((x * 92837111) ^ (y * 689287499)) >>> 0) % ARVORES}`;
 
 export function usaPlChao(scene: Phaser.Scene, map: TileMap): boolean {
-  if (!PL_CHAO_MAPS.has(map.id) || pares.size === 0) return false;
+  if ((!PL_CHAO_MAPS.has(map.id) && !ehAndar(map.id)) || pares.size === 0) return false;
   for (const p of pares.values()) if (!scene.textures.exists(p.key)) return false;
   return true;
 }
@@ -252,7 +258,7 @@ export function desenhaPlChao(
   const pctx = proc.getContext('2d')!;
   pctx.drawImage(ctx.canvas, 0, 0);
   const tile = (x: number, y: number) => map.tiles[Math.min(H - 1, Math.max(0, y)) * W + Math.min(W - 1, Math.max(0, x))]!;
-  const doMapa = CHAO_DO_MAPA[map.id] ?? {};
+  const doMapa = CHAO_DO_MAPA[chaveDoMapa(map.id)] ?? {};
   const chaoDe = (t: number) => doMapa[t] ?? CHAO_DE[t];
   // a pedra fica em cima do chão que estiver em volta (grama no barranco, concreto na ponte)
   const emVolta = (x: number, y: number): Terreno | undefined => {

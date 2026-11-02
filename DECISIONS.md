@@ -338,7 +338,18 @@ sugestão; os docs só descrevem o Planalto, o Vale e a Ilha do Farol em uma lin
   (um helper só, `xpDaFormula`, no lugar das quatro cópias da fórmula). Do 1 ao 20 o total passa de
   49.474 para 53.336.
 - **Arte:** 2 tilesets de trigo e 15 bonecos e bichos do PixelLab (198 gerações). O Vale e a Ilha
-  usam os tilesets que já existiam.
+  usam os tilesets que já existiam. Depois, 2 tilesets das Galerias (chão de pedra molhada e parede
+  de concreto do túnel, 30 gerações): os andares da masmorra usam o chão do PixelLab.
+- **Uma folha por boneco:** os quadros soltos (quase 2.000 PNG) foram para `art-src/pl`;
+  `tools/art/pl-folhas.mjs` junta cada boneco em `public/pl/<boneco>/folha.png`, com o tamanho em
+  `art/plBonecos.json`. No servidor de desenvolvimento o jogo passou de mais de 2 min para uns 25 s
+  para abrir, e o cache do app offline caiu de 982 para uns 560 arquivos.
+- **Troca de lado (`game/trocaDeLado.ts`):** com o Seu Jacó, depois da flag da cabeceira (19), uma vez
+  por temporada (o mês, pelo relógio de quem chama). Mantém o nível e a classe; a instituição vira a
+  da mesma classe na outra margem e a ala vira o par dela (a mesma posição na lista de alas, que bate
+  com os pares do briefing). Perde a patente e a moradia (Sistemas.md); o guia vira o primeiro da
+  outra margem; talentos que não valem do outro lado voltam a ficar pendentes; missões ativas da
+  margem antiga são largadas. A metade do bônus dos itens já era a regra de item da outra margem.
 
 ## Sugestões (o que não está nos docs)
 Lista mantida por fase. Tudo aqui pode ser trocado pelos autores.
