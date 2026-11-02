@@ -159,6 +159,11 @@ export const EnemiesFile = z
     escalaPorNivel: z
       .object({ vidaPct: z.number(), ataquePct: z.number(), defesaPct: z.number(), xpPct: z.number(), ...Sugestao })
       .strict(),
+    /** ajuste geral de dificuldade, em % sobre a vida e o ataque de todo inimigo (negativo = mais fácil) */
+    dificuldade: z
+      .object({ vidaPct: z.number().gt(-100), ataquePct: z.number().gt(-100), ...Sugestao })
+      .strict()
+      .optional(),
     afixos: z.array(EliteAffix).length(4),
     inimigos: z.array(Enemy).min(1),
     ...Sugestao,

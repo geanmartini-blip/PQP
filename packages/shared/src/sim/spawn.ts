@@ -288,8 +288,9 @@ export function spawnEnemy(w: World, enemyId: string, x: number, y: number, opts
   const promoted = tier === 'elite' && def.tier === 'normal';
   const level = Math.max(def.nivel, opts.level ?? def.nivel);
   const up = level - def.nivel;
-  let vida = def.vida * (1 + (esc.vidaPct / 100) * up);
-  let ataque = def.ataque * (1 + (esc.ataquePct / 100) * up);
+  const dif = D.enemies.dificuldade;
+  let vida = def.vida * (1 + (esc.vidaPct / 100) * up) * (1 + (dif?.vidaPct ?? 0) / 100);
+  let ataque = def.ataque * (1 + (esc.ataquePct / 100) * up) * (1 + (dif?.ataquePct ?? 0) / 100);
   let defesa = def.defesa * (1 + (esc.defesaPct / 100) * up);
   let xp = def.xp * (1 + (esc.xpPct / 100) * up);
   let lootTable: string = def.tabelaSaque;

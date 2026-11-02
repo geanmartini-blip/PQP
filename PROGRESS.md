@@ -65,7 +65,10 @@ Plano:
      boneco para quem completa o conjunto;
    - falta: o chão das Galerias (masmorra, ainda procedural) e os estágios do conjunto.
    Gasto até aqui: 1.712 gerações (tileset "pro" custa 15, boneco "pro" 25 em 128 px e 15 em 112).
-5. Testes, build, NOVIDADES da v0.3, versão 0.3.0 e commit, sem push.
+5. Pronto para o launch: inimigos com 20% menos vida e 25% menos ataque (`dificuldade` em
+   enemies.json), respawn de 90 s (elite 3 min, chefe 5 min) e nunca com o jogador a menos de 12
+   tiles, no servidor e no modo offline. Versão 0.3.0, NOVIDADES da v0.3, testes e build:app
+   passando. Falta só o push, que publica no GitHub Pages.
 
 Visual dos itens:
 - O jogador nasce com o **boneco base** do PixelLab, um corpo neutro com variações de pele e cabelo

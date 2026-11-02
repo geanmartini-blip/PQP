@@ -7,7 +7,7 @@ O jogo mostra a seção da versão atual uma vez, na primeira abertura depois de
 - Jornada nova: o Bruno Ferro chega no nível 4, a balsa é no 5 e a ala no 10.
 - Do 11 ao 19, as missões vão chegando perto da Ponte; a da cabeceira libera a troca de lado.
 - Conjunto da classe: as missões dão as 5 peças, e a calça entrou na armadura.
-- Luta com menos correria no começo: golpes mais lentos e mais fortes, com animação própria.
+- Luta mais tranquila: golpes mais lentos e fortes, inimigos mais fracos e que demoram mais a voltar.
 - Arte nova no mapa todo, do Delta ao Juncal: chão, fachadas, inimigos, treinadores e NPCs.
 
 ## v0.2

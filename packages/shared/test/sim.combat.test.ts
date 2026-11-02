@@ -125,7 +125,8 @@ describe('inimigos: aviso no chão, elite e chefe', () => {
     const base = getData().enemiesById.get('capanga_do_capataz')!;
     const e = spawnEnemy(w, 'capanga_do_capataz', 12, 15, { tier: 'elite', affixes: ['blindado'] });
     expect(e.tier).toBe('elite');
-    expect(e.stats.hpMax).toBeCloseTo(base.vida * getData().enemies.promocaoElite.vidaMult);
+    const dif = 1 + (getData().enemies.dificuldade?.vidaPct ?? 0) / 100;
+    expect(e.stats.hpMax).toBeCloseTo(base.vida * dif * getData().enemies.promocaoElite.vidaMult);
     expect(e.stats.pct['damageTaken']).toBeCloseTo(-0.4);
     const p = spawnPlayer(w, { name: 'Li', archetypeId: 'idol', x: 10, y: 15 });
     p.targetId = e.id;

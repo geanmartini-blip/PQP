@@ -294,9 +294,11 @@ import type {
 } from '@pqp/shared/net';
 import { archetypeLook, defaultLook } from '../art/character';
 
-// SUGESTÃO: bando morto volta em 30 s; o chefe em 60 s.
-export const RESPAWN_BAND_MS = 30000;
-export const RESPAWN_BOSS_MS = 60000;
+// SUGESTÃO: os mesmos números do servidor (server/src/config.ts): bando morto volta em 90 s, o chefe
+// em 5 min, e nada renasce com o jogador a menos de 12 tiles do ponto.
+export const RESPAWN_BAND_MS = 90000;
+export const RESPAWN_BOSS_MS = 300000;
+export const RESPAWN_SAFE_RADIUS = 12;
 // SUGESTÃO: ala inicial do personagem template do protótipo.
 export const DEFAULT_ARCHETYPE = 'peao_brabo';
 // SUGESTÃO: os mesmos números do servidor (server/src/config.ts): fila alvo de 1 entrada, até 2
@@ -1064,7 +1066,11 @@ export class LocalServer {
       if (alive) continue;
       if (g.deadSince === undefined) g.deadSince = now;
       const wait = (g.kind === 'chefe' ? RESPAWN_BOSS_MS : RESPAWN_BAND_MS) / TICK_MS;
-      if (now - g.deadSince >= wait) this.spawnGroup(g);
+      if (now - g.deadSince < wait) continue;
+      let perto = false;
+      for (const e of this.w.entities.values())
+        if (e.kind === 'player' && !e.dead && Math.hypot(e.x - g.x, e.y - g.y) < RESPAWN_SAFE_RADIUS) perto = true;
+      if (!perto) this.spawnGroup(g);
     }
   }
 

@@ -357,6 +357,8 @@ describe('IA: mapa do protótipo', () => {
     const p = spawnPlayer(w, { name: 'Ana', archetypeId: 'idol', x: px, y: py, playerId: 'p1' });
     p.auto = true;
     p.hp = p.stats.hpMax = 5000;
+    // bate fraco, para o bando viver o bastante para revidar (com a dificuldade baixa, morria antes)
+    p.stats.attack = 1;
     const evs = stepN(w, 20 * 60);
     expect(evs.some((e) => e.t === 'hit' && e.src === p.id)).toBe(true);
     expect(evs.some((e) => e.t === 'hit' && e.dst === p.id)).toBe(true);

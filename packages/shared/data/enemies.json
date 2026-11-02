@@ -35,6 +35,11 @@
     "xpPct": 10,
     "sugestao": true
   },
+  "dificuldade": {
+    "vidaPct": -20,
+    "ataquePct": -25,
+    "sugestao": true
+  },
   "afixos": [
     {
       "id": "rapido",

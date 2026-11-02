@@ -54,11 +54,12 @@ export const OFFLINE_AUTO_MS = 120_000;
 // SUGESTÃO: o Colyseus segura a mesma sessão por 20 s para a reconexão automática do SDK.
 export const COLYSEUS_RECONNECT_S = 20;
 
-// SUGESTÃO: inimigos renascem 30 s depois que o bando inteiro caiu (elite 60 s, chefe 120 s).
-export const RESPAWN_MS = { normal: 30_000, elite: 60_000, chefe: 120_000 } as const;
+// SUGESTÃO: inimigos renascem 90 s depois que o bando inteiro caiu (elite 3 min, chefe 5 min), para
+// dar tempo de falar com NPC, ler a missão e pegar o saque.
+export const RESPAWN_MS = { normal: 90_000, elite: 180_000, chefe: 300_000 } as const;
 
-// SUGESTÃO: não renasce inimigo com jogador a menos de 8 tiles do ponto (não aparece na cara).
-export const RESPAWN_SAFE_RADIUS = 8;
+// SUGESTÃO: não renasce inimigo com jogador a menos de 12 tiles do ponto (não aparece na cara).
+export const RESPAWN_SAFE_RADIUS = 12;
 
 // SUGESTÃO: membros de um bando nascem num círculo de 1 tile em volta do marcador.
 export const BAND_SPREAD_TILES = 1;
