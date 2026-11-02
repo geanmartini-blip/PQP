@@ -7,16 +7,15 @@ falta e onde a integração já está pronta.
 - Plano Pixel Apprentice assinado em 2026-11-01: 2.000 gerações por mês, até 8 tarefas ao mesmo
   tempo. Na v0.3 já foram 476: boneco base, golpes, 18 tilesets do chão e das paredes, 2 árvores,
   Seu Jacó, Bruno Ferro, capanga, cobrador, siri e mosquito.
-- **O boneco base é um só.** A criação zoeira (corpo, pele, cabelo) ainda não aparece no mundo: todo
-  mundo que não completou o conjunto usa o mesmo boneco. Para mostrar a criação, faltam variações do
-  boneco base (estados do PixelLab por corpo e tom de pele) ou camadas por cima dele.
+- **O boneco base é um só, pintado.** Desde a v0.4, a pele, a cor do cabelo e a cor da camiseta da
+  criação pintam o boneco base (`src/art/plTinta.ts`, sem gerar nada no PixelLab). Ainda não aparecem:
+  o corpo, o corte de cabelo, o rosto e os detalhes. Para isso, faltam variações do boneco base
+  (estados do PixelLab por corte e corpo) ou camadas por cima dele.
 - Com a v0.4 (trigo, NPCs e inimigos do Planalto, do Vale e da Ilha, e o chão das Galerias), 1.940
   gerações; sobram 60 até 2026-12-01. As 24 alas têm boneco do PixelLab (o do treinador) para quem
   completa o conjunto. Os NPCs que não são treinadores ficam parados, sem andar. Cada boneco é uma
   folha só (`tools/art/pl-folhas.mjs`). O Bruno Ferro chefe usa o mesmo tamanho do NPC (sem a escala
   maior do chefe antigo).
-- A troca de lado (v0.4) escolhe sozinha o guia da outra margem (o primeiro da lista). Falta uma tela
-  para escolher o guia na troca, se vocês quiserem.
 
 ## 1. Supabase: conta, chaves e migrations
 - **Criar o projeto** no Supabase. Pode ser o plano grátis no piloto.

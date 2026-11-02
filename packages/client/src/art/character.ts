@@ -129,6 +129,8 @@ export function findTier(look: CharacterLook): OutfitTier | undefined {
   return exact ?? tiers.find((t) => t.arquetipo === arch && t.tier === want);
 }
 
+export const paletteOfLook = (look: ArtLook, tier: OutfitTier | undefined): Color[] => paletteOf(look, tier);
+
 function paletteOf(look: ArtLook, tier: OutfitTier | undefined): Color[] {
   if (look.paletteHex) return look.paletteHex.map((h) => hex(h));
   const d = getData();

@@ -7,7 +7,8 @@ O jogo mostra a seção da versão atual uma vez, na primeira abertura depois de
 - Três áreas novas: o Planalto do Trigo, o Vale das Chaminés e a Ilha do Farol.
 - Histórias novas do 6 ao 9, com chefe: A Colheita, na Esquerda, e O Turno da Noite, na Direita.
 - Mais missões: 5 no Delta, uma por instituição, bicos repetíveis e O Sinal da Eco no nível 10.
-- No nível 19, o Seu Jacó leva você para o outro lado: troca de lado, uma vez por mês.
+- No nível 19, o Seu Jacó leva você para o outro lado: troca de lado, uma vez por mês, e você escolhe o guia novo.
+- A pele, o cabelo e a camiseta do cadastro agora aparecem no boneco, no mundo e na prévia.
 - O jogo abre mais rápido, as Galerias têm chão novo e do 5 ao 10 cada nível pede mais experiência.
 
 ## v0.3

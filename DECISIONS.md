@@ -347,9 +347,17 @@ sugestão; os docs só descrevem o Planalto, o Vale e a Ilha do Farol em uma lin
 - **Troca de lado (`game/trocaDeLado.ts`):** com o Seu Jacó, depois da flag da cabeceira (19), uma vez
   por temporada (o mês, pelo relógio de quem chama). Mantém o nível e a classe; a instituição vira a
   da mesma classe na outra margem e a ala vira o par dela (a mesma posição na lista de alas, que bate
-  com os pares do briefing). Perde a patente e a moradia (Sistemas.md); o guia vira o primeiro da
-  outra margem; talentos que não valem do outro lado voltam a ficar pendentes; missões ativas da
-  margem antiga são largadas. A metade do bônus dos itens já era a regra de item da outra margem.
+  com os pares do briefing). Perde a patente e a moradia (Sistemas.md); talentos que não valem do
+  outro lado voltam a ficar pendentes; missões ativas da margem antiga são largadas. A metade do
+  bônus dos itens já era a regra de item da outra margem. O guia novo é escolhido na conversa: o
+  "Trocar de lado" vira a lista dos guias da outra margem (com o bônus de cada um) e um "fico deste
+  lado"; o pedido fica no contador `troca_de_lado_escolhendo`. Falas do Seu Jacó nessa hora são
+  sugestão.
+- **A criação no boneco do PixelLab (`art/plTinta.ts`):** a folha base tem paleta fechada; as cores
+  da pele, do cabelo e da camiseta viram as do visual (sombra pela razão de luminância, brilho pela
+  diferença), sem gerar nada. O marrom-escuro do cabelo também é contorno da calça, então só vale
+  na parte de cima do quadro (45%). A prévia do cadastro e da Máquina de Visual usa o mesmo boneco.
+  Corpo, corte, rosto e detalhes ainda não aparecem nele (PENDENTE.md).
 
 ## Sugestões (o que não está nos docs)
 Lista mantida por fase. Tudo aqui pode ser trocado pelos autores.

@@ -7,7 +7,8 @@
  * - Libera no 19, com a flag da cabeceira (troca_de_lado_liberada), como diz a Jornada.md v0.3.
  * - A classe fica; a instituição vira a da mesma classe na outra margem e a ala vira o par dela (a
  *   mesma posição na lista de alas, que é o par do briefing: Peão Brabo e Sumô Cibernético...).
- * - O guia vira o primeiro da outra margem (espírito ou IA de bolso); a troca de guia fica para depois.
+ * - O guia é escolhido na hora, entre os da outra margem (espírito ou IA de bolso), na conversa com o
+ *   Seu Jacó; sem escolha (chamada direta), vai o primeiro da lista.
  * - Os talentos que não valem do outro lado (instituição, margem, ala) voltam a ficar pendentes.
  * - As missões ativas da margem antiga são largadas.
  * - "Uma vez por temporada": a temporada é o mês (as arenas são mensais); quem chama passa o número
@@ -56,8 +57,22 @@ export function podeTrocarDeLado(rec: PlayerRecord, temporada: number): { ok: tr
   return { ok: true };
 }
 
+/** Contador de quem pediu a troca e está escolhendo o guia (a conversa com o Seu Jacó lista os guias). */
+export const TROCA_ESCOLHENDO_KEY = 'troca_de_lado_escolhendo';
+
+/** Os guias do outro lado, para a escolha na troca. */
+export function guiasDaTroca(rec: PlayerRecord): { id: string; name: string; tipo: string; bonusTexto: string }[] {
+  const d = destinoDaTroca(rec);
+  if (!d) return [];
+  return getData().guides.guias.filter((g) => g.margem === d.side).map((g) => ({ id: g.id, name: g.name, tipo: g.tipo, bonusTexto: g.bonusTexto }));
+}
+
 /** Troca de lado: margem, instituição, ala, guia, patentes, moradia, talentos e missões. */
-export function trocarDeLado(rec: PlayerRecord, temporada: number): ({ ok: true } | { ok: false; erro: string }) & { resultado: GameResult } {
+export function trocarDeLado(
+  rec: PlayerRecord,
+  temporada: number,
+  guiaId?: string,
+): ({ ok: true } | { ok: false; erro: string }) & { resultado: GameResult } {
   const r = emptyResult();
   const pode = podeTrocarDeLado(rec, temporada);
   if (!pode.ok) return { ...pode, resultado: r };
@@ -66,7 +81,10 @@ export function trocarDeLado(rec: PlayerRecord, temporada: number): ({ ok: true 
   const antigo = { side: rec.side!, institution: rec.institution! };
   const inst = D.institutionsById.get(destino.institution)!;
   const soc = D.societies.sociedades.find((s) => s.side === destino.side)!;
-  const guia = D.guides.guias.find((g) => g.margem === destino.side);
+  const guia = guiaId === undefined ? D.guides.guias.find((g) => g.margem === destino.side) : D.guidesById.get(guiaId);
+  if (guiaId !== undefined && guia?.margem !== destino.side)
+    return { ok: false, erro: destino.side === 'esquerda' ? 'Escolha um espírito guia da Esquerda.' : 'Escolha uma IA de bolso da Direita.', resultado: r };
+  delete rec.counters[TROCA_ESCOLHENDO_KEY];
 
   rec.side = destino.side;
   rec.institution = inst.id;

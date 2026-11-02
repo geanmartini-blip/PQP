@@ -127,8 +127,10 @@ export class UiController {
       scene,
       art,
       onOption: (npc, op) => {
-        this.gc.dialogOption(npc, op);
+        // fecha antes: o servidor local responde na hora, e a conversa que segue (a escolha do guia na
+        // troca de lado) não pode ser fechada junto
         this.closeDialog();
+        this.gc.dialogOption(npc, op);
       },
       onClose: () => {
         const d = this.dialog.current;

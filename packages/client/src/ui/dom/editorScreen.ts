@@ -20,6 +20,7 @@ import {
 } from '../creatorModel';
 import { button, el } from './styles';
 import { drawFrame, spinFrame } from './sprite';
+import { pixellabSheet } from '../../art/pixellab';
 
 export interface EditorDeps {
   scene: () => Phaser.Scene | undefined;
@@ -41,6 +42,7 @@ export class EditorScreen {
   private nome: HTMLInputElement | null = null;
   private pronto: HTMLButtonElement | null = null;
   private sheetKey = '';
+  private sheetScale = 4;
   private sheetDirty = true;
   private paused = false;
   private t0 = 0;
@@ -264,7 +266,11 @@ export class EditorScreen {
     if (this.sheetDirty) {
       this.sheetDirty = false;
       try {
-        this.sheetKey = this.deps.art.characterSheet(scene, previewLook(s));
+        // v0.4: a prévia é o boneco do PixelLab do mundo, com a pele, o cabelo e a camiseta pintados
+        const look = previewLook(s);
+        const pl = pixellabSheet(scene, look);
+        this.sheetScale = pl ? 2 : 4;
+        this.sheetKey = pl ?? this.deps.art.characterSheet(scene, look);
       } catch {
         this.sheetKey = '';
       }
@@ -273,6 +279,6 @@ export class EditorScreen {
     if (!this.t0) this.t0 = now;
     const t = this.paused ? 0 : now - this.t0;
     const f = spinFrame(t);
-    drawFrame(scene, cv, this.sheetKey, this.paused ? `parado_0_0` : f.frame, 4);
+    drawFrame(scene, cv, this.sheetKey, this.paused ? `parado_0_0` : f.frame, this.sheetScale);
   }
 }

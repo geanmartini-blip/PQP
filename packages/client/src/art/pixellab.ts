@@ -13,6 +13,7 @@ import * as Phaser from 'phaser';
 import { ANIMS, type AnimName, type CharacterLook } from './contract';
 import { registerSheet } from './index';
 import FOLHAS from './plBonecos.json';
+import { pintar, type Tinta, tintaDe, tintaKey } from './plTinta';
 
 /** tamanho do quadro e quantos quadros de andar e de golpe cada folha tem */
 const PL_FOLHAS: Record<string, { w: number; h: number; andar: number; golpe: number }> = FOLHAS;
@@ -75,9 +76,13 @@ export function plBonecoDe(look: CharacterLook): string {
   return ala && look.outfit.conjunto ? ala : PL_BASE;
 }
 
-/** Folha do PixelLab deste visual de jogador, ou undefined se o boneco ainda não foi carregado. */
+/**
+ * Folha do PixelLab deste visual de jogador, ou undefined se o boneco ainda não foi carregado.
+ * v0.4: o boneco base sai com a pele, o cabelo e a camiseta do visual (plTinta.ts).
+ */
 export function pixellabSheet(scene: Phaser.Scene, look: CharacterLook): string | undefined {
-  return folhaBoneco(scene, plBonecoDe(look));
+  const f = plBonecoDe(look);
+  return f === PL_BASE ? folhaBoneco(scene, f, tintaDe(look)) : folhaBoneco(scene, f);
 }
 
 /**
@@ -165,8 +170,8 @@ function folhaBicho(scene: Phaser.Scene, f: string): string | undefined {
   return key;
 }
 
-function folhaBoneco(scene: Phaser.Scene, f: string): string | undefined {
-  const key = `pl_${f}`;
+function folhaBoneco(scene: Phaser.Scene, f: string, tinta?: Tinta): string | undefined {
+  const key = tinta ? `pl_${f}_${tintaKey(tinta)}` : `pl_${f}`;
   if (scene.textures.exists(key)) return key;
   const info = PL_FOLHAS[f];
   if (!info || !scene.textures.exists(folhaKey(f))) return undefined;
@@ -174,7 +179,13 @@ function folhaBoneco(scene: Phaser.Scene, f: string): string | undefined {
   const { w, h } = info;
   const tex = scene.textures.createCanvas(key, folha.width, folha.height);
   if (!tex) return undefined;
-  tex.getContext().drawImage(folha, 0, 0);
+  const ctx = tex.getContext();
+  ctx.drawImage(folha, 0, 0);
+  if (tinta) {
+    const img = ctx.getImageData(0, 0, folha.width, folha.height);
+    pintar(img.data, tinta, folha.width, h);
+    ctx.putImageData(img, 0, 0);
+  }
   const temGolpe = info.golpe >= 6;
   const temAndar = info.andar > 1;
   const anims: Partial<Record<AnimName, number>> = {};

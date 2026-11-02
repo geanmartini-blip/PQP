@@ -1628,6 +1628,7 @@ export class GameServerCore implements CityCore {
     if (opcao === 'tchau') return;
     const base: Dialog = slot.lastDialog && slot.lastDialog.npc === npcId ? slot.lastDialog : { npc: npcId, nome: npcId, contexto: 'opcao', fala: '', opcoes: [] };
     const d: S2C_Dialogo = { ...base, opcoes: dialogOptions(slot.rec, npcId, this.dialogCtx()) };
+    if (res.fala !== undefined) d.fala = res.fala;
     if (res.abrir) d.abrir = res.abrir;
     slot.lastDialog = { ...base, opcoes: d.opcoes };
     this.send(slot.sid, GAME_MSG.dialogo, d);

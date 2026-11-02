@@ -15,7 +15,7 @@ import { FLAG_BRUNO } from './progression';
 import { FLAG_EMBARCOU } from './barco';
 import { canCross, travessiaOptions, type TravessiaOptions } from './travessia';
 import { canUseMachine } from './visual';
-import { destinoDaTroca, podeTrocarDeLado, trocarDeLado } from './trocaDeLado';
+import { destinoDaTroca, guiasDaTroca, podeTrocarDeLado, TROCA_ESCOLHENDO_KEY, trocarDeLado } from './trocaDeLado';
 import { emptyResult, mergeResult, type GameResult, type PlayerRecord } from './types';
 
 export type DialogOptionKind = 'aceitar_missao' | 'escolha' | 'maquina_visual' | 'travessia' | 'tchau' | 'escolher_ala' | 'trocar_lado';
@@ -108,6 +108,13 @@ export function dialogOptions(rec: PlayerRecord, npcId: string, ctx: DialogCtx =
   if (npcId === 'seu_jaco' && canCross(rec).ok) out.push({ id: 'travessia', tipo: 'travessia', texto: hasFlag(rec, FLAG_EMBARCOU) ? 'Escolher a margem' : 'Embarcar na travessia' });
   // v0.4: depois da cabeceira, o Seu Jacó leva para o outro lado (uma vez por temporada)
   if (npcId === 'seu_jaco' && podeTrocarDeLado(rec, ctx.temporada ?? -1).ok) {
+    // pediu a troca: a conversa vira a escolha do guia do outro lado
+    if (rec.counters[TROCA_ESCOLHENDO_KEY]) {
+      for (const g of guiasDaTroca(rec)) out.push({ id: `trocar_lado:${g.id}`, tipo: 'trocar_lado', texto: `${g.name}: ${g.bonusTexto}` });
+      // SUGESTÃO: texto do botão de desistir da troca.
+      out.push({ id: 'trocar_lado_voltar', tipo: 'trocar_lado', texto: 'Pensando melhor, fico deste lado' });
+      return out;
+    }
     const d = destinoDaTroca(rec)!;
     // SUGESTÃO: texto do botão de trocar de lado.
     out.push({ id: 'trocar_lado', tipo: 'trocar_lado', texto: `Trocar de lado: ${D.institutionsById.get(d.institution)?.name ?? d.institution}, na Margem ${d.side === 'esquerda' ? 'Esquerda' : 'Direita'}` });
@@ -201,13 +208,32 @@ function talkToGuide(rec: PlayerRecord, npcId: string): { dialogo: Dialog; resul
 export type DialogOpen = { tela: 'maquina_visual'; maquina: string } | { tela: 'travessia'; opcoes: TravessiaOptions };
 
 /** Opção escolhida no diálogo. */
-export function dialogOption(rec: PlayerRecord, npcId: string, opcaoId: string, ctx: DialogCtx = {}): { ok: boolean; erro?: string; resultado: GameResult; abrir?: DialogOpen } {
+export function dialogOption(
+  rec: PlayerRecord,
+  npcId: string,
+  opcaoId: string,
+  ctx: DialogCtx = {},
+): { ok: boolean; erro?: string; resultado: GameResult; abrir?: DialogOpen; fala?: string } {
   const r = emptyResult();
   const opts = dialogOptions(rec, npcId, ctx);
   if (!opts.some((o) => o.id === opcaoId)) return { ok: false, erro: 'Opção indisponível.', resultado: r };
   if (opcaoId === 'tchau') return { ok: true, resultado: r };
+  // v0.4: a troca de lado pede o guia antes (a conversa segue com a lista)
   if (opcaoId === 'trocar_lado') {
-    const t = trocarDeLado(rec, ctx.temporada ?? -1);
+    rec.counters[TROCA_ESCOLHENDO_KEY] = 1;
+    r.mudou = true;
+    // SUGESTÃO: fala do Seu Jacó na escolha do guia.
+    const fala = rec.side === 'esquerda' ? 'Do lado de lá, espírito não entra. Escolhe uma dessas maquininhas falantes.' : 'Do lado de cá, aplicativo não pega. Escolhe um espírito, que eles vêm de graça.';
+    return { ok: true, resultado: r, fala };
+  }
+  if (opcaoId === 'trocar_lado_voltar') {
+    delete rec.counters[TROCA_ESCOLHENDO_KEY];
+    r.mudou = true;
+    // SUGESTÃO: fala do Seu Jacó quando a pessoa desiste da troca.
+    return { ok: true, resultado: r, fala: 'Tá certo. O rio continua aqui no mês que vem.' };
+  }
+  if (opcaoId.startsWith('trocar_lado:')) {
+    const t = trocarDeLado(rec, ctx.temporada ?? -1, opcaoId.slice('trocar_lado:'.length));
     return t.ok ? { ok: true, resultado: t.resultado } : { ok: false, erro: t.erro, resultado: t.resultado };
   }
   if (opcaoId === 'travessia') return { ok: true, resultado: r, abrir: { tela: 'travessia', opcoes: travessiaOptions(rec) } };

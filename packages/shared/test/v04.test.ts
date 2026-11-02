@@ -144,7 +144,21 @@ describe('v0.4: troca de lado', () => {
     setFlag(rec, FLAG_TROCA_LIBERADA);
     expect(destinoDaTroca(rec)).toEqual({ side: 'direita', institution: 'torcida_furia_neon', archetype: 'sumo_cibernetico' });
     expect(dialogOptions(rec, 'seu_jaco', { temporada: 1 }).some((o) => o.id === 'trocar_lado')).toBe(true);
-    expect(dialogOption(rec, 'seu_jaco', 'trocar_lado', { temporada: 1 }).ok).toBe(true);
+    // pedir a troca abre a escolha do guia: as 4 IAs de bolso da Direita e o "fico"
+    const pedido = dialogOption(rec, 'seu_jaco', 'trocar_lado', { temporada: 1 });
+    expect(pedido.ok).toBe(true);
+    expect(pedido.fala).toBeTruthy();
+    expect(rec.side).toBe('esquerda');
+    const guias = dialogOptions(rec, 'seu_jaco', { temporada: 1 }).filter((o) => o.id.startsWith('trocar_lado:'));
+    expect(guias.map((o) => o.id)).toEqual(D.guides.guias.filter((g) => g.margem === 'direita').map((g) => `trocar_lado:${g.id}`));
+    // guia da margem errada não passa; desistir volta ao normal
+    expect(dialogOption(rec, 'seu_jaco', 'trocar_lado:valquiria', { temporada: 1 }).ok).toBe(false);
+    expect(dialogOption(rec, 'seu_jaco', 'trocar_lado_voltar', { temporada: 1 }).ok).toBe(true);
+    expect(dialogOptions(rec, 'seu_jaco', { temporada: 1 }).some((o) => o.id === 'trocar_lado')).toBe(true);
+    dialogOption(rec, 'seu_jaco', 'trocar_lado', { temporada: 1 });
+    expect(dialogOption(rec, 'seu_jaco', 'trocar_lado:byte', { temporada: 1 }).ok).toBe(true);
+    expect(rec.guide_id).toBe('byte');
+    expect(rec.counters['troca_de_lado_escolhendo']).toBeUndefined();
     expect(rec.side).toBe('direita');
     expect(rec.institution).toBe('torcida_furia_neon');
     expect(rec.class).toBe('combatente');

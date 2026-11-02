@@ -120,6 +120,7 @@ import {
   createCharacter,
   currentObjectives,
   dialogOption,
+  dialogOptions,
   gainXp,
   isDeltaRookie,
   lookOf,
@@ -1383,7 +1384,14 @@ export class LocalServer {
         const r = dialogOption(rec, String(c.npcId), String(c.opcao), { temporada: temporadaDe(this.nowMs()) });
         if (!r.ok) return this.aviso(r.erro ?? 'Opção indisponível.', 'erro');
         if (r.abrir?.tela === 'travessia') this.outbox.push([GAME_MSG.travessiaOpcoes, r.abrir.opcoes]);
-        else if (r.abrir) {
+        else if (r.fala !== undefined) {
+          // v0.4: a conversa segue (a escolha do guia na troca de lado)
+          const npcId = String(c.npcId);
+          const nome = getData().npcsById.get(npcId)?.name ?? npcId;
+          const opcoes = dialogOptions(rec, npcId, { temporada: temporadaDe(this.nowMs()) });
+          const d: S2C_Dialogo = { npc: npcId, nome, contexto: 'opcao', fala: r.fala, opcoes };
+          this.outbox.push([GAME_MSG.dialogo, d]);
+        } else if (r.abrir) {
           const d: S2C_Dialogo = { npc: String(c.npcId), nome: '', contexto: 'abrir', fala: '', opcoes: [], abrir: r.abrir };
           this.outbox.push([GAME_MSG.dialogo, d]);
         }
