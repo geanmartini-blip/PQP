@@ -60,9 +60,11 @@ Plano:
      pedra pega o chão em volta. Mercenário do Sombra com andar e golpe; o Sombra, a Dalva, o
      Cambista e o Curupira parados; turbina, enguia, cobra, cão e a Bomba Descontrolada (chefe das
      Galerias) como desenho único;
-   - falta: o chão das Galerias (masmorra, ainda procedural), o andar e o golpe dos 22 treinadores
-     (para virarem o boneco da ala do jogador com o conjunto completo) e os estágios do conjunto.
-   Gasto até aqui: 1.518 gerações (tileset "pro" custa 15, boneco "pro" 25 em 128 px e 15 em 112).
+   - pronto: os 22 treinadores andam e têm golpe (soco nos Combatentes e Mascarados, arremesso nos
+     Atiradores, magia nos Elementais) e viraram o boneco da ala em `PL_ARCHETYPES`: as 24 alas têm
+     boneco para quem completa o conjunto;
+   - falta: o chão das Galerias (masmorra, ainda procedural) e os estágios do conjunto.
+   Gasto até aqui: 1.712 gerações (tileset "pro" custa 15, boneco "pro" 25 em 128 px e 15 em 112).
 5. Testes, build, NOVIDADES da v0.3, versão 0.3.0 e commit, sem push.
 
 Visual dos itens:

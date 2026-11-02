@@ -13,7 +13,33 @@ import { ANIMS, type AnimName, type CharacterLook } from './contract';
 import { registerSheet } from './index';
 
 /** Arquétipo → pasta em public/pl/. */
-export const PL_ARCHETYPES: Record<string, string> = { peao_brabo: 'peao', idol: 'idol' };
+export const PL_ARCHETYPES: Record<string, string> = {
+  peao_brabo: 'peao',
+  idol: 'idol',
+  // as outras alas usam o boneco do treinador, que também é o NPC dele
+  iogue_furioso: 'dev_kumar',
+  cidadao_revolucionario: 'jacques',
+  babushka: 'olga',
+  arqueiro_das_estepes: 'batu',
+  cacador_de_crocodilo: 'bazza',
+  druida_rabugento: 'seamus',
+  bruxa_do_trovao: 'sigrid',
+  curandeira_dos_andes: 'ayaan_quispe',
+  luchador_sagrado: 'el_relampago',
+  diva_da_opera: 'donna_valentina',
+  malandro: 'tiao',
+  sumo_cibernetico: 'takeshi',
+  o_fiel: 'edson',
+  monstro_da_academia: 'thalysson',
+  tropa_de_choque: 'big_mo',
+  cowboy_cromado: 'dusty',
+  diretor_de_nollywood: 'chidi',
+  engenheira_de_gambiarra: 'mei_lin_zhao',
+  doktor_klaus: 'klaus',
+  coach_de_bem_estar: 'brooke',
+  atendente_imortal: 'katia',
+  hacker_da_aldeia: 'kaua_ferreira',
+};
 /** o boneco base, sem itens da classe */
 export const PL_BASE = 'base';
 /** dir do contrato: 0 baixo, 1 esquerda, 2 cima, 3 direita */
@@ -103,9 +129,11 @@ export const PL_INIMIGOS: Record<string, string> = {
 const PL_BICHOS: ReadonlySet<string> = new Set(['siri', 'mosquito', 'drone', 'turbina', 'enguia', 'cobra', 'cao', 'bomba']);
 /** NPCs que não lutam: só o andar */
 const PL_SEM_GOLPE: ReadonlySet<string> = new Set(['jaco', 'toninho', 'vendedor', 'chopindita']);
-/** NPCs das margens: só as 4 direções, sem andar nem golpe (ficam no lugar) */
+/** NPCs das margens, da Usina e do Juncal: só as 4 direções, sem andar nem golpe (ficam no lugar) */
 const PL_PARADOS: ReadonlySet<string> = new Set(
-  Object.values(PL_NPCS).filter((f) => !['jaco', 'bruno', 'toninho', 'vendedor', 'chopindita', 'peao', 'idol'].includes(f)),
+  Object.values(PL_NPCS).filter(
+    (f) => !['jaco', 'bruno', 'toninho', 'vendedor', 'chopindita'].includes(f) && !Object.values(PL_ARCHETYPES).includes(f),
+  ),
 );
 
 /** Folha do PixelLab de um NPC ou inimigo, ou undefined se ele não tem (ou ainda não carregou). */

@@ -10,10 +10,9 @@ falta e onde a integração já está pronta.
 - **O boneco base é um só.** A criação zoeira (corpo, pele, cabelo) ainda não aparece no mundo: todo
   mundo que não completou o conjunto usa o mesmo boneco. Para mostrar a criação, faltam variações do
   boneco base (estados do PixelLab por corpo e tom de pele) ou camadas por cima dele.
-- As alas sem boneco do PixelLab (22 de 24) mostram o boneco base mesmo com o conjunto completo.
-- Com a Usina e o Juncal, 1.518 gerações; sobram 482 até 2026-12-01. Os NPCs ficam parados, sem
-  andar. Faltam o chão das Galerias e o andar e golpe dos 22 treinadores (cerca de 8 gerações cada),
-  que fariam deles o boneco da ala do jogador. O cache offline do app passou de 980 arquivos com os quadros dos
+- Com os treinadores animados, 1.712 gerações; sobram 288 até 2026-12-01. As 24 alas têm boneco
+  do PixelLab (o do treinador) para quem completa o conjunto. Os NPCs que não são treinadores ficam
+  parados, sem andar. Falta o chão das Galerias. O cache offline do app passou de 980 arquivos com os quadros dos
   bonecos; juntar os quadros numa folha por boneco deixaria a instalação mais leve. O Bruno Ferro
   chefe usa o mesmo tamanho do NPC (sem a escala maior do chefe antigo).
 - A troca de lado em si (mudar de margem, instituição e ala) fica para a v0.4. A missão da cabeceira já
