@@ -183,7 +183,7 @@ function folhaBoneco(scene: Phaser.Scene, f: string, tinta?: Tinta): string | un
   ctx.drawImage(folha, 0, 0);
   if (tinta) {
     const img = ctx.getImageData(0, 0, folha.width, folha.height);
-    pintar(img.data, tinta, folha.width, h);
+    pintar(img.data, tinta, folha.width, h, w);
     ctx.putImageData(img, 0, 0);
   }
   const temGolpe = info.golpe >= 6;

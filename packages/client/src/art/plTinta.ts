@@ -8,6 +8,7 @@ import { getData } from '@pqp/shared';
 import { type CharacterLook } from './contract';
 import { findTier, paletteOfLook } from './character';
 import { B, type Color, G, hex, R } from './pixel';
+import { CABELO_NOVO, cortar, mascaraDoCabelo } from './plCorte';
 
 /** cores da folha base (public/pl/base/folha.png), por parte, e a de referência (a mais comum) */
 const PELE_BASE = ['#fbb88a', '#e99b6d', '#dd8d61', '#ce7f54', '#b76b47', '#a45337', '#cd764f', '#9f5942', '#ba744f', '#7e452f', '#f4bf9f'];
@@ -18,21 +19,24 @@ export interface Tinta {
   pele: string;
   cabelo: string;
   roupa: string;
+  /** id do corte de cabelo (plCorte); sem ele, o cabelo da folha base */
+  corte?: string;
 }
 
-/** A pele, o cabelo e a cor da camiseta deste visual (o padrão de appearance.json quando falta). */
+/** A pele, o cabelo, a cor da camiseta e o corte deste visual (o padrão de appearance.json quando falta). */
 export function tintaDe(look: CharacterLook): Tinta {
   const ap = getData().appearance;
+  const corte = ap.cortes.find((x) => x.id === look.hair || x.artKey === look.hair) ?? ap.cortes.find((x) => x.id === ap.padrao.hair)!;
   const pele = ap.peles.find((x) => x.id === look.skin || x.artKey === look.skin) ?? ap.peles.find((x) => x.id === ap.padrao.skin)!;
   const cab =
     ap.coresCabelo.find((x) => x.id === look.hairColor || x.artKey === look.hairColor) ??
     ap.coresCabelo.find((x) => x.id === ap.padrao.hair_color)!;
   const c = paletteOfLook(look, findTier(look))[0]!;
   const roupa = '#' + [R(c), G(c), B(c)].map((v) => v.toString(16).padStart(2, '0')).join('');
-  return { pele: pele.hex.toLowerCase(), cabelo: cab.hex.toLowerCase(), roupa: roupa.toLowerCase() };
+  return { pele: pele.hex.toLowerCase(), cabelo: cab.hex.toLowerCase(), roupa: roupa.toLowerCase(), corte: corte.id };
 }
 
-export const tintaKey = (t: Tinta): string => `${t.pele}${t.cabelo}${t.roupa}`.replace(/#/g, '');
+export const tintaKey = (t: Tinta): string => `${t.pele}${t.cabelo}${t.roupa}${t.corte ? '_' + t.corte : ''}`.replace(/#/g, '');
 
 const lum = (c: Color) => 0.299 * R(c) + 0.587 * G(c) + 0.114 * B(c);
 const rgb24 = (c: Color) => ((R(c) << 16) | (G(c) << 8) | B(c)) >>> 0;
@@ -57,22 +61,30 @@ export function trocaDeCor(t: Tinta): Map<number, [number, number, number]> {
     const a = hex(alvo);
     for (const s of lista) m.set(rgb24(hex(s)), naLuz(a, hex(s), ref));
   }
+  // o cabelo desenhado pelo corte (plCorte) tem a luz das três primeiras cores do cabelo base
+  CABELO_NOVO.forEach((c, i) => m.set(c, m.get(rgb24(hex(CABELO_BASE[i]!)))!));
   return m;
 }
 
 /** O cabelo fica na cabeça: abaixo disto (fração da altura do quadro), o marrom-escuro é contorno da calça e do chinelo. */
 const CABECA = 0.45;
 const CABELO_RGB = new Set(CABELO_BASE.map((s) => rgb24(hex(s))));
+const CONTORNO = 0x1d1414;
 
 /** Pinta os pixels RGBA (ImageData.data) da folha base com a tinta; a folha tem `largura` px e quadros de `alturaQuadro` px. */
-export function pintar(px: Uint8ClampedArray, t: Tinta, largura = Infinity, alturaQuadro = Infinity): void {
+export function pintar(px: Uint8ClampedArray, t: Tinta, largura = Infinity, alturaQuadro = Infinity, larguraQuadro = 0): void {
+  // com o tamanho do quadro, o cabelo base só pinta onde é cabelo mesmo (olho e sobrancelha ficam)
+  const cabelo = larguraQuadro ? mascaraDoCabelo(px, largura, larguraQuadro, alturaQuadro) : undefined;
+  if (t.corte && larguraQuadro) cortar(px, t.corte, largura, larguraQuadro, alturaQuadro);
   const m = trocaDeCor(t);
   for (let i = 0; i < px.length; i += 4) {
     if (px[i + 3]! < 8) continue;
     const cor = (px[i]! << 16) | (px[i + 1]! << 8) | px[i + 2]!;
-    const novo = m.get(cor);
+    let novo = m.get(cor);
+    // antialias do cabelo fora da paleta: pinta pela luz dele
+    if (!novo && cabelo?.has(i / 4) && cor !== CONTORNO) novo = naLuz(hex(t.cabelo), ((cor << 8) | 255) >>> 0, hex(CABELO_BASE[0]!));
     if (!novo) continue;
-    if (CABELO_RGB.has(cor) && Math.floor(i / 4 / largura) % alturaQuadro >= alturaQuadro * CABECA) continue;
+    if (CABELO_RGB.has(cor) && (cabelo ? !cabelo.has(i / 4) : Math.floor(i / 4 / largura) % alturaQuadro >= alturaQuadro * CABECA)) continue;
     px[i] = novo[0];
     px[i + 1] = novo[1];
     px[i + 2] = novo[2];

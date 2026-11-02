@@ -7,10 +7,11 @@ falta e onde a integração já está pronta.
 - Plano Pixel Apprentice assinado em 2026-11-01: 2.000 gerações por mês, até 8 tarefas ao mesmo
   tempo. Na v0.3 já foram 476: boneco base, golpes, 18 tilesets do chão e das paredes, 2 árvores,
   Seu Jacó, Bruno Ferro, capanga, cobrador, siri e mosquito.
-- **O boneco base é um só, pintado.** Desde a v0.4, a pele, a cor do cabelo e a cor da camiseta da
-  criação pintam o boneco base (`src/art/plTinta.ts`, sem gerar nada no PixelLab). Ainda não aparecem:
-  o corpo, o corte de cabelo, o rosto e os detalhes. Para isso, faltam variações do boneco base
-  (estados do PixelLab por corte e corpo) ou camadas por cima dele.
+- **O boneco base é um só, pintado e cortado.** Desde a v0.4, a pele, a cor do cabelo e a cor da
+  camiseta da criação pintam o boneco base (`src/art/plTinta.ts`), e os 20 cortes de cabelo são
+  desenhados por código em cima dele (`src/art/plCorte.ts`), sem gerar nada no PixelLab. Ainda não
+  aparecem: o corpo, o rosto e os detalhes. O liso comprido e o chanel de costas ficam com cara de
+  bloco; um estado do PixelLab por corte resolveria, mas custa gerações.
 - Com a v0.4 (trigo, NPCs e inimigos do Planalto, do Vale e da Ilha, e o chão das Galerias), 1.940
   gerações; sobram 60 até 2026-12-01. As 24 alas têm boneco do PixelLab (o do treinador) para quem
   completa o conjunto. Os NPCs que não são treinadores ficam parados, sem andar. Cada boneco é uma

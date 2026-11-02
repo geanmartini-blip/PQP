@@ -357,7 +357,14 @@ sugestão; os docs só descrevem o Planalto, o Vale e a Ilha do Farol em uma lin
   da pele, do cabelo e da camiseta viram as do visual (sombra pela razão de luminância, brilho pela
   diferença), sem gerar nada. O marrom-escuro do cabelo também é contorno da calça, então só vale
   na parte de cima do quadro (45%). A prévia do cadastro e da Máquina de Visual usa o mesmo boneco.
-  Corpo, corte, rosto e detalhes ainda não aparecem nele (PENDENTE.md).
+  Corpo, rosto e detalhes ainda não aparecem nele (PENDENTE.md).
+- **O corte de cabelo no boneco do PixelLab (`art/plCorte.ts`):** o cabelo da folha base é o curtinho
+  social (o corte padrão). Em cada quadro, o cabelo é achado por preenchimento a partir do topo (olho e
+  sobrancelha ficam de fora), o crânio é uma elipse dentro dele, e cada corte apaga (vira pele dentro
+  do crânio), apara rente ou desenha volume, rabo, tranças, franja e boné, por trás ou pela frente
+  conforme a direção da linha. O cabelo desenhado usa cores vizinhas das da base, que o plTinta pinta
+  em qualquer altura; o cabelo base só é pintado dentro da máscara, o que também tirou a cor do cabelo
+  dos olhos. A cor do cabelo pinta o boné, como diz o appearance.json.
 
 ## Sugestões (o que não está nos docs)
 Lista mantida por fase. Tudo aqui pode ser trocado pelos autores.
